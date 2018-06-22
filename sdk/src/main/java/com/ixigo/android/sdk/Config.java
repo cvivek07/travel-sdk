@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.ixigo.android.sdk.util.DeviceUtils;
+import com.ixigo.android.sdk.util.PackageUtils;
 import com.ixigo.android.sdk.util.StringUtils;
 import com.ixigo.android.sdk.util.UuidHelper;
 
@@ -19,6 +20,7 @@ public class Config {
     private String deviceId;
     private String uuid;
     private int appVersion;
+    private int sdkVersion;
     private Class<? extends IxigoAuthHelper> ixigoAuthHelperImplClass;
     private EventCallback eventCallback;
 
@@ -76,6 +78,14 @@ public class Config {
         return appVersion;
     }
 
+    private void setSdkVersion(int sdkVersion) {
+        this.sdkVersion = sdkVersion;
+    }
+
+    public int getSdkVersion() {
+        return sdkVersion;
+    }
+
     private void setEventCallback(EventCallback eventCallback) {
         this.eventCallback = eventCallback;
     }
@@ -112,6 +122,7 @@ public class Config {
         private String deviceId;
         private String uuid;
         private int appVersion;
+        private int sdkVersion;
         private Class<? extends IxigoAuthHelper> ixigoAuthHelperImplClass;
         private EventCallback eventCallback;
 
@@ -133,21 +144,6 @@ public class Config {
 
         public Builder apiKey(String apiKey) {
             this.apiKey = apiKey;
-            return this;
-        }
-
-        public Builder deviceId(String deviceId) {
-            this.deviceId = deviceId;
-            return this;
-        }
-
-        public Builder uuid(String uuid) {
-            this.uuid = uuid;
-            return this;
-        }
-
-        public Builder appVersion(int appVersion) {
-            this.appVersion = appVersion;
             return this;
         }
 
@@ -190,7 +186,8 @@ public class Config {
             config.setClientId(clientId);
             config.setDeviceId(DeviceUtils.getDeviceId(context));
             config.setUuid(UuidHelper.getInstance(context).getUuid().toString());
-            config.setAppVersion(appVersion);
+            config.setAppVersion(PackageUtils.getVersionCode(context));
+            config.setSdkVersion(BuildConfig.VERSION_CODE);
             config.setIxigoAuthHelperImplClass(ixigoAuthHelperImplClass);
             config.setEventCallback(eventCallback);
             config.setStagingModeEnabled(stagingModeEnabled);
