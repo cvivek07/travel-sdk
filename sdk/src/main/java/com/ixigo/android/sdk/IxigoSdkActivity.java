@@ -88,6 +88,7 @@ public class IxigoSdkActivity extends AppCompatActivity {
             map.put("clientId", IxigoSdk.getInstance().getConfig().getClientId());
             map.put("apiKey", IxigoSdk.getInstance().getConfig().getApiKey());
             map.put("appVersion", String.valueOf(IxigoSdk.getInstance().getConfig().getAppVersion()));
+            map.put("sdkVersion", String.valueOf(IxigoSdk.getInstance().getConfig().getSdkVersion()));
             map.put("deviceId", IxigoSdk.getInstance().getConfig().getDeviceId());
             map.put("uuid", IxigoSdk.getInstance().getConfig().getUuid());
             if (IxigoSdk.getInstance().getAuthToken() != null) {
@@ -222,6 +223,7 @@ public class IxigoSdkActivity extends AppCompatActivity {
             jsonObject.put("uuid", IxigoSdk.getInstance().getConfig().getUuid());
             jsonObject.put("apiKey", IxigoSdk.getInstance().getConfig().getApiKey());
             jsonObject.put("appVersion", IxigoSdk.getInstance().getConfig().getAppVersion());
+            jsonObject.put("sdkVersion", IxigoSdk.getInstance().getConfig().getSdkVersion());
             if (IxigoSdk.getInstance().getAuthToken() != null) {
                 jsonObject.put("Authorization", IxigoSdk.getInstance().getAuthToken());
             }
