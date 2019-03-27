@@ -19,8 +19,8 @@ public class MainActivity extends AppCompatActivity {
 
         if (IxigoSdk.isInitializable()) {
             Config config = new Config.Builder(this)
-                    .clientId("induspay")
-                    .apiKey("induspay!2$")
+                    .clientId("<client-id>")
+                    .apiKey("<api-key>")
                     .stagingModeEnabled(true)
                     .ixigoAuthHelperImplClass(IxigoAuthHelperImpl.class)
                     .eventCallback(new EventCallbackImpl())
