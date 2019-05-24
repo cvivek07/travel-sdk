@@ -41,7 +41,7 @@ public class Feature implements Serializable {
     }
 
     public Feature(String path) {
-        this.path = path;
+        this(path, false, false);
     }
 
     public String getPath() {
