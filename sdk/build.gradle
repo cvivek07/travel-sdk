@@ -40,7 +40,7 @@ uploadArchives {
             }
             pom.groupId = 'com.ixigo.android'
             pom.artifactId = 'sdk'
-            pom.version = '1.0.0'
+            pom.version = '1.1.0'
             pom.whenConfigured { pom ->
                 println("Current Dependencies ${pom.dependencies}")
                 pom.dependencies.each { dep ->
