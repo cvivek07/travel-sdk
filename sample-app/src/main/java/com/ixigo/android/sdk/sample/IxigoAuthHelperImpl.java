@@ -17,7 +17,7 @@ public class IxigoAuthHelperImpl extends IxigoAuthHelper {
     public void onLogInRequired(AppCompatActivity activity) {
         Log.i(TAG, "onLogInRequired: ");
         // partner app generates an auth token and invokes initiateIxigoLogin()
-        initiateIxigoLogin("<partner-auth-token>");
+        initiateIxigoLogin("8b3b9f5d667367dac977b22aa2dd7fe2");
     }
 
     @Override

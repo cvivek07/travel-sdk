@@ -19,8 +19,8 @@ public class MainActivity extends AppCompatActivity {
 
         if (IxigoSdk.isInitializable()) {
             Config config = new Config.Builder(this)
-                    .clientId("<client-id>")
-                    .apiKey("<api-key>")
+                    .clientId("ecomaxgo")
+                    .apiKey("ecomaxgo!2$")
                     .stagingModeEnabled(true)
                     .ixigoAuthHelperImplClass(IxigoAuthHelperImpl.class)
                     .eventCallback(new EventCallbackImpl())
@@ -29,32 +29,19 @@ public class MainActivity extends AppCompatActivity {
             IxigoSdk.init(this.getApplication(), config);
         }
 
-        findViewById(R.id.button).setOnClickListener(view -> {
+        findViewById(R.id.btn_flight_search).setOnClickListener(view -> launchFeature(Feature.FLIGHT_HOME));
+        findViewById(R.id.btn_flight_trips).setOnClickListener(view -> launchFeature(Feature.FLIGHT_TRIPS));
+        findViewById(R.id.btn_hotel_search).setOnClickListener(view -> launchFeature(Feature.HOTEL_HOME));
+        findViewById(R.id.btn_hotel_trips).setOnClickListener(view -> launchFeature(Feature.HOTEL_TRIPS));
+        findViewById(R.id.btn_bus_search).setOnClickListener(view -> launchFeature(Feature.BUS_HOME));
+        findViewById(R.id.btn_bus_trips).setOnClickListener(view -> launchFeature(Feature.BUS_TRIPS));
+        findViewById(R.id.btn_wallet).setOnClickListener(view -> launchFeature(Feature.WALLET));
 
-            if (!IxigoSdk.isInitialized()) {
-                return;
-            }
+    }
 
-            IxigoSdk.getInstance().launchFeature(MainActivity.this, Feature.FLIGHT_SEARCH);
-        });
+    private void launchFeature(Feature feature) {
+        IxigoSdk.getInstance().launchFeature(MainActivity.this, feature);
 
-        findViewById(R.id.button2).setOnClickListener(view -> {
-
-            if (!IxigoSdk.isInitialized()) {
-                return;
-            }
-
-            IxigoSdk.getInstance().launchFeature(MainActivity.this, Feature.TRIPS);
-        });
-
-        findViewById(R.id.button3).setOnClickListener(view -> {
-
-            if (!IxigoSdk.isInitialized()) {
-                return;
-            }
-
-            IxigoSdk.getInstance().launchFeature(MainActivity.this, Feature.WALLET);
-        });
     }
 
     public static class EventCallbackImpl implements EventCallback {
