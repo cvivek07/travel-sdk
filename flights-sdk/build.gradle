@@ -82,6 +82,7 @@ version = '1.0'
 
 
 afterEvaluate {
+
     publishing {
         publications {
             // Creates a Maven publication called "release".
@@ -105,8 +106,8 @@ afterEvaluate {
                 url = "https://nexus.ixigo.com/nexus/content/repositories/androidshared${suffix}"
                 name = 'Nexus'
                 credentials {
-                    username = nexusUser ?: "$System.env.nexusUser"
-                    password = nexusPassword ?: "$System.env.nexusPassword"
+                    username = hasProperty("nexusUser") ? nexusUser : System.env.nexusUser
+                    password = hasProperty("nexusPassword") ? nexusPassword : System.env.nexusPassword
                 }
             }
         }

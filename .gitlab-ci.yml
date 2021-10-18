@@ -41,6 +41,7 @@ flights-sdk:deploy:
 
 .common:build:
   stage: build
+  interruptible: true
   script:
     - "./gradlew $LIB:check --stacktrace"
   artifacts:
