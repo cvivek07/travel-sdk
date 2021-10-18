@@ -1,0 +1,19 @@
+<html>
+<head>
+    <script>
+        function loginSuccess(token) {
+            document.getElementById("result").innerHTML = token;
+        }
+
+        function loginFail(token) {
+            document.getElementById("result").innerHTML = "fail";
+        }
+
+    </script>
+</head>
+<body>
+<a id="link"
+   onclick="IxiWebView.loginUser('javascript:loginSuccess(\'AUTH_TOKEN\')', 'javascript:loginFail()')">Press</a>
+<div id="result"></div>
+</body>
+</html>

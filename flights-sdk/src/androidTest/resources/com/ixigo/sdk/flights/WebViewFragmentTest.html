@@ -1,0 +1,16 @@
+<html>
+<head>
+    <script type="text/javascript" type="text/ecmascript-6">
+        function updateLoginResult(value) {
+            document.getElementById("login_result").innerHTML = value;
+        }
+    </script>
+</head>
+<body>
+<a id="login_button"
+   onclick="IxiWebView.loginUser('javascript:updateLoginResult(\'AUTH_TOKEN\')', 'javascript:updateLoginResult(\'fail\')')">Login</a>
+<div id="login_result"></div>
+<a id="quit_button"
+   onclick="IxiWebView.quit()">Quit</a>
+</body>
+</html>

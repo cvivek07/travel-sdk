@@ -1,0 +1,114 @@
+plugins {
+    id 'com.android.library'
+    id 'kotlin-android'
+    id 'kotlin-parcelize'
+    id 'maven-publish'
+}
+
+android {
+    compileSdk 31
+
+    defaultConfig {
+        minSdk 21
+        targetSdk 31
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "com.ixigo.sdk.test.util.EspressoRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    buildFeatures {
+        viewBinding true
+    }
+    compileOptions {
+        coreLibraryDesugaringEnabled true
+    }
+    testOptions {
+        unitTests.includeAndroidResources = true
+    }
+}
+
+dependencies {
+    def fragment_version = "1.4.0-alpha10"
+
+    implementation 'androidx.core:core-ktx:1.6.0'
+    implementation("androidx.activity:activity-ktx:1.3.1")
+    implementation("androidx.fragment:fragment-ktx:$fragment_version")
+    implementation 'androidx.appcompat:appcompat:1.3.1'
+    implementation 'com.google.android.material:material:1.4.0'
+
+    // Testing
+    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:1.1.1"
+    debugImplementation("androidx.fragment:fragment-testing:$fragment_version")
+    implementation 'androidx.test.ext:junit-ktx:1.1.3'
+    testImplementation 'junit:junit:4.+'
+    testImplementation 'androidx.test.espresso:espresso-web:3.4.0'
+    testImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    testImplementation 'androidx.test:rules:1.4.0'
+    testImplementation 'org.robolectric:robolectric:4.6'
+
+
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-web:3.4.0'
+
+    androidTestImplementation 'androidx.test:runner:1.4.0'
+    androidTestImplementation 'androidx.test:rules:1.4.0'
+    androidTestImplementation 'com.squareup.okhttp3:mockwebserver:4.9.2'
+    androidTestImplementation 'org.mockito.kotlin:mockito-kotlin:4.0.0'
+    androidTestImplementation 'com.linkedin.dexmaker:dexmaker-mockito-inline:2.28.1'
+
+    // Used to read html files when testing WebView
+    androidTestImplementation 'commons-io:commons-io:2.11.0'
+
+}
+
+group = 'com.ixigo.sdk.flights'
+version = '1.0'
+
+
+afterEvaluate {
+    publishing {
+        publications {
+            // Creates a Maven publication called "release".
+            release(MavenPublication) {
+                // Applies the component for the release build variant.
+                from components.release
+            }
+            // Creates a Maven publication called “debug”.
+            debug(MavenPublication) {
+                // Applies the component for the debug build variant.
+                from components.debug
+
+                artifactId = "${project.name}-debug"
+                version = "${version}-SNAPSHOT"
+            }
+        }
+
+        repositories {
+            maven {
+                def suffix = project.hasProperty('release') ? '' : '-snapshots'
+                url = "https://nexus.ixigo.com/nexus/content/repositories/androidshared${suffix}"
+                name = 'Nexus'
+                credentials {
+                    username = nexusUser
+                    password = nexusPassword
+                }
+            }
+        }
+    }
+}
