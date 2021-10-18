@@ -1,0 +1,56 @@
+## This image extends 'jangrewe/gitlab-ci-android' by adding node and yarn, needed for DangerJS.
+image: 119677764340.dkr.ecr.ap-south-1.amazonaws.com/jangrewe/gitlab-ci-android:1.1
+
+default:
+  tags:
+    - docker
+
+workflow:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "web"'
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+    - if: '$CI_COMMIT_BRANCH == "development"'
+
+stages:
+  - build
+  - deploy
+
+before_script:
+  - npm install -g gnomon
+  - export GRADLE_USER_HOME=$(pwd)/.gradle
+  - chmod +x ./gradlew
+  - if [ "$GRADLE_SCAN" = "true" ]; then GRADLE_SCAN_OPTION="--scan"; fi
+  - yarn install
+  - export
+
+cache:
+  key: ${CI_PROJECT_ID}
+  paths:
+    - .gradle/
+
+## flights-sdk
+flights-sdk:build:
+  extends: common:build
+  variables:
+    LIB: flights-sdk
+
+flights-sdk:deploy:
+  extends: common:snapshot-deploy
+  variables:
+    LIB: flights-sdk
+
+common:build:
+  stage: build
+  script:
+    - "./gradlew $LIB:check --stacktrace"
+  artifacts:
+    paths:
+      - $LIB/build/outputs
+      - $LIB/build/reports
+
+common:snapshot-deploy:
+  stage: deploy
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "development"'
+  script:
+    - "./gradlew $LIB:publishDebugPublicationToNexusRepository --stacktrace"
