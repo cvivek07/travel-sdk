@@ -10,10 +10,8 @@ import androidx.test.espresso.web.webdriver.Locator
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ixigo.sdk.AppInfo
 import com.ixigo.sdk.IxigoSDK
-import com.ixigo.sdk.auth.AuthCallback
-import com.ixigo.sdk.auth.AuthData
-import com.ixigo.sdk.auth.AuthProvider
-import com.ixigo.sdk.auth.AuthResult
+import com.ixigo.sdk.auth.*
+import com.ixigo.sdk.payment.EmptyPaymentProvider
 import com.ixigo.sdk.test.util.FileDispatcher
 import okhttp3.mockwebserver.MockWebServer
 import org.hamcrest.CoreMatchers.equalTo
@@ -72,6 +70,7 @@ class WebViewFragmentTest {
     private fun testLogin(token: String?) {
         IxigoSDK.init(
             FakeAuthProvider(token),
+            EmptyPaymentProvider,
             AppInfo(
                 clientId = "clientId",
                 apiKey = "apiKey",
@@ -93,15 +92,5 @@ class WebViewFragmentTest {
                     equalTo(expectedLoginResult)
                 )
             )
-    }
-}
-
-class FakeAuthProvider(private val token: String?) : AuthProvider {
-    override fun login(callback: AuthCallback) {
-        if (token == null) {
-            callback(AuthResult.failure(Error("Not loggedIn")))
-        } else {
-            callback(AuthResult.success(AuthData(token)))
-        }
     }
 }
