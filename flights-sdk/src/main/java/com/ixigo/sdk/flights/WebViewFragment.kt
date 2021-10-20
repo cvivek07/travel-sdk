@@ -13,12 +13,13 @@ import android.webkit.WebViewClient
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.ixigo.sdk.flights.databinding.WebviewLayoutBinding
+import com.ixigo.sdk.payment.PaymentInput
 import kotlinx.parcelize.Parcelize
 
 class WebViewFragment : Fragment() {
     private lateinit var binding: WebviewLayoutBinding
     private val webView get() = binding.webView
-    val authModel: WebViewViewModel by viewModels()
+    val viewModel: WebViewViewModel by viewModels()
 
     lateinit var delegate: WebViewFragmentDelegate
 
@@ -27,7 +28,14 @@ class WebViewFragment : Fragment() {
 
         WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG)
 
-        authModel.loginResult.observe(this, { loginResult ->
+        viewModel.paymentResult.observe(this, { paymentResult ->
+            // No action if Payment failed
+            paymentResult.result.map {
+                loadUrl(it.nextUrl)
+            }
+        })
+
+        viewModel.loginResult.observe(this, { loginResult ->
             val url = loginResult.result.fold(
                 onSuccess = {
                     loginResult.loginParams.successJSFunction.replace("AUTH_TOKEN", it.token)
@@ -98,7 +106,7 @@ private class IxiWebView(val fragment: WebViewFragment) : JsInterface {
     @JavascriptInterface
     fun loginUser(logInSuccessJsFunction: String, logInFailureJsFunction: String) {
         runOnUiThread {
-            fragment.authModel.login(
+            fragment.viewModel.login(
                 LoginParams(
                     successJSFunction = logInSuccessJsFunction,
                     failureJSFunction = logInFailureJsFunction
@@ -112,6 +120,14 @@ private class IxiWebView(val fragment: WebViewFragment) : JsInterface {
         runOnUiThread {
             fragment.delegate.quit()
         }
+    }
+
+    @JavascriptInterface
+    fun startNativePayment(paymentId: String?): Boolean {
+        if (paymentId == null) {
+            return false
+        }
+        return fragment.viewModel.startNativePayment(PaymentInput(paymentId))
     }
 
     fun runOnUiThread(runnable: Runnable) {

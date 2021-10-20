@@ -5,12 +5,13 @@ import com.ixigo.sdk.auth.AuthData
 import com.ixigo.sdk.auth.AuthProvider
 import com.ixigo.sdk.auth.AuthResult
 
-class FakeAuthProvider(val token: String?): AuthProvider {
+class FakeAuthProvider(private val loginToken: String?, override val authData: AuthData? = null): AuthProvider {
+
     override fun login(callback: AuthCallback) {
-        if (token == null) {
+        if (loginToken == null) {
             callback(AuthResult.failure(Error("Not loggedIn")))
         } else {
-            callback(AuthResult.success(AuthData(token)))
+            callback(AuthResult.success(AuthData(loginToken)))
         }
     }
 }

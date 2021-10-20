@@ -1,18 +1,19 @@
 package com.ixigo.sdk
 
 import com.ixigo.sdk.auth.AuthProvider
+import com.ixigo.sdk.payment.PaymentProvider
 import kotlin.IllegalStateException
 
-class IxigoSDK private constructor(val authProvider: AuthProvider, val appInfo: AppInfo) {
+class IxigoSDK private constructor(val authProvider: AuthProvider, val paymentProvider: PaymentProvider, val appInfo: AppInfo) {
 
     companion object {
         private var INSTANCE: IxigoSDK? = null
 
-        fun init(authProvider: AuthProvider, appInfo: AppInfo) {
+        fun init(authProvider: AuthProvider, paymentProvider: PaymentProvider, appInfo: AppInfo) {
             if (INSTANCE != null) {
                 throw IllegalStateException("IxigoSDK has already been initialized")
             }
-            INSTANCE = IxigoSDK(authProvider, appInfo)
+            INSTANCE = IxigoSDK(authProvider, paymentProvider, appInfo)
         }
 
         fun getInstance(): IxigoSDK {

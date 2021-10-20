@@ -47,16 +47,21 @@ private fun IxigoSDK.getUrl(properties: Map<String, String>): String {
 }
 
 private fun IxigoSDK.launchWebActivity(context: Context, url: String) {
-    val headers = mapOf(
+    val intent = Intent(context, WebActivity::class.java)
+    intent.putExtra(WebViewFragment.INITIAL_PAGE_DATA_ARGS, InitialPageData(url, getHeaders()))
+    context.startActivity(intent)
+}
+
+private fun IxigoSDK.getHeaders(): Map<String, String> {
+    val headers = mutableMapOf(
         "appVersion" to appInfo.appVersion,
         "clientId" to appInfo.clientId,
         "apiKey" to appInfo.apiKey,
         "deviceId" to appInfo.deviceId,
         "uuid" to appInfo.uuid
     )
-    val intent = Intent(context, WebActivity::class.java)
-    intent.putExtra(WebViewFragment.INITIAL_PAGE_DATA_ARGS, InitialPageData(url, headers))
-    context.startActivity(intent)
+    authProvider.authData?.let { headers["Authorization"] = it.token }
+    return headers
 }
 
 private val formatter: DateTimeFormatter? = DateTimeFormatter.ofPattern("ddMMyyyy")
