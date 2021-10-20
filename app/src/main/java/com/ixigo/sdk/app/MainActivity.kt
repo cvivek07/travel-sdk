@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
 
 //        IxigoSDK.init(FakeAuthProvider("token"), AppInfo("abhibus", "abhibus!2\$", "1801", "deviceId", "uuid"))
         val token = "s9736ibca3swimf5bxu8ptr5r0d0gxfx3oltq6l0t9etceuj4bvf23de9g4y5c1583ij8pxwh4ps2nrtqxkupk9grblrpps8fdjqfb2lh6c67459duamk7m5oalbclem0polr5otvj1rdhim9xhn20estj1m999a097a7ib0gjp1tv2w1p6989d3aatginjb2nd"
-        IxigoSDK.init(FakeAuthProvider(token, AuthData(token)), FakePaymentProvider("http://www.google.com"), AppInfo("iximatr", "iximatr!2\$", "1801", "33d040f296f87aeb", "8ee37b17-aa86-42d6-a2dc-80598ca35c9f"))
+        IxigoSDK.init(FakeAuthProvider(token), FakePaymentProvider("http://www.google.com"), AppInfo("iximatr", "iximatr!2\$", "1801", "33d040f296f87aeb", "8ee37b17-aa86-42d6-a2dc-80598ca35c9f"))
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)

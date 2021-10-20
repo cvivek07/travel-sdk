@@ -16,7 +16,7 @@ class WebViewViewModel: ViewModel() {
         MutableLiveData<NativePaymentResult>()
     }
 
-    fun login(params: LoginParams) =
+    fun login(params: LoginParams): Boolean =
         IxigoSDK.getInstance().authProvider.login {
             loginResult.postValue(LoginResult(params, it))
         }

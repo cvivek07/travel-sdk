@@ -5,5 +5,5 @@ typealias AuthCallback = (AuthResult) -> Unit
 
 interface AuthProvider {
     val authData: AuthData?
-    fun login(callback: AuthCallback)
+    fun login(callback: AuthCallback): Boolean
 }

@@ -104,15 +104,13 @@ private class IxiWebView(val fragment: WebViewFragment) : JsInterface {
         get() = "IxiWebView"
 
     @JavascriptInterface
-    fun loginUser(logInSuccessJsFunction: String, logInFailureJsFunction: String) {
-        runOnUiThread {
-            fragment.viewModel.login(
-                LoginParams(
-                    successJSFunction = logInSuccessJsFunction,
-                    failureJSFunction = logInFailureJsFunction
-                )
+    fun loginUser(logInSuccessJsFunction: String, logInFailureJsFunction: String): Boolean {
+        return fragment.viewModel.login(
+            LoginParams(
+                successJSFunction = logInSuccessJsFunction,
+                failureJSFunction = logInFailureJsFunction
             )
-        }
+        )
     }
 
     @JavascriptInterface
