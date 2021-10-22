@@ -4,9 +4,11 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import com.ixigo.sdk.IxigoSDK
+import com.ixigo.sdk.webview.InitialPageData
+import com.ixigo.sdk.webview.WebActivity
+import com.ixigo.sdk.webview.WebViewFragment
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-
 
 fun IxigoSDK.flightsStartHome(context: Context) {
     val url = getUrl(mapOf(

@@ -1,4 +1,4 @@
-package com.ixigo.sdk.flights
+package com.ixigo.sdk.webview
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -10,15 +10,21 @@ import android.webkit.JavascriptInterface
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.annotation.VisibleForTesting
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.github.michaelbull.result.mapBoth
+import com.github.michaelbull.result.onSuccess
+import com.ixigo.sdk.common.Generated
+import com.ixigo.sdk.flights.BuildConfig
 import com.ixigo.sdk.flights.databinding.WebviewLayoutBinding
 import com.ixigo.sdk.payment.PaymentInput
 import kotlinx.parcelize.Parcelize
 
 class WebViewFragment : Fragment() {
     private lateinit var binding: WebviewLayoutBinding
-    private val webView get() = binding.webView
+    @VisibleForTesting
+    internal val webView get() = binding.webView
     val viewModel: WebViewViewModel by viewModels()
 
     lateinit var delegate: WebViewFragmentDelegate
@@ -30,17 +36,17 @@ class WebViewFragment : Fragment() {
 
         viewModel.paymentResult.observe(this, { paymentResult ->
             // No action if Payment failed
-            paymentResult.result.map {
+            paymentResult.result.onSuccess {
                 loadUrl(it.nextUrl)
             }
         })
 
         viewModel.loginResult.observe(this, { loginResult ->
-            val url = loginResult.result.fold(
-                onSuccess = {
+            val url = loginResult.result.mapBoth(
+                {
                     loginResult.loginParams.successJSFunction.replace("AUTH_TOKEN", it.token)
                 },
-                onFailure = {
+                {
                     loginResult.loginParams.failureJSFunction
                 })
             loadUrl(url)
@@ -90,6 +96,7 @@ interface WebViewFragmentDelegate {
 }
 
 @Parcelize
+@Generated
 data class InitialPageData(
     val url: String,
     val headers: Map<String, String> = mapOf(),
@@ -129,6 +136,6 @@ private class IxiWebView(val fragment: WebViewFragment) : JsInterface {
     }
 
     fun runOnUiThread(runnable: Runnable) {
-        fragment.activity?.runOnUiThread(runnable)
+        fragment.requireActivity().runOnUiThread(runnable)
     }
 }

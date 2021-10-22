@@ -1,0 +1,17 @@
+plugins {
+    id 'groovy-gradle-plugin'
+    id "com.vanniktech.android.junit.jacoco" version "0.16.0"
+    id "com.kageiit.jacobo" version "2.1.0"
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        url "https://plugins.gradle.org/m2/"
+    }
+}
+
+dependencies {
+    implementation "com.vanniktech:gradle-android-junit-jacoco-plugin:0.16.0"
+    implementation "com.kageiit.jacobo:com.kageiit.jacobo.gradle.plugin:2.1.0"
+}

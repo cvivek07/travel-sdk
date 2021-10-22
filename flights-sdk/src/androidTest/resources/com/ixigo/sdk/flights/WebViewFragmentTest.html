@@ -4,13 +4,27 @@
         function updateLoginResult(value) {
             document.getElementById("login_result").innerHTML = value;
         }
+        function updatePaymentResult(value) {
+            document.getElementById('payment_result').innerHTML = value;
+        }
     </script>
 </head>
 <body>
+
+<!--IxiWebView.loginUser-->
 <a id="login_button"
    onclick="IxiWebView.loginUser('javascript:updateLoginResult(\'AUTH_TOKEN\')', 'javascript:updateLoginResult(\'fail\')')">Login</a>
 <div id="login_result"></div>
+
+<!--IxiWebView.quit-->
 <a id="quit_button"
    onclick="IxiWebView.quit()">Quit</a>
+
+<!--IxiWebView.startNativePayment-->
+<a id="native_payment_button"
+   onclick="updatePaymentResult(IxiWebView.startNativePayment('paymentId'));">Start Native Payment</a>
+<a id="null_paymentId_native_payment_button"
+   onclick="updatePaymentResult(IxiWebView.startNativePayment(null));">Start Native Payment with invalid paymentId</a>
+<div id="payment_result"></div>
 </body>
 </html>

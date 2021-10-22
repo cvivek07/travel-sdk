@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.ixigo.sdk.app.databinding.FragmentFirstBinding
-import com.ixigo.sdk.flights.HelloSDK
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -33,7 +32,6 @@ class FirstFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.textviewFirst.text = HelloSDK().sayHello()
         binding.buttonFirst.setOnClickListener {
             findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
         }

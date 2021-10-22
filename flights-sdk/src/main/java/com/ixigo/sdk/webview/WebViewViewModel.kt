@@ -1,9 +1,10 @@
-package com.ixigo.sdk.flights
+package com.ixigo.sdk.webview
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.auth.AuthResult
+import com.ixigo.sdk.common.Generated
 import com.ixigo.sdk.payment.PaymentInput
 import com.ixigo.sdk.payment.PaymentResult
 
@@ -31,4 +32,5 @@ data class LoginParams(val successJSFunction: String, val failureJSFunction: Str
 
 data class LoginResult(val loginParams: LoginParams, val result: AuthResult)
 
+@Generated
 data class NativePaymentResult(val input: PaymentInput, val result: PaymentResult)

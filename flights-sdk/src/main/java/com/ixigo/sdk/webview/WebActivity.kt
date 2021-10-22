@@ -1,12 +1,8 @@
-package com.ixigo.sdk.flights
+package com.ixigo.sdk.webview
 
 import android.os.Bundle
-import android.webkit.WebView
 import androidx.appcompat.app.AppCompatActivity
 import com.ixigo.sdk.flights.databinding.WebActivityBinding
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
 
 class WebActivity: AppCompatActivity(), WebViewFragmentDelegate {
 

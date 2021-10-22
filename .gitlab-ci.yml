@@ -29,25 +29,15 @@ cache:
     - .gradle/
 
 ## flights-sdk
-flights-sdk:build:
-  extends: .common:build
-  variables:
-    LIB: flights-sdk
-
-flights-sdk:deploy:
-  extends: .common:snapshot-deploy
-  variables:
-    LIB: flights-sdk
-
-.common:build:
+build-all:
   stage: build
   interruptible: true
   script:
-    - "./gradlew $LIB:check --stacktrace"
+    # `overallCoverageReport` builds everything and creates coverage info
+    - "./gradlew overallCoverageReport --stacktrace"
   artifacts:
     paths:
-      - $LIB/build/outputs
-      - $LIB/build/reports
+      - "**/build/reports"
 
 .common:snapshot-deploy:
   stage: deploy

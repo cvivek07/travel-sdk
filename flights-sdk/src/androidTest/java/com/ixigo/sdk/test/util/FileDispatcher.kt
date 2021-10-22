@@ -8,9 +8,13 @@ import java.nio.charset.StandardCharsets
 
 class FileDispatcher: Dispatcher() {
     override fun dispatch(request: RecordedRequest): MockResponse {
-        val path = request.path ?: throw Error("Path is not present for request=$request")
-        val resourceString = if (path.startsWith("/"))  path.substring(1) else path
-        val body = IOUtils.toString(javaClass.classLoader!!.getResourceAsStream(resourceString), StandardCharsets.UTF_8)
-        return MockResponse().setBody(body)
+        return try {
+            val path = request.path ?: throw Error("Path is not present for request=$request")
+            val resourceString = if (path.startsWith("/"))  path.substring(1) else path
+            val body = IOUtils.toString(javaClass.classLoader!!.getResourceAsStream(resourceString), StandardCharsets.UTF_8)
+            MockResponse().setBody(body)
+        } catch (e: Exception) {
+            MockResponse().setHttp2ErrorCode(404)
+        }
     }
 }

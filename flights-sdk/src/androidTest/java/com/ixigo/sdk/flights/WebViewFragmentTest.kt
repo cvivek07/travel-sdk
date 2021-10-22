@@ -4,17 +4,23 @@ import android.os.Bundle
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.espresso.web.assertion.WebViewAssertions.webMatches
+import androidx.test.espresso.web.model.Atoms.getCurrentUrl
 import androidx.test.espresso.web.sugar.Web.onWebView
 import androidx.test.espresso.web.webdriver.DriverAtoms.*
 import androidx.test.espresso.web.webdriver.Locator
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.github.michaelbull.result.Err
+import com.github.michaelbull.result.Ok
 import com.ixigo.sdk.AppInfo
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.auth.*
 import com.ixigo.sdk.payment.EmptyPaymentProvider
+import com.ixigo.sdk.payment.FakePaymentProvider
+import com.ixigo.sdk.payment.PaymentResponse
 import com.ixigo.sdk.test.util.FileDispatcher
 import okhttp3.mockwebserver.MockWebServer
 import org.hamcrest.CoreMatchers.equalTo
+import org.hamcrest.Matchers.isEmptyOrNullString
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
@@ -55,6 +61,62 @@ class WebViewFragmentTest {
     }
 
     @Test
+    fun testSuccessfulPayment() {
+        val successfulPaymentUrl = "https://www.ixigo.com/"
+        IxigoSDK.init(
+            EmptyAuthProvider,
+            FakePaymentProvider(Ok(PaymentResponse(successfulPaymentUrl))),
+            appInfo
+        )
+        onWebView()
+            .withElement(findElement(Locator.ID, "native_payment_button"))
+            .perform(webClick())
+        onWebView().check(webMatches(getCurrentUrl(), equalTo(successfulPaymentUrl)))
+    }
+
+    @Test
+    fun testFailedPayment() {
+        IxigoSDK.init(
+            EmptyAuthProvider,
+            FakePaymentProvider(Err(Error())),
+            appInfo
+        )
+        onWebView()
+            .withElement(findElement(Locator.ID, "native_payment_button"))
+            .perform(webClick())
+
+        assertElementText("payment_result", "true")
+    }
+
+    @Test
+    fun testNoPaymentAvailable() {
+        IxigoSDK.init(
+            EmptyAuthProvider,
+            EmptyPaymentProvider,
+            appInfo
+        )
+        onWebView()
+            .withElement(findElement(Locator.ID, "native_payment_button"))
+            .perform(webClick())
+
+        assertElementText("payment_result", "false")
+    }
+
+    @Test
+    fun testWrongPaymentIdProvided() {
+        IxigoSDK.init(
+            EmptyAuthProvider,
+            FakePaymentProvider(Ok(PaymentResponse("https://www.ixigo.com"))),
+            appInfo
+        )
+        onWebView()
+            .withElement(findElement(Locator.ID, "null_paymentId_native_payment_button"))
+            .perform(webClick())
+
+        assertElementText("payment_result", "false")
+    }
+
+    @Test
     fun testQuit() {
         scenario.onFragment { fragment ->
             fragment.delegate = fragmentDelegate
@@ -67,17 +129,21 @@ class WebViewFragmentTest {
         verify(fragmentDelegate).quit()
     }
 
+    private fun assertElementText(id: String, expectedText: String) {
+        onWebView()
+            .withElement(findElement(Locator.ID, id)).check(
+                webMatches(
+                    getText(),
+                    equalTo(expectedText)
+                )
+            )
+    }
+
     private fun testLogin(token: String?) {
         IxigoSDK.init(
             FakeAuthProvider(token),
             EmptyPaymentProvider,
-            AppInfo(
-                clientId = "clientId",
-                apiKey = "apiKey",
-                appVersion = "appVersion",
-                deviceId = "deviceId",
-                uuid = "uuid"
-            )
+            appInfo
         )
         onWebView()
             .withElement(findElement(Locator.ID, "login_button"))
@@ -93,4 +159,12 @@ class WebViewFragmentTest {
                 )
             )
     }
+
+    private val appInfo = AppInfo(
+        clientId = "clientId",
+        apiKey = "apiKey",
+        appVersion = "appVersion",
+        deviceId = "deviceId",
+        uuid = "uuid"
+    )
 }

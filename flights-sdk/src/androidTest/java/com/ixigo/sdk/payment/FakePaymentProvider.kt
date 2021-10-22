@@ -2,13 +2,13 @@ package com.ixigo.sdk.payment
 
 import android.os.Handler
 
-class FakePaymentProvider(private val nextUrl: String? = null):PaymentProvider {
+class FakePaymentProvider(private val result: PaymentResult? = null):PaymentProvider {
     override fun startPayment(input: PaymentInput, callback: PaymentCallback): Boolean {
-        if (nextUrl == null) {
+        if (result == null) {
             return false
         }
         Handler().post {
-            callback(PaymentResult.success(PaymentResponse(nextUrl)))
+            callback(result)
         }
         return true
     }
