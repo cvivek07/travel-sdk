@@ -9,7 +9,7 @@ Inside **root/build.gradle**
 ```groovy
 buildscript {
   repositories {
-    # Other repositories ...
+    // Other repositories...
     maven { url 'https://nexus.ixigo.com/nexus/content/repositories/androidshared' }
   }
 }
@@ -17,12 +17,10 @@ buildscript {
 
 Inside **app/build.gradle**
 
-```
+```groovy
 dependencies {
-  # ... Other dependencies
-
+  // Other dependencies...
   implementation "com.ixigo.sdk.flights:1.0.0"
-
 }
 ```
 
@@ -33,7 +31,7 @@ Inside **root/build.gradle**
 ```groovy
 buildscript {
   repositories {
-    # Other repositories ...
+    // Other repositories...
     maven { url 'https://nexus.ixigo.com/nexus/content/repositories/androidshared-snapshots' }
   }
 }
@@ -41,11 +39,9 @@ buildscript {
 
 Inside **app/build.gradle**
 
-```
+```groovy
 dependencies {
-  # ... Other dependencies
-
+  // Other dependencies...
   implementation "com.ixigo.sdk.flights:1.0.0-SNAPSHOT"
-
 }
 ```
