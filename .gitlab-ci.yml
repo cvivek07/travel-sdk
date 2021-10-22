@@ -13,6 +13,7 @@ workflow:
 
 stages:
   - build
+  - post-build
   - deploy
 
 before_script:
@@ -28,7 +29,6 @@ cache:
   paths:
     - .gradle/
 
-## flights-sdk
 build-all:
   stage: build
   interruptible: true
@@ -38,6 +38,21 @@ build-all:
   artifacts:
     paths:
       - "**/build/reports"
+
+coverage:mergeRequest:
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+  stage: post-build
+  interruptible: true
+  script:
+    - git fetch origin $CI_MERGE_REQUEST_TARGET_BRANCH_NAME:$CI_MERGE_REQUEST_TARGET_BRANCH_NAME
+    - "./gradlew jacocoDiffCoverage -PtargetBranch=$CI_MERGE_REQUEST_TARGET_BRANCH_NAME --continue"
+  artifacts:
+    when: always
+    paths:
+      - "**/build/**/reports"
+    reports:
+      cobertura: "**/build/reports/cobertura/cobertura.xml"
 
 .common:snapshot-deploy:
   stage: deploy

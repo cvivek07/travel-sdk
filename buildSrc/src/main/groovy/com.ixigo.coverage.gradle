@@ -1,11 +1,10 @@
 import java.text.NumberFormat
+import com.kageiit.jacobo.JacoboTask
 
 plugins {
     id "com.vanniktech.android.junit.jacoco"
     id "com.kageiit.jacobo"
 }
-
-import com.kageiit.jacobo.JacoboTask
 
 junitJacoco {
     ignoreProjects = ['app', 'auth-sdk'] // Create extension to configure which subprojects to ignore
@@ -69,17 +68,71 @@ afterEvaluate {
         reportMergedTask.dependsOn jacocoReport
         reportMergedTask.mustRunAfter jacocoReport
     }
-
-    // Create Cobertura Report for Gitlab
-    def coberturaTask = tasks.create("overallCobertura", JacoboTask, {
-        def jacocoReport = file("${project.buildDir}/reports/jacoco/jacoco.xml")
-        onlyIf {
-            return jacocoReport.exists()
-        }
-        it.jacocoReport = jacocoReport
-        it.coberturaReport = file("${project.buildDir}/reports/cobertura/cobertura.xml")
-        def overallJacocoTask = tasks.findByName("jacocoTestReportMerged")
-        it.srcDirs = overallJacocoTask.sourceDirectories
-    })
-    overallCoverageReport.finalizedBy(coberturaTask)
 }
+
+subprojects { subproject ->
+    if (junitJacoco.ignoreProjects.contains(subproject.name)) {
+        return
+    }
+    apply plugin: 'com.form.diff-coverage'
+
+    /**
+     * HACK Alert:
+     * We need to config diffCoverageReport in `afterEvaluate` and use a shell task because
+     * Jacoco Plugin uses `afterEvaluate` and we need access to `jacocoTestReportDebug` task when configuring `diffCoverageReport`
+     * More info on this approach here: https://github.com/vanniktech/gradle-android-junit-jacoco-plugin/issues/171
+     */
+    afterEvaluate {
+        // See https://github.com/vanniktech/gradle-android-junit-jacoco-plugin/issues/193#issuecomment-839662047
+        tasks.withType(Test) {
+            jacoco.excludes += ['jdk.internal.*']
+        }
+        def jacocoDiffCoverageTask = tasks.create("jacocoDiffCoverage") {
+            dependsOn "jacocoTestReportDebug"
+
+            doLast {
+                def jacocoTestReport =
+                        tasks.findByName("jacocoTestReportDebug") as org.gradle.testing.jacoco.tasks.JacocoReport
+                if (!jacocoTestReport) {
+                    println("Unable to find jacocoReport for subproject=$subproject")
+                    return
+                }
+
+                def targetBranch = project.getProperties().get("targetBranch") ?: "development"
+                def diffFile = new File(buildDir, "diff.patch")
+                exec {
+                    // Create the diff using `...` which matches what a merge request does
+                    commandLine "bash", "-c", "git diff ${targetBranch}..."
+                    standardOutput new FileOutputStream(diffFile)
+                }
+                diffCoverageReport {
+
+                    diffSource.file = diffFile
+
+                    jacocoExecFiles = files(jacocoTestReport.executionData)
+                    classesDirs = files(jacocoTestReport.classDirectories)
+                    srcDirs = files(jacocoTestReport.sourceDirectories)
+
+                    reports {
+                        html = true
+                        xml = true
+                    }
+                }
+                diffCoverage.executeAction()
+            }
+        }
+        def coberturaTask = tasks.create("jacoboInternal", JacoboTask, {
+            def jacocoReport = file("${project.buildDir}/reports/jacoco/diffCoverage/report.xml")
+            onlyIf {
+                return jacocoReport.exists()
+            }
+            it.jacocoReport = jacocoReport
+            it.coberturaReport = file("${project.buildDir}/reports/cobertura/cobertura.xml")
+            it.srcDirs = android.sourceSets.main.java.srcDirs
+        })
+        jacocoDiffCoverageTask.finalizedBy(coberturaTask)
+    }
+}
+
+
+
