@@ -131,11 +131,11 @@ private class IxiWebView(val fragment: WebViewFragment) : JsInterface {
 
     @JavascriptInterface
     fun executeNativePayment(paymentInfoString: String): Boolean {
-        try {
+        return try {
             val paymentInput = klason.parse<PaymentInput>(paymentInfoString)!!
-            return fragment.viewModel.startNativePayment(paymentInput)
+            fragment.viewModel.startNativePayment(paymentInput)
         } catch (_: Exception)  {
-            return false
+            false
         }
     }
 

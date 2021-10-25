@@ -11,6 +11,7 @@ class IxigoSDK private constructor(val appInfo: AppInfo, val authProvider: AuthP
     companion object {
         private var INSTANCE: IxigoSDK? = null
 
+        @JvmStatic
         fun init(authProvider: AuthProvider, paymentProvider: PaymentProvider, appInfo: AppInfo) {
             if (INSTANCE != null) {
                 throw IllegalStateException("IxigoSDK has already been initialized")
@@ -18,6 +19,7 @@ class IxigoSDK private constructor(val appInfo: AppInfo, val authProvider: AuthP
             INSTANCE = IxigoSDK(appInfo, authProvider, paymentProvider)
         }
 
+        @JvmStatic
         fun getInstance(): IxigoSDK {
             return INSTANCE
                 ?: throw IllegalStateException("IxigoSDK has not been initialized. Call `IxigoSDK.init()` to initialize it.")
