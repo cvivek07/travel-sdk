@@ -114,7 +114,7 @@ private class IxiWebView(val fragment: WebViewFragment) : JsInterface {
 
     @JavascriptInterface
     fun loginUser(logInSuccessJsFunction: String, logInFailureJsFunction: String): Boolean {
-        return fragment.viewModel.login(
+        return fragment.viewModel.login(fragment.requireActivity(),
             LoginParams(
                 successJSFunction = logInSuccessJsFunction,
                 failureJSFunction = logInFailureJsFunction

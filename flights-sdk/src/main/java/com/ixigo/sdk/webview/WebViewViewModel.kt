@@ -1,5 +1,6 @@
 package com.ixigo.sdk.webview
 
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.ixigo.sdk.IxigoSDK
@@ -17,8 +18,8 @@ class WebViewViewModel: ViewModel() {
         MutableLiveData<NativePaymentResult>()
     }
 
-    fun login(params: LoginParams): Boolean =
-        IxigoSDK.getInstance().authProvider.login {
+    fun login(fragmentActivity: FragmentActivity, params: LoginParams): Boolean =
+        IxigoSDK.getInstance().authProvider.login(fragmentActivity) {
             loginResult.postValue(LoginResult(params, it))
         }
 
