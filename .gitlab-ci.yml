@@ -55,6 +55,11 @@ coverage:mergeRequest:
     reports:
       cobertura: "**/build/reports/cobertura/cobertura.xml"
 
+deploy:flights-sdk:
+  extends: .common:snapshot-deploy
+  variables:
+    LIB: flights-sdk
+
 .common:snapshot-deploy:
   stage: deploy
   rules:
