@@ -6,7 +6,6 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.launchActivity
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ixigo.sdk.AppInfo
-import com.ixigo.sdk.CoverageTest
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.auth.AuthData
 import com.ixigo.sdk.auth.EmptyAuthProvider
@@ -68,7 +67,6 @@ class FlightsFunnelTest {
 
     @Test
     fun `test flightsStartSearch launches WebActivity with return Date`() {
-        CoverageTest().covered()
         assertFlightSearch(
             searchData = FlightSearchData(
                 origin = "DEL",
