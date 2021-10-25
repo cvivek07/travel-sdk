@@ -6,12 +6,12 @@ import android.webkit.JavascriptInterface
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.github.michaelbull.result.Err
-import com.github.michaelbull.result.Ok
 import com.ixigo.sdk.AppInfo
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.auth.test.FakeAuthProvider
 import com.ixigo.sdk.auth.EmptyAuthProvider
+import com.ixigo.sdk.common.Err
+import com.ixigo.sdk.common.Ok
 import com.ixigo.sdk.payment.*
 import org.junit.After
 import org.junit.Assert.*

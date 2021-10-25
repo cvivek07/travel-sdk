@@ -1,8 +1,8 @@
 package com.ixigo.sdk.auth
 
 import android.os.Handler
-import com.github.michaelbull.result.Err
-import com.github.michaelbull.result.Ok
+import com.ixigo.sdk.common.Err
+import com.ixigo.sdk.common.Ok
 
 class FakeAuthProvider(private val loginToken: String?, override val authData: AuthData? = null): AuthProvider {
 
