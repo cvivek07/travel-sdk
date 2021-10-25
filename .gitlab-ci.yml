@@ -27,7 +27,8 @@ before_script:
 cache:
   key: ${CI_PROJECT_ID}
   paths:
-    - .gradle/
+    - .gradle/wrapper
+    - .gradle/caches
 
 build-all:
   stage: build
