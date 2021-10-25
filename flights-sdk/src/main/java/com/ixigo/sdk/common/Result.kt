@@ -1,5 +1,12 @@
 package com.ixigo.sdk.common
 
+/**
+ * Result class to return values from different APIs
+ *
+ * This replaces [Kotlin Result](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/-result/) as it requires kotlin 1.5 to return as a type
+ *
+ * @param T The type of a successful response
+ */
 sealed class Result<out T> {
     fun onSuccess(block: (T) -> Unit) {
         when (this) {
