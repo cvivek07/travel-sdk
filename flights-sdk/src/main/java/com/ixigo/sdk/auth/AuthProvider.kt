@@ -1,7 +1,8 @@
 package com.ixigo.sdk.auth
-import com.github.michaelbull.result.Result
 
-typealias AuthResult = Result<AuthData, Error>
+import com.ixigo.sdk.common.Result
+
+typealias AuthResult = Result<AuthData>
 typealias AuthCallback = (AuthResult) -> Unit
 
 interface AuthProvider {

@@ -13,10 +13,8 @@ import android.webkit.WebViewClient
 import androidx.annotation.VisibleForTesting
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.github.michaelbull.result.mapBoth
-import com.github.michaelbull.result.onSuccess
+import androidx.viewbinding.BuildConfig
 import com.ixigo.sdk.common.Generated
-import com.ixigo.sdk.flights.BuildConfig
 import com.ixigo.sdk.flights.databinding.WebviewLayoutBinding
 import com.ixigo.sdk.payment.PaymentInput
 import kotlinx.parcelize.Parcelize

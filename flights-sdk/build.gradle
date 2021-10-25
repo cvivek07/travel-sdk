@@ -54,7 +54,6 @@ dependencies {
     implementation("androidx.fragment:fragment-ktx:$fragment_version")
     implementation 'androidx.appcompat:appcompat:1.3.1'
     implementation 'com.google.android.material:material:1.4.0'
-    api("com.michael-bull.kotlin-result:kotlin-result:1.1.12")
 
     // Testing
     coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:1.1.1"
@@ -94,13 +93,14 @@ afterEvaluate {
             release(MavenPublication) {
                 // Applies the component for the release build variant.
                 from components.release
+                artifactId = "${project.name}"
             }
             // Creates a Maven publication called “debug”.
             debug(MavenPublication) {
                 // Applies the component for the debug build variant.
                 from components.debug
 
-                artifactId = "${project.name}-debug"
+                artifactId = "${project.name}"
                 version = "${version}-SNAPSHOT"
             }
         }
@@ -109,6 +109,7 @@ afterEvaluate {
             maven {
                 def suffix = project.hasProperty('release') ? '' : '-snapshots'
                 url = "https://nexus.ixigo.com/nexus/content/repositories/androidshared${suffix}"
+
                 name = 'Nexus'
                 credentials {
                     username = findProperty("nexusUser") ?: System.env.nexusUser

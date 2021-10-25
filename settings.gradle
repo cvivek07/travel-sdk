@@ -3,6 +3,9 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven {
+            url 'https://nexus.ixigo.com/nexus/content/repositories/androidshared-snapshots'
+        }
         jcenter() // Warning: this repository is going to shut down soon
     }
 }

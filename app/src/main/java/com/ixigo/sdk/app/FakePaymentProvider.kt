@@ -1,7 +1,7 @@
 package com.ixigo.sdk.app
 
 import android.os.Handler
-import com.github.michaelbull.result.Ok
+import com.ixigo.sdk.common.Ok
 import com.ixigo.sdk.payment.*
 
 class FakePaymentProvider(private val nextUrl: String? = null):PaymentProvider {
