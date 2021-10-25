@@ -14,6 +14,7 @@ import androidx.annotation.VisibleForTesting
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.viewbinding.BuildConfig
+import com.beust.klaxon.Klaxon
 import com.ixigo.sdk.common.Generated
 import com.ixigo.sdk.flights.databinding.WebviewLayoutBinding
 import com.ixigo.sdk.payment.PaymentInput
@@ -105,6 +106,9 @@ interface JsInterface {
 }
 
 private class IxiWebView(val fragment: WebViewFragment) : JsInterface {
+
+    private val klason: Klaxon by lazy { Klaxon() }
+    
     override val name: String
         get() = "IxiWebView"
 
@@ -126,11 +130,13 @@ private class IxiWebView(val fragment: WebViewFragment) : JsInterface {
     }
 
     @JavascriptInterface
-    fun startNativePayment(paymentId: String?): Boolean {
-        if (paymentId == null) {
+    fun executeNativePayment(paymentInfoString: String): Boolean {
+        try {
+            val paymentInput = klason.parse<PaymentInput>(paymentInfoString)!!
+            return fragment.viewModel.startNativePayment(paymentInput)
+        } catch (_: Exception)  {
             return false
         }
-        return fragment.viewModel.startNativePayment(PaymentInput(paymentId))
     }
 
     fun runOnUiThread(runnable: Runnable) {

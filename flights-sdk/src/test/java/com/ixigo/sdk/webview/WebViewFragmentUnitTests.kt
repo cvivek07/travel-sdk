@@ -6,6 +6,7 @@ import android.webkit.JavascriptInterface
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.beust.klaxon.Klaxon
 import com.ixigo.sdk.AppInfo
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.auth.test.FakeAuthProvider
@@ -83,14 +84,23 @@ class WebViewFragmentUnitTests {
     @Test
     fun `test successful payment`() {
         val nextUrl = "nextUrl"
-        val paymentId = "paymentId"
+        val paymentInputStr = """
+            |{
+            |   "product":"flights",
+            |   "data":{
+            |       "paymentId":"186CWHA8NAOIHJK1EHX",
+            |       "tripId":"IF21102519356877",
+            |       "providerId":1044
+            |   }
+            |}""".trimMargin()
+        val paymentInput = Klaxon().parse<PaymentInput>(paymentInputStr)!!
         IxigoSDK.init(
             EmptyAuthProvider,
-            FakePaymentProvider(mapOf(paymentId to Ok(PaymentResponse(nextUrl)))),
+            FakePaymentProvider(mapOf(paymentInput to Ok(PaymentResponse(nextUrl)))),
             appInfo
         )
-        val startNativePaymentMethod = ixiWebView.javaClass.getDeclaredMethod("startNativePayment", String::class.java)
-        val paymentReturn = startNativePaymentMethod.invoke(ixiWebView, paymentId) as Boolean
+        val startNativePaymentMethod = ixiWebView.javaClass.getDeclaredMethod("executeNativePayment", String::class.java)
+        val paymentReturn = startNativePaymentMethod.invoke(ixiWebView, paymentInputStr) as Boolean
         shadowOf(getMainLooper()).idle()
 
         assertTrue(paymentReturn)
@@ -100,14 +110,23 @@ class WebViewFragmentUnitTests {
 
     @Test
     fun `test failed payment`() {
-        val paymentId = "paymentId"
+        val paymentInputStr = """
+            |{
+            |   "product":"flights",
+            |   "data":{
+            |       "paymentId":"186CWHA8NAOIHJK1EHX",
+            |       "tripId":"IF21102519356877",
+            |       "providerId":1044
+            |   }
+            |}""".trimMargin()
+        val paymentInput = Klaxon().parse<PaymentInput>(paymentInputStr)!!
         IxigoSDK.init(
             EmptyAuthProvider,
-            FakePaymentProvider(mapOf(paymentId to Err(Error()))),
+            FakePaymentProvider(mapOf(paymentInput to Err(Error()))),
             appInfo
         )
-        val startNativePaymentMethod = ixiWebView.javaClass.getDeclaredMethod("startNativePayment", String::class.java)
-        val paymentReturn = startNativePaymentMethod.invoke(ixiWebView, paymentId) as Boolean
+        val startNativePaymentMethod = ixiWebView.javaClass.getDeclaredMethod("executeNativePayment", String::class.java)
+        val paymentReturn = startNativePaymentMethod.invoke(ixiWebView, paymentInputStr) as Boolean
         shadowOf(getMainLooper()).idle()
 
         assertTrue(paymentReturn)
@@ -115,14 +134,18 @@ class WebViewFragmentUnitTests {
     }
 
     @Test
-    fun `test null payment`() {
+    fun `test invalid payment`() {
         IxigoSDK.init(
             EmptyAuthProvider,
             FakePaymentProvider(mapOf()),
             appInfo
         )
-        val startNativePaymentMethod = ixiWebView.javaClass.getDeclaredMethod("startNativePayment", String::class.java)
-        val paymentReturn = startNativePaymentMethod.invoke(ixiWebView, null) as Boolean
+        val paymentInputStr = """
+            |{
+            |   "yolo":"flights"
+            |}""".trimMargin()
+        val startNativePaymentMethod = ixiWebView.javaClass.getDeclaredMethod("executeNativePayment", String::class.java)
+        val paymentReturn = startNativePaymentMethod.invoke(ixiWebView, paymentInputStr) as Boolean
         shadowOf(getMainLooper()).idle()
 
         assertFalse(paymentReturn)
@@ -158,9 +181,9 @@ class WebViewFragmentUnitTests {
     private val ixiWebView by lazy { shadowWebView.getJavascriptInterface("IxiWebView") }
 }
 
-private class FakePaymentProvider(private val results: Map<String, PaymentResult>):PaymentProvider {
+private class FakePaymentProvider(private val results: Map<PaymentInput, PaymentResult>):PaymentProvider {
     override fun startPayment(input: PaymentInput, callback: PaymentCallback): Boolean {
-        val result = results[input.paymentId] ?: return false
+        val result = results[input] ?: return false
         callback(result)
         return true
     }
