@@ -80,6 +80,37 @@ class FlightsFunnelTest {
         )
     }
 
+    @Test
+    fun `test flightsStartSearch launches WebActivity with dates as Strings`() {
+        assertFlightSearch(
+            searchData = FlightSearchData(
+                origin = "DEL",
+                destination = "BOM",
+                departDateStr = "22102021",
+                returnDateStr = "26102021",
+                source = "FlightSearchFormFragment",
+                passengerData = FlightPassengerData(adults = 1, children = 0, infants = 0)
+            ),
+            expectedUrl = "https://www.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=appVersion&deviceId=deviceId&class=e&languageCode=en&page=FLIGHT_LISTING&orgn=DEL&dstn=BOM&departDate=22102021&returnDate=26102021&adults=1&children=0&infants=0&source=FlightSearchFormFragment"
+        )
+    }
+
+    @Test
+    fun `test flightsStartSearch launches WebActivity with wrong String Dates`() {
+        val tomorrowStr = formatDate(LocalDate.now().plusDays(1))
+        assertFlightSearch(
+            searchData = FlightSearchData(
+                origin = "DEL",
+                destination = "BOM",
+                departDateStr = "aasdfds",
+                returnDateStr = "asdfd",
+                source = "FlightSearchFormFragment",
+                passengerData = FlightPassengerData(adults = 1, children = 0, infants = 0)
+            ),
+            expectedUrl = "https://www.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=appVersion&deviceId=deviceId&class=e&languageCode=en&page=FLIGHT_LISTING&orgn=DEL&dstn=BOM&departDate=${tomorrowStr}&returnDate=&adults=1&children=0&infants=0&source=FlightSearchFormFragment"
+        )
+    }
+
     private fun assertFlightsHome() {
         scenario.onActivity { activity ->
             IxigoSDK.getInstance().flightsStartHome(activity)

@@ -88,28 +88,30 @@ version = '1.0'
 afterEvaluate {
     publishing {
         publications {
-            // Creates a Maven publication called "release".
-            release(MavenPublication) {
-                // Applies the component for the release build variant.
+            snapshot(MavenPublication) {
                 from components.release
                 artifactId = "${project.name}"
+                version = "${version}-SNAPSHOT"
             }
-            // Creates a Maven publication called “debug”.
-            debug(MavenPublication) {
-                // Applies the component for the debug build variant.
-                from components.debug
+            release(MavenPublication) {
+                from components.release
 
                 artifactId = "${project.name}"
-                version = "${version}-SNAPSHOT"
             }
         }
 
         repositories {
             maven {
-                def suffix = project.hasProperty('release') ? '' : '-snapshots'
-                url = "https://nexus.ixigo.com/nexus/content/repositories/androidshared${suffix}"
-
+                url = "https://nexus.ixigo.com/nexus/content/repositories/androidshared"
                 name = 'Nexus'
+                credentials {
+                    username = findProperty("nexusUser") ?: System.env.nexusUser
+                    password = findProperty("nexusPassword") ?:System.env.nexusPassword
+                }
+            }
+            maven {
+                url = "https://nexus.ixigo.com/nexus/content/repositories/androidshared-snapshots"
+                name = 'NexusSnapshot'
                 credentials {
                     username = findProperty("nexusUser") ?: System.env.nexusUser
                     password = findProperty("nexusPassword") ?:System.env.nexusPassword

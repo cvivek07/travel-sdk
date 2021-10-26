@@ -11,24 +11,28 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 fun IxigoSDK.flightsStartHome(context: Context) {
-    val url = getUrl(mapOf(
-        "page" to "FLIGHT_HOME"
-    ))
+    val url = getUrl(
+        mapOf(
+            "page" to "FLIGHT_HOME"
+        )
+    )
     launchWebActivity(context, url)
 }
 
 fun IxigoSDK.flightsStartSearch(context: Context, searchData: FlightSearchData) {
-    val url = getUrl(mapOf(
-        "page" to "FLIGHT_LISTING",
-        "orgn" to searchData.origin,
-        "dstn" to searchData.destination,
-        "departDate" to formatDate(searchData.departDate),
-        "returnDate" to formatDate(searchData.returnDate),
-        "adults" to searchData.passengerData.adults.toString(),
-        "children" to searchData.passengerData.children.toString(),
-        "infants" to searchData.passengerData.infants.toString(),
-        "source" to searchData.source
-    ))
+    val url = getUrl(
+        mapOf(
+            "page" to "FLIGHT_LISTING",
+            "orgn" to searchData.origin,
+            "dstn" to searchData.destination,
+            "departDate" to formatDate(searchData.departDate),
+            "returnDate" to formatDate(searchData.returnDate),
+            "adults" to searchData.passengerData.adults.toString(),
+            "children" to searchData.passengerData.children.toString(),
+            "infants" to searchData.passengerData.infants.toString(),
+            "source" to searchData.source
+        )
+    )
 
     launchWebActivity(context, url)
 }
@@ -67,7 +71,13 @@ private fun IxigoSDK.getHeaders(): Map<String, String> {
 }
 
 private val formatter: DateTimeFormatter? = DateTimeFormatter.ofPattern("ddMMyyyy")
-private fun formatDate(date: LocalDate?): String = date?.format(formatter).orEmpty()
+internal fun formatDate(date: LocalDate?): String = date?.format(formatter).orEmpty()
+private fun parseDate(dateStr: String?): LocalDate? =
+    try {
+        LocalDate.parse(dateStr, formatter)
+    } catch (_: Exception) {
+        null
+    }
 
 data class FlightSearchData(
     val origin: String,
@@ -76,7 +86,25 @@ data class FlightSearchData(
     val returnDate: LocalDate? = null,
     val passengerData: FlightPassengerData,
     val source: String
-)
+) {
+    constructor(
+        origin: String,
+        destination: String,
+        departDateStr: String,
+        returnDateStr: String?,
+        passengerData: FlightPassengerData,
+        source: String
+    ) :
+            this(
+                origin,
+                destination,
+                departDate = parseDate(departDateStr) ?: LocalDate.now().plusDays(1),
+                returnDate = parseDate(returnDateStr),
+                passengerData,
+                source
+            )
+
+}
 
 data class FlightPassengerData(val adults: Int, val children: Int, val infants: Int)
 
