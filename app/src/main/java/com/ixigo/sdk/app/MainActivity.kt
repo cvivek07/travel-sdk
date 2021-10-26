@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
 //        IxigoSDK.init(FakeAuthProvider("token"), AppInfo("abhibus", "abhibus!2\$", "1801", "deviceId", "uuid"))
-        val token = "s9736ibca3swimf5bxu8ptr5r0d0gxfx3oltq6l0t9etceuj4bvf23de9g4y5c1583ij8pxwh4ps2nrtqxkupk9grblrpps8fdjqfb2lh6c67459duamk7m5oalbclem0polr5otvj1rdhim9xhn20estj1m999a097a7ib0gjp1tv2w1p6989d3aatginjb2nd"
+        val token = "qb7b60ur2hclgaucbmxtvqfyeqk646hbt0ccog14taqsxtywb52kasdtw9kubsw5oxxmoajrkbni4cssu0j7rq3c3qp296ivi45lx8v8lv8keb8cbgfv6gxxevagid3a5n5o6oaufgtn43xr12xrgisfcjdyei2v59etdt7u5tsh3ow7hddyieecy3d7y3n2los"
         IxigoSDK.init(FakeAuthProvider(token), FakePaymentProvider(null), AppInfo("iximatr", "iximatr!2\$", "1801", "33d040f296f87aeb", "8ee37b17-aa86-42d6-a2dc-80598ca35c9f"))
 
         binding = ActivityMainBinding.inflate(layoutInflater)

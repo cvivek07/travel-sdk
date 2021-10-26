@@ -10,6 +10,7 @@ import android.webkit.JavascriptInterface
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.activity.OnBackPressedCallback
 import androidx.annotation.VisibleForTesting
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -49,6 +50,16 @@ class WebViewFragment : Fragment() {
                     loginResult.loginParams.failureJSFunction
                 })
             loadUrl(url)
+        })
+
+        activity?.onBackPressedDispatcher?.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (webView.canGoBack()) {
+                    webView.goBack()
+                } else {
+                    delegate.quit()
+                }
+            }
         })
     }
 

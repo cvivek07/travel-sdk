@@ -43,6 +43,7 @@ class WebViewFragmentUnitTests {
         })
         scenario.onFragment {
             shadowWebView = shadowOf(it.webView)
+            shadowWebView.pushEntryToHistory(initialPageData.url)
             it.delegate = fragmentDelegate
             fragmentActivity = it.requireActivity()
         }
@@ -158,6 +159,20 @@ class WebViewFragmentUnitTests {
 
         assertFalse(paymentReturn)
         assertEquals(initialPageData.url, shadowWebView.lastLoadedUrl)
+    }
+
+    @Test
+    fun `test backButton goes back if Webview can go back`() {
+        shadowWebView.pushEntryToHistory("https://www.ixigo.com/page1")
+        fragmentActivity.onBackPressed()
+        assertEquals(1, shadowWebView.goBackInvocations)
+    }
+
+    @Test
+    fun `test backButton calls quit if Webview can not go back`() {
+        fragmentActivity.onBackPressed()
+        assertEquals(0, shadowWebView.goBackInvocations)
+        verify(fragmentDelegate).quit()
     }
 
     private fun testLogin(token: String?) {
