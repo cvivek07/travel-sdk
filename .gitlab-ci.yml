@@ -35,7 +35,8 @@ build-all:
   interruptible: true
   script:
     # `overallCoverageReport` builds everything and creates coverage info
-    - "./gradlew overallCoverageReport --stacktrace"
+    # `app:lintDebug` is used as an unmbrella project at the moment to run all module Lints
+    - "./gradlew overallCoverageReport app:lintDebug --stacktrace"
   artifacts:
     paths:
       - "**/build/reports"

@@ -95,6 +95,7 @@ interface WebViewFragmentDelegate {
 }
 
 @Parcelize
+@SuppressLint("ParcelCreator")
 @Generated
 data class InitialPageData(
     val url: String,
@@ -107,7 +108,7 @@ interface JsInterface {
 
 private class IxiWebView(val fragment: WebViewFragment) : JsInterface {
 
-    private val klason: Klaxon by lazy { Klaxon() }
+    private val klaxon: Klaxon by lazy { Klaxon() }
     
     override val name: String
         get() = "IxiWebView"
@@ -132,7 +133,7 @@ private class IxiWebView(val fragment: WebViewFragment) : JsInterface {
     @JavascriptInterface
     fun executeNativePayment(paymentInfoString: String): Boolean {
         return try {
-            val paymentInput = klason.parse<PaymentInput>(paymentInfoString)!!
+            val paymentInput = klaxon.parse<PaymentInput>(paymentInfoString)!!
             fragment.viewModel.startNativePayment(fragment.requireActivity(), paymentInput)
         } catch (_: Exception)  {
             false

@@ -50,6 +50,7 @@ class MainActivity : AppCompatActivity() {
                     destination = "BOM",
                     departDate = LocalDate.now().plusDays(1),
                     source = "FlightSearchFormFragment",
+                    flightClass = "e",
                     passengerData = FlightPassengerData(adults = 1, children = 0, infants = 0)
                 )
             )

@@ -26,12 +26,22 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+        coreLibraryDesugaringEnabled true
     }
     kotlinOptions {
         jvmTarget = '1.8'
     }
     buildFeatures {
         viewBinding true
+    }
+
+    lintOptions {
+
+        checkDependencies true
+        xmlReport true
+        htmlReport true
+        htmlOutput file("${project.rootDir}/build/reports/lint-results.html")
+        xmlOutput file("${project.rootDir}/build/reports/lint-results.xml")
     }
 }
 
