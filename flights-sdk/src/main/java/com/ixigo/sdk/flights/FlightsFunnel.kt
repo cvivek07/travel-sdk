@@ -1,3 +1,5 @@
+@file:JvmName("FlightsFunnel")
+
 package com.ixigo.sdk.flights
 
 import android.content.Context
