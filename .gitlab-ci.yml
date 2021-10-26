@@ -65,4 +65,4 @@ deploy:flights-sdk:
   rules:
     - if: '$CI_COMMIT_BRANCH == "development"'
   script:
-    - "./gradlew $LIB:publishDebugPublicationToNexusRepository --stacktrace"
+    - "./gradlew $LIB:publishSnapshotPublicationToNexusSnapshotRepository --stacktrace"
