@@ -45,6 +45,12 @@ android {
     }
 }
 
+configurations.all {
+    resolutionStrategy {
+        cacheChangingModulesFor 0, 'minutes'
+    }
+}
+
 dependencies {
 
     coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:1.1.5"
@@ -58,6 +64,10 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2'
 
     implementation project(path: ':flights-sdk')
+//    implementation("com.ixigo.sdk.flights:flights-sdk:1.0-SNAPSHOT@aar") {
+//        transitive = true
+//        changing = true
+//    }
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
