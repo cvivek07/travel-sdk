@@ -5,12 +5,12 @@ plugins {
 
 
 android {
-    compileSdk 31
+    compileSdk 29
 
     defaultConfig {
         applicationId "com.ixigo.sdk.app"
         minSdk 21
-        targetSdk 31
+        targetSdk 29
         versionCode 1
         versionName "1.0"
 
@@ -64,8 +64,7 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2'
 
     implementation project(path: ':flights-sdk')
-//    implementation("com.ixigo.sdk.flights:flights-sdk:1.0-SNAPSHOT@aar") {
-//        transitive = true
+//    implementation("com.ixigo.sdk.flights:flights-sdk:1.0-SNAPSHOT") {
 //        changing = true
 //    }
 
