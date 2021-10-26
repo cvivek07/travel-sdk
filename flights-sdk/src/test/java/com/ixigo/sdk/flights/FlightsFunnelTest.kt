@@ -59,9 +59,10 @@ class FlightsFunnelTest {
                 destination = "BOM",
                 departDate = LocalDate.of(2021,10, 22),
                 source = "FlightSearchFormFragment",
+                flightClass = "e",
                 passengerData = FlightPassengerData(adults = 1, children = 0, infants = 0)
             ),
-            expectedUrl = "https://www.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=appVersion&deviceId=deviceId&class=e&languageCode=en&page=FLIGHT_LISTING&orgn=DEL&dstn=BOM&departDate=22102021&returnDate=&adults=1&children=0&infants=0&source=FlightSearchFormFragment"
+            expectedUrl = "https://www.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=appVersion&deviceId=deviceId&languageCode=en&page=FLIGHT_LISTING&orgn=DEL&dstn=BOM&departDate=22102021&returnDate=&adults=1&children=0&infants=0&class=e&source=FlightSearchFormFragment"
         )
     }
 
@@ -74,9 +75,10 @@ class FlightsFunnelTest {
                 departDate = LocalDate.of(2021,10, 22),
                 returnDate = LocalDate.of(2021,10, 26),
                 source = "FlightSearchFormFragment",
+                flightClass = "a",
                 passengerData = FlightPassengerData(adults = 1, children = 0, infants = 0)
             ),
-            expectedUrl = "https://www.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=appVersion&deviceId=deviceId&class=e&languageCode=en&page=FLIGHT_LISTING&orgn=DEL&dstn=BOM&departDate=22102021&returnDate=26102021&adults=1&children=0&infants=0&source=FlightSearchFormFragment"
+            expectedUrl = "https://www.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=appVersion&deviceId=deviceId&languageCode=en&page=FLIGHT_LISTING&orgn=DEL&dstn=BOM&departDate=22102021&returnDate=26102021&adults=1&children=0&infants=0&class=a&source=FlightSearchFormFragment"
         )
     }
 
@@ -89,9 +91,10 @@ class FlightsFunnelTest {
                 departDateStr = "22102021",
                 returnDateStr = "26102021",
                 source = "FlightSearchFormFragment",
+                flightClass = "e",
                 passengerData = FlightPassengerData(adults = 1, children = 0, infants = 0)
             ),
-            expectedUrl = "https://www.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=appVersion&deviceId=deviceId&class=e&languageCode=en&page=FLIGHT_LISTING&orgn=DEL&dstn=BOM&departDate=22102021&returnDate=26102021&adults=1&children=0&infants=0&source=FlightSearchFormFragment"
+            expectedUrl = "https://www.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=appVersion&deviceId=deviceId&languageCode=en&page=FLIGHT_LISTING&orgn=DEL&dstn=BOM&departDate=22102021&returnDate=26102021&adults=1&children=0&infants=0&class=e&source=FlightSearchFormFragment"
         )
     }
 
@@ -105,16 +108,17 @@ class FlightsFunnelTest {
                 departDateStr = "aasdfds",
                 returnDateStr = "asdfd",
                 source = "FlightSearchFormFragment",
+                flightClass = "e",
                 passengerData = FlightPassengerData(adults = 1, children = 0, infants = 0)
             ),
-            expectedUrl = "https://www.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=appVersion&deviceId=deviceId&class=e&languageCode=en&page=FLIGHT_LISTING&orgn=DEL&dstn=BOM&departDate=${tomorrowStr}&returnDate=&adults=1&children=0&infants=0&source=FlightSearchFormFragment"
+            expectedUrl = "https://www.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=appVersion&deviceId=deviceId&languageCode=en&page=FLIGHT_LISTING&orgn=DEL&dstn=BOM&departDate=${tomorrowStr}&returnDate=&adults=1&children=0&infants=0&class=e&source=FlightSearchFormFragment"
         )
     }
 
     private fun assertFlightsHome() {
         scenario.onActivity { activity ->
             IxigoSDK.getInstance().flightsStartHome(activity)
-            assertLaunchedIntent(activity, "https://www.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=appVersion&deviceId=deviceId&class=e&languageCode=en&page=FLIGHT_HOME")
+            assertLaunchedIntent(activity, "https://www.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=appVersion&deviceId=deviceId&languageCode=en&page=FLIGHT_HOME")
         }
     }
 

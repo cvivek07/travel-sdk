@@ -32,6 +32,7 @@ fun IxigoSDK.flightsStartSearch(context: Context, searchData: FlightSearchData) 
             "adults" to searchData.passengerData.adults.toString(),
             "children" to searchData.passengerData.children.toString(),
             "infants" to searchData.passengerData.infants.toString(),
+            "class" to searchData.flightClass,
             "source" to searchData.source
         )
     )
@@ -46,7 +47,6 @@ private fun IxigoSDK.getUrl(properties: Map<String, String>): String {
         .appendQueryParameter("apiKey", appInfo.apiKey)
         .appendQueryParameter("appVersion", appInfo.appVersion)
         .appendQueryParameter("deviceId", appInfo.deviceId)
-        .appendQueryParameter("class", "e")
         .appendQueryParameter("languageCode", "en") // TODO
     for (property in properties) {
         builder.appendQueryParameter(property.key, property.value)
@@ -87,6 +87,7 @@ data class FlightSearchData(
     val departDate: LocalDate,
     val returnDate: LocalDate? = null,
     val passengerData: FlightPassengerData,
+    val flightClass: String,
     val source: String
 ) {
     constructor(
@@ -95,6 +96,7 @@ data class FlightSearchData(
         departDateStr: String,
         returnDateStr: String?,
         passengerData: FlightPassengerData,
+        flightClass: String,
         source: String
     ) :
             this(
@@ -103,6 +105,7 @@ data class FlightSearchData(
                 departDate = parseDate(departDateStr) ?: LocalDate.now().plusDays(1),
                 returnDate = parseDate(returnDateStr),
                 passengerData,
+                flightClass,
                 source
             )
 
