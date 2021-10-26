@@ -1,10 +1,11 @@
 package com.ixigo.sdk.payment
 
+import androidx.fragment.app.FragmentActivity
 import com.ixigo.sdk.common.Generated
 import com.ixigo.sdk.common.Result
 
 interface PaymentProvider {
-    fun startPayment(input: PaymentInput, callback: PaymentCallback): Boolean
+    fun startPayment(activity: FragmentActivity, input: PaymentInput, callback: PaymentCallback): Boolean
 }
 
 @Generated

@@ -1,16 +1,18 @@
 package com.ixigo.sdk.webview
 
+import android.app.Activity
 import android.os.Bundle
 import android.os.Looper.getMainLooper
 import android.webkit.JavascriptInterface
+import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.beust.klaxon.Klaxon
 import com.ixigo.sdk.AppInfo
 import com.ixigo.sdk.IxigoSDK
-import com.ixigo.sdk.auth.test.FakeAuthProvider
 import com.ixigo.sdk.auth.EmptyAuthProvider
+import com.ixigo.sdk.auth.test.FakeAuthProvider
 import com.ixigo.sdk.common.Err
 import com.ixigo.sdk.common.Ok
 import com.ixigo.sdk.payment.*
@@ -29,8 +31,10 @@ class WebViewFragmentUnitTests {
 
     private lateinit var scenario: FragmentScenario<WebViewFragment>
     private val fragmentDelegate = mock<WebViewFragmentDelegate>()
-    private val initialPageData = InitialPageData("https://www.ixigo.com", mapOf("header1" to "header1Value") )
+    private val initialPageData =
+        InitialPageData("https://www.ixigo.com", mapOf("header1" to "header1Value"))
     private lateinit var shadowWebView: ShadowWebView
+    private lateinit var fragmentActivity: Activity
 
     @Before
     fun setup() {
@@ -40,6 +44,7 @@ class WebViewFragmentUnitTests {
         scenario.onFragment {
             shadowWebView = shadowOf(it.webView)
             it.delegate = fragmentDelegate
+            fragmentActivity = it.requireActivity()
         }
     }
 
@@ -96,10 +101,11 @@ class WebViewFragmentUnitTests {
         val paymentInput = Klaxon().parse<PaymentInput>(paymentInputStr)!!
         IxigoSDK.init(
             EmptyAuthProvider,
-            FakePaymentProvider(mapOf(paymentInput to Ok(PaymentResponse(nextUrl)))),
+            FakePaymentProvider(fragmentActivity, mapOf(paymentInput to Ok(PaymentResponse(nextUrl)))),
             appInfo
         )
-        val startNativePaymentMethod = ixiWebView.javaClass.getDeclaredMethod("executeNativePayment", String::class.java)
+        val startNativePaymentMethod =
+            ixiWebView.javaClass.getDeclaredMethod("executeNativePayment", String::class.java)
         val paymentReturn = startNativePaymentMethod.invoke(ixiWebView, paymentInputStr) as Boolean
         shadowOf(getMainLooper()).idle()
 
@@ -122,10 +128,11 @@ class WebViewFragmentUnitTests {
         val paymentInput = Klaxon().parse<PaymentInput>(paymentInputStr)!!
         IxigoSDK.init(
             EmptyAuthProvider,
-            FakePaymentProvider(mapOf(paymentInput to Err(Error()))),
+            FakePaymentProvider(fragmentActivity, mapOf(paymentInput to Err(Error()))),
             appInfo
         )
-        val startNativePaymentMethod = ixiWebView.javaClass.getDeclaredMethod("executeNativePayment", String::class.java)
+        val startNativePaymentMethod =
+            ixiWebView.javaClass.getDeclaredMethod("executeNativePayment", String::class.java)
         val paymentReturn = startNativePaymentMethod.invoke(ixiWebView, paymentInputStr) as Boolean
         shadowOf(getMainLooper()).idle()
 
@@ -137,14 +144,15 @@ class WebViewFragmentUnitTests {
     fun `test invalid payment`() {
         IxigoSDK.init(
             EmptyAuthProvider,
-            FakePaymentProvider(mapOf()),
+            FakePaymentProvider(fragmentActivity, mapOf()),
             appInfo
         )
         val paymentInputStr = """
             |{
             |   "yolo":"flights"
             |}""".trimMargin()
-        val startNativePaymentMethod = ixiWebView.javaClass.getDeclaredMethod("executeNativePayment", String::class.java)
+        val startNativePaymentMethod =
+            ixiWebView.javaClass.getDeclaredMethod("executeNativePayment", String::class.java)
         val paymentReturn = startNativePaymentMethod.invoke(ixiWebView, paymentInputStr) as Boolean
         shadowOf(getMainLooper()).idle()
 
@@ -161,7 +169,11 @@ class WebViewFragmentUnitTests {
         val successJs = "success"
         val failureJs = "failure"
 
-        val loginUserMethod = ixiWebView.javaClass.getDeclaredMethod("loginUser", String::class.java, String::class.java)
+        val loginUserMethod = ixiWebView.javaClass.getDeclaredMethod(
+            "loginUser",
+            String::class.java,
+            String::class.java
+        )
         val loginReturn = loginUserMethod.invoke(ixiWebView, successJs, failureJs) as Boolean
         shadowOf(getMainLooper()).idle()
         val expectedUrl = if (token == null) failureJs else successJs
@@ -181,8 +193,16 @@ class WebViewFragmentUnitTests {
     private val ixiWebView by lazy { shadowWebView.getJavascriptInterface("IxiWebView") }
 }
 
-private class FakePaymentProvider(private val results: Map<PaymentInput, PaymentResult>):PaymentProvider {
-    override fun startPayment(input: PaymentInput, callback: PaymentCallback): Boolean {
+private class FakePaymentProvider(
+    private val expectedActivity: Activity,
+    private val results: Map<PaymentInput, PaymentResult>
+) : PaymentProvider {
+    override fun startPayment(
+        activity: FragmentActivity,
+        input: PaymentInput,
+        callback: PaymentCallback
+    ): Boolean {
+        assertSame(expectedActivity, activity)
         val result = results[input] ?: return false
         callback(result)
         return true

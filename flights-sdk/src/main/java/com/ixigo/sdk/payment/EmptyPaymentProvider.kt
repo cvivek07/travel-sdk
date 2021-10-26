@@ -1,5 +1,7 @@
 package com.ixigo.sdk.payment
 
+import androidx.fragment.app.FragmentActivity
+
 internal object EmptyPaymentProvider: PaymentProvider {
-    override fun startPayment(input: PaymentInput, callback: PaymentCallback) = false
+    override fun startPayment(activity: FragmentActivity, input: PaymentInput, callback: PaymentCallback) = false
 }
