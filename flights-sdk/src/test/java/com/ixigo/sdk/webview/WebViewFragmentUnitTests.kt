@@ -11,6 +11,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.beust.klaxon.Klaxon
 import com.ixigo.sdk.AppInfo
 import com.ixigo.sdk.IxigoSDK
+import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.auth.EmptyAuthProvider
 import com.ixigo.sdk.auth.test.FakeAuthProvider
 import com.ixigo.sdk.common.Err
@@ -35,6 +36,7 @@ class WebViewFragmentUnitTests {
         InitialPageData("https://www.ixigo.com", mapOf("header1" to "header1Value"))
     private lateinit var shadowWebView: ShadowWebView
     private lateinit var fragmentActivity: Activity
+    private val analyticsProvider = mock<AnalyticsProvider>()
 
     @Before
     fun setup() {
@@ -101,9 +103,11 @@ class WebViewFragmentUnitTests {
             |}""".trimMargin()
         val paymentInput = Klaxon().parse<PaymentInput>(paymentInputStr)!!
         IxigoSDK.init(
+            fragmentActivity,
             EmptyAuthProvider,
             FakePaymentProvider(fragmentActivity, mapOf(paymentInput to Ok(PaymentResponse(nextUrl)))),
-            appInfo
+            appInfo,
+            analyticsProvider
         )
         val startNativePaymentMethod =
             ixiWebView.javaClass.getDeclaredMethod("executeNativePayment", String::class.java)
@@ -128,9 +132,11 @@ class WebViewFragmentUnitTests {
             |}""".trimMargin()
         val paymentInput = Klaxon().parse<PaymentInput>(paymentInputStr)!!
         IxigoSDK.init(
+            fragmentActivity,
             EmptyAuthProvider,
             FakePaymentProvider(fragmentActivity, mapOf(paymentInput to Err(Error()))),
-            appInfo
+            appInfo,
+            analyticsProvider
         )
         val startNativePaymentMethod =
             ixiWebView.javaClass.getDeclaredMethod("executeNativePayment", String::class.java)
@@ -144,9 +150,11 @@ class WebViewFragmentUnitTests {
     @Test
     fun `test invalid payment`() {
         IxigoSDK.init(
+            fragmentActivity,
             EmptyAuthProvider,
             FakePaymentProvider(fragmentActivity, mapOf()),
-            appInfo
+            appInfo,
+            analyticsProvider
         )
         val paymentInputStr = """
             |{
@@ -177,9 +185,11 @@ class WebViewFragmentUnitTests {
 
     private fun testLogin(token: String?) {
         IxigoSDK.init(
+            fragmentActivity,
             FakeAuthProvider(token),
             EmptyPaymentProvider,
-            appInfo
+            appInfo,
+            analyticsProvider
         )
         val successJs = "success"
         val failureJs = "failure"

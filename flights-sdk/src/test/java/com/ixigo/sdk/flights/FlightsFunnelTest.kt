@@ -7,6 +7,7 @@ import androidx.test.core.app.launchActivity
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ixigo.sdk.AppInfo
 import com.ixigo.sdk.IxigoSDK
+import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.auth.AuthData
 import com.ixigo.sdk.auth.EmptyAuthProvider
 import com.ixigo.sdk.auth.test.FakeAuthProvider
@@ -21,6 +22,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.kotlin.mock
 import org.robolectric.Shadows.shadowOf
 import java.time.LocalDate
 
@@ -28,10 +30,13 @@ import java.time.LocalDate
 class FlightsFunnelTest {
 
     private lateinit var scenario: ActivityScenario<Activity>
+    private lateinit var activity: Activity
+    private val analyticsProvider = mock<AnalyticsProvider>()
 
     @Before
     fun setup() {
         scenario = launchActivity()
+        scenario.onActivity { activity = it }
     }
 
     @After
@@ -41,13 +46,13 @@ class FlightsFunnelTest {
 
     @Test
     fun `test flightsStartHome launches WebActivity`() {
-        IxigoSDK.init(EmptyAuthProvider, EmptyPaymentProvider, appInfo)
+        IxigoSDK.init(activity, EmptyAuthProvider, EmptyPaymentProvider, appInfo, analyticsProvider)
         assertFlightsHome()
     }
 
     @Test
     fun `test flightsStartHome launches WebActivity with Auth Token`() {
-        IxigoSDK.init(FakeAuthProvider("token", AuthData("token")), EmptyPaymentProvider, appInfo)
+        IxigoSDK.init(activity, FakeAuthProvider("token", AuthData("token")), EmptyPaymentProvider, appInfo, analyticsProvider)
         assertFlightsHome()
     }
 
@@ -123,7 +128,7 @@ class FlightsFunnelTest {
     }
 
     private fun assertFlightSearch(searchData: FlightSearchData, expectedUrl: String) {
-        IxigoSDK.init(EmptyAuthProvider, EmptyPaymentProvider, appInfo)
+        IxigoSDK.init(activity, EmptyAuthProvider, EmptyPaymentProvider, appInfo, analyticsProvider)
         scenario.onActivity { activity ->
             IxigoSDK.getInstance().flightsStartSearch(activity, searchData)
             assertLaunchedIntent(activity, expectedUrl)

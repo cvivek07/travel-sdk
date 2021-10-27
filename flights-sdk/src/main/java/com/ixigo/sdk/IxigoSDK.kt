@@ -1,10 +1,10 @@
 package com.ixigo.sdk
 
+import android.content.Context
+import com.ixigo.sdk.analytics.AnalyticsProvider
+import com.ixigo.sdk.analytics.FirebaseAnalyticsProvider
 import com.ixigo.sdk.auth.AuthProvider
-import com.ixigo.sdk.auth.EmptyAuthProvider
-import com.ixigo.sdk.payment.EmptyPaymentProvider
 import com.ixigo.sdk.payment.PaymentProvider
-import kotlin.IllegalStateException
 
 /**
  * This is the main entrypoint to interact with Ixigo SDK.
@@ -13,7 +13,12 @@ import kotlin.IllegalStateException
  * Before using it, you need to call `IxigoSDK.init(...)` once when you start-up your Application
  *
  */
-class IxigoSDK private constructor(val appInfo: AppInfo, val authProvider: AuthProvider = EmptyAuthProvider, val paymentProvider: PaymentProvider = EmptyPaymentProvider) {
+class IxigoSDK private constructor(
+    internal val appInfo: AppInfo,
+    internal val authProvider: AuthProvider,
+    internal val paymentProvider: PaymentProvider,
+    internal val analyticsProvider: AnalyticsProvider
+) {
 
     companion object {
         private var INSTANCE: IxigoSDK? = null
@@ -23,16 +28,24 @@ class IxigoSDK private constructor(val appInfo: AppInfo, val authProvider: AuthP
          *
          * Call this method when you initialize your Application. eg: `Application.onCreate`
          *
+         * @param context Android Context. Typically ApplicationContext
          * @param authProvider Delegates Authentication logic via this AuthProvider
          * @param paymentProvider Delegates Payment logic via this PaymentProvider
          * @param appInfo The AppInfo
+         * @param analyticsProvider AnalyticsProvider used throughout the SDK
          */
         @JvmStatic
-        fun init(authProvider: AuthProvider, paymentProvider: PaymentProvider, appInfo: AppInfo) {
+        fun init(
+            context: Context,
+            authProvider: AuthProvider,
+            paymentProvider: PaymentProvider,
+            appInfo: AppInfo,
+            analyticsProvider: AnalyticsProvider = FirebaseAnalyticsProvider(context)
+        ) {
             if (INSTANCE != null) {
                 throw IllegalStateException("IxigoSDK has already been initialized")
             }
-            INSTANCE = IxigoSDK(appInfo, authProvider, paymentProvider)
+            INSTANCE = IxigoSDK(appInfo, authProvider, paymentProvider, analyticsProvider)
         }
 
         /**
@@ -67,4 +80,10 @@ class IxigoSDK private constructor(val appInfo: AppInfo, val authProvider: AuthP
  * @property deviceId
  * @property uuid
  */
-data class AppInfo(val clientId: String, val apiKey: String, val appVersion: String, val deviceId: String, val uuid: String)
+data class AppInfo(
+    val clientId: String,
+    val apiKey: String,
+    val appVersion: String,
+    val deviceId: String,
+    val uuid: String
+)

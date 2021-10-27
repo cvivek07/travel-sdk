@@ -9,8 +9,10 @@ import androidx.test.espresso.web.sugar.Web.onWebView
 import androidx.test.espresso.web.webdriver.DriverAtoms.*
 import androidx.test.espresso.web.webdriver.Locator
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import com.ixigo.sdk.AppInfo
 import com.ixigo.sdk.IxigoSDK
+import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.auth.*
 import com.ixigo.sdk.common.Err
 import com.ixigo.sdk.common.Ok
@@ -36,6 +38,7 @@ class WebViewFragmentTest {
     private lateinit var mockServer: MockWebServer
     private lateinit var scenario: FragmentScenario<WebViewFragment>
     private val fragmentDelegate = mock<WebViewFragmentDelegate>()
+    private val analyticsProvider = mock<AnalyticsProvider>()
 
     @Before
     fun setup() {
@@ -67,9 +70,11 @@ class WebViewFragmentTest {
     fun testSuccessfulPayment() {
         val successfulPaymentUrl = "https://www.ixigo.com/"
         IxigoSDK.init(
+            InstrumentationRegistry.getInstrumentation().targetContext,
             EmptyAuthProvider,
             FakePaymentProvider(Ok(PaymentResponse(successfulPaymentUrl))),
-            appInfo
+            appInfo,
+            analyticsProvider
         )
         onWebView()
             .withElement(findElement(Locator.ID, "native_payment_button"))
@@ -80,9 +85,11 @@ class WebViewFragmentTest {
     @Test
     fun testFailedPayment() {
         IxigoSDK.init(
+            InstrumentationRegistry.getInstrumentation().targetContext,
             EmptyAuthProvider,
             FakePaymentProvider(Err(Error())),
-            appInfo
+            appInfo,
+            analyticsProvider
         )
         onWebView()
             .withElement(findElement(Locator.ID, "native_payment_button"))
@@ -94,9 +101,11 @@ class WebViewFragmentTest {
     @Test
     fun testNoPaymentAvailable() {
         IxigoSDK.init(
+            InstrumentationRegistry.getInstrumentation().targetContext,
             EmptyAuthProvider,
             EmptyPaymentProvider,
-            appInfo
+            appInfo,
+            analyticsProvider
         )
         onWebView()
             .withElement(findElement(Locator.ID, "native_payment_button"))
@@ -108,9 +117,11 @@ class WebViewFragmentTest {
     @Test
     fun testWrongPaymentIdProvided() {
         IxigoSDK.init(
+            InstrumentationRegistry.getInstrumentation().targetContext,
             EmptyAuthProvider,
             FakePaymentProvider(Ok(PaymentResponse("https://www.ixigo.com"))),
-            appInfo
+            appInfo,
+            analyticsProvider
         )
         onWebView()
             .withElement(findElement(Locator.ID, "null_paymentId_native_payment_button"))
@@ -144,9 +155,11 @@ class WebViewFragmentTest {
 
     private fun testLogin(token: String?) {
         IxigoSDK.init(
+            InstrumentationRegistry.getInstrumentation().targetContext,
             FakeAuthProvider(token),
             EmptyPaymentProvider,
-            appInfo
+            appInfo,
+            analyticsProvider
         )
         onWebView()
             .withElement(findElement(Locator.ID, "login_button"))

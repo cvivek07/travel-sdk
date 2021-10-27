@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "132902544575",
+    "project_id": "ixigo-sdk-demo-app",
+    "storage_bucket": "ixigo-sdk-demo-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:132902544575:android:0fa188108ec15e4571120a",
+        "android_client_info": {
+          "package_name": "com.ixigo.sdk.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "132902544575-ud330jfk84hl2ijo4q99j051tkhpvnil.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBEJrf3SjSFMUBahV5eL20pquCW6auVSfA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "132902544575-ud330jfk84hl2ijo4q99j051tkhpvnil.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
