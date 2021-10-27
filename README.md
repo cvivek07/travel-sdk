@@ -20,7 +20,7 @@ Inside **app/build.gradle**
 ```groovy
 dependencies {
   // Other dependencies...
-  implementation "com.ixigo.sdk.flights:1.0.0"
+  implementation "com.ixigo.sdk.flights:flights-sdk:1.0"
 }
 ```
 
@@ -42,6 +42,10 @@ Inside **app/build.gradle**
 ```groovy
 dependencies {
   // Other dependencies...
-  implementation "com.ixigo.sdk.flights:1.0.0-SNAPSHOT"
+  implementation "com.ixigo.sdk.flights:flights-sdk:1.0-SNAPSHOT"
 }
 ```
+
+### Usage
+
+Initialize the SDK calling `IxigoSDK.init(...)` in your App creation flow. 
