@@ -5,7 +5,7 @@ import android.os.Bundle
 import com.google.firebase.analytics.FirebaseAnalytics
 import timber.log.Timber
 
-class FirebaseAnalyticsProvider(val context: Context): AnalyticsProvider {
+internal class FirebaseAnalyticsProvider(val context: Context): AnalyticsProvider {
 
     private val firebaseAnalytics: FirebaseAnalytics? by lazy {
         try {

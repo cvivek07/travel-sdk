@@ -9,6 +9,6 @@
 
     <application>
         <activity android:name="com.ixigo.sdk.webview.WebActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar"/>
+            android:theme="@style/Theme.IxigoSDK.NoActionBar"/>
     </application>
 </manifest>

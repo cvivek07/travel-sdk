@@ -39,6 +39,15 @@ class IxigoSDK private constructor(
             context: Context,
             authProvider: AuthProvider,
             paymentProvider: PaymentProvider,
+            appInfo: AppInfo
+        ) {
+            init(context, authProvider, paymentProvider, appInfo, FirebaseAnalyticsProvider(context))
+        }
+
+        internal fun init(
+            context: Context,
+            authProvider: AuthProvider,
+            paymentProvider: PaymentProvider,
             appInfo: AppInfo,
             analyticsProvider: AnalyticsProvider = FirebaseAnalyticsProvider(context)
         ) {
