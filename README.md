@@ -1,6 +1,6 @@
-## Ixigo Android SDK
-
 This repository is the entry point to using Ixigo Android SDK. 
+
+[[_TOC_]]
 
 ## Installation
 
@@ -46,6 +46,6 @@ dependencies {
 }
 ```
 
-### Usage
+## Usage
 
 Initialize the SDK calling `IxigoSDK.init(...)` in your App creation flow. 
