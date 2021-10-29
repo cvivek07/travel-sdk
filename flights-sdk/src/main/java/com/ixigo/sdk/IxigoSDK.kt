@@ -1,6 +1,7 @@
 package com.ixigo.sdk
 
 import android.content.Context
+import com.ixigo.sdk.Config.Companion.ProdConfig
 import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.FirebaseAnalyticsProvider
 import com.ixigo.sdk.auth.AuthProvider
@@ -13,11 +14,12 @@ import com.ixigo.sdk.payment.PaymentProvider
  * Before using it, you need to call `IxigoSDK.init(...)` once when you start-up your Application
  *
  */
-class IxigoSDK private constructor(
+class IxigoSDK internal constructor(
     internal val appInfo: AppInfo,
     internal val authProvider: AuthProvider,
     internal val paymentProvider: PaymentProvider,
-    internal val analyticsProvider: AnalyticsProvider
+    internal val analyticsProvider: AnalyticsProvider,
+    internal val config: Config = ProdConfig
 ) {
 
     companion object {
@@ -72,10 +74,18 @@ class IxigoSDK private constructor(
 
         /**
          * Resets IxigoSDK singleton. Used only for tests
-         *
          */
         internal fun clearInstance() {
             INSTANCE = null
+        }
+
+        /**
+         * Replaces IxigoSDK singleton. Used only for tests
+         *
+         * @param newInstance
+         */
+        internal fun replaceInstance(newInstance: IxigoSDK) {
+            INSTANCE = newInstance
         }
     }
 }

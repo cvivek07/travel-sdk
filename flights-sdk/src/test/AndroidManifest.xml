@@ -3,6 +3,7 @@
 
     <application>
         <activity android:name="android.app.Activity"/>
+        <activity android:name="androidx.fragment.app.FragmentActivity"/>
     </application>
 
 </manifest>

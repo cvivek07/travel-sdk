@@ -8,6 +8,13 @@ package com.ixigo.sdk.common
  * @param T The type of a successful response
  */
 sealed class Result<out T> {
+    val isSuccess: Boolean by lazy {
+        when (this) {
+            is Ok -> true
+            else -> false
+        }
+    }
+
     fun onSuccess(block: (T) -> Unit) {
         when (this) {
             is Ok -> block(value)
@@ -15,7 +22,7 @@ sealed class Result<out T> {
         }
     }
 
-    fun <S>mapBoth(success: (T) -> S, failure: (Error) -> S): S {
+    fun <S> mapBoth(success: (T) -> S, failure: (Error) -> S): S {
         return when (this) {
             is Ok -> success(value)
             is Err -> failure(value)
@@ -23,5 +30,5 @@ sealed class Result<out T> {
     }
 }
 
-class Ok<T>(val value: T): Result<T>()
-class Err(val value: Error): Result<Nothing>()
+class Ok<T>(val value: T) : Result<T>()
+class Err(val value: Error) : Result<Nothing>()
