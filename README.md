@@ -48,4 +48,18 @@ dependencies {
 
 ## Usage
 
+### Initialize the SDK
+
 Initialize the SDK calling `IxigoSDK.init(...)` in your App creation flow. 
+
+### Configure Appearance
+
+You can configure the appearance of certain UI elements presented by the sdk by providing the following keys in your resources
+
+```xml
+<resources>
+  ...
+  <!-- Primary color: will be used in several UI elements. eg: status bar bg color-->
+  <color name="ixigosdk_primary_color">#FF0000</color>
+</resources>
+```
