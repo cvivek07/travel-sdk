@@ -7,7 +7,5 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="ixigosdk_status_bar_color">#FF0000</color>
-
-    <bool name="ixigosdk_status_bar_color_is_light">true</bool>
+    <color name="ixigosdk_primary_color">#ACDDDE</color>
 </resources>
