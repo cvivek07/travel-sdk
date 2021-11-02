@@ -12,6 +12,16 @@ import okhttp3.*
 import timber.log.Timber
 import java.io.IOException
 
+/**
+ * AuthProvider implementation that matches a partner token to an Ixigo token.
+ *
+ * The logic on how to match a partner token is kept server side. Some options:
+ * - If a match on certain fields is found between the partner account and an ixigo account (email or phone number match),
+ * this authProvider will return a token for the matched Ixigo account
+ * - If there is no match, a new Ixigo Account might be created
+ *
+ * @property partnerTokenProvider
+ */
 class SSOAuthProvider(private val partnerTokenProvider: PartnerTokenProvider) : AuthProvider {
     private val client: OkHttpClient by lazy { OkHttpClient() }
     private val moshi by lazy { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
@@ -39,6 +49,10 @@ class SSOAuthProvider(private val partnerTokenProvider: PartnerTokenProvider) : 
 
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
+                Timber.e(
+                    e,
+                    "Error getting access token"
+                )
                 callback(Err(Error(e)))
             }
 
