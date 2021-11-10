@@ -1,5 +1,7 @@
 import { scan } from "danger-plugin-lint-report";
 import { checkMergeRequestSize } from "@ixigo-packages/danger-plugin-merge-request-size";
+import commitlint from "danger-plugin-conventional-commitlint";
+import configConventional from "@commitlint/config-conventional";
 
 const mergeRequestSizeOptions = {
   rules: [
@@ -36,5 +38,8 @@ const mergeRequestSizeOptions = {
     fileMask: "**/reports/lint-results*.xml",
     reportSeverity: true,
     requireLineModification: true,
+  });
+  await commitlint(configConventional.rules, {
+    severity: "warn",
   });
 })();
