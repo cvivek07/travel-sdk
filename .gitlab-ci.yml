@@ -5,6 +5,9 @@ default:
   tags:
     - docker
 
+#variables:
+#  CI_DEBUG_TRACE: "true"
+
 workflow:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "web"'
@@ -17,12 +20,11 @@ stages:
   - deploy
 
 before_script:
+  - export
   - npm install -g gnomon
   - export GRADLE_USER_HOME=$(pwd)/.gradle
   - chmod +x ./gradlew
   - if [ "$GRADLE_SCAN" = "true" ]; then GRADLE_SCAN_OPTION="--scan"; fi
-  - yarn install
-  - export
 
 cache:
   key: ${CI_PROJECT_ID}
@@ -67,3 +69,17 @@ deploy:flights-sdk:
     - if: '$CI_COMMIT_BRANCH == "development"'
   script:
     - "./gradlew $LIB:publishSnapshotPublicationToNexusSnapshotRepository --stacktrace"
+
+danger:
+  stage: post-build
+  needs:
+    - "coverage:mergeRequest"
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+  cache:
+    key: ${CI_PROJECT_ID}_node
+    paths:
+      - node_modules/
+  script:
+    - yarn install
+    - yarn danger ci -f -d danger/dangerfile.ts
