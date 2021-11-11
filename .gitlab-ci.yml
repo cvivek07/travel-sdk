@@ -83,3 +83,10 @@ danger:
   script:
     - yarn install
     - yarn danger ci -f -d danger/dangerfile.ts
+
+pages:
+  script:
+    - echo "pages running"
+  artifacts:
+    paths:
+      - public
