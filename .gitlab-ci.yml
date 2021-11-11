@@ -89,7 +89,8 @@ pages:
   script:
     - apt install rsync -y
     - ./gradlew dokkaHtmlMultiModule
-    - rsync -a -v build/dokka/htmlMultiModule/ public/dokka
+    - mkdir public/docs
+    - rsync -a -v build/dokka/htmlMultiModule/ public/docs
   artifacts:
     paths:
       - public
