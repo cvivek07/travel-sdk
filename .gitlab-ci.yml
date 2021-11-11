@@ -85,6 +85,7 @@ danger:
     - yarn danger ci -f -d danger/dangerfile.ts
 
 pages:
+  stage: deploy
   script:
     - echo "pages running"
   artifacts:
