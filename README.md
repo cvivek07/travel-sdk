@@ -1,4 +1,4 @@
-This repository is the entry point to using Ixigo Android SDK. 
+This repository is the entry point to using Ixigo Android SDK.
 
 [[_TOC_]]
 
@@ -50,7 +50,7 @@ dependencies {
 
 ### Initialize the SDK
 
-Initialize the SDK calling `IxigoSDK.init(...)` in your App creation flow. 
+Initialize the SDK calling `IxigoSDK.init(...)` in your App creation flow.
 
 ### Configure Appearance
 
@@ -63,3 +63,7 @@ You can configure the appearance of certain UI elements presented by the sdk by 
   <color name="ixigosdk_primary_color">#FF0000</color>
 </resources>
 ```
+
+## Docs
+
+You can find classes documentation here: http://android.pages.ixigo.com/ixigo-android-sdk/docs/
