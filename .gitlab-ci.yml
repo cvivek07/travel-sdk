@@ -87,7 +87,9 @@ danger:
 pages:
   stage: deploy
   script:
-    - echo "pages running"
+    - apt install rsync -y
+    - ./gradlew dokkaHtmlMultiModule
+    - rsync -a -v build/dokka/htmlMultiModule/ public/dokka
   artifacts:
     paths:
       - public
