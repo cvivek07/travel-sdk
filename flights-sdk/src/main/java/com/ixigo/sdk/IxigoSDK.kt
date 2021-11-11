@@ -10,8 +10,9 @@ import com.ixigo.sdk.payment.PaymentProvider
 /**
  * This is the main entrypoint to interact with Ixigo SDK.
  *
- * All interactions should happen via its singleton object, `IxigoSDK.getInstance()`
- * Before using it, you need to call `IxigoSDK.init(...)` once when you start-up your Application
+ * All interactions should happen via its singleton object, [IxigoSDK.getInstance()][getInstance].
+ *
+ * Before using it, you need to call [IxigoSDK.init(...)][init] once when you start-up your Application.
  *
  */
 class IxigoSDK internal constructor(
@@ -30,11 +31,11 @@ class IxigoSDK internal constructor(
          *
          * Call this method when you initialize your Application. eg: `Application.onCreate`
          *
-         * @param context Android Context. Typically ApplicationContext
-         * @param authProvider Delegates Authentication logic via this AuthProvider
-         * @param paymentProvider Delegates Payment logic via this PaymentProvider
-         * @param appInfo The AppInfo
-         * @param analyticsProvider AnalyticsProvider used throughout the SDK
+         * @param context Android Context. Typically [ApplicationContext]
+         * @param authProvider Delegates Authentication logic via this [AuthProvider]
+         * @param paymentProvider Delegates Payment logic via this [PaymentProvider]
+         * @param appInfo The [AppInfo]
+         * @param analyticsProvider [AnalyticsProvider] used throughout the SDK
          */
         @JvmStatic
         fun init(
