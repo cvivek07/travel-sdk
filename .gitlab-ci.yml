@@ -94,3 +94,9 @@ pages:
   artifacts:
     paths:
       - public
+
+release:
+  stage: deploy
+  when: manual
+  script:
+    - echo "Releasing App"
