@@ -18,6 +18,7 @@ stages:
   - build
   - post-build
   - deploy
+  - release
 
 before_script:
   - export
@@ -98,7 +99,7 @@ pages:
       - public
 
 release:
-  stage: deploy
+  stage: release
   rules:
     - if: '$CI_COMMIT_BRANCH == "development"'
       when: manual
@@ -111,3 +112,6 @@ release:
     - yarn install
     - yarn run release -- --dry-run
     - git push --follow-tags -o ci-skip http://root:$REPO_ACCESS_TOKEN@$CI_SERVER_HOST/$CI_PROJECT_PATH.git HEAD:development
+  artifacts:
+    paths:
+      - CHANGELOG.md
