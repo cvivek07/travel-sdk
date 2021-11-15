@@ -32,8 +32,6 @@ class WebViewFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG)
-
         viewModel.paymentResult.observe(this, { paymentResult ->
             // No action if Payment failed
             paymentResult.result.onSuccess {
