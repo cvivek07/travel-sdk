@@ -1,0 +1,9 @@
+{
+  "bumpFiles": [
+    {
+      "filename": "flights-sdk/build.gradle",
+      "updater": "node_modules/@damlys/standard-version-updater-gradle/dist/build-gradle.js"
+    }
+  ],
+  "packageFiles": []
+}

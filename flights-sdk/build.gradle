@@ -3,7 +3,7 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-parcelize'
     id 'maven-publish'
-    id "org.jetbrains.dokka"
+    id 'org.jetbrains.dokka'
 }
 
 android {
@@ -13,10 +13,10 @@ android {
         minSdk 21
         targetSdk 31
         versionCode 1
-        versionName "1.0"
+        versionName '1.0'
 
-        testInstrumentationRunner "com.ixigo.sdk.test.util.EspressoRunner"
-        consumerProguardFiles "consumer-rules.pro"
+        testInstrumentationRunner 'com.ixigo.sdk.test.util.EspressoRunner'
+        consumerProguardFiles 'consumer-rules.pro'
     }
 
     buildTypes {
@@ -47,16 +47,16 @@ android {
 }
 
 dependencies {
-    def fragmentVersion = "1.3.6"
-    def firebaseVersion = "28.4.2"
+    def fragmentVersion = '1.3.6'
+    def firebaseVersion = '28.4.2'
 
     implementation 'androidx.core:core-ktx:1.6.0'
     implementation "androidx.fragment:fragment-ktx:$fragmentVersion"
     implementation 'androidx.appcompat:appcompat:1.3.1'
-    implementation "androidx.constraintlayout:constraintlayout:2.0.4"
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'com.beust:klaxon:5.5'
-    implementation "com.squareup.okhttp3:okhttp:4.9.2"
-    implementation "com.squareup.moshi:moshi-kotlin:1.12.0"
+    implementation 'com.squareup.okhttp3:okhttp:4.9.2'
+    implementation 'com.squareup.moshi:moshi-kotlin:1.12.0'
 
     // Logging
     implementation 'com.jakewharton.timber:timber:4.7.1' // Version 5 is only compatible with AGP7
@@ -65,7 +65,7 @@ dependencies {
     compileOnly 'com.google.firebase:firebase-analytics-ktx'
 
     // Unit Tests
-    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:1.1.5"
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
     debugImplementation("androidx.fragment:fragment-testing:$fragmentVersion")
     implementation 'androidx.test.ext:junit-ktx:1.1.3'
     testImplementation 'junit:junit:4.13.2'
@@ -79,7 +79,7 @@ dependencies {
     testImplementation 'org.mockito:mockito-inline:3.12.4'
     testImplementation platform("com.google.firebase:firebase-bom:$firebaseVersion")
     testImplementation 'com.google.firebase:firebase-analytics-ktx'
-    testImplementation "com.squareup.okhttp3:mockwebserver:4.9.2"
+    testImplementation 'com.squareup.okhttp3:mockwebserver:4.9.2'
     testImplementation 'org.awaitility:awaitility-kotlin:4.1.1'
 
     // Instrumented Tests
@@ -95,8 +95,7 @@ dependencies {
 }
 
 group = 'com.ixigo.sdk.flights'
-version = '1.0'
-
+version = "1.0.0"
 
 afterEvaluate {
     publishing {
@@ -115,19 +114,19 @@ afterEvaluate {
 
         repositories {
             maven {
-                url = "https://nexus.ixigo.com/nexus/content/repositories/androidshared"
+                url = 'https://nexus.ixigo.com/nexus/content/repositories/androidshared'
                 name = 'Nexus'
                 credentials {
-                    username = findProperty("nexusUser") ?: System.env.nexusUser
-                    password = findProperty("nexusPassword") ?:System.env.nexusPassword
+                    username = findProperty('nexusUser') ?: System.env.nexusUser
+                    password = findProperty('nexusPassword') ?: System.env.nexusPassword
                 }
             }
             maven {
-                url = "https://nexus.ixigo.com/nexus/content/repositories/androidshared-snapshots"
+                url = 'https://nexus.ixigo.com/nexus/content/repositories/androidshared-snapshots'
                 name = 'NexusSnapshot'
                 credentials {
-                    username = findProperty("nexusUser") ?: System.env.nexusUser
-                    password = findProperty("nexusPassword") ?:System.env.nexusPassword
+                    username = findProperty('nexusUser') ?: System.env.nexusUser
+                    password = findProperty('nexusPassword') ?: System.env.nexusPassword
                 }
             }
         }

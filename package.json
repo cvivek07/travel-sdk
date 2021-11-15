@@ -3,17 +3,20 @@
     "prepush": "yarn build; yarn danger:prepush",
     "danger:prepush": "yarn danger local --base development -v -t --dangerfile danger/dangerfile.ts",
     "commit": "git-cz",
-    "tsc": "tsc"
+    "tsc": "tsc",
+    "release": "standard-version"
   },
   "license": "UNLICENSED",
   "devDependencies": {
     "@commitlint/cli": "^14.1.0",
     "@commitlint/config-conventional": "^14.1.0",
     "@commitlint/cz-commitlint": "^14.1.0",
+    "@damlys/standard-version-updater-gradle": "1.0.0",
     "commitizen": "^4.2.4",
     "danger": "^10.6.6",
     "danger-plugin-conventional-commitlint": "^2.0.0",
     "husky": "^7.0.2",
+    "standard-version": "^9.3.2",
     "typescript": "^4.3.5"
   },
   "dependencies": {
