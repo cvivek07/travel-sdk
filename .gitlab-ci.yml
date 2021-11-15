@@ -102,6 +102,7 @@ release:
   rules:
     - if: '$CI_COMMIT_BRANCH == "development"'
       when: manual
+  allow_failure: true
   cache: []
   before_script:
     - git config --global user.name "${GITLAB_USER_NAME}"
