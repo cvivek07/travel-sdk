@@ -88,6 +88,32 @@ private class MyAppAuthProvider(): AuthProvider {
 IxigoSDK.init(context, MyAppAuthProvider, /* Other Params */)
 ```
 
+### Payment
+
+To customize how payments are processed, you can implement `PaymentProvider` and use it when initializing `IxigoSDK`
+
+```kotlin
+class MyPaymentProvider(): PaymentProvider {
+  override fun startPayment(activity: FragmentActivity, input: PaymentInput, callback: PaymentCallback): Boolean {
+      TODO("Handle payment")
+   }
+}
+```
+
+If your `PaymentProvider` implementation starts another activity for result, you can implement as well `ActivityResultHandler` to get a callback when the Activity is finished
+
+```kotlin
+class MyPaymentProvider(): PaymentProvider, ActivityResultHandler {
+  override fun startPayment(activity: FragmentActivity, input: PaymentInput, callback: PaymentCallback): Boolean {
+      TODO("Handle payment")
+  }
+
+  fun handle(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
+    TODO("Handle Activity Result")
+  }
+}
+```
+
 ### Configure Appearance
 
 You can configure the appearance of certain UI elements presented by the sdk by providing the following keys in your resources
