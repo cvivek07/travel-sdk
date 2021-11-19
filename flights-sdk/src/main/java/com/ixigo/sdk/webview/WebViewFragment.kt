@@ -1,6 +1,7 @@
 package com.ixigo.sdk.webview
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.LayoutInflater
@@ -16,6 +17,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.viewbinding.BuildConfig
 import com.beust.klaxon.Klaxon
+import com.ixigo.sdk.IxigoSDK
+import com.ixigo.sdk.common.ActivityResultHandler
 import com.ixigo.sdk.common.Generated
 import com.ixigo.sdk.flights.databinding.WebviewLayoutBinding
 import com.ixigo.sdk.payment.PaymentInput
@@ -83,6 +86,11 @@ class WebViewFragment : Fragment() {
         }
 
         return binding.root
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        val activityResultHandler = IxigoSDK.getInstance().paymentProvider as ActivityResultHandler?
+        activityResultHandler?.handle(requestCode, resultCode, data)
     }
 
     @SuppressLint("JavascriptInterface")

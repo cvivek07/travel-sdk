@@ -1,6 +1,7 @@
 package com.ixigo.sdk.webview
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.os.Looper.getMainLooper
 import android.webkit.JavascriptInterface
@@ -14,6 +15,7 @@ import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.auth.EmptyAuthProvider
 import com.ixigo.sdk.auth.test.FakeAuthProvider
+import com.ixigo.sdk.common.ActivityResultHandler
 import com.ixigo.sdk.common.Err
 import com.ixigo.sdk.common.Ok
 import com.ixigo.sdk.payment.*
@@ -22,8 +24,7 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
+import org.mockito.kotlin.*
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.shadows.ShadowWebView
 
@@ -170,6 +171,27 @@ class WebViewFragmentUnitTests {
     }
 
     @Test
+    fun `test activity result is forwarded to paymentProvider`() {
+        val requestCode = 123
+        val responseCode = 456
+        val intent = Intent()
+        val paymentProvider = mock<ActivityResultPaymentProvider>()
+
+        IxigoSDK.init(
+            fragmentActivity,
+            EmptyAuthProvider,
+            paymentProvider,
+            appInfo,
+            analyticsProvider
+        )
+
+        scenario.onFragment { fragment ->
+            fragment.onActivityResult(requestCode, responseCode, intent)
+            verify(paymentProvider).handle(requestCode, responseCode, intent)
+        }
+    }
+
+    @Test
     fun `test backButton goes back if Webview can go back`() {
         shadowWebView.pushEntryToHistory("https://www.ixigo.com/page1")
         fragmentActivity.onBackPressed()
@@ -233,3 +255,5 @@ private class FakePaymentProvider(
         return true
     }
 }
+
+private interface ActivityResultPaymentProvider: PaymentProvider, ActivityResultHandler
