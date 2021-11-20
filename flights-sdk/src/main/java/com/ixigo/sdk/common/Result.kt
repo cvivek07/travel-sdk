@@ -22,7 +22,7 @@ sealed class Result<out T> {
         }
     }
 
-    fun <S> mapBoth(success: (T) -> S, failure: (Error) -> S): S {
+    fun <S> mapBoth(success: (T) -> S, failure: (Throwable) -> S): S {
         return when (this) {
             is Ok -> success(value)
             is Err -> failure(value)
@@ -37,7 +37,7 @@ class Ok<T>(val value: T) : Result<T>() {
     }
 }
 
-class Err(val value: Error) : Result<Nothing>() {
+class Err(val value: Throwable) : Result<Nothing>() {
     override fun equals(other: Any?): Boolean {
         val otherErr = other as? Err ?: return false
         return otherErr.value::class == value::class
