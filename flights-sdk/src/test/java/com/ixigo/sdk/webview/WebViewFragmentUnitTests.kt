@@ -9,7 +9,6 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.beust.klaxon.Klaxon
 import com.ixigo.sdk.AppInfo
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.analytics.AnalyticsProvider
@@ -19,12 +18,15 @@ import com.ixigo.sdk.common.ActivityResultHandler
 import com.ixigo.sdk.common.Err
 import com.ixigo.sdk.common.Ok
 import com.ixigo.sdk.payment.*
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.kotlin.*
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.shadows.ShadowWebView
 
@@ -38,6 +40,9 @@ class WebViewFragmentUnitTests {
     private lateinit var shadowWebView: ShadowWebView
     private lateinit var fragmentActivity: Activity
     private val analyticsProvider = mock<AnalyticsProvider>()
+
+    private val moshi by lazy { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
+    private val paymentInputAdapter by lazy { moshi.adapter(PaymentInput::class.java) }
 
     @Before
     fun setup() {
@@ -102,11 +107,14 @@ class WebViewFragmentUnitTests {
             |       "providerId":1044
             |   }
             |}""".trimMargin()
-        val paymentInput = Klaxon().parse<PaymentInput>(paymentInputStr)!!
+        val paymentInput = paymentInputAdapter.fromJson(paymentInputStr)!!
         IxigoSDK.init(
             fragmentActivity,
             EmptyAuthProvider,
-            FakePaymentProvider(fragmentActivity, mapOf(paymentInput to Ok(PaymentResponse(nextUrl)))),
+            FakePaymentProvider(
+                fragmentActivity,
+                mapOf(paymentInput to Ok(PaymentResponse(nextUrl)))
+            ),
             appInfo,
             analyticsProvider
         )
@@ -131,7 +139,7 @@ class WebViewFragmentUnitTests {
             |       "providerId":1044
             |   }
             |}""".trimMargin()
-        val paymentInput = Klaxon().parse<PaymentInput>(paymentInputStr)!!
+        val paymentInput = paymentInputAdapter.fromJson(paymentInputStr)!!
         IxigoSDK.init(
             fragmentActivity,
             EmptyAuthProvider,
@@ -256,4 +264,4 @@ private class FakePaymentProvider(
     }
 }
 
-private interface ActivityResultPaymentProvider: PaymentProvider, ActivityResultHandler
+private interface ActivityResultPaymentProvider : PaymentProvider, ActivityResultHandler

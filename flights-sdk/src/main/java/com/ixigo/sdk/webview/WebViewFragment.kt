@@ -9,19 +9,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.webkit.JavascriptInterface
 import android.webkit.WebChromeClient
-import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.VisibleForTesting
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.viewbinding.BuildConfig
-import com.beust.klaxon.Klaxon
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.common.ActivityResultHandler
 import com.ixigo.sdk.common.Generated
 import com.ixigo.sdk.flights.databinding.WebviewLayoutBinding
 import com.ixigo.sdk.payment.PaymentInput
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.parcelize.Parcelize
 
 class WebViewFragment : Fragment() {
@@ -125,8 +124,9 @@ interface JsInterface {
 
 private class IxiWebView(val fragment: WebViewFragment) : JsInterface {
 
-    private val klaxon: Klaxon by lazy { Klaxon() }
-    
+    private val moshi by lazy { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
+    private val paymentInputAdapter by lazy { moshi.adapter(PaymentInput::class.java) }
+
     override val name: String
         get() = "IxiWebView"
 
@@ -150,7 +150,7 @@ private class IxiWebView(val fragment: WebViewFragment) : JsInterface {
     @JavascriptInterface
     fun executeNativePayment(paymentInfoString: String): Boolean {
         return try {
-            val paymentInput = klaxon.parse<PaymentInput>(paymentInfoString)!!
+            val paymentInput = paymentInputAdapter.fromJson(paymentInfoString)!!
             fragment.viewModel.startNativePayment(fragment.requireActivity(), paymentInput)
         } catch (_: Exception)  {
             false
