@@ -63,7 +63,7 @@ You will need to pass a `PartnerTokenProvider` so that we can retrieve your App 
 ```kotlin
 class MyAppPartnerTokenProvider(): PartnerTokenProvider {
   override val partnerToken: PartnerToken?
-        get() = TODO("Logic to the MyApp access token")
+        get() = TODO("Logic to retrieve MyApp access token")
 }
 
 // Inside your Application initialization code
@@ -72,7 +72,7 @@ IxigoSDK.init(context, SSOAuthProvider(MyAppPartnerTokenProvider()), /* Other Pa
 
 #### Custom Authentication
 
-If your App has other means of getting an Ixigo access token, you can implement `AuthProvider` and use it when initializing `IxigoSDK`
+If your App has other means of getting an Ixigo access token, you can implement `AuthProvider` and use it when initializing `IxigoSDK`.
 
 ```kotlin
 private class MyAppAuthProvider(): AuthProvider {
