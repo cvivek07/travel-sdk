@@ -116,7 +116,7 @@ release:
     paths:
       - CHANGELOG.md
 
-release-dry-run:
+release-preview:
   stage: release
   rules:
     - if: '$CI_COMMIT_BRANCH == "development"'
@@ -124,7 +124,8 @@ release-dry-run:
   cache: []
   script:
     - yarn install
-    - yarn run release -- --dry-run -t flights-sdk-
+    - yarn run release -- -t flights-sdk-
+    - yarn run pdf-changelog
   artifacts:
     paths:
-      - CHANGELOG.md
+      - "build/CHANGELOG.pdf"
