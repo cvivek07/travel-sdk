@@ -24,7 +24,10 @@
   },
   "dependencies": {
     "@ixigo-packages/danger-plugin-merge-request-size": "^1.0.14",
-    "danger-plugin-lint-report": "^1.5.4"
+    "danger-plugin-lint-report": "^1.5.4",
+    "glob-promise": "^4.2.0",
+    "is-object": "^1.0.2",
+    "xml2js": "^0.4.23"
   },
   "config": {
     "commitizen": {

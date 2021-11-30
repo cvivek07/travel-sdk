@@ -2,6 +2,7 @@ import { scan } from "danger-plugin-lint-report";
 import { checkMergeRequestSize } from "@ixigo-packages/danger-plugin-merge-request-size";
 import commitlint from "danger-plugin-conventional-commitlint";
 import configConventional from "@commitlint/config-conventional";
+import { diffCoverage } from "./diffCoverage";
 
 const mergeRequestSizeOptions = {
   rules: [
@@ -42,4 +43,5 @@ const mergeRequestSizeOptions = {
   await commitlint(configConventional.rules, {
     severity: "warn",
   });
+  await diffCoverage()
 })();
