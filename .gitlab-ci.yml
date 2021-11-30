@@ -104,16 +104,15 @@ release:
     - if: '$CI_COMMIT_BRANCH == "development"'
       when: manual
   allow_failure: true
-  cache: []
   before_script:
     - git config --global user.name "${GITLAB_USER_NAME}"
     - git config --global user.email "${GITLAB_USER_EMAIL}"
   script:
     - yarn install
     - yarn run release -- -t flights-sdk-
-    - "./gradlew flights-sdk:publishReleasePublicationToNexusRepository --stacktrace"
     - git push --follow-tags -o ci-skip http://root:$REPO_ACCESS_TOKEN@$CI_SERVER_HOST/$CI_PROJECT_PATH.git HEAD:development
     - yarn run pdf-changelog
+    - "./gradlew flights-sdk:publishReleasePublicationToNexusRepository --stacktrace"
   artifacts:
     name: CHANGELOG
     paths:
