@@ -126,6 +126,21 @@ You can configure the appearance of certain UI elements presented by the sdk by 
 </resources>
 ```
 
+## Development
+
+### Release a new version
+
+We use [standard-version](https://github.com/conventional-changelog/standard-version) to handle commits and releases.
+
+To release a new version:
+
+1. Find the pipeline for the commit you want to release in [development` branch](https://git.ixigo.com/android/ixigo-android-sdk/-/pipelines?page=1&scope=all&ref=development&status=success) and click on it.
+2. To preview the changelog that will be generated:
+  1. Find the job in `release` stage called `release-preview`
+  2. Browse the artifacts and open `build/CHANGELOG.pdf`. For instance, if the `release-preview` id job of your job is `123456`, the preview of the changelog will be at https://git.ixigo.com/android/ixigo-android-sdk/-/jobs/123456/artifacts/file/build/CHANGELOG.pdf
+3. In the pipeline page, click on ▶ in the `release` job to release the sdk
+
+
 ## Docs
 
 You can find classes documentation here: http://android.pages.ixigo.com/ixigo-android-sdk/docs/
