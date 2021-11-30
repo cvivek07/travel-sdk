@@ -113,6 +113,7 @@ release:
     - git push --follow-tags -o ci-skip http://root:$REPO_ACCESS_TOKEN@$CI_SERVER_HOST/$CI_PROJECT_PATH.git HEAD:development
     - yarn run pdf-changelog
   artifacts:
+    name: CHANGELOG
     paths:
       - CHANGELOG.md
 
@@ -129,5 +130,6 @@ release-preview:
     - yarn run release -- -t flights-sdk-
     - yarn run pdf-changelog
   artifacts:
+    name: CHANGELOG
     paths:
       - "build/CHANGELOG.pdf"
