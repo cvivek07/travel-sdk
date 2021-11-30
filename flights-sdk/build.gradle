@@ -95,7 +95,7 @@ dependencies {
 }
 
 group = 'com.ixigo.sdk.flights'
-version = "1.0.0"
+version = "1.0.1"
 
 afterEvaluate {
     publishing {
