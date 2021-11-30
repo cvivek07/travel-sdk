@@ -5,6 +5,7 @@
     "commit": "git-cz",
     "tsc": "tsc",
     "release": "standard-version",
+    "prepare": "husky install",
     "pdf-changelog": "markdown-pdf CHANGELOG.md -o build/CHANGELOG.pdf"
   },
   "license": "UNLICENSED",
