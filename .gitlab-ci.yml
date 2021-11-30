@@ -109,9 +109,9 @@ release:
     - git config --global user.name "${GITLAB_USER_NAME}"
     - git config --global user.email "${GITLAB_USER_EMAIL}"
   script:
-    - yarn install
     - yarn run release -- -t flights-sdk-
     - git push --follow-tags -o ci-skip http://root:$REPO_ACCESS_TOKEN@$CI_SERVER_HOST/$CI_PROJECT_PATH.git HEAD:development
+    - yarn run pdf-changelog
   artifacts:
     paths:
       - CHANGELOG.md
@@ -122,8 +122,10 @@ release-preview:
     - if: '$CI_COMMIT_BRANCH == "development"'
   allow_failure: true
   cache: []
+  before_script:
+    - git config --global user.name "${GITLAB_USER_NAME}"
+    - git config --global user.email "${GITLAB_USER_EMAIL}"
   script:
-    - yarn install
     - yarn run release -- -t flights-sdk-
     - yarn run pdf-changelog
   artifacts:
