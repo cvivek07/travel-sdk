@@ -56,9 +56,9 @@ Initialize the SDK calling `IxigoSDK.init(...)` in your App creation flow.
 
 #### SSO Authentication (Recommended)
 
-To use SSO Authentication, initially `IxigoSDK` with an instance of `SSOAuthProvider`.
+To use SSO Authentication, initialize `IxigoSDK` with an instance of `SSOAuthProvider`.
 
-You will need to pass a `PartnerTokenProvider` so that we can retrieve your App access token and exchange it for an Ixigo access token
+You will need to pass a `PartnerTokenProvider` so that we can retrieve your App access token and exchange it for an Ixigo access token.
 
 ```kotlin
 class MyAppPartnerTokenProvider(): PartnerTokenProvider {
