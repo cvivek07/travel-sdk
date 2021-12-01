@@ -3,12 +3,8 @@
 package com.ixigo.sdk.flights
 
 import android.content.Context
-import android.content.Intent
 import android.net.Uri
 import com.ixigo.sdk.IxigoSDK
-import com.ixigo.sdk.webview.InitialPageData
-import com.ixigo.sdk.webview.WebActivity
-import com.ixigo.sdk.webview.WebViewFragment
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -52,24 +48,6 @@ private fun IxigoSDK.getUrl(properties: Map<String, String>): String {
         builder.appendQueryParameter(property.key, property.value)
     }
     return builder.build().toString()
-}
-
-private fun IxigoSDK.launchWebActivity(context: Context, url: String) {
-    val intent = Intent(context, WebActivity::class.java)
-    intent.putExtra(WebViewFragment.INITIAL_PAGE_DATA_ARGS, InitialPageData(url, getHeaders()))
-    context.startActivity(intent)
-}
-
-private fun IxigoSDK.getHeaders(): Map<String, String> {
-    val headers = mutableMapOf(
-        "appVersion" to appInfo.appVersion,
-        "clientId" to appInfo.clientId,
-        "apiKey" to appInfo.apiKey,
-        "deviceId" to appInfo.deviceId,
-        "uuid" to appInfo.uuid
-    )
-    authProvider.authData?.let { headers["Authorization"] = it.token }
-    return headers
 }
 
 private val formatter: DateTimeFormatter? = DateTimeFormatter.ofPattern("ddMMyyyy")

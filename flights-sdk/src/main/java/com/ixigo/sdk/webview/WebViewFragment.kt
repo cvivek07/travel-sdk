@@ -157,7 +157,14 @@ private class IxiWebView(val fragment: WebViewFragment) : JsInterface {
         }
     }
 
-    fun runOnUiThread(runnable: Runnable) {
+    @JavascriptInterface
+    fun openWindow(url: String, title: String) {
+        runOnUiThread {
+            IxigoSDK.getInstance().launchWebActivity(fragment.requireActivity(), url)
+        }
+    }
+
+    private fun runOnUiThread(runnable: Runnable) {
         fragment.requireActivity().runOnUiThread(runnable)
     }
 }

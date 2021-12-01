@@ -8,6 +8,9 @@ import android.webkit.JavascriptInterface
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
+import androidx.test.espresso.web.sugar.Web
+import androidx.test.espresso.web.webdriver.DriverAtoms
+import androidx.test.espresso.web.webdriver.Locator
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ixigo.sdk.AppInfo
 import com.ixigo.sdk.IxigoSDK
@@ -25,8 +28,7 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
+import org.mockito.kotlin.*
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.shadows.ShadowWebView
 
@@ -211,6 +213,26 @@ class WebViewFragmentUnitTests {
         fragmentActivity.onBackPressed()
         assertEquals(0, shadowWebView.goBackInvocations)
         verify(fragmentDelegate).quit()
+    }
+
+    @Test
+    fun `test openWindow starts a new WebViewActivity`() {
+        val mockIxigoSDK:IxigoSDK = mock {
+            on {appInfo} doReturn appInfo
+            on {authProvider} doReturn EmptyAuthProvider
+        }
+        IxigoSDK.replaceInstance(mockIxigoSDK)
+        scenario.onFragment { fragment ->
+            val openWindowMethod = ixiWebView.javaClass.getDeclaredMethod(
+                "openWindow",
+                String::class.java,
+                String::class.java
+            )
+            val url = "openWindowUrl"
+            openWindowMethod.invoke(ixiWebView, url, "title")
+
+            verify(mockIxigoSDK, times(1)).launchWebActivity(fragment.requireActivity(), url)
+        }
     }
 
     private fun testLogin(token: String?) {

@@ -1,11 +1,17 @@
 package com.ixigo.sdk
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import com.ixigo.sdk.Config.Companion.ProdConfig
 import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.FirebaseAnalyticsProvider
 import com.ixigo.sdk.auth.AuthProvider
 import com.ixigo.sdk.payment.PaymentProvider
+import com.ixigo.sdk.webview.InitialPageData
+import com.ixigo.sdk.webview.WebActivity
+import com.ixigo.sdk.webview.WebViewFragment
+import java.net.URL
 
 /**
  * This is the main entrypoint to interact with Ixigo SDK.
@@ -87,6 +93,41 @@ class IxigoSDK internal constructor(
          */
         internal fun replaceInstance(newInstance: IxigoSDK) {
             INSTANCE = newInstance
+        }
+    }
+
+    /**
+     * Opens an Activity to the specified url. It will add all necessary headers based on the provided [AppInfo]
+     *
+     * @param context
+     * @param url url to open the activity
+     */
+    internal fun launchWebActivity(context: Context, url: String) {
+        val intent = Intent(context, WebActivity::class.java)
+        intent.putExtra(WebViewFragment.INITIAL_PAGE_DATA_ARGS, InitialPageData(url, getHeaders(url)))
+        context.startActivity(intent)
+    }
+
+    private fun getHeaders(url: String): Map<String, String> {
+        if (!isIxigoUrl(url)) {
+            return mapOf()
+        }
+        val headers = mutableMapOf(
+            "appVersion" to appInfo.appVersion,
+            "clientId" to appInfo.clientId,
+            "apiKey" to appInfo.apiKey,
+            "deviceId" to appInfo.deviceId,
+            "uuid" to appInfo.uuid
+        )
+        authProvider.authData?.let { headers["Authorization"] = it.token }
+        return headers
+    }
+
+    private fun isIxigoUrl(url: String) : Boolean {
+        return try {
+            URL(url).host?.endsWith("ixigo.com") ?: false
+        } catch (e: Exception) {
+            false
         }
     }
 }
