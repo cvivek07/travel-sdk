@@ -2,7 +2,7 @@ This repository is the entry point to using Ixigo Android SDK.
 
 [[_TOC_]]
 
-## Installation
+# Installation
 
 Inside **root/build.gradle**
 
@@ -13,6 +13,7 @@ buildscript {
     maven { url 'https://nexus.ixigo.com/nexus/content/repositories/androidshared' }
   }
 }
+
 ```
 
 Inside **app/build.gradle**
@@ -22,9 +23,10 @@ dependencies {
   // Other dependencies...
   implementation "com.ixigo.sdk.flights:flights-sdk:1.0"
 }
+
 ```
 
-### Use Snapshots
+## Use Snapshots
 
 Inside **root/build.gradle**
 
@@ -35,6 +37,7 @@ buildscript {
     maven { url 'https://nexus.ixigo.com/nexus/content/repositories/androidshared-snapshots' }
   }
 }
+
 ```
 
 Inside **app/build.gradle**
@@ -44,17 +47,18 @@ dependencies {
   // Other dependencies...
   implementation "com.ixigo.sdk.flights:flights-sdk:1.0-SNAPSHOT"
 }
+
 ```
 
-## Usage
+# Usage
 
-### Initialize the SDK
+## Initialize the SDK
 
 Initialize the SDK calling `IxigoSDK.init(...)` in your App creation flow.
 
-### Authentication
+## Authentication
 
-#### SSO Authentication (Recommended)
+### SSO Authentication (Recommended)
 
 To use SSO Authentication, initialize `IxigoSDK` with an instance of `SSOAuthProvider`.
 
@@ -68,9 +72,10 @@ class MyAppPartnerTokenProvider(): PartnerTokenProvider {
 
 // Inside your Application initialization code
 IxigoSDK.init(context, SSOAuthProvider(MyAppPartnerTokenProvider()), /* Other Params */)
+
 ```
 
-#### Custom Authentication
+### Custom Authentication
 
 If your App has other means of getting an Ixigo access token, you can implement `AuthProvider` and use it when initializing `IxigoSDK`.
 
@@ -86,11 +91,12 @@ private class MyAppAuthProvider(): AuthProvider {
 
 // Inside your Application initialization code
 IxigoSDK.init(context, MyAppAuthProvider, /* Other Params */)
+
 ```
 
-### Payment
+## Payment
 
-To customize how payments are processed, you can implement `PaymentProvider` and use it when initializing `IxigoSDK`
+If your App supports a custom Payment mechanism, you can implement `PaymentProvider` and use it when initializing `IxigoSDK`
 
 ```kotlin
 class MyPaymentProvider(): PaymentProvider {
@@ -98,6 +104,7 @@ class MyPaymentProvider(): PaymentProvider {
       TODO("Handle payment")
    }
 }
+
 ```
 
 If your `PaymentProvider` implementation starts another activity for result, you can implement as well `ActivityResultHandler` to get a callback when the Activity is finished
@@ -112,6 +119,7 @@ class MyPaymentProvider(): PaymentProvider, ActivityResultHandler {
     TODO("Handle Activity Result")
   }
 }
+
 ```
 
 ### Configure Appearance
@@ -124,6 +132,7 @@ You can configure the appearance of certain UI elements presented by the sdk by 
   <!-- Primary color: will be used in several UI elements. eg: status bar bg color-->
   <color name="ixigosdk_primary_color">#FF0000</color>
 </resources>
+
 ```
 
 ## [Development](docs/DEVELOPMENT.md)
