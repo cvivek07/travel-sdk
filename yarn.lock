@@ -266,10 +266,14 @@
   resolved "https://registry.yarnpkg.com/@hutson/parse-repository-url/-/parse-repository-url-3.0.2.tgz#98c23c950a3d9b6c8f0daed06da6c3af06981340"
   integrity sha512-H9XAx3hc0BQHY6l+IFSWHDySypcXsvsuLhgYLUGywmJ5pswRVQJUHpOsobnLYp2ZUaUlKiKDrgWWhosOwAEM8Q==
 
-"@ixigo-packages/danger-plugin-merge-request-size@^1.0.14":
-  version "1.0.14"
-  resolved "https://git.ixigo.com/api/v4/projects/520/packages/npm/@ixigo-packages/danger-plugin-merge-request-size/-/@ixigo-packages/danger-plugin-merge-request-size-1.0.14.tgz#107dd96198132facd7a15917d7263fe6617e8a50"
-  integrity sha1-EH3ZYZgTL6zXoVkX1yY/5mF+ilA=
+"@ixigo-packages/ixigo-danger-common@^1.3.1":
+  version "1.3.1"
+  resolved "https://git.ixigo.com/api/v4/projects/536/packages/npm/@ixigo-packages/ixigo-danger-common/-/@ixigo-packages/ixigo-danger-common-1.3.1.tgz#1e66542ec8680e8787162fbc65b06f414ad0b904"
+  integrity sha1-HmZULshoDoeHFi+8ZbBvQUrQuQQ=
+  dependencies:
+    "@commitlint/config-conventional" "^14.1.0"
+    axios "^0.24.0"
+    danger-plugin-conventional-commitlint "^2.0.0"
 
 "@octokit/auth-token@^2.4.0":
   version "2.5.0"
@@ -396,10 +400,15 @@
   resolved "https://registry.yarnpkg.com/@types/minimist/-/minimist-1.2.2.tgz#ee771e2ba4b3dc5b372935d549fd9617bf345b8c"
   integrity sha512-jhuKLIRrhvCPLqwPcx6INqmKeiA5EWrsCOPhrlFSrbrmU4ZMPjj5Ul/oLCMDO98XRUIwVm78xICz4EPCektzeQ==
 
-"@types/node@*", "@types/node@>= 8", "@types/node@^16.6.1":
+"@types/node@*", "@types/node@>= 8":
   version "16.11.7"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-16.11.7.tgz#36820945061326978c42a01e56b61cd223dfdc42"
   integrity sha512-QB5D2sqfSjCmTuWcBWyJ+/44bcjO7VbjSbOE0ucoVbAsSNQc4Lt6QkgkVXkTDwkL4z/beecZNDvVX15D4P8Jbw==
+
+"@types/node@^16.6.1":
+  version "16.11.12"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.11.12.tgz#ac7fb693ac587ee182c3780c26eb65546a1a3c10"
+  integrity sha512-+2Iggwg7PxoO5Kyhvsq9VarmPbIelXP070HMImEpbtGCoyWNINQj4wzjbQCXzdHTRXnqufutJb5KAURZANNBAw==
 
 "@types/normalize-package-data@^2.4.0":
   version "2.4.1"
@@ -581,6 +590,13 @@ aws4@^1.8.0:
   version "1.11.0"
   resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.11.0.tgz#d61f46d83b2519250e2784daf5b09479a8b41c59"
   integrity sha512-xh1Rl34h6Fi1DC2WWKfxUTVqRsNnr6LsKz2+hfwDxQJWmrx8+c7ylaqBMcHfl1U1r2dsifOvKX3LQuLNZ+XSvA==
+
+axios@^0.24.0:
+  version "0.24.0"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-0.24.0.tgz#804e6fa1e4b9c5288501dd9dff56a7a0940d20d6"
+  integrity sha512-Q6cWsys88HoPgAaFAVUb0WpPk0O8iTeisR9IMqy9G8AbO4NlpVknrnQS03zzF9PGAWgO3cgletO3VjV/P7VztA==
+  dependencies:
+    follow-redirects "^1.14.4"
 
 babel-code-frame@^6.26.0:
   version "6.26.0"
@@ -1192,9 +1208,9 @@ danger-plugin-conventional-commitlint@^2.0.0:
     "@commitlint/lint" "^13.1.0"
 
 danger-plugin-lint-report@^1.5.4:
-  version "1.5.5"
-  resolved "https://registry.yarnpkg.com/danger-plugin-lint-report/-/danger-plugin-lint-report-1.5.5.tgz#fd865e2e598771e4fd03f94560993424cdd83cc4"
-  integrity sha512-2C1XqLtiuw4d53UT89buPlNiUyz00yzKrnQg+fMhkKrqstJy7aVYUzHuLKFIXP9MC3ZS25NfqgD7F9vc9MzSKA==
+  version "1.5.6"
+  resolved "https://registry.yarnpkg.com/danger-plugin-lint-report/-/danger-plugin-lint-report-1.5.6.tgz#d48616d1e50e6cb59a98c91ccc6c59d5b54141f2"
+  integrity sha512-dh6IJMfdX7w1UIHVh6Q0Wf40VaIXziuMjxAA14YUfeoIsc8Nyd9Uqz5CXHLFSpJmnkQUmZUX6A/9x+hvCCWqFQ==
   dependencies:
     "@types/node" "^16.6.1"
     glob "^7.1.7"
@@ -1741,6 +1757,11 @@ findup-sync@^4.0.0:
     is-glob "^4.0.0"
     micromatch "^4.0.2"
     resolve-dir "^1.0.1"
+
+follow-redirects@^1.14.4:
+  version "1.14.6"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.14.6.tgz#8cfb281bbc035b3c067d6cd975b0f6ade6e855cd"
+  integrity sha512-fhUl5EwSJbbl8AR+uYL2KQDxLkdSjZGR36xy46AO7cOMTrCMON6Sa28FmAnC2tRTDbd/Uuzz3aJBv7EBN7JH8A==
 
 forever-agent@~0.6.1:
   version "0.6.1"
