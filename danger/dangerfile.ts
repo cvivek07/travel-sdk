@@ -2,6 +2,7 @@ import { scan } from "danger-plugin-lint-report";
 import {
   checkMergeRequestSize,
   commitlint,
+  apkSize,
 } from "@ixigo-packages/ixigo-danger-common";
 import { diffCoverage } from "./diffCoverage";
 
@@ -14,4 +15,9 @@ import { diffCoverage } from "./diffCoverage";
   });
   await commitlint();
   await diffCoverage();
+  await apkSize(
+    "app/build/outputs/apk/debug/app-debug.apk",
+    "development",
+    "build-all"
+  );
 })();

@@ -57,6 +57,7 @@ coverage:mergeRequest:
     when: always
     paths:
       - "**/build/**/reports"
+      - "**/build/outputs"
     reports:
       cobertura: "**/build/reports/cobertura/cobertura.xml"
 
