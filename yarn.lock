@@ -266,10 +266,10 @@
   resolved "https://registry.yarnpkg.com/@hutson/parse-repository-url/-/parse-repository-url-3.0.2.tgz#98c23c950a3d9b6c8f0daed06da6c3af06981340"
   integrity sha512-H9XAx3hc0BQHY6l+IFSWHDySypcXsvsuLhgYLUGywmJ5pswRVQJUHpOsobnLYp2ZUaUlKiKDrgWWhosOwAEM8Q==
 
-"@ixigo-packages/ixigo-danger-common@^2.0.3":
-  version "2.0.3"
-  resolved "https://git.ixigo.com/api/v4/projects/536/packages/npm/@ixigo-packages/ixigo-danger-common/-/@ixigo-packages/ixigo-danger-common-2.0.3.tgz#2dcefe941da108420b81e00dff357f8a82e9093a"
-  integrity sha1-Lc7+lB2hCEILgeAN/zV/ioLpCTo=
+"@ixigo-packages/ixigo-danger-common@^2.0.8":
+  version "2.0.8"
+  resolved "https://git.ixigo.com/api/v4/projects/536/packages/npm/@ixigo-packages/ixigo-danger-common/-/@ixigo-packages/ixigo-danger-common-2.0.8.tgz#7973a79ef6edb368d7da5355be4af1fcf96fb9af"
+  integrity sha1-eXOnnvbts2jX2lNVvkrx/Plvua8=
   dependencies:
     "@commitlint/config-conventional" "^14.1.0"
     async-csv "^2.1.3"
