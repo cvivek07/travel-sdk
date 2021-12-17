@@ -47,14 +47,6 @@ build-all:
       - "**/build/reports"
       - "**/build/outputs"
 
-measure-library-size:
-  stage: post-build
-  script:
-    - "./gradlew ixigo-sdk:assemble ixigo-sdk:measureSize --stacktrace"
-  artifacts:
-    paths:
-      - "**/reports/apkscale.json"
-
 coverage:mergeRequest:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
@@ -86,10 +78,8 @@ deploy:ixigo-sdk:
 danger:
   stage: post-build
   needs:
-    - "measure-library-size"
     - "coverage:mergeRequest"
   dependencies:
-    - measure-library-size
     - coverage:mergeRequest
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'

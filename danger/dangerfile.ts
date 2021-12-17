@@ -3,7 +3,6 @@ import {
   checkMergeRequestSize,
   commitlint,
   apkSize,
-  checkAndroidLibrarySize,
 } from "@ixigo-packages/ixigo-danger-common";
 import { diffCoverage } from "./diffCoverage";
 
@@ -17,5 +16,4 @@ import { diffCoverage } from "./diffCoverage";
   await commitlint();
   await diffCoverage();
   await apkSize("app/build/outputs/**/*.apk", "build-all");
-  await checkAndroidLibrarySize();
 })();

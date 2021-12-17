@@ -1264,10 +1264,10 @@ danger-plugin-conventional-commitlint@^2.0.0:
   dependencies:
     "@commitlint/lint" "^13.1.0"
 
-danger-plugin-lint-report@^1.6.0:
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/danger-plugin-lint-report/-/danger-plugin-lint-report-1.6.0.tgz#edd4de5f49070eefa6ad218c540299f39561db1e"
-  integrity sha512-fE+EakTI4XlloP7cMeTHJKFFCoMzjGChsv1870KPo4xy3aVbanNq2kVlaHBqqnI9M/uV/Bdi/3aHK8z9ZO8vDQ==
+danger-plugin-lint-report@^1.5.4:
+  version "1.5.6"
+  resolved "https://registry.yarnpkg.com/danger-plugin-lint-report/-/danger-plugin-lint-report-1.5.6.tgz#d48616d1e50e6cb59a98c91ccc6c59d5b54141f2"
+  integrity sha512-dh6IJMfdX7w1UIHVh6Q0Wf40VaIXziuMjxAA14YUfeoIsc8Nyd9Uqz5CXHLFSpJmnkQUmZUX6A/9x+hvCCWqFQ==
   dependencies:
     "@types/node" "^16.6.1"
     glob "^7.1.7"
