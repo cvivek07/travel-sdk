@@ -7,7 +7,7 @@ plugins {
 }
 
 junitJacoco {
-    ignoreProjects = ['app', 'auth-sdk'] // Create extension to configure which subprojects to ignore
+    ignoreProjects = ['app'] // Create extension to configure which subprojects to ignore
     excludes = [
             '**/R.class',
             '**/R2.class', // ButterKnife Gradle Plugin.

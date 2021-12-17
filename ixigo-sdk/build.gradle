@@ -95,8 +95,8 @@ dependencies {
     androidTestImplementation 'commons-io:commons-io:2.11.0' // Used to read html files when testing WebView
 }
 
-group = 'com.ixigo.sdk.flights'
-version = "1.0.1"
+group = 'com.ixigo.sdk'
+version = "1.0.0"
 
 afterEvaluate {
     publishing {

@@ -68,8 +68,8 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:28.4.2')
     implementation 'com.google.firebase:firebase-analytics-ktx'
 
-    implementation project(path: ':flights-sdk')
-//    implementation("com.ixigo.sdk.flights:flights-sdk:1.0-SNAPSHOT") {
+    implementation project(path: ':ixigo-sdk')
+//    implementation("com.ixigo.sdk.flights:ixigo-sdk:1.0-SNAPSHOT") {
 //        changing = true
 //    }
 

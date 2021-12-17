@@ -48,7 +48,7 @@ build-all:
 measure-library-size:
   stage: post-build
   script:
-    - "./gradlew flights-sdk:assemble flights-sdk:measureSize --stacktrace"
+    - "./gradlew ixigo-sdk:assemble ixigo-sdk:measureSize --stacktrace"
   artifacts:
     paths:
       - "**/reports/apkscale.json"
@@ -69,10 +69,10 @@ coverage:mergeRequest:
     reports:
       cobertura: "**/build/reports/cobertura/cobertura.xml"
 
-deploy:flights-sdk:
+deploy:ixigo-sdk:
   extends: .common:snapshot-deploy
   variables:
-    LIB: flights-sdk
+    LIB: ixigo-sdk
 
 .common:snapshot-deploy:
   stage: deploy
@@ -87,8 +87,8 @@ danger:
     - "measure-library-size"
     - "coverage:mergeRequest"
   dependencies:
-    - "measure-library-size"
-    - "coverage:mergeRequest"
+    - measure-library-size
+    - coverage:mergeRequest
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
   cache:
@@ -123,10 +123,10 @@ release:
     - git config --global user.email "${GITLAB_USER_EMAIL}"
   script:
     - yarn install
-    - yarn run release -- -t flights-sdk-
+    - yarn run release -- -t ixigo-sdk-
     - git push --follow-tags -o ci-skip http://root:$REPO_ACCESS_TOKEN@$CI_SERVER_HOST/$CI_PROJECT_PATH.git HEAD:development
     - yarn run pdf-changelog
-    - "./gradlew flights-sdk:publishReleasePublicationToNexusRepository --stacktrace"
+    - "./gradlew ixigo-sdk:publishReleasePublicationToNexusRepository --stacktrace"
   artifacts:
     name: CHANGELOG
     paths:
@@ -143,7 +143,7 @@ release-preview:
     - git config --global user.email "${GITLAB_USER_EMAIL}"
   script:
     - yarn install
-    - yarn run release -- -t flights-sdk-
+    - yarn run release -- -t ixigo-sdk-
     - yarn run pdf-changelog
   artifacts:
     name: CHANGELOG

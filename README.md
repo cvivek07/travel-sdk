@@ -21,7 +21,7 @@ Inside **app/build.gradle**
 ```groovy
 dependencies {
   // Other dependencies...
-  implementation "com.ixigo.sdk.flights:flights-sdk:1.0.1"
+  implementation "com.ixigo.sdk.flights:ixigo-sdk:1.0.1"
 }
 
 ```
@@ -45,7 +45,7 @@ Inside **app/build.gradle**
 ```groovy
 dependencies {
   // Other dependencies...
-  implementation "com.ixigo.sdk.flights:flights-sdk:1.0.1-SNAPSHOT"
+  implementation "com.ixigo.sdk.flights:ixigo-sdk:1.0.1-SNAPSHOT"
 }
 
 ```
