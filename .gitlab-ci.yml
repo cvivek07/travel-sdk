@@ -45,7 +45,7 @@ build-all:
       - "**/build/reports"
       - "**/build/outputs"
 
-measure-apk-size:
+measure-library-size:
   stage: post-build
   script:
     - "./gradlew flights-sdk:assemble flights-sdk:measureSize --stacktrace"
@@ -84,6 +84,10 @@ deploy:flights-sdk:
 danger:
   stage: post-build
   needs:
+    - "measure-library-size"
+    - "coverage:mergeRequest"
+  dependencies:
+    - "measure-library-size"
     - "coverage:mergeRequest"
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'

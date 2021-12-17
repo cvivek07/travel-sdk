@@ -21,14 +21,14 @@ export function coverageTables(groups: CoverageGroup[]) {
   const markdownTables = groups
     .map((group) => coverageTable(group))
     .join("\n\n");
-  markdown(markdownTables);
+  markdown("# Test Coverage\n" + markdownTables);
 }
 
 function coverageTable(group: CoverageGroup): string {
   const { rows } = group;
   const columns = getColumns(rows);
   if (columns.length == 0) {
-    return `### ${group.name}
+    return `## ${group.name}
 No coverage info found.`;
   }
 
@@ -40,7 +40,7 @@ No coverage info found.`;
     return `| ${row.name} | ${coverageData.join(" | ")} |`;
   });
 
-  return `### ${group.name}
+  return `## ${group.name}
 ${header}
 ${headerSeparator}
 ${projectRows.join("\n")}`;
