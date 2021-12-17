@@ -4,6 +4,7 @@ plugins {
     id 'kotlin-parcelize'
     id 'maven-publish'
     id 'org.jetbrains.dokka'
+    id 'com.twilio.apkscale'
 }
 
 android {
@@ -66,7 +67,7 @@ dependencies {
 
     // Unit Tests
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
-    debugImplementation("androidx.fragment:fragment-testing:$fragmentVersion")
+    testImplementation("androidx.fragment:fragment-testing:$fragmentVersion")
     testImplementation 'androidx.test.ext:junit-ktx:1.1.3'
     testImplementation 'junit:junit:4.13.2'
     testImplementation 'androidx.test.espresso:espresso-web:3.4.0'

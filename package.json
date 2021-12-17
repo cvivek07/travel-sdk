@@ -15,7 +15,7 @@
     "@commitlint/cz-commitlint": "^14.1.0",
     "@damlys/standard-version-updater-gradle": "1.0.0",
     "commitizen": "^4.2.4",
-    "danger-plugin-lint-report": "^1.5.4",
+    "danger-plugin-lint-report": "^1.6.0",
     "danger": "^10.6.6",
     "husky": "^7.0.2",
     "standard-version": "^9.3.2",
@@ -23,7 +23,7 @@
     "markdown-pdf": "10.0.0"
   },
   "dependencies": {
-    "@ixigo-packages/ixigo-danger-common": "^2.0.8",
+    "@ixigo-packages/ixigo-danger-common": "^2.0.9",
     "glob-promise": "^4.2.0",
     "is-object": "^1.0.2",
     "xml2js": "^0.4.23"
