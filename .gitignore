@@ -1,6 +1,7 @@
 
 # Custom 
 .idea/deploymentTargetDropDown.xml
+.idea/ktfmt.xml
 
 # Created by https://www.toptal.com/developers/gitignore/api/android,androidstudio,node
 # Edit at https://www.toptal.com/developers/gitignore?templates=android,androidstudio,node

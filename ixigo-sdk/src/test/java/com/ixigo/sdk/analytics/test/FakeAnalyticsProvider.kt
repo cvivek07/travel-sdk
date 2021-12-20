@@ -1,8 +1,8 @@
 package com.ixigo.sdk.analytics.test
 
-import android.os.Bundle
 import com.ixigo.sdk.analytics.AnalyticsProvider
+import com.ixigo.sdk.analytics.Event
 
-class FakeAnalyticsProvider(override val enabled: Boolean = false) : AnalyticsProvider {
-  override fun logEvent(name: String, params: Bundle) {}
+class FakeAnalyticsProvider : AnalyticsProvider {
+  override fun logEvent(event: Event) {}
 }

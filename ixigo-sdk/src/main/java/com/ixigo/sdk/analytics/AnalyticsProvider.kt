@@ -1,8 +1,17 @@
 package com.ixigo.sdk.analytics
 
-import android.os.Bundle
-
 interface AnalyticsProvider {
-  val enabled: Boolean
-  fun logEvent(name: String, params: Bundle)
+  fun logEvent(event: Event)
+}
+
+data class Event(
+    val category: String,
+    val action: String,
+    val value: Long? = null,
+    val label: String? = null,
+    val dimensions: Map<EventDimension, String> = mapOf()
+)
+
+enum class EventDimension(val index: Int) {
+  CLIENT_ID(1)
 }
