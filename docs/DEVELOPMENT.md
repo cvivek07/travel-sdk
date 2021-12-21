@@ -34,6 +34,15 @@ This means our commits need to follow the standard message. If you don't, you mi
 
 To create a commit that always complies you can create it using `yarn run commit`. This will guide you through creating a compliant ommit message.
 
+## Analytics
+
+Metrics of the SDK are collected using [Google Analytics](https://developers.google.com/analytics/devguides/collection/android/v4) Legacy (not GA4). The rationale for this is:
+
+- We can't use Firebase Analytics since it only works with 1 Firebase App, and analytics would go to the host Firebase App.
+- GA4 for mobile forces you to use Firebase
+
+Analytics Account Id: `211766096`. Contact miguel@travenues (or rajnish@travenues) for access if needed.
+
 ## Release a new version
 
 To release a new version:
