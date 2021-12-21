@@ -5,12 +5,14 @@ package com.ixigo.sdk.flights
 import android.content.Context
 import android.net.Uri
 import com.ixigo.sdk.IxigoSDK
+import com.ixigo.sdk.analytics.Event
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 fun IxigoSDK.flightsStartHome(context: Context) {
   val url = getUrl(mapOf("page" to "FLIGHT_HOME"))
   launchWebActivity(context, url)
+  analyticsProvider.logEvent(Event(action = "flightsStartHome"))
 }
 
 fun IxigoSDK.flightsStartSearch(context: Context, searchData: FlightSearchData) {
@@ -29,6 +31,8 @@ fun IxigoSDK.flightsStartSearch(context: Context, searchData: FlightSearchData) 
               "source" to searchData.source))
 
   launchWebActivity(context, url)
+
+  analyticsProvider.logEvent(Event(action = "flightsStartSearch"))
 }
 
 private fun IxigoSDK.getUrl(properties: Map<String, String>): String {

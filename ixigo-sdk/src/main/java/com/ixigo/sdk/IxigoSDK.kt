@@ -74,9 +74,7 @@ internal constructor(
 
       analyticsProvider.logEvent(
           Event(
-              category = "Lifecycle",
-              action = "init",
-              dimensions = mapOf(EventDimension.CLIENT_ID to appInfo.clientId)))
+              action = "sdkInit", dimensions = mapOf(EventDimension.CLIENT_ID to appInfo.clientId)))
     }
 
     /**

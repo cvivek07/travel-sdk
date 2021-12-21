@@ -5,7 +5,7 @@ interface AnalyticsProvider {
 }
 
 data class Event(
-    val category: String,
+    val category: String = "action",
     val action: String,
     val value: Long? = null,
     val label: String? = null,

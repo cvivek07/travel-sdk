@@ -8,6 +8,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ixigo.sdk.AppInfo
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.analytics.AnalyticsProvider
+import com.ixigo.sdk.analytics.Event
 import com.ixigo.sdk.auth.AuthData
 import com.ixigo.sdk.auth.EmptyAuthProvider
 import com.ixigo.sdk.auth.test.FakeAuthProvider
@@ -24,6 +25,7 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 import org.robolectric.Shadows.shadowOf
 
 @RunWith(AndroidJUnit4::class)
@@ -31,7 +33,7 @@ class FlightsFunnelTest {
 
   private lateinit var scenario: ActivityScenario<Activity>
   private lateinit var activity: Activity
-  private val analyticsProvider = mock<AnalyticsProvider>()
+  private val mockAnalyticsProvider = mock<AnalyticsProvider>()
 
   @Before
   fun setup() {
@@ -46,7 +48,7 @@ class FlightsFunnelTest {
 
   @Test
   fun `test flightsStartHome launches WebActivity`() {
-    IxigoSDK.init(activity, EmptyAuthProvider, EmptyPaymentProvider, appInfo, analyticsProvider)
+    IxigoSDK.init(activity, EmptyAuthProvider, EmptyPaymentProvider, appInfo, mockAnalyticsProvider)
     assertFlightsHome()
   }
 
@@ -57,7 +59,7 @@ class FlightsFunnelTest {
         FakeAuthProvider("token", AuthData("token")),
         EmptyPaymentProvider,
         appInfo,
-        analyticsProvider)
+        mockAnalyticsProvider)
     assertFlightsHome()
   }
 
@@ -131,14 +133,16 @@ class FlightsFunnelTest {
       assertLaunchedIntent(
           activity,
           "https://www.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=appVersion&deviceId=deviceId&languageCode=en&page=FLIGHT_HOME")
+      verify(mockAnalyticsProvider).logEvent(Event(action = "flightsStartHome"))
     }
   }
 
   private fun assertFlightSearch(searchData: FlightSearchData, expectedUrl: String) {
-    IxigoSDK.init(activity, EmptyAuthProvider, EmptyPaymentProvider, appInfo, analyticsProvider)
+    IxigoSDK.init(activity, EmptyAuthProvider, EmptyPaymentProvider, appInfo, mockAnalyticsProvider)
     scenario.onActivity { activity ->
       IxigoSDK.getInstance().flightsStartSearch(activity, searchData)
       assertLaunchedIntent(activity, expectedUrl)
+      verify(mockAnalyticsProvider).logEvent(Event(action = "flightsStartSearch"))
     }
   }
 
