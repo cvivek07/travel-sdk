@@ -7,7 +7,6 @@ import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.JavascriptInterface
 import android.webkit.WebChromeClient
 import android.webkit.WebViewClient
 import androidx.activity.OnBackPressedCallback
@@ -18,9 +17,6 @@ import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.common.ActivityResultHandler
 import com.ixigo.sdk.common.Generated
 import com.ixigo.sdk.flights.databinding.WebviewLayoutBinding
-import com.ixigo.sdk.payment.PaymentInput
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.parcelize.Parcelize
 
 class WebViewFragment : Fragment() {
@@ -122,45 +118,4 @@ data class InitialPageData(
 
 interface JsInterface {
   val name: String
-}
-
-private class IxiWebView(val fragment: WebViewFragment) : JsInterface {
-
-  private val moshi by lazy { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
-  private val paymentInputAdapter by lazy { moshi.adapter(PaymentInput::class.java) }
-
-  override val name: String
-    get() = "IxiWebView"
-
-  @JavascriptInterface
-  fun loginUser(logInSuccessJsFunction: String, logInFailureJsFunction: String): Boolean {
-    return fragment.viewModel.login(
-        fragment.requireActivity(),
-        LoginParams(
-            successJSFunction = logInSuccessJsFunction, failureJSFunction = logInFailureJsFunction))
-  }
-
-  @JavascriptInterface
-  fun quit() {
-    runOnUiThread { fragment.delegate.quit() }
-  }
-
-  @JavascriptInterface
-  fun executeNativePayment(paymentInfoString: String): Boolean {
-    return try {
-      val paymentInput = paymentInputAdapter.fromJson(paymentInfoString)!!
-      fragment.viewModel.startNativePayment(fragment.requireActivity(), paymentInput)
-    } catch (_: Exception) {
-      false
-    }
-  }
-
-  @JavascriptInterface
-  fun openWindow(url: String, title: String) {
-    runOnUiThread { IxigoSDK.getInstance().launchWebActivity(fragment.requireActivity(), url) }
-  }
-
-  private fun runOnUiThread(runnable: Runnable) {
-    fragment.requireActivity().runOnUiThread(runnable)
-  }
 }

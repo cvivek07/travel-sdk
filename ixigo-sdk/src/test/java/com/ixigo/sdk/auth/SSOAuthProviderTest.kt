@@ -9,7 +9,6 @@ import com.ixigo.sdk.analytics.test.FakeAnalyticsProvider
 import com.ixigo.sdk.auth.test.FakePartnerTokenProvider
 import com.ixigo.sdk.payment.EmptyPaymentProvider
 import com.ixigo.sdk.test.TestData.FakeAppInfo
-import java.util.concurrent.CountDownLatch
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.awaitility.kotlin.await
@@ -46,7 +45,6 @@ class SSOAuthProviderTest {
   fun `test that accessToken is retrieved successfully`() {
     val expectedAccessToken = "expectedAccessToken"
     mockServer.enqueue(MockResponse().setBody(validJsonResponse(expectedAccessToken)))
-    val countDownLatch = CountDownLatch(1)
     val partnerToken = PartnerToken("partnerToken")
     val ssoAuthProvider = SSOAuthProvider(FakePartnerTokenProvider(partnerToken))
     assertNull(ssoAuthProvider.authData)
@@ -128,7 +126,7 @@ class SSOAuthProviderTest {
     assertTrue(request.headers.contains(Pair("deviceId", appInfo.deviceId)))
   }
 
-  fun validJsonResponse(accessToken: String): String =
+  private fun validJsonResponse(accessToken: String): String =
       """
         {
           "data": {

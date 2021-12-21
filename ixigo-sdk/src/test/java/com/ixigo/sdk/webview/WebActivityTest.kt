@@ -53,6 +53,7 @@ class WebActivityTest {
       assertEquals(
           expectedLight,
           WindowInsetsControllerCompat(activity.window, rootView).isAppearanceLightStatusBars)
+      @Suppress("DEPRECATION")
       assertEquals(
           activity.resources.getColor(R.color.ixigosdk_primary_color),
           activity.window.statusBarColor)

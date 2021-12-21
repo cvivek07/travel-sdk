@@ -42,6 +42,7 @@ class WebActivity : AppCompatActivity(), WebViewFragmentDelegate {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
           ColorUtils.calculateLuminance(resources.getColor(R.color.ixigosdk_primary_color, theme))
         } else {
+          @Suppress("DEPRECATION")
           ColorUtils.calculateLuminance(resources.getColor(R.color.ixigosdk_primary_color))
         }
     val isLightColor = luminance > 0.5

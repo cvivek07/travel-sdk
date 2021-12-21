@@ -13,9 +13,20 @@ class ResultTest {
   }
 
   @Test
+  fun testOkHashcode() {
+    assertEquals("hello".hashCode(), Ok("hello").hashCode())
+  }
+
+  @Test
   fun testErrEquals() {
     assertEquals(Err(Error("error1")), Err(Error("error1")))
     assertEquals(Err(Exception("error1")), Err(Exception("error2")))
     assertNotEquals(Err(Error("error1")), Error("error1"))
+  }
+
+  @Test
+  fun testErrHashcode() {
+    val error = Error("error1")
+    assertEquals(error.hashCode(), Err(error).hashCode())
   }
 }

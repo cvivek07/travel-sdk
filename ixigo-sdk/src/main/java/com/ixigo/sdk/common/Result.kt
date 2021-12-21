@@ -45,8 +45,12 @@ sealed class Result<out T> {
 
 class Ok<T>(val value: T) : Result<T>() {
   override fun equals(other: Any?): Boolean {
-    val otherOk = other as? Ok<T> ?: return false
+    @Suppress("UNCHECKED_CAST") val otherOk = other as? Ok<T> ?: return false
     return otherOk.value == value
+  }
+
+  override fun hashCode(): Int {
+    return value.hashCode()
   }
 }
 
@@ -54,5 +58,9 @@ class Err(val value: Throwable) : Result<Nothing>() {
   override fun equals(other: Any?): Boolean {
     val otherErr = other as? Err ?: return false
     return otherErr.value::class == value::class
+  }
+
+  override fun hashCode(): Int {
+    return value.hashCode()
   }
 }
