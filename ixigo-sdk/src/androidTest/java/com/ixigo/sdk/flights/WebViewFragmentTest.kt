@@ -13,6 +13,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.ixigo.sdk.AppInfo
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.analytics.AnalyticsProvider
+import com.ixigo.sdk.analytics.Event
 import com.ixigo.sdk.auth.*
 import com.ixigo.sdk.common.Err
 import com.ixigo.sdk.common.Ok
@@ -78,6 +79,7 @@ class WebViewFragmentTest {
         analyticsProvider)
     onWebView().withElement(findElement(Locator.ID, "native_payment_button")).perform(webClick())
     onWebView().check(webMatches(getCurrentUrl(), equalTo(successfulPaymentUrl)))
+    assertPaymentEvents(true)
   }
 
   @Test
@@ -91,6 +93,7 @@ class WebViewFragmentTest {
     onWebView().withElement(findElement(Locator.ID, "native_payment_button")).perform(webClick())
 
     assertElementText("payment_result", "true")
+    assertPaymentEvents(false)
   }
 
   @Test
@@ -104,6 +107,7 @@ class WebViewFragmentTest {
     onWebView().withElement(findElement(Locator.ID, "native_payment_button")).perform(webClick())
 
     assertElementText("payment_result", "false")
+    assertPaymentEvents(false)
   }
 
   @Test
@@ -119,6 +123,7 @@ class WebViewFragmentTest {
         .perform(webClick())
 
     assertElementText("payment_result", "false")
+    assertPaymentEvents(false)
   }
 
   @Test
@@ -128,6 +133,13 @@ class WebViewFragmentTest {
     onWebView().withElement(findElement(Locator.ID, "quit_button")).perform(webClick())
 
     verify(fragmentDelegate).quit()
+  }
+
+  private fun assertPaymentEvents(success: Boolean) {
+    verify(analyticsProvider).logEvent(Event(action = "paymentStart"))
+    val finishedEventLabel = if (success) "Success" else "Error"
+    verify(analyticsProvider)
+        .logEvent(Event(action = "paymentFinished", label = finishedEventLabel))
   }
 
   private fun assertElementText(id: String, expectedText: String) {
@@ -150,6 +162,10 @@ class WebViewFragmentTest {
     onWebView()
         .withElement(findElement(Locator.ID, "login_result"))
         .check(webMatches(getText(), equalTo(expectedLoginResult)))
+
+    verify(analyticsProvider).logEvent(Event(action = "loginStart"))
+    val finishedEventLabel = if (token == null) "Error" else "Success"
+    verify(analyticsProvider).logEvent(Event(action = "loginFinished", label = finishedEventLabel))
   }
 
   private val appInfo =

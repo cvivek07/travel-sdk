@@ -31,7 +31,11 @@ class SSOAuthProvider(private val partnerTokenProvider: PartnerTokenProvider) : 
     private set
 
   override fun login(fragmentActivity: FragmentActivity, callback: AuthCallback): Boolean {
-    val partnerToken = partnerTokenProvider.partnerToken ?: return false
+    val partnerToken = partnerTokenProvider.partnerToken
+    if (partnerToken == null) {
+      Timber.e("Unable to find a partner token when attempting SSO login")
+      return false
+    }
 
     val formBody: FormBody = FormBody.Builder().add("authCode", partnerToken.token).build()
 

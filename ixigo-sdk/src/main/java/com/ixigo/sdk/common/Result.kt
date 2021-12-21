@@ -29,6 +29,18 @@ sealed class Result<out T> {
       is Err -> failure(value)
     }
   }
+
+  /**
+   * Used for logging
+   *
+   * @return "Success" or "Error", depending on the value of the Result
+   */
+  fun simpleString(): String {
+    return when (this) {
+      is Ok -> "Success"
+      is Err -> "Error"
+    }
+  }
 }
 
 class Ok<T>(val value: T) : Result<T>() {
