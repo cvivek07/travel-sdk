@@ -20,79 +20,89 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.Shadows
 
-
 @RunWith(AndroidJUnit4::class)
 class IxigoSDKTests {
 
-    private lateinit var scenario: ActivityScenario<Activity>
+  private lateinit var scenario: ActivityScenario<Activity>
 
-    @Test
-    fun `test launchWebActivity for logged in user`() {
-        val ixigoSDK =
-            IxigoSDK(FakeAppInfo, FakeAuthProvider(null, AuthData("token")), EmptyPaymentProvider, DisabledAnalyticsProvider)
-        testLaunchActivity("https://www.ixigo.com/page", ixigoSDK)
+  @Test
+  fun `test launchWebActivity for logged in user`() {
+    val ixigoSDK =
+        IxigoSDK(
+            FakeAppInfo,
+            FakeAuthProvider(null, AuthData("token")),
+            EmptyPaymentProvider,
+            DisabledAnalyticsProvider)
+    testLaunchActivity("https://www.ixigo.com/page", ixigoSDK)
+  }
+
+  @Test
+  fun `test launchWebActivity for logged out user`() {
+    val ixigoSDK =
+        IxigoSDK(FakeAppInfo, EmptyAuthProvider, EmptyPaymentProvider, DisabledAnalyticsProvider)
+    testLaunchActivity("https://www.ixigo.com/page", ixigoSDK)
+  }
+
+  @Test
+  fun `test launchWebActivity for non ixigo website does not append headers`() {
+    val ixigoSDK =
+        IxigoSDK(
+            FakeAppInfo,
+            FakeAuthProvider(null, AuthData("token")),
+            EmptyPaymentProvider,
+            DisabledAnalyticsProvider)
+    testLaunchActivity("https://www.booking.com/page", ixigoSDK, mapOf())
+  }
+
+  @Test
+  fun `test launchWebActivity for malformed url does not append headers`() {
+    val ixigoSDK =
+        IxigoSDK(
+            FakeAppInfo,
+            FakeAuthProvider(null, AuthData("token")),
+            EmptyPaymentProvider,
+            DisabledAnalyticsProvider)
+    testLaunchActivity("www.ixigo.com/page", ixigoSDK, mapOf())
+  }
+
+  private fun testLaunchActivity(
+      url: String,
+      ixigoSDK: IxigoSDK,
+      expectedHeaders: Map<String, String> = expectedHeaders(ixigoSDK)
+  ) {
+    scenario = launchActivity()
+    scenario.onActivity { activity ->
+      ixigoSDK.launchWebActivity(activity, url)
+      assertLaunchedIntent(activity, url, expectedHeaders)
     }
+  }
 
-    @Test
-    fun `test launchWebActivity for logged out user`() {
-        val ixigoSDK =
-            IxigoSDK(FakeAppInfo, EmptyAuthProvider, EmptyPaymentProvider, DisabledAnalyticsProvider)
-        testLaunchActivity("https://www.ixigo.com/page", ixigoSDK)
-    }
+  private fun assertLaunchedIntent(
+      activity: Activity,
+      url: String,
+      expectedHeaders: Map<String, String>
+  ) {
+    val intent = Intent(activity, WebActivity::class.java)
+    intent.putExtra(WebViewFragment.INITIAL_PAGE_DATA_ARGS, InitialPageData(url, expectedHeaders))
+    val shadowActivity = Shadows.shadowOf(activity)
+    val nextIntent = shadowActivity.nextStartedActivity
+    MatcherAssert.assertThat(nextIntent, IntentMatcher(intent))
+  }
 
-    @Test
-    fun `test launchWebActivity for non ixigo website does not append headers`() {
-        val ixigoSDK =
-            IxigoSDK(FakeAppInfo, FakeAuthProvider(null, AuthData("token")), EmptyPaymentProvider, DisabledAnalyticsProvider)
-        testLaunchActivity("https://www.booking.com/page", ixigoSDK, mapOf())
-    }
-
-    @Test
-    fun `test launchWebActivity for malformed url does not append headers`() {
-        val ixigoSDK =
-            IxigoSDK(FakeAppInfo, FakeAuthProvider(null, AuthData("token")), EmptyPaymentProvider, DisabledAnalyticsProvider)
-        testLaunchActivity("www.ixigo.com/page", ixigoSDK, mapOf())
-    }
-
-    private fun testLaunchActivity(url: String, ixigoSDK: IxigoSDK, expectedHeaders: Map<String, String> = expectedHeaders(ixigoSDK)) {
-        scenario = launchActivity()
-        scenario.onActivity { activity ->
-            ixigoSDK.launchWebActivity(activity, url)
-            assertLaunchedIntent(activity, url, expectedHeaders)
+  private fun expectedHeaders(ixigoSDK: IxigoSDK): Map<String, String> {
+    val appInfo = ixigoSDK.appInfo
+    return mutableMapOf(
+        "appVersion" to appInfo.appVersion,
+        "clientId" to appInfo.clientId,
+        "apiKey" to appInfo.apiKey,
+        "deviceId" to appInfo.deviceId,
+        "uuid" to appInfo.uuid,
+    )
+        .also {
+          val authData = ixigoSDK.authProvider.authData
+          if (authData != null) {
+            it["Authorization"] = authData.token
+          }
         }
-    }
-
-    private fun assertLaunchedIntent(
-        activity: Activity,
-        url: String,
-        expectedHeaders: Map<String, String>
-    ) {
-        val intent = Intent(activity, WebActivity::class.java)
-        intent.putExtra(
-            WebViewFragment.INITIAL_PAGE_DATA_ARGS,
-            InitialPageData(
-                url,
-                expectedHeaders
-            )
-        )
-        val shadowActivity = Shadows.shadowOf(activity)
-        val nextIntent = shadowActivity.nextStartedActivity
-        MatcherAssert.assertThat(nextIntent, IntentMatcher(intent))
-    }
-
-    private fun expectedHeaders(ixigoSDK: IxigoSDK): Map<String, String> {
-        val appInfo = ixigoSDK.appInfo
-        return mutableMapOf(
-            "appVersion" to appInfo.appVersion,
-            "clientId" to appInfo.clientId,
-            "apiKey" to appInfo.apiKey,
-            "deviceId" to appInfo.deviceId,
-            "uuid" to appInfo.uuid,
-        ).also {
-            val authData = ixigoSDK.authProvider.authData
-            if (authData != null) {
-                it["Authorization"] = authData.token
-            }
-        }
-    }
+  }
 }

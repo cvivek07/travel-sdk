@@ -9,6 +9,7 @@ import com.ixigo.sdk.analytics.test.FakeAnalyticsProvider
 import com.ixigo.sdk.auth.test.FakePartnerTokenProvider
 import com.ixigo.sdk.payment.EmptyPaymentProvider
 import com.ixigo.sdk.test.TestData.FakeAppInfo
+import java.util.concurrent.CountDownLatch
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.awaitility.kotlin.await
@@ -17,126 +18,118 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.atomic.AtomicBoolean
 
 @RunWith(AndroidJUnit4::class)
 class SSOAuthProviderTest {
 
-    private lateinit var mockServer: MockWebServer
+  private lateinit var mockServer: MockWebServer
 
-    @Before
-    fun setup() {
-        mockServer = MockWebServer()
-        mockServer.start()
-        IxigoSDK.replaceInstance(
-            IxigoSDK(
-                FakeAppInfo,
-                EmptyAuthProvider,
-                EmptyPaymentProvider,
-                FakeAnalyticsProvider(),
-                Config(mockServer.url("").toString())
-            )
-        )
+  @Before
+  fun setup() {
+    mockServer = MockWebServer()
+    mockServer.start()
+    IxigoSDK.replaceInstance(
+        IxigoSDK(
+            FakeAppInfo,
+            EmptyAuthProvider,
+            EmptyPaymentProvider,
+            FakeAnalyticsProvider(),
+            Config(mockServer.url("").toString())))
+  }
+
+  @After
+  fun tearDown() {
+    IxigoSDK.clearInstance()
+  }
+
+  @Test
+  fun `test that accessToken is retrieved successfully`() {
+    val expectedAccessToken = "expectedAccessToken"
+    mockServer.enqueue(MockResponse().setBody(validJsonResponse(expectedAccessToken)))
+    val countDownLatch = CountDownLatch(1)
+    val partnerToken = PartnerToken("partnerToken")
+    val ssoAuthProvider = SSOAuthProvider(FakePartnerTokenProvider(partnerToken))
+    assertNull(ssoAuthProvider.authData)
+
+    var callbackCalled = false
+    launchActivity<FragmentActivity>().onActivity { activity ->
+      val handled =
+          ssoAuthProvider.login(activity) {
+            assertTrue(it.isSuccess)
+            it.onSuccess { authData -> assertEquals(expectedAccessToken, authData.token) }
+            assertRequest(partnerToken)
+            callbackCalled = true
+          }
+      assertTrue(handled)
     }
+    await.until { callbackCalled }
+  }
 
-    @After
-    fun tearDown() {
-        IxigoSDK.clearInstance()
+  @Test
+  fun `test that login returns false if no partnerToken is provided`() {
+    val ssoAuthProvider = SSOAuthProvider(FakePartnerTokenProvider(null))
+
+    launchActivity<FragmentActivity>().onActivity { activity ->
+      val handled = ssoAuthProvider.login(activity) { fail("block should not have been called") }
+      assertFalse(handled)
+      assertEquals(0, mockServer.requestCount)
     }
+  }
 
-    @Test
-    fun `test that accessToken is retrieved successfully`() {
-        val expectedAccessToken = "expectedAccessToken"
-        mockServer.enqueue(
-            MockResponse().setBody(validJsonResponse(expectedAccessToken))
-        )
-        val countDownLatch = CountDownLatch(1)
-        val partnerToken = PartnerToken("partnerToken")
-        val ssoAuthProvider = SSOAuthProvider(FakePartnerTokenProvider(partnerToken))
-        assertNull(ssoAuthProvider.authData)
+  @Test
+  fun `test that login returns Error if request returns 400`() {
+    assertRequestFails(MockResponse().setResponseCode(400))
+  }
 
-        var callbackCalled = false
-        launchActivity<FragmentActivity>().onActivity { activity ->
-            val handled = ssoAuthProvider.login(activity) {
-                assertTrue(it.isSuccess)
-                it.onSuccess { authData ->
-                    assertEquals(expectedAccessToken, authData.token)
-                }
-                assertRequest(partnerToken)
-                callbackCalled = true
-            }
-            assertTrue(handled)
-        }
-        await.until { callbackCalled }
+  @Test
+  fun `test that login returns Error if json is invalid`() {
+    assertRequestFails(MockResponse().setBody("""{"data":{}}"""))
+  }
+
+  @Test
+  fun `test that login returns Error if request fails`() {
+    assertRequestFails(MockResponse().setStatus("bad status"))
+  }
+
+  private fun assertRequestFails(response: MockResponse) {
+    mockServer.enqueue(response)
+    val partnerToken = PartnerToken("partnerToken")
+    val ssoAuthProvider = SSOAuthProvider(FakePartnerTokenProvider(partnerToken))
+
+    var callbackCalled = false
+    launchActivity<FragmentActivity>().onActivity { activity ->
+      val handled =
+          ssoAuthProvider.login(activity) {
+            print("XXX inside UI Thread")
+            assertFalse(it.isSuccess)
+            assertRequest(partnerToken)
+            callbackCalled = true
+            print("callback changed")
+          }
+      assertTrue(handled)
     }
+    await.until { callbackCalled }
+    print("XXX DONE")
+  }
 
-    @Test
-    fun `test that login returns false if no partnerToken is provided`() {
-        val ssoAuthProvider = SSOAuthProvider(FakePartnerTokenProvider(null))
+  private fun assertRequest(partnerToken: PartnerToken) {
+    assertEquals(1, mockServer.requestCount)
+    val request = mockServer.takeRequest()
 
-        launchActivity<FragmentActivity>().onActivity { activity ->
-            val handled = ssoAuthProvider.login(activity) {
-                fail("block should not have been called")
-            }
-            assertFalse(handled)
-            assertEquals(0, mockServer.requestCount)
-        }
-    }
+    assertEquals("POST", request.method)
+    assertEquals("/api/v2/oauth/sso/login/token", request.path)
+    assertEquals("[text=authCode=${partnerToken.token}]", request.body.toString())
 
-    @Test
-    fun `test that login returns Error if request returns 400`() {
-        assertRequestFails(MockResponse().setResponseCode(400))
-    }
+    val appInfo = IxigoSDK.getInstance().appInfo
 
-    @Test
-    fun `test that login returns Error if json is invalid`() {
-        assertRequestFails(MockResponse().setBody("""{"data":{}}"""))
-    }
+    assertTrue(request.headers.contains(Pair("ixiSrc", appInfo.clientId)))
+    assertTrue(request.headers.contains(Pair("clientId", appInfo.clientId)))
+    assertTrue(request.headers.contains(Pair("apiKey", appInfo.apiKey)))
+    assertTrue(request.headers.contains(Pair("deviceId", appInfo.deviceId)))
+  }
 
-    @Test
-    fun `test that login returns Error if request fails`() {
-        assertRequestFails(MockResponse().setStatus("bad status"))
-    }
-
-    private fun assertRequestFails(response: MockResponse) {
-        mockServer.enqueue(response)
-        val partnerToken = PartnerToken("partnerToken")
-        val ssoAuthProvider = SSOAuthProvider(FakePartnerTokenProvider(partnerToken))
-
-        var callbackCalled = false
-        launchActivity<FragmentActivity>().onActivity { activity ->
-            val handled = ssoAuthProvider.login(activity) {
-                print("XXX inside UI Thread")
-                assertFalse(it.isSuccess)
-                assertRequest(partnerToken)
-                callbackCalled = true
-                print("callback changed")
-            }
-            assertTrue(handled)
-        }
-        await.until { callbackCalled }
-        print("XXX DONE")
-    }
-
-    private fun assertRequest(partnerToken: PartnerToken) {
-        assertEquals(1, mockServer.requestCount)
-        val request = mockServer.takeRequest()
-
-        assertEquals("POST", request.method)
-        assertEquals("/api/v2/oauth/sso/login/token", request.path)
-        assertEquals("[text=authCode=${partnerToken.token}]", request.body.toString())
-
-        val appInfo = IxigoSDK.getInstance().appInfo
-
-        assertTrue(request.headers.contains(Pair("ixiSrc", appInfo.clientId)))
-        assertTrue(request.headers.contains(Pair("clientId", appInfo.clientId)))
-        assertTrue(request.headers.contains(Pair("apiKey", appInfo.apiKey)))
-        assertTrue(request.headers.contains(Pair("deviceId", appInfo.deviceId)))
-    }
-
-    fun validJsonResponse(accessToken: String): String = """
+  fun validJsonResponse(accessToken: String): String =
+      """
         {
           "data": {
             "token_type": "bearer",

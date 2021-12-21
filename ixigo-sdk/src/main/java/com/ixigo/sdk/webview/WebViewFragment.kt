@@ -24,90 +24,92 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.parcelize.Parcelize
 
 class WebViewFragment : Fragment() {
-    private lateinit var binding: WebviewLayoutBinding
-    @VisibleForTesting
-    internal val webView get() = binding.webView
-    val viewModel: WebViewViewModel by viewModels()
+  private lateinit var binding: WebviewLayoutBinding
+  @VisibleForTesting
+  internal val webView
+    get() = binding.webView
+  val viewModel: WebViewViewModel by viewModels()
 
-    lateinit var delegate: WebViewFragmentDelegate
+  lateinit var delegate: WebViewFragmentDelegate
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
 
-        viewModel.paymentResult.observe(this, { paymentResult ->
-            // No action if Payment failed
-            paymentResult.result.onSuccess {
-                loadUrl(it.nextUrl)
+    viewModel.paymentResult.observe(
+        this,
+        { paymentResult ->
+          // No action if Payment failed
+          paymentResult.result.onSuccess { loadUrl(it.nextUrl) }
+        })
+
+    viewModel.loginResult.observe(
+        this,
+        { loginResult ->
+          val url =
+              loginResult.result.mapBoth(
+                  { loginResult.loginParams.successJSFunction.replace("AUTH_TOKEN", it.token) },
+                  { loginResult.loginParams.failureJSFunction })
+          loadUrl(url)
+        })
+
+    activity?.onBackPressedDispatcher?.addCallback(
+        this,
+        object : OnBackPressedCallback(true) {
+          override fun handleOnBackPressed() {
+            if (webView.canGoBack()) {
+              webView.goBack()
+            } else {
+              delegate.quit()
             }
+          }
         })
+  }
 
-        viewModel.loginResult.observe(this, { loginResult ->
-            val url = loginResult.result.mapBoth(
-                {
-                    loginResult.loginParams.successJSFunction.replace("AUTH_TOKEN", it.token)
-                },
-                {
-                    loginResult.loginParams.failureJSFunction
-                })
-            loadUrl(url)
-        })
+  @SuppressLint("SetJavaScriptEnabled")
+  override fun onCreateView(
+      inflater: LayoutInflater,
+      container: ViewGroup?,
+      savedInstanceState: Bundle?
+  ): View {
+    super.onCreate(savedInstanceState)
 
-        activity?.onBackPressedDispatcher?.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                if (webView.canGoBack()) {
-                    webView.goBack()
-                } else {
-                    delegate.quit()
-                }
-            }
-        })
+    binding = WebviewLayoutBinding.inflate(layoutInflater)
+
+    webView.webViewClient = WebViewClient()
+    webView.webChromeClient = WebChromeClient()
+    webView.settings.javaScriptEnabled = true
+
+    addJavascriptInterface(IxiWebView(this))
+
+    val initialPageData = arguments?.getParcelable<InitialPageData>(INITIAL_PAGE_DATA_ARGS)
+    if (initialPageData != null) {
+      webView.loadUrl(initialPageData.url, initialPageData.headers)
     }
 
-    @SuppressLint("SetJavaScriptEnabled")
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        super.onCreate(savedInstanceState)
+    return binding.root
+  }
 
-        binding = WebviewLayoutBinding.inflate(layoutInflater)
+  override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    val activityResultHandler = IxigoSDK.getInstance().paymentProvider as ActivityResultHandler?
+    activityResultHandler?.handle(requestCode, resultCode, data)
+  }
 
-        webView.webViewClient = WebViewClient()
-        webView.webChromeClient = WebChromeClient()
-        webView.settings.javaScriptEnabled = true
+  @SuppressLint("JavascriptInterface")
+  private fun addJavascriptInterface(jsInterface: JsInterface) {
+    webView.addJavascriptInterface(jsInterface, jsInterface.name)
+  }
 
-        addJavascriptInterface(IxiWebView(this))
+  private fun loadUrl(url: String, headers: Map<String, String> = mapOf()) {
+    webView.loadUrl(url, headers)
+  }
 
-        val initialPageData = arguments?.getParcelable<InitialPageData>(INITIAL_PAGE_DATA_ARGS)
-        if (initialPageData != null) {
-            webView.loadUrl(initialPageData.url, initialPageData.headers)
-        }
-
-        return binding.root
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        val activityResultHandler = IxigoSDK.getInstance().paymentProvider as ActivityResultHandler?
-        activityResultHandler?.handle(requestCode, resultCode, data)
-    }
-
-    @SuppressLint("JavascriptInterface")
-    private fun addJavascriptInterface(jsInterface: JsInterface) {
-        webView.addJavascriptInterface(jsInterface, jsInterface.name)
-    }
-
-    private fun loadUrl(url: String, headers: Map<String, String> = mapOf()) {
-        webView.loadUrl(url, headers)
-    }
-
-    companion object {
-        const val INITIAL_PAGE_DATA_ARGS = "InitialPageData"
-    }
+  companion object {
+    const val INITIAL_PAGE_DATA_ARGS = "InitialPageData"
+  }
 }
 
 interface WebViewFragmentDelegate {
-    fun quit()
+  fun quit()
 }
 
 @Parcelize
@@ -119,52 +121,46 @@ data class InitialPageData(
 ) : Parcelable
 
 interface JsInterface {
-    val name: String
+  val name: String
 }
 
 private class IxiWebView(val fragment: WebViewFragment) : JsInterface {
 
-    private val moshi by lazy { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
-    private val paymentInputAdapter by lazy { moshi.adapter(PaymentInput::class.java) }
+  private val moshi by lazy { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
+  private val paymentInputAdapter by lazy { moshi.adapter(PaymentInput::class.java) }
 
-    override val name: String
-        get() = "IxiWebView"
+  override val name: String
+    get() = "IxiWebView"
 
-    @JavascriptInterface
-    fun loginUser(logInSuccessJsFunction: String, logInFailureJsFunction: String): Boolean {
-        return fragment.viewModel.login(fragment.requireActivity(),
-            LoginParams(
-                successJSFunction = logInSuccessJsFunction,
-                failureJSFunction = logInFailureJsFunction
-            )
-        )
+  @JavascriptInterface
+  fun loginUser(logInSuccessJsFunction: String, logInFailureJsFunction: String): Boolean {
+    return fragment.viewModel.login(
+        fragment.requireActivity(),
+        LoginParams(
+            successJSFunction = logInSuccessJsFunction, failureJSFunction = logInFailureJsFunction))
+  }
+
+  @JavascriptInterface
+  fun quit() {
+    runOnUiThread { fragment.delegate.quit() }
+  }
+
+  @JavascriptInterface
+  fun executeNativePayment(paymentInfoString: String): Boolean {
+    return try {
+      val paymentInput = paymentInputAdapter.fromJson(paymentInfoString)!!
+      fragment.viewModel.startNativePayment(fragment.requireActivity(), paymentInput)
+    } catch (_: Exception) {
+      false
     }
+  }
 
-    @JavascriptInterface
-    fun quit() {
-        runOnUiThread {
-            fragment.delegate.quit()
-        }
-    }
+  @JavascriptInterface
+  fun openWindow(url: String, title: String) {
+    runOnUiThread { IxigoSDK.getInstance().launchWebActivity(fragment.requireActivity(), url) }
+  }
 
-    @JavascriptInterface
-    fun executeNativePayment(paymentInfoString: String): Boolean {
-        return try {
-            val paymentInput = paymentInputAdapter.fromJson(paymentInfoString)!!
-            fragment.viewModel.startNativePayment(fragment.requireActivity(), paymentInput)
-        } catch (_: Exception)  {
-            false
-        }
-    }
-
-    @JavascriptInterface
-    fun openWindow(url: String, title: String) {
-        runOnUiThread {
-            IxigoSDK.getInstance().launchWebActivity(fragment.requireActivity(), url)
-        }
-    }
-
-    private fun runOnUiThread(runnable: Runnable) {
-        fragment.requireActivity().runOnUiThread(runnable)
-    }
+  private fun runOnUiThread(runnable: Runnable) {
+    fragment.requireActivity().runOnUiThread(runnable)
+  }
 }

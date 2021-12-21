@@ -7,17 +7,14 @@ import org.hamcrest.BaseMatcher
 import org.hamcrest.Description
 
 class IntentMatcher(val intent: Intent) : BaseMatcher<Intent>() {
-    override fun describeTo(description: Description?) {
-    }
+  override fun describeTo(description: Description?) {}
 
-    override fun matches(item: Any?): Boolean {
-        val itemIntent = item as Intent? ?: return false
-        return itemIntent.filterEquals(intent) && getInitialPageData(itemIntent) == getInitialPageData(
-            intent
-        )
-    }
+  override fun matches(item: Any?): Boolean {
+    val itemIntent = item as Intent? ?: return false
+    return itemIntent.filterEquals(intent) &&
+        getInitialPageData(itemIntent) == getInitialPageData(intent)
+  }
 
-    private fun getInitialPageData(intent: Intent): InitialPageData =
-        intent.getParcelableExtra(WebViewFragment.INITIAL_PAGE_DATA_ARGS)!!
-
+  private fun getInitialPageData(intent: Intent): InitialPageData =
+      intent.getParcelableExtra(WebViewFragment.INITIAL_PAGE_DATA_ARGS)!!
 }

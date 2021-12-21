@@ -4,6 +4,15 @@ plugins {
     id 'kotlin-parcelize'
     id 'maven-publish'
     id 'org.jetbrains.dokka'
+    id "com.ncorti.ktfmt.gradle" version "0.7.0"
+    id "com.diffplug.spotless" version "6.0.5"
+}
+
+spotless {
+    kotlin {
+        ktfmt()
+        target '**/*.kt'
+    }
 }
 
 android {
