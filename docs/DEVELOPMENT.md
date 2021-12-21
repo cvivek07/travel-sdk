@@ -13,6 +13,19 @@
    1. `cd ixigo-android-sdk.git`
    1. `yarn install`
 
+## Code Format
+
+We use [ktfmt](https://github.com/facebookincubator/ktfmt) to format our code.
+
+We use [spotless](https://github.com/diffplug/spotless) in gradle to run ktfmt.
+
+We enforce it via:
+
+- **Git pre-commit hook:** installed via `yarn install` and running `spotlessApply` gradle task to automatically format files
+- **CI**: invoking `spotlessCheck` gradle task and failing the build if there are formatting errors.
+
+If you want, you can also install ktfmt plugin for Android Studio. Find instructions [here](https://github.com/facebookincubator/ktfmt#intellij-android-studio-and-other-jetbrains-ides)
+
 ## Create a new commit
 
 We use [standard-version](https://github.com/conventional-changelog/standard-version) to handle commits and releases.
