@@ -8,7 +8,7 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.core.app.launchActivity
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.ixigo.sdk.flights.R
+import com.ixigo.sdk.R
 import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith

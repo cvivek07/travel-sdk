@@ -1,10 +1,14 @@
 package com.ixigo.sdk
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.launchActivity
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.ixigo.sdk.analytics.AnalyticsProvider
+import com.ixigo.sdk.analytics.Event
+import com.ixigo.sdk.analytics.EventDimension
 import com.ixigo.sdk.auth.AuthData
 import com.ixigo.sdk.auth.EmptyAuthProvider
 import com.ixigo.sdk.auth.test.FakeAuthProvider
@@ -18,6 +22,8 @@ import com.ixigo.sdk.webview.WebViewFragment
 import org.hamcrest.MatcherAssert
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 import org.robolectric.Shadows
 
 @RunWith(AndroidJUnit4::class)
@@ -63,6 +69,21 @@ class IxigoSDKTests {
             EmptyPaymentProvider,
             DisabledAnalyticsProvider)
     testLaunchActivity("www.ixigo.com/page", ixigoSDK, mapOf())
+  }
+
+  @Test
+  fun `test init sends correct analytics event`() {
+    val analyticsProvider: AnalyticsProvider = mock()
+    val context: Context = mock()
+    IxigoSDK.init(context, EmptyAuthProvider, EmptyPaymentProvider, FakeAppInfo, analyticsProvider)
+    verify(analyticsProvider)
+        .logEvent(
+            Event(
+                action = "sdkInit",
+                dimensions =
+                    mapOf(
+                        EventDimension.CLIENT_ID to FakeAppInfo.clientId,
+                        EventDimension.SDK_VERSION to BuildConfig.SDK_VERSION)))
   }
 
   private fun testLaunchActivity(

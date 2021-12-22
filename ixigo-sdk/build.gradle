@@ -15,6 +15,9 @@ spotless {
     }
 }
 
+group = 'com.ixigo.sdk'
+version = '1.2.3'
+
 android {
     compileSdk 31
 
@@ -22,7 +25,9 @@ android {
         minSdk 21
         targetSdk 31
         versionCode 1
-        versionName '1.0'
+        versionName "$version"
+
+        buildConfigField("String", "SDK_VERSION", "\"$versionName\"")
 
         testInstrumentationRunner 'com.ixigo.sdk.test.util.EspressoRunner'
         consumerProguardFiles 'consumer-rules.pro'
@@ -98,9 +103,6 @@ dependencies {
     androidTestImplementation 'com.linkedin.dexmaker:dexmaker-mockito-inline:2.28.1'
     androidTestImplementation 'commons-io:commons-io:2.11.0' // Used to read html files when testing WebView
 }
-
-group = 'com.ixigo.sdk'
-version = '1.2.3'
 
 afterEvaluate {
     publishing {

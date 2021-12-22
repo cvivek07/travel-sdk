@@ -13,5 +13,6 @@ data class Event(
 )
 
 enum class EventDimension(val index: Int) {
-  CLIENT_ID(1)
+  CLIENT_ID(1),
+  SDK_VERSION(2)
 }

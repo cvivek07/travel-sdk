@@ -16,7 +16,7 @@ import androidx.fragment.app.viewModels
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.common.ActivityResultHandler
 import com.ixigo.sdk.common.Generated
-import com.ixigo.sdk.flights.databinding.WebviewLayoutBinding
+import com.ixigo.sdk.databinding.WebviewLayoutBinding
 import kotlinx.parcelize.Parcelize
 
 class WebViewFragment : Fragment() {

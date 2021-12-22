@@ -5,8 +5,8 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.ColorUtils
 import androidx.core.view.WindowInsetsControllerCompat
-import com.ixigo.sdk.flights.R
-import com.ixigo.sdk.flights.databinding.WebActivityBinding
+import com.ixigo.sdk.R
+import com.ixigo.sdk.databinding.WebActivityBinding
 
 class WebActivity : AppCompatActivity(), WebViewFragmentDelegate {
 
