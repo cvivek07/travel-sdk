@@ -25,53 +25,111 @@
                 android:text="Tap here to modify SDK parameters by restarting the App"
                 android:visibility="gone" />
 
-
-            <com.google.android.material.textfield.TextInputLayout
+            <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:hint="Client ID"
-                app:helperText="eg: iximatr">
+                android:layout_marginBottom="10dp">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/clientId"
-                    android:layout_width="match_parent"
-                    android:maxLines="1"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:inputType="text"/>
+                    android:layout_marginEnd="5dp"
+                    android:layout_weight="1"
+                    android:hint="Client ID"
+                    app:helperText="eg: iximatr">
 
-            </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/clientId"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:imeOptions="actionDone"
+                        android:maxLines="1" />
 
-            <com.google.android.material.textfield.TextInputLayout
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:layout_weight="1"
+                    android:hint="API key">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/apiKey"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:imeOptions="actionDone"
+                        android:maxLines="1" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:hint="API key">
+                android:layout_marginBottom="10dp">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/apiKey"
-                    android:layout_width="match_parent"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:maxLines="1"
-                    android:inputType="text"/>
+                    android:layout_marginEnd="5dp"
+                    android:hint="App Version"
+                    app:helperText="eg: 1801">
 
-            </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/appVersion"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:imeOptions="actionDone"
+                        android:maxLines="1" />
+                </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:hint="UUID">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/uuid"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:imeOptions="actionDone"
+                        android:maxLines="1" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:hint="App Version"
-                app:helperText="eg: 1801">
+                android:layout_marginBottom="10dp">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/appVersion"
-                    android:layout_width="match_parent"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:maxLines="1"
-                    android:inputType="text"/>
+                    android:layout_marginEnd="5dp"
+                    android:hint="Device Id">
 
-            </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/deviceId"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:imeOptions="actionDone"
+                        android:maxLines="1" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
@@ -84,8 +142,9 @@
                     android:id="@+id/ssoPartnerToken"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:maxLines="1"
-                    android:inputType="text"/>
+                    android:inputType="text"
+                    android:imeOptions="actionDone"
+                    android:maxLines="1" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -114,8 +173,8 @@
                     android:id="@+id/buttonFlightSearch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Flights Search"
-                    android:layout_marginEnd="20dp" />
+                    android:layout_marginEnd="20dp"
+                    android:text="Flights Search" />
 
                 <Button
                     android:id="@+id/buttonFlightHome"

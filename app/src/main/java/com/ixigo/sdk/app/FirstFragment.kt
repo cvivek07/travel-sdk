@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.VISIBLE
@@ -92,6 +91,8 @@ class FirstFragment : Fragment() {
     loadSetting(prefs, binding.appVersion, "appVersion")
     loadSetting(prefs, binding.ssoPartnerToken, "ssoPartnerToken")
     loadSetting(prefs, binding.configInput.editText!!, "config")
+    loadSetting(prefs, binding.uuid, "uuid")
+    loadSetting(prefs, binding.deviceId, "deviceId")
   }
 
   private fun saveSettings() {
@@ -102,6 +103,8 @@ class FirstFragment : Fragment() {
       saveSetting(this, binding.appVersion, "appVersion")
       saveSetting(this, binding.ssoPartnerToken, "ssoPartnerToken")
       saveSetting(this, binding.configInput.editText!!, "config")
+      saveSetting(this, binding.uuid, "uuid")
+      saveSetting(this, binding.deviceId, "deviceId")
       commit()
     }
   }
@@ -131,29 +134,25 @@ class FirstFragment : Fragment() {
     if (sdkInitialized) {
       return true
     }
-    val clientId = binding.clientId.text.toString()
-    if (clientId.isNullOrEmpty()) {
-      binding.clientId.error = "Client Id can not be empty"
-    }
-    val apiKey = binding.apiKey.text.toString()
-    if (apiKey.isNullOrEmpty()) {
-      binding.apiKey.error = "ApiKey can not be empty"
-    }
-    val appVersion = binding.appVersion.text.toString()
-    if (appVersion.isNullOrEmpty()) {
-      binding.appVersion.error = "App Version can not be empty"
-    }
+    val clientId = getFieldValue(binding.clientId, "Client Id")
+    val apiKey = getFieldValue(binding.apiKey, "Api Key")
+    val appVersion = getFieldValue(binding.appVersion, "App Version")
+    val uuid = getFieldValue(binding.uuid, "UUID")
+    val deviceId = getFieldValue(binding.deviceId, "Device Id")
     val ixigoConfig =
         ixigoConfigs.find { it.label == binding.configInput.editText?.text.toString() }
     if (ixigoConfig == null) {
       binding.configInput.error = "Config can not be empty"
     }
-    if (appVersion.isNullOrEmpty() ||
-        apiKey.isNullOrEmpty() ||
-        clientId.isNullOrEmpty() ||
+    if (appVersion == null ||
+        apiKey == null ||
+        clientId == null ||
+        uuid == null ||
+        deviceId == null ||
         ixigoConfig == null) {
       return false
     }
+
     IxigoSDK.init(
         requireContext(),
         getAuthProvider(),
@@ -162,18 +161,32 @@ class FirstFragment : Fragment() {
             clientId = clientId,
             apiKey = apiKey,
             appVersion = appVersion,
-            uuid = "uuid",
-            deviceId = "deviceId"),
+            uuid = uuid,
+            deviceId = deviceId),
         config = ixigoConfig.config)
+
     binding.clientId.isEnabled = false
     binding.apiKey.isEnabled = false
     binding.appVersion.isEnabled = false
     binding.ssoPartnerToken.isEnabled = false
     binding.configInput.isEnabled = false
+    binding.deviceId.isEnabled = false
+    binding.uuid.isEnabled = false
     binding.buttonRestart.visibility = VISIBLE
+
     saveSettings()
     sdkInitialized = true
     return true
+  }
+
+  private fun getFieldValue(editText: EditText, fieldName: String): String? {
+    val value = editText.text.toString()
+    return if (value.isNullOrEmpty()) {
+      editText.error = "$fieldName can not be empty"
+      null
+    } else {
+      value
+    }
   }
 
   private fun getAuthProvider(): AuthProvider {
