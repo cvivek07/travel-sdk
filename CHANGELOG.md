@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.4.0](https://git.ixigo.com/android/ixigo-android-sdk/compare/ixigo-sdk-1.3.0...ixigo-sdk-1.4.0) (2021-12-22)
+
+
+### Features
+
+* improve sample app ([129ddcd](https://git.ixigo.com/android/ixigo-android-sdk/commit/129ddcde480aa4848116b9301ef9e6a3861004b8))
+
 ## [1.3.0](https://git.ixigo.com/android/ixigo-android-sdk/compare/ixigo-sdk-1.2.3...ixigo-sdk-1.3.0) (2021-12-22)
 
 
