@@ -11,6 +11,7 @@ import com.ixigo.sdk.analytics.Event
 import com.ixigo.sdk.analytics.EventDimension
 import com.ixigo.sdk.analytics.GoogleAnalyticsProvider
 import com.ixigo.sdk.auth.AuthProvider
+import com.ixigo.sdk.payment.DisabledPaymentProvider
 import com.ixigo.sdk.payment.PaymentProvider
 import com.ixigo.sdk.webview.InitialPageData
 import com.ixigo.sdk.webview.WebActivity
@@ -53,10 +54,17 @@ internal constructor(
     fun init(
         context: Context,
         authProvider: AuthProvider,
-        paymentProvider: PaymentProvider,
-        appInfo: AppInfo
+        paymentProvider: PaymentProvider = DisabledPaymentProvider,
+        appInfo: AppInfo,
+        config: Config = ProdConfig
     ) {
-      init(context, authProvider, paymentProvider, appInfo, createGoogleAnalyticsProvider(context))
+      init(
+          context,
+          authProvider,
+          paymentProvider,
+          appInfo,
+          createGoogleAnalyticsProvider(context),
+          config)
     }
 
     internal fun init(
@@ -64,12 +72,13 @@ internal constructor(
         authProvider: AuthProvider,
         paymentProvider: PaymentProvider,
         appInfo: AppInfo,
-        analyticsProvider: AnalyticsProvider = createGoogleAnalyticsProvider(context)
+        analyticsProvider: AnalyticsProvider = createGoogleAnalyticsProvider(context),
+        config: Config = ProdConfig
     ) {
       if (INSTANCE != null) {
         throw IllegalStateException("IxigoSDK has already been initialized")
       }
-      INSTANCE = IxigoSDK(appInfo, authProvider, paymentProvider, analyticsProvider)
+      INSTANCE = IxigoSDK(appInfo, authProvider, paymentProvider, analyticsProvider, config)
 
       analyticsProvider.logEvent(
           Event(

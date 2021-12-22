@@ -17,7 +17,7 @@ import com.ixigo.sdk.analytics.Event
 import com.ixigo.sdk.auth.*
 import com.ixigo.sdk.common.Err
 import com.ixigo.sdk.common.Ok
-import com.ixigo.sdk.payment.EmptyPaymentProvider
+import com.ixigo.sdk.payment.DisabledPaymentProvider
 import com.ixigo.sdk.payment.FakePaymentProvider
 import com.ixigo.sdk.payment.PaymentResponse
 import com.ixigo.sdk.test.util.FileDispatcher
@@ -101,7 +101,7 @@ class WebViewFragmentTest {
     IxigoSDK.init(
         InstrumentationRegistry.getInstrumentation().targetContext,
         EmptyAuthProvider,
-        EmptyPaymentProvider,
+        DisabledPaymentProvider,
         appInfo,
         analyticsProvider)
     onWebView().withElement(findElement(Locator.ID, "native_payment_button")).perform(webClick())
@@ -152,7 +152,7 @@ class WebViewFragmentTest {
     IxigoSDK.init(
         InstrumentationRegistry.getInstrumentation().targetContext,
         FakeAuthProvider(token),
-        EmptyPaymentProvider,
+        DisabledPaymentProvider,
         appInfo,
         analyticsProvider)
     onWebView().withElement(findElement(Locator.ID, "login_button")).perform(webClick())

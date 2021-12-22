@@ -6,13 +6,14 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.launchActivity
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ixigo.sdk.AppInfo
+import com.ixigo.sdk.Config
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
 import com.ixigo.sdk.auth.AuthData
 import com.ixigo.sdk.auth.EmptyAuthProvider
 import com.ixigo.sdk.auth.test.FakeAuthProvider
-import com.ixigo.sdk.payment.EmptyPaymentProvider
+import com.ixigo.sdk.payment.DisabledPaymentProvider
 import com.ixigo.sdk.webview.InitialPageData
 import com.ixigo.sdk.webview.WebActivity
 import com.ixigo.sdk.webview.WebViewFragment
@@ -34,6 +35,7 @@ class FlightsFunnelTest {
   private lateinit var scenario: ActivityScenario<Activity>
   private lateinit var activity: Activity
   private val mockAnalyticsProvider = mock<AnalyticsProvider>()
+  private val config = Config("https://baseUrl.ixigo.com/")
 
   @Before
   fun setup() {
@@ -48,7 +50,13 @@ class FlightsFunnelTest {
 
   @Test
   fun `test flightsStartHome launches WebActivity`() {
-    IxigoSDK.init(activity, EmptyAuthProvider, EmptyPaymentProvider, appInfo, mockAnalyticsProvider)
+    IxigoSDK.init(
+        activity,
+        EmptyAuthProvider,
+        DisabledPaymentProvider,
+        appInfo,
+        mockAnalyticsProvider,
+        config)
     assertFlightsHome()
   }
 
@@ -57,9 +65,10 @@ class FlightsFunnelTest {
     IxigoSDK.init(
         activity,
         FakeAuthProvider("token", AuthData("token")),
-        EmptyPaymentProvider,
+        DisabledPaymentProvider,
         appInfo,
-        mockAnalyticsProvider)
+        mockAnalyticsProvider,
+        config)
     assertFlightsHome()
   }
 
@@ -75,7 +84,7 @@ class FlightsFunnelTest {
                 flightClass = "e",
                 passengerData = FlightPassengerData(adults = 1, children = 0, infants = 0)),
         expectedUrl =
-            "https://www.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=appVersion&deviceId=deviceId&languageCode=en&page=FLIGHT_LISTING&orgn=DEL&dstn=BOM&departDate=22102021&returnDate=&adults=1&children=0&infants=0&class=e&source=FlightSearchFormFragment")
+            "https://baseUrl.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=appVersion&deviceId=deviceId&languageCode=en&page=FLIGHT_LISTING&orgn=DEL&dstn=BOM&departDate=22102021&returnDate=&adults=1&children=0&infants=0&class=e&source=FlightSearchFormFragment")
   }
 
   @Test
@@ -91,7 +100,7 @@ class FlightsFunnelTest {
                 flightClass = "a",
                 passengerData = FlightPassengerData(adults = 1, children = 0, infants = 0)),
         expectedUrl =
-            "https://www.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=appVersion&deviceId=deviceId&languageCode=en&page=FLIGHT_LISTING&orgn=DEL&dstn=BOM&departDate=22102021&returnDate=26102021&adults=1&children=0&infants=0&class=a&source=FlightSearchFormFragment")
+            "https://baseUrl.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=appVersion&deviceId=deviceId&languageCode=en&page=FLIGHT_LISTING&orgn=DEL&dstn=BOM&departDate=22102021&returnDate=26102021&adults=1&children=0&infants=0&class=a&source=FlightSearchFormFragment")
   }
 
   @Test
@@ -107,7 +116,7 @@ class FlightsFunnelTest {
                 flightClass = "e",
                 passengerData = FlightPassengerData(adults = 1, children = 0, infants = 0)),
         expectedUrl =
-            "https://www.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=appVersion&deviceId=deviceId&languageCode=en&page=FLIGHT_LISTING&orgn=DEL&dstn=BOM&departDate=22102021&returnDate=26102021&adults=1&children=0&infants=0&class=e&source=FlightSearchFormFragment")
+            "https://baseUrl.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=appVersion&deviceId=deviceId&languageCode=en&page=FLIGHT_LISTING&orgn=DEL&dstn=BOM&departDate=22102021&returnDate=26102021&adults=1&children=0&infants=0&class=e&source=FlightSearchFormFragment")
   }
 
   @Test
@@ -124,7 +133,7 @@ class FlightsFunnelTest {
                 flightClass = "e",
                 passengerData = FlightPassengerData(adults = 1, children = 0, infants = 0)),
         expectedUrl =
-            "https://www.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=appVersion&deviceId=deviceId&languageCode=en&page=FLIGHT_LISTING&orgn=DEL&dstn=BOM&departDate=${tomorrowStr}&returnDate=&adults=1&children=0&infants=0&class=e&source=FlightSearchFormFragment")
+            "https://baseUrl.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=appVersion&deviceId=deviceId&languageCode=en&page=FLIGHT_LISTING&orgn=DEL&dstn=BOM&departDate=${tomorrowStr}&returnDate=&adults=1&children=0&infants=0&class=e&source=FlightSearchFormFragment")
   }
 
   private fun assertFlightsHome() {
@@ -132,13 +141,19 @@ class FlightsFunnelTest {
       IxigoSDK.getInstance().flightsStartHome(activity)
       assertLaunchedIntent(
           activity,
-          "https://www.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=appVersion&deviceId=deviceId&languageCode=en&page=FLIGHT_HOME")
+          "https://baseUrl.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=appVersion&deviceId=deviceId&languageCode=en&page=FLIGHT_HOME")
       verify(mockAnalyticsProvider).logEvent(Event(action = "flightsStartHome"))
     }
   }
 
   private fun assertFlightSearch(searchData: FlightSearchData, expectedUrl: String) {
-    IxigoSDK.init(activity, EmptyAuthProvider, EmptyPaymentProvider, appInfo, mockAnalyticsProvider)
+    IxigoSDK.init(
+        activity,
+        EmptyAuthProvider,
+        DisabledPaymentProvider,
+        appInfo,
+        mockAnalyticsProvider,
+        config)
     scenario.onActivity { activity ->
       IxigoSDK.getInstance().flightsStartSearch(activity, searchData)
       assertLaunchedIntent(activity, expectedUrl)

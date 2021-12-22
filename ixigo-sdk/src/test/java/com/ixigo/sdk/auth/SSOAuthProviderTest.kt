@@ -7,7 +7,7 @@ import com.ixigo.sdk.Config
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.analytics.test.FakeAnalyticsProvider
 import com.ixigo.sdk.auth.test.FakePartnerTokenProvider
-import com.ixigo.sdk.payment.EmptyPaymentProvider
+import com.ixigo.sdk.payment.DisabledPaymentProvider
 import com.ixigo.sdk.test.TestData.FakeAppInfo
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
@@ -31,7 +31,7 @@ class SSOAuthProviderTest {
         IxigoSDK(
             FakeAppInfo,
             EmptyAuthProvider,
-            EmptyPaymentProvider,
+            DisabledPaymentProvider,
             FakeAnalyticsProvider(),
             Config(mockServer.url("").toString())))
   }

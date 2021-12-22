@@ -12,7 +12,7 @@ import com.ixigo.sdk.analytics.EventDimension
 import com.ixigo.sdk.auth.AuthData
 import com.ixigo.sdk.auth.EmptyAuthProvider
 import com.ixigo.sdk.auth.test.FakeAuthProvider
-import com.ixigo.sdk.payment.EmptyPaymentProvider
+import com.ixigo.sdk.payment.DisabledPaymentProvider
 import com.ixigo.sdk.test.IntentMatcher
 import com.ixigo.sdk.test.TestData.DisabledAnalyticsProvider
 import com.ixigo.sdk.test.TestData.FakeAppInfo
@@ -37,7 +37,7 @@ class IxigoSDKTests {
         IxigoSDK(
             FakeAppInfo,
             FakeAuthProvider(null, AuthData("token")),
-            EmptyPaymentProvider,
+            DisabledPaymentProvider,
             DisabledAnalyticsProvider)
     testLaunchActivity("https://www.ixigo.com/page", ixigoSDK)
   }
@@ -45,7 +45,7 @@ class IxigoSDKTests {
   @Test
   fun `test launchWebActivity for logged out user`() {
     val ixigoSDK =
-        IxigoSDK(FakeAppInfo, EmptyAuthProvider, EmptyPaymentProvider, DisabledAnalyticsProvider)
+        IxigoSDK(FakeAppInfo, EmptyAuthProvider, DisabledPaymentProvider, DisabledAnalyticsProvider)
     testLaunchActivity("https://www.ixigo.com/page", ixigoSDK)
   }
 
@@ -55,7 +55,7 @@ class IxigoSDKTests {
         IxigoSDK(
             FakeAppInfo,
             FakeAuthProvider(null, AuthData("token")),
-            EmptyPaymentProvider,
+            DisabledPaymentProvider,
             DisabledAnalyticsProvider)
     testLaunchActivity("https://www.booking.com/page", ixigoSDK, mapOf())
   }
@@ -66,7 +66,7 @@ class IxigoSDKTests {
         IxigoSDK(
             FakeAppInfo,
             FakeAuthProvider(null, AuthData("token")),
-            EmptyPaymentProvider,
+            DisabledPaymentProvider,
             DisabledAnalyticsProvider)
     testLaunchActivity("www.ixigo.com/page", ixigoSDK, mapOf())
   }
@@ -75,7 +75,8 @@ class IxigoSDKTests {
   fun `test init sends correct analytics event`() {
     val analyticsProvider: AnalyticsProvider = mock()
     val context: Context = mock()
-    IxigoSDK.init(context, EmptyAuthProvider, EmptyPaymentProvider, FakeAppInfo, analyticsProvider)
+    IxigoSDK.init(
+        context, EmptyAuthProvider, DisabledPaymentProvider, FakeAppInfo, analyticsProvider)
     verify(analyticsProvider)
         .logEvent(
             Event(

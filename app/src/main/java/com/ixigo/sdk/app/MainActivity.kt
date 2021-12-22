@@ -33,9 +33,6 @@ class MainActivity : AppCompatActivity() {
 
         WebView.setWebContentsDebuggingEnabled(true)
 
-        val token = "qb7b60ur2hclgaucbmxtvqfyeqk646hbt0ccog14taqsxtywb52kasdtw9kubsw5oxxmoajrkbni4cssu0j7rq3c3qp296ivi45lx8v8lv8keb8cbgfv6gxxevagid3a5n5o6oaufgtn43xr12xrgisfcjdyei2v59etdt7u5tsh3ow7hddyieecy3d7y3n2los"
-        IxigoSDK.init(this, SSOAuthProvider(FakePartnerTokenProvider(PartnerToken(token))), FakePaymentProvider(null), AppInfo("iximatr", "iximatr!2\$", "1801", "33d040f296f87aeb", "8ee37b17-aa86-42d6-a2dc-80598ca35c9f"))
-
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -45,20 +42,6 @@ class MainActivity : AppCompatActivity() {
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
 
-        binding.fab.setOnClickListener {
-//            IxigoSDK.getInstance().flightsStartHome(this);
-            IxigoSDK.getInstance().flightsStartSearch(
-                this,
-                FlightSearchData(
-                    origin = "DEL",
-                    destination = "BOM",
-                    departDate = LocalDate.now().plusDays(1),
-                    source = "FlightSearchFormFragment",
-                    flightClass = "e",
-                    passengerData = FlightPassengerData(adults = 1, children = 0, infants = 0)
-                )
-            )
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

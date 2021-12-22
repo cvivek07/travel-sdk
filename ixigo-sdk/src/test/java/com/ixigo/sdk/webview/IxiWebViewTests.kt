@@ -212,7 +212,11 @@ class IxiWebViewTests {
 
   private fun testLogin(token: String?) {
     IxigoSDK.init(
-        fragmentActivity, FakeAuthProvider(token), EmptyPaymentProvider, appInfo, analyticsProvider)
+        fragmentActivity,
+        FakeAuthProvider(token),
+        DisabledPaymentProvider,
+        appInfo,
+        analyticsProvider)
     val successJs = "success"
     val failureJs = "failure"
 

@@ -37,9 +37,8 @@ fun IxigoSDK.flightsStartSearch(context: Context, searchData: FlightSearchData) 
 
 private fun IxigoSDK.getUrl(properties: Map<String, String>): String {
   val builder =
-      Uri.Builder()
-          .scheme("https")
-          .authority("www.ixigo.com")
+      Uri.parse(config.apiBaseUrl)
+          .buildUpon()
           .appendPath("pwa")
           .appendPath("initialpage")
           .appendQueryParameter("clientId", appInfo.clientId)
