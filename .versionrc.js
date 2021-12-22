@@ -23,6 +23,6 @@ const gradleUpdater = {
     "node_modules/@damlys/standard-version-updater-gradle/dist/build-gradle.js",
 };
 module.exports = {
-  bumpFiles: [readmeTracker],
+  bumpFiles: [readmeTracker, gradleUpdater],
   packageFiles: [gradleUpdater],
 };
