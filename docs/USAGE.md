@@ -19,7 +19,7 @@ Inside **app/build.gradle**
 ```groovy
 dependencies {
   // Other dependencies...
-  implementation "com.ixigo.sdk:ixigo-sdk:1.2.1"
+  implementation "com.ixigo.sdk:ixigo-sdk:1.2.3"
 }
 
 ```
@@ -43,7 +43,7 @@ Inside **app/build.gradle**
 ```groovy
 dependencies {
   // Other dependencies...
-  implementation "com.ixigo.sdk:ixigo-sdk:1.2.1-SNAPSHOT"
+  implementation "com.ixigo.sdk:ixigo-sdk:1.2.3-SNAPSHOT"
 }
 
 ```
