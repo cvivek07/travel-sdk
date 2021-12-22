@@ -116,7 +116,7 @@ release:
   script:
     - yarn install
     - yarn run release -- -t ixigo-sdk-
-    - git push --follow-tags -o ci.skip http://root:$REPO_ACCESS_TOKEN@$CI_SERVER_HOST/$CI_PROJECT_PATH.git HEAD:development
+    - git push --follow-tags http://root:$REPO_ACCESS_TOKEN@$CI_SERVER_HOST/$CI_PROJECT_PATH.git HEAD:development
     - yarn run pdf-changelog
     - "./gradlew ixigo-sdk:publishReleasePublicationToNexusRepository --stacktrace"
   artifacts:
