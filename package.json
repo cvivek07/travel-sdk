@@ -6,16 +6,19 @@
     "tsc": "tsc",
     "release": "standard-version",
     "prepare": "husky install",
-    "pdf-changelog": "markdown-pdf CHANGELOG.md -o build/CHANGELOG.pdf"
+    "pdf-changelog": "markdown-pdf CHANGELOG.md -o build/CHANGELOG.pdf",
+    "upload-app-to-slack": "yarn tsc && node dist/slackUpload.js"
   },
   "license": "UNLICENSED",
   "devDependencies": {
     "@commitlint/cli": "^14.1.0",
     "@commitlint/config-conventional": "^14.1.0",
     "@commitlint/cz-commitlint": "^14.1.0",
+    "@slack/bolt": "^3.8.1",
     "commitizen": "^4.2.4",
     "danger": "^10.6.6",
     "danger-plugin-lint-report": "^1.6.0",
+    "glob": "^7.2.0",
     "husky": "^7.0.2",
     "markdown-pdf": "10.0.0",
     "standard-version": "^9.3.2",
@@ -24,7 +27,7 @@
   "dependencies": {
     "@ixigo-packages/ixigo-danger-common": "^2.1.3",
     "git-format-staged": "^2.1.3",
-    "glob-promise": "^4.2.0",
+    "glob-promise": "^4.2.2",
     "is-object": "^1.0.2",
     "xml2js": "^0.4.23"
   },

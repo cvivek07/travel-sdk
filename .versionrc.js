@@ -36,7 +36,12 @@ const gradleTracker = {
   updater: gradleUpdater,
 };
 
+const gradleAppTracker = {
+  filename: "app/build.gradle",
+  updater: gradleUpdater,
+};
+
 module.exports = {
-  bumpFiles: [readmeTracker, gradleTracker],
+  bumpFiles: [readmeTracker, gradleTracker, gradleAppTracker],
   packageFiles: [gradleTracker],
 };

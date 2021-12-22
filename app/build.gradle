@@ -4,18 +4,21 @@ plugins {
     id 'com.google.gms.google-services'
 }
 
+version = '1.3.0'
 
 android {
     compileSdk 29
 
     defaultConfig {
-        applicationId "com.ixigo.sdk.app"
+        applicationId 'com.ixigo.sdk.app'
         minSdk 21
         targetSdk 29
         versionCode 1
-        versionName "1.0"
+        versionName "$version"
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        archivesBaseName = "ixigoSDK-sampleApp-v$version"
+
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
 
     buildTypes {
@@ -37,7 +40,6 @@ android {
     }
 
     lintOptions {
-
         checkDependencies true
         xmlReport true
         htmlReport true
@@ -53,8 +55,7 @@ configurations.all {
 }
 
 dependencies {
-
-    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:1.1.5"
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
 
     implementation 'androidx.core:core-ktx:1.6.0'
     implementation 'androidx.appcompat:appcompat:1.3.1'

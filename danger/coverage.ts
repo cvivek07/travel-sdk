@@ -55,7 +55,7 @@ function getDataCoverage(project: CoverageRow, dataName: string): string {
 }
 
 function getColumns(projects: CoverageRow[]): string[] {
-  const columns = [];
+  const columns: Array<string> = [];
   for (let project of projects) {
     for (let data of project.data) {
       if (!columns.includes(data.name)) {

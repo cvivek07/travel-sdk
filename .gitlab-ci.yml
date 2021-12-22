@@ -47,6 +47,19 @@ build-all:
       - "**/build/reports"
       - "**/build/outputs"
 
+slack-test-app-upload:
+  stage: deploy
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "development"'
+      when: manual
+  cache:
+    key: ${CI_PROJECT_ID}_node
+    paths:
+      - node_modules/
+  script:
+    - yarn install
+    - yarn run upload-app-to-slack
+
 coverage:mergeRequest:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
@@ -103,6 +116,30 @@ pages:
   artifacts:
     paths:
       - public
+
+## Deploy
+slack-sample-app-upload:
+  stage: deploy
+  interruptible: true
+  rules:
+    # Don't run for merge requests
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: never
+    # Run in any other case
+    - when: always
+  script:
+    - |-
+      SLACK_MESSAGE_JSON=$(cat << JSON
+      {
+        "user": "@$GITLAB_USER_LOGIN",
+        "branch": "<$CI_PROJECT_URL/-/tree/$CI_COMMIT_BRANCH|$CI_COMMIT_BRANCH>",
+        "commit": "<$CI_PROJECT_URL/-/commit/$CI_COMMIT_SHA|$CI_COMMIT_TITLE>",
+        "pipeline": "<$CI_PIPELINE_URL|$CI_PIPELINE_ID>",
+        "extra info": "$SLACK_EXTRA_INFO"
+      }
+      JSON
+      )
+    - './gradlew $APP:uploadToSlack -PslackToken=$SLACK_ANDROID_BOT_TOKEN -PslackMessageJson="$SLACK_MESSAGE_JSON"'
 
 release:
   stage: release
