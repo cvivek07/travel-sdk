@@ -7,7 +7,7 @@
     "release": "standard-version",
     "prepare": "husky install",
     "pdf-changelog": "markdown-pdf CHANGELOG.md -o build/CHANGELOG.pdf",
-    "upload-app-to-slack": "yarn tsc && node dist/slackUpload.js"
+    "upload-app-to-slack": "yarn tsc && node dist/slackUpload.js --unhandled-rejections=strict"
   },
   "license": "UNLICENSED",
   "devDependencies": {
