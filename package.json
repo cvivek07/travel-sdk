@@ -13,7 +13,6 @@
     "@commitlint/cli": "^14.1.0",
     "@commitlint/config-conventional": "^14.1.0",
     "@commitlint/cz-commitlint": "^14.1.0",
-    "@damlys/standard-version-updater-gradle": "1.0.0",
     "commitizen": "^4.2.4",
     "danger": "^10.6.6",
     "danger-plugin-lint-report": "^1.6.0",

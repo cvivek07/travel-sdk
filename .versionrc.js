@@ -18,11 +18,25 @@ const readmeTracker = {
 };
 
 const gradleUpdater = {
-  filename: "ixigo-sdk/build.gradle",
-  updater:
-    "node_modules/@damlys/standard-version-updater-gradle/dist/build-gradle.js",
+  readVersion: function (contents) {
+    const match = /version\s*=\s*[?:'|"](\d+\.\d+\.\d+)[?:'|"]/.exec(contents);
+    const version = match[1];
+    return version;
+  },
+  writeVersion: function (contents, version) {
+    return contents.replace(
+      /(.*version\s*=\s*[?:'|"])(\d+\.\d+\.\d+)([?:'|"].*)/,
+      `\$1${version}\$3`
+    );
+  },
 };
+
+const gradleTracker = {
+  filename: "ixigo-sdk/build.gradle",
+  updater: gradleUpdater,
+};
+
 module.exports = {
-  bumpFiles: [readmeTracker, gradleUpdater],
-  packageFiles: [gradleUpdater],
+  bumpFiles: [readmeTracker, gradleTracker],
+  packageFiles: [gradleTracker],
 };

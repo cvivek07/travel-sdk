@@ -246,11 +246,6 @@
   dependencies:
     chalk "^4.0.0"
 
-"@damlys/standard-version-updater-gradle@1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@damlys/standard-version-updater-gradle/-/standard-version-updater-gradle-1.0.0.tgz#5db054aae30b8be3ef8af232927c38e219f37530"
-  integrity sha512-Xct7wDKoyC8LltA+uu5eeOABGcxu7Difk+ZqFcJURTiraJYk4x+GIBo8nfq+exr37+JAQxudoq9OVuEnep88/Q==
-
 "@endemolshinegroup/cosmiconfig-typescript-loader@^3.0.2":
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/@endemolshinegroup/cosmiconfig-typescript-loader/-/cosmiconfig-typescript-loader-3.0.2.tgz#eea4635828dde372838b0909693ebd9aafeec22d"
