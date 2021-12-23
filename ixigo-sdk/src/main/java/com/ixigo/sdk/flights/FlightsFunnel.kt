@@ -43,7 +43,7 @@ private fun IxigoSDK.getUrl(properties: Map<String, String>): String {
           .appendPath("initialpage")
           .appendQueryParameter("clientId", appInfo.clientId)
           .appendQueryParameter("apiKey", appInfo.apiKey)
-          .appendQueryParameter("appVersion", appInfo.appVersion)
+          .appendQueryParameter("appVersion", appInfo.appVersionString)
           .appendQueryParameter("deviceId", appInfo.deviceId)
           .appendQueryParameter("languageCode", "en") // TODO
   for (property in properties) {

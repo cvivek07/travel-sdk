@@ -142,7 +142,7 @@ internal constructor(
     }
     val headers =
         mutableMapOf(
-            "appVersion" to appInfo.appVersion,
+            "appVersion" to appInfo.appVersionString,
             "clientId" to appInfo.clientId,
             "apiKey" to appInfo.apiKey,
             "deviceId" to appInfo.deviceId,
@@ -172,7 +172,10 @@ internal constructor(
 data class AppInfo(
     val clientId: String,
     val apiKey: String,
-    val appVersion: String,
+    val appVersion: Long,
     val deviceId: String,
     val uuid: String
-)
+) {
+  val appVersionString
+    get() = appVersion.toString()
+}

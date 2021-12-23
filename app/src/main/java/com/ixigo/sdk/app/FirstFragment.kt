@@ -190,7 +190,7 @@ class FirstFragment : Fragment() {
 
     val clientId = getFieldValue(binding.clientId, "Client Id")
     val apiKey = getFieldValue(binding.apiKey, "Api Key")
-    val appVersion = getFieldValue(binding.appVersion, "App Version")
+    val appVersion = getFieldValue(binding.appVersion, "App Version")?.toLongOrNull()
     val uuid = getFieldValue(binding.uuid, "UUID")
     val deviceId = getFieldValue(binding.deviceId, "Device Id")
     val ixigoConfig =

@@ -84,7 +84,7 @@ class FlightsFunnelTest {
                 flightClass = "e",
                 passengerData = FlightPassengerData(adults = 1, children = 0, infants = 0)),
         expectedUrl =
-            "https://baseUrl.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=appVersion&deviceId=deviceId&languageCode=en&page=FLIGHT_LISTING&orgn=DEL&dstn=BOM&departDate=22102021&returnDate=&adults=1&children=0&infants=0&class=e&source=FlightSearchFormFragment")
+            "https://baseUrl.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=1&deviceId=deviceId&languageCode=en&page=FLIGHT_LISTING&orgn=DEL&dstn=BOM&departDate=22102021&returnDate=&adults=1&children=0&infants=0&class=e&source=FlightSearchFormFragment")
   }
 
   @Test
@@ -100,7 +100,7 @@ class FlightsFunnelTest {
                 flightClass = "a",
                 passengerData = FlightPassengerData(adults = 1, children = 0, infants = 0)),
         expectedUrl =
-            "https://baseUrl.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=appVersion&deviceId=deviceId&languageCode=en&page=FLIGHT_LISTING&orgn=DEL&dstn=BOM&departDate=22102021&returnDate=26102021&adults=1&children=0&infants=0&class=a&source=FlightSearchFormFragment")
+            "https://baseUrl.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=1&deviceId=deviceId&languageCode=en&page=FLIGHT_LISTING&orgn=DEL&dstn=BOM&departDate=22102021&returnDate=26102021&adults=1&children=0&infants=0&class=a&source=FlightSearchFormFragment")
   }
 
   @Test
@@ -116,7 +116,7 @@ class FlightsFunnelTest {
                 flightClass = "e",
                 passengerData = FlightPassengerData(adults = 1, children = 0, infants = 0)),
         expectedUrl =
-            "https://baseUrl.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=appVersion&deviceId=deviceId&languageCode=en&page=FLIGHT_LISTING&orgn=DEL&dstn=BOM&departDate=22102021&returnDate=26102021&adults=1&children=0&infants=0&class=e&source=FlightSearchFormFragment")
+            "https://baseUrl.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=1&deviceId=deviceId&languageCode=en&page=FLIGHT_LISTING&orgn=DEL&dstn=BOM&departDate=22102021&returnDate=26102021&adults=1&children=0&infants=0&class=e&source=FlightSearchFormFragment")
   }
 
   @Test
@@ -133,7 +133,7 @@ class FlightsFunnelTest {
                 flightClass = "e",
                 passengerData = FlightPassengerData(adults = 1, children = 0, infants = 0)),
         expectedUrl =
-            "https://baseUrl.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=appVersion&deviceId=deviceId&languageCode=en&page=FLIGHT_LISTING&orgn=DEL&dstn=BOM&departDate=${tomorrowStr}&returnDate=&adults=1&children=0&infants=0&class=e&source=FlightSearchFormFragment")
+            "https://baseUrl.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=1&deviceId=deviceId&languageCode=en&page=FLIGHT_LISTING&orgn=DEL&dstn=BOM&departDate=${tomorrowStr}&returnDate=&adults=1&children=0&infants=0&class=e&source=FlightSearchFormFragment")
   }
 
   private fun assertFlightsHome() {
@@ -141,7 +141,7 @@ class FlightsFunnelTest {
       IxigoSDK.getInstance().flightsStartHome(activity)
       assertLaunchedIntent(
           activity,
-          "https://baseUrl.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=appVersion&deviceId=deviceId&languageCode=en&page=FLIGHT_HOME")
+          "https://baseUrl.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=1&deviceId=deviceId&languageCode=en&page=FLIGHT_HOME")
       verify(mockAnalyticsProvider).logEvent(Event(action = "flightsStartHome"))
     }
   }
@@ -173,13 +173,13 @@ class FlightsFunnelTest {
       AppInfo(
           clientId = "clientId",
           apiKey = "apiKey",
-          appVersion = "appVersion",
+          appVersion = 1,
           deviceId = "deviceId",
           uuid = "uuid")
 
   private fun expectedHeaders(): Map<String, String> =
       mutableMapOf(
-          "appVersion" to appInfo.appVersion,
+          "appVersion" to appInfo.appVersionString,
           "clientId" to appInfo.clientId,
           "apiKey" to appInfo.apiKey,
           "deviceId" to appInfo.deviceId,

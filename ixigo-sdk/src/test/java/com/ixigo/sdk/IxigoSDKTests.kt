@@ -114,7 +114,7 @@ class IxigoSDKTests {
   private fun expectedHeaders(ixigoSDK: IxigoSDK): Map<String, String> {
     val appInfo = ixigoSDK.appInfo
     return mutableMapOf(
-        "appVersion" to appInfo.appVersion,
+        "appVersion" to appInfo.appVersionString,
         "clientId" to appInfo.clientId,
         "apiKey" to appInfo.apiKey,
         "deviceId" to appInfo.deviceId,
