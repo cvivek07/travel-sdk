@@ -14,14 +14,15 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
+import com.google.android.material.snackbar.Snackbar
 import com.ixigo.sdk.AppInfo
 import com.ixigo.sdk.Config
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.app.databinding.FragmentFirstBinding
-import com.ixigo.sdk.auth.AuthProvider
-import com.ixigo.sdk.auth.PartnerToken
-import com.ixigo.sdk.auth.PartnerTokenProvider
-import com.ixigo.sdk.auth.SSOAuthProvider
+import com.ixigo.sdk.auth.*
+import com.ixigo.sdk.common.Err
+import com.ixigo.sdk.common.Ok
+import com.ixigo.sdk.common.Result
 import com.ixigo.sdk.flights.FlightPassengerData
 import com.ixigo.sdk.flights.FlightSearchData
 import com.ixigo.sdk.flights.flightsStartHome
@@ -30,6 +31,10 @@ import com.ixigo.sdk.payment.PaymentCallback
 import com.ixigo.sdk.payment.PaymentInput
 import com.ixigo.sdk.payment.PaymentProvider
 import java.time.LocalDate
+import kotlin.reflect.full.companionObject
+import kotlin.reflect.full.companionObjectInstance
+import kotlin.reflect.full.declaredFunctions
+import kotlin.reflect.jvm.isAccessible
 
 /** A simple [Fragment] subclass as the default destination in the navigation. */
 class FirstFragment : Fragment() {
@@ -43,9 +48,9 @@ class FirstFragment : Fragment() {
     get() = _binding!!
 
   override fun onCreateView(
-      inflater: LayoutInflater,
-      container: ViewGroup?,
-      savedInstanceState: Bundle?
+    inflater: LayoutInflater,
+    container: ViewGroup?,
+    savedInstanceState: Bundle?
   ): View? {
 
     _binding = FragmentFirstBinding.inflate(inflater, container, false)
@@ -55,9 +60,16 @@ class FirstFragment : Fragment() {
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
 
-    loadSettings()
-
     binding.buttonRestart.setOnClickListener { restartApp() }
+    
+    binding.buttonSSOTest.setOnClickListener {
+      initSDK()
+
+      getAuthProvider().login(requireActivity()) {
+        Snackbar.make(binding.buttonSSOTest, getSsoAuthMessage(it), Snackbar.LENGTH_LONG)
+          .show()
+      }
+    }
 
     binding.buttonFlightHome.setOnClickListener {
       if (initSDK()) {
@@ -68,20 +80,54 @@ class FirstFragment : Fragment() {
     binding.buttonFlightSearch.setOnClickListener {
       if (initSDK()) {
         IxigoSDK.getInstance()
-            .flightsStartSearch(
-                requireContext(),
-                FlightSearchData(
-                    origin = "DEL",
-                    destination = "BOM",
-                    departDate = LocalDate.now().plusDays(1),
-                    source = "FlightSearchFormFragment",
-                    flightClass = "e",
-                    passengerData = FlightPassengerData(adults = 1, children = 0, infants = 0)))
+          .flightsStartSearch(
+            requireContext(),
+            FlightSearchData(
+              origin = "DEL",
+              destination = "BOM",
+              departDate = LocalDate.now().plusDays(1),
+              source = "FlightSearchFormFragment",
+              flightClass = "e",
+              passengerData = FlightPassengerData(adults = 1, children = 0, infants = 0)))
       }
     }
 
     val adapter = ArrayAdapter(requireContext(), R.layout.list_item, ixigoConfigs)
     (binding.configInput.editText as? AutoCompleteTextView)?.setAdapter(adapter)
+
+    val presetAdapter = ArrayAdapter(requireContext(), R.layout.list_item, presets)
+    (binding.presetInput.editText as? AutoCompleteTextView)?.setAdapter(presetAdapter)
+    (binding.presetInput.editText as? AutoCompleteTextView)?.setOnItemClickListener {
+        parent,
+        view,
+        position,
+        id ->
+      val preset = presets[position]
+      if (preset.label == "Other") {
+        binding.expansionLayout.expand(true)
+      } else {
+        binding.expansionLayout.collapse(true)
+      }
+      loadPreset(presets[position])
+    }
+
+    loadPreset(presets[0])
+  }
+
+  private fun getSsoAuthMessage(it: Result<AuthData>): String {
+    return when (it) {
+      is Ok -> "Auth Successful. Ixigo Token=${it.value.token}"
+      is Err -> "Auth Error. Error=${it.value.message}"
+    }
+  }
+
+  private fun loadPreset(preset: Preset) {
+    binding.clientId.setText(preset.clientId, TextView.BufferType.EDITABLE)
+    binding.apiKey.setText(preset.apiKey, TextView.BufferType.EDITABLE)
+    binding.appVersion.setText(preset.appVersion, TextView.BufferType.EDITABLE)
+    binding.ssoPartnerToken.setText(preset.ssoPartnerToken, TextView.BufferType.EDITABLE)
+    binding.uuid.setText(preset.uuid, TextView.BufferType.EDITABLE)
+    binding.deviceId.setText(preset.deviceId, TextView.BufferType.EDITABLE)
   }
 
   private fun loadSettings() {
@@ -90,7 +136,6 @@ class FirstFragment : Fragment() {
     loadSetting(prefs, binding.apiKey, "apiKey")
     loadSetting(prefs, binding.appVersion, "appVersion")
     loadSetting(prefs, binding.ssoPartnerToken, "ssoPartnerToken")
-    loadSetting(prefs, binding.configInput.editText!!, "config")
     loadSetting(prefs, binding.uuid, "uuid")
     loadSetting(prefs, binding.deviceId, "deviceId")
   }
@@ -130,51 +175,48 @@ class FirstFragment : Fragment() {
     Runtime.getRuntime().exit(0)
   }
 
+  private fun clearSDK() {
+    val companionObject = IxigoSDK::class.companionObject!!
+    val companionInstance = IxigoSDK::class.companionObjectInstance
+    val method = companionObject.declaredFunctions.first { it.name == "clearInstance" }
+    method.isAccessible = true
+    method.call(companionInstance)
+  }
+
   private fun initSDK(): Boolean {
-    if (sdkInitialized) {
-      return true
-    }
+    clearSDK()
+
     val clientId = getFieldValue(binding.clientId, "Client Id")
     val apiKey = getFieldValue(binding.apiKey, "Api Key")
     val appVersion = getFieldValue(binding.appVersion, "App Version")
     val uuid = getFieldValue(binding.uuid, "UUID")
     val deviceId = getFieldValue(binding.deviceId, "Device Id")
     val ixigoConfig =
-        ixigoConfigs.find { it.label == binding.configInput.editText?.text.toString() }
+      ixigoConfigs.find { it.label == binding.configInput.editText?.text.toString() }
     if (ixigoConfig == null) {
       binding.configInput.error = "Config can not be empty"
     }
     if (appVersion == null ||
-        apiKey == null ||
-        clientId == null ||
-        uuid == null ||
-        deviceId == null ||
-        ixigoConfig == null) {
+      apiKey == null ||
+      clientId == null ||
+      uuid == null ||
+      deviceId == null ||
+      ixigoConfig == null) {
       return false
     }
 
     IxigoSDK.init(
-        requireContext(),
-        getAuthProvider(),
-        DisabledPaymentProvider,
-        AppInfo(
-            clientId = clientId,
-            apiKey = apiKey,
-            appVersion = appVersion,
-            uuid = uuid,
-            deviceId = deviceId),
-        config = ixigoConfig.config)
+      requireContext(),
+      getAuthProvider(),
+      DisabledPaymentProvider,
+      AppInfo(
+        clientId = clientId,
+        apiKey = apiKey,
+        appVersion = appVersion,
+        uuid = uuid,
+        deviceId = deviceId),
+      config = ixigoConfig.config)
 
-    binding.clientId.isEnabled = false
-    binding.apiKey.isEnabled = false
-    binding.appVersion.isEnabled = false
-    binding.ssoPartnerToken.isEnabled = false
-    binding.configInput.isEnabled = false
-    binding.deviceId.isEnabled = false
-    binding.uuid.isEnabled = false
-    binding.buttonRestart.visibility = VISIBLE
-
-    saveSettings()
     sdkInitialized = true
     return true
   }
@@ -190,17 +232,18 @@ class FirstFragment : Fragment() {
   }
 
   private fun getAuthProvider(): AuthProvider {
-    val token = binding.ssoPartnerToken.text.toString()
+    //    val token = binding.ssoPartnerToken.text.toString()
+    val token = "D5DCFBD21CF7867B74D5273A57A0254D1785773799EEDD0E683B0EE5C6E56878"
     return SSOAuthProvider(
-        object : PartnerTokenProvider {
-          override val partnerToken: PartnerToken?
-            get() =
-                if (token.isNullOrEmpty()) {
-                  null
-                } else {
-                  PartnerToken(token)
-                }
-        })
+      object : PartnerTokenProvider {
+        override val partnerToken: PartnerToken?
+          get() =
+            if (token.isNullOrEmpty()) {
+              null
+            } else {
+              PartnerToken(token)
+            }
+      })
   }
 
   override fun onDestroyView() {
@@ -210,21 +253,57 @@ class FirstFragment : Fragment() {
 
   object DisabledPaymentProvider : PaymentProvider {
     override fun startPayment(
-        activity: FragmentActivity,
-        input: PaymentInput,
-        callback: PaymentCallback
+      activity: FragmentActivity,
+      input: PaymentInput,
+      callback: PaymentCallback
     ): Boolean {
       return false
     }
   }
 
-  data class IxigoConfig(val label: String, val config: Config) {
-    override fun toString(): String {
-      return label
-    }
-  }
+  private val ixigoConfigs =
+    listOf(IxigoConfig("Prod", Config.ProdConfig)) +
+            (1..8).map { IxigoConfig("Build $it", Config.StagingBuildConfig("build$it")) }
 
-  val ixigoConfigs =
-      listOf(IxigoConfig("Prod", Config.ProdConfig)) +
-          (1..8).map { IxigoConfig("Build $it", Config.StagingBuildConfig("build$it")) }
+  private val presets =
+    listOf(
+      Preset(
+        label = "Abhibus",
+        clientId = "abhibus",
+        apiKey = "abhibus!2\$",
+        ssoPartnerToken = "RQjsRqkORTji8R9+AQkLFyl9yeLQxX2II01n4rvVh1vpoH6pVx4eiw=="),
+      Preset(
+        label = "ConfirmTk",
+        clientId = "confirmtckt",
+        apiKey = "confirmtckt!2\$",
+        ssoPartnerToken = "D5DCFBD21CF7867B74D5273A57A0254D1785773799EEDD0E683B0EE5C6E56878"),
+      Preset(label = "Ixigo Trains", clientId = "iximatr", apiKey = "iximatr!2\$"),
+      Preset(
+        label = "Other",
+        clientId = "",
+        apiKey = "",
+        ssoPartnerToken = "",
+        uuid = "",
+        deviceId = "",
+        appVersion = ""))
+}
+
+data class Preset(
+  val label: String,
+  val clientId: String,
+  val apiKey: String,
+  val ssoPartnerToken: String? = null,
+  val appVersion: String = "1.0",
+  val uuid: String = "uuid",
+  val deviceId: String = "deviceId"
+) {
+  override fun toString(): String {
+    return label
+  }
+}
+
+data class IxigoConfig(val label: String, val config: Config) {
+  override fun toString(): String {
+    return label
+  }
 }
