@@ -6,12 +6,8 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
-import android.widget.EditText
-import android.widget.TextView
+import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.google.android.material.snackbar.Snackbar
@@ -48,9 +44,9 @@ class FirstFragment : Fragment() {
     get() = _binding!!
 
   override fun onCreateView(
-    inflater: LayoutInflater,
-    container: ViewGroup?,
-    savedInstanceState: Bundle?
+      inflater: LayoutInflater,
+      container: ViewGroup?,
+      savedInstanceState: Bundle?
   ): View? {
 
     _binding = FragmentFirstBinding.inflate(inflater, container, false)
@@ -61,13 +57,12 @@ class FirstFragment : Fragment() {
     super.onViewCreated(view, savedInstanceState)
 
     binding.buttonRestart.setOnClickListener { restartApp() }
-    
+
     binding.buttonSSOTest.setOnClickListener {
       initSDK()
 
       getAuthProvider().login(requireActivity()) {
-        Snackbar.make(binding.buttonSSOTest, getSsoAuthMessage(it), Snackbar.LENGTH_LONG)
-          .show()
+        Snackbar.make(binding.buttonSSOTest, getSsoAuthMessage(it), Snackbar.LENGTH_LONG).show()
       }
     }
 
@@ -80,37 +75,37 @@ class FirstFragment : Fragment() {
     binding.buttonFlightSearch.setOnClickListener {
       if (initSDK()) {
         IxigoSDK.getInstance()
-          .flightsStartSearch(
-            requireContext(),
-            FlightSearchData(
-              origin = "DEL",
-              destination = "BOM",
-              departDate = LocalDate.now().plusDays(1),
-              source = "FlightSearchFormFragment",
-              flightClass = "e",
-              passengerData = FlightPassengerData(adults = 1, children = 0, infants = 0)))
+            .flightsStartSearch(
+                requireContext(),
+                FlightSearchData(
+                    origin = "DEL",
+                    destination = "BOM",
+                    departDate = LocalDate.now().plusDays(1),
+                    source = "FlightSearchFormFragment",
+                    flightClass = "e",
+                    passengerData = FlightPassengerData(adults = 1, children = 0, infants = 0)))
       }
     }
 
     val adapter = ArrayAdapter(requireContext(), R.layout.list_item, ixigoConfigs)
     (binding.configInput.editText as? AutoCompleteTextView)?.setAdapter(adapter)
 
+    setupPreset()
+  }
+
+  private fun setupPreset() {
+    val autoCompleteTextView = binding.presetInput.editText as AutoCompleteTextView
     val presetAdapter = ArrayAdapter(requireContext(), R.layout.list_item, presets)
-    (binding.presetInput.editText as? AutoCompleteTextView)?.setAdapter(presetAdapter)
-    (binding.presetInput.editText as? AutoCompleteTextView)?.setOnItemClickListener {
-        parent,
-        view,
-        position,
-        id ->
+    autoCompleteTextView.setAdapter(presetAdapter)
+    autoCompleteTextView.setOnItemClickListener { parent, view, position, id ->
       val preset = presets[position]
       if (preset.label == "Other") {
         binding.expansionLayout.expand(true)
       } else {
         binding.expansionLayout.collapse(true)
       }
-      loadPreset(presets[position])
+      loadPreset(preset)
     }
-
     loadPreset(presets[0])
   }
 
@@ -128,6 +123,7 @@ class FirstFragment : Fragment() {
     binding.ssoPartnerToken.setText(preset.ssoPartnerToken, TextView.BufferType.EDITABLE)
     binding.uuid.setText(preset.uuid, TextView.BufferType.EDITABLE)
     binding.deviceId.setText(preset.deviceId, TextView.BufferType.EDITABLE)
+    (binding.presetInput.editText as AutoCompleteTextView).setText(preset.label, false)
   }
 
   private fun loadSettings() {
@@ -192,30 +188,30 @@ class FirstFragment : Fragment() {
     val uuid = getFieldValue(binding.uuid, "UUID")
     val deviceId = getFieldValue(binding.deviceId, "Device Id")
     val ixigoConfig =
-      ixigoConfigs.find { it.label == binding.configInput.editText?.text.toString() }
+        ixigoConfigs.find { it.label == binding.configInput.editText?.text.toString() }
     if (ixigoConfig == null) {
       binding.configInput.error = "Config can not be empty"
     }
     if (appVersion == null ||
-      apiKey == null ||
-      clientId == null ||
-      uuid == null ||
-      deviceId == null ||
-      ixigoConfig == null) {
+        apiKey == null ||
+        clientId == null ||
+        uuid == null ||
+        deviceId == null ||
+        ixigoConfig == null) {
       return false
     }
 
     IxigoSDK.init(
-      requireContext(),
-      getAuthProvider(),
-      DisabledPaymentProvider,
-      AppInfo(
-        clientId = clientId,
-        apiKey = apiKey,
-        appVersion = appVersion,
-        uuid = uuid,
-        deviceId = deviceId),
-      config = ixigoConfig.config)
+        requireContext(),
+        getAuthProvider(),
+        DisabledPaymentProvider,
+        AppInfo(
+            clientId = clientId,
+            apiKey = apiKey,
+            appVersion = appVersion,
+            uuid = uuid,
+            deviceId = deviceId),
+        config = ixigoConfig.config)
 
     sdkInitialized = true
     return true
@@ -235,15 +231,15 @@ class FirstFragment : Fragment() {
     //    val token = binding.ssoPartnerToken.text.toString()
     val token = "D5DCFBD21CF7867B74D5273A57A0254D1785773799EEDD0E683B0EE5C6E56878"
     return SSOAuthProvider(
-      object : PartnerTokenProvider {
-        override val partnerToken: PartnerToken?
-          get() =
-            if (token.isNullOrEmpty()) {
-              null
-            } else {
-              PartnerToken(token)
-            }
-      })
+        object : PartnerTokenProvider {
+          override val partnerToken: PartnerToken?
+            get() =
+                if (token.isNullOrEmpty()) {
+                  null
+                } else {
+                  PartnerToken(token)
+                }
+        })
   }
 
   override fun onDestroyView() {
@@ -253,49 +249,49 @@ class FirstFragment : Fragment() {
 
   object DisabledPaymentProvider : PaymentProvider {
     override fun startPayment(
-      activity: FragmentActivity,
-      input: PaymentInput,
-      callback: PaymentCallback
+        activity: FragmentActivity,
+        input: PaymentInput,
+        callback: PaymentCallback
     ): Boolean {
       return false
     }
   }
 
   private val ixigoConfigs =
-    listOf(IxigoConfig("Prod", Config.ProdConfig)) +
-            (1..8).map { IxigoConfig("Build $it", Config.StagingBuildConfig("build$it")) }
+      listOf(IxigoConfig("Prod", Config.ProdConfig)) +
+          (1..8).map { IxigoConfig("Build $it", Config.StagingBuildConfig("build$it")) }
 
   private val presets =
-    listOf(
-      Preset(
-        label = "Abhibus",
-        clientId = "abhibus",
-        apiKey = "abhibus!2\$",
-        ssoPartnerToken = "RQjsRqkORTji8R9+AQkLFyl9yeLQxX2II01n4rvVh1vpoH6pVx4eiw=="),
-      Preset(
-        label = "ConfirmTk",
-        clientId = "confirmtckt",
-        apiKey = "confirmtckt!2\$",
-        ssoPartnerToken = "D5DCFBD21CF7867B74D5273A57A0254D1785773799EEDD0E683B0EE5C6E56878"),
-      Preset(label = "Ixigo Trains", clientId = "iximatr", apiKey = "iximatr!2\$"),
-      Preset(
-        label = "Other",
-        clientId = "",
-        apiKey = "",
-        ssoPartnerToken = "",
-        uuid = "",
-        deviceId = "",
-        appVersion = ""))
+      listOf(
+        Preset(
+          label = "ConfirmTk",
+          clientId = "confirmtckt",
+          apiKey = "confirmtckt!2\$",
+          ssoPartnerToken = "D5DCFBD21CF7867B74D5273A57A0254D1785773799EEDD0E683B0EE5C6E56878"),
+          Preset(
+              label = "Abhibus",
+              clientId = "abhibus",
+              apiKey = "abhibus!2\$",
+              ssoPartnerToken = "RQjsRqkORTji8R9+AQkLFyl9yeLQxX2II01n4rvVh1vpoH6pVx4eiw=="),
+          Preset(label = "Ixigo Trains", clientId = "iximatr", apiKey = "iximatr!2\$"),
+          Preset(
+              label = "Other",
+              clientId = "",
+              apiKey = "",
+              ssoPartnerToken = "",
+              uuid = "",
+              deviceId = "",
+              appVersion = ""))
 }
 
 data class Preset(
-  val label: String,
-  val clientId: String,
-  val apiKey: String,
-  val ssoPartnerToken: String? = null,
-  val appVersion: String = "1.0",
-  val uuid: String = "uuid",
-  val deviceId: String = "deviceId"
+    val label: String,
+    val clientId: String,
+    val apiKey: String,
+    val ssoPartnerToken: String? = null,
+    val appVersion: String = "1.0.0",
+    val uuid: String = "987654321ABC",
+    val deviceId: String = "123456789abcdef"
 ) {
   override fun toString(): String {
     return label
