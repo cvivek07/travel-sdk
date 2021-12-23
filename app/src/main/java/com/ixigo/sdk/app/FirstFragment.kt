@@ -294,7 +294,7 @@ data class Preset(
     val clientId: String,
     val apiKey: String,
     val ssoPartnerToken: String? = null,
-    val appVersion: String = "1.0.0",
+    val appVersion: String = "1",
     val uuid: String = "987654321ABC",
     val deviceId: String = "123456789abcdef"
 ) {
