@@ -2,7 +2,7 @@ import { App, LogLevel } from "@slack/bolt";
 import fs from "fs";
 import glob from "glob-promise";
 
-const channel = "D02RTRZBQ3E"; // #ixigo-mobile-sdk-builds
+const channel = "C02RJSVUMLN"; // #ixigo-mobile-sdk-builds
 const token = process.env.SLACK_TOKEN;
 const signingSecret = process.env.SLACK_SIGNING_SECRET;
 const app = new App({
