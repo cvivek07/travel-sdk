@@ -7,7 +7,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
+import android.widget.EditText
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.google.android.material.snackbar.Snackbar
@@ -61,8 +64,11 @@ class FirstFragment : Fragment() {
     binding.buttonSSOTest.setOnClickListener {
       initSDK()
 
-      getAuthProvider().login(requireActivity()) {
+      val enabled = getAuthProvider().login(requireActivity()) {
         Snackbar.make(binding.buttonSSOTest, getSsoAuthMessage(it), Snackbar.LENGTH_LONG).show()
+      }
+      if (!enabled) {
+        Snackbar.make(binding.buttonSSOTest, "No partner token found", Snackbar.LENGTH_LONG).show()
       }
     }
 
@@ -228,8 +234,7 @@ class FirstFragment : Fragment() {
   }
 
   private fun getAuthProvider(): AuthProvider {
-    //    val token = binding.ssoPartnerToken.text.toString()
-    val token = "D5DCFBD21CF7867B74D5273A57A0254D1785773799EEDD0E683B0EE5C6E56878"
+    val token = binding.ssoPartnerToken.text.toString()
     return SSOAuthProvider(
         object : PartnerTokenProvider {
           override val partnerToken: PartnerToken?
@@ -263,11 +268,11 @@ class FirstFragment : Fragment() {
 
   private val presets =
       listOf(
-        Preset(
-          label = "ConfirmTk",
-          clientId = "confirmtckt",
-          apiKey = "confirmtckt!2\$",
-          ssoPartnerToken = "D5DCFBD21CF7867B74D5273A57A0254D1785773799EEDD0E683B0EE5C6E56878"),
+          Preset(
+              label = "ConfirmTk",
+              clientId = "confirmtckt",
+              apiKey = "confirmtckt!2\$",
+              ssoPartnerToken = "D5DCFBD21CF7867B74D5273A57A0254D1785773799EEDD0E683B0EE5C6E56878"),
           Preset(
               label = "Abhibus",
               clientId = "abhibus",
