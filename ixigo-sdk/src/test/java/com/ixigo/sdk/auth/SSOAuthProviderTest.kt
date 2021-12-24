@@ -7,6 +7,8 @@ import com.ixigo.sdk.Config
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.analytics.test.FakeAnalyticsProvider
 import com.ixigo.sdk.auth.test.FakePartnerTokenProvider
+import com.ixigo.sdk.common.Err
+import com.ixigo.sdk.common.Ok
 import com.ixigo.sdk.payment.DisabledPaymentProvider
 import com.ixigo.sdk.test.TestData.FakeAppInfo
 import okhttp3.mockwebserver.MockResponse
@@ -85,11 +87,16 @@ class SSOAuthProviderTest {
   }
 
   @Test
+  fun `test that login returns Error message in body`() {
+    assertRequestFails(MockResponse().setBody("""{"errors":{"message":"MyError"}}"""), "MyError")
+  }
+
+  @Test
   fun `test that login returns Error if request fails`() {
     assertRequestFails(MockResponse().setStatus("bad status"))
   }
 
-  private fun assertRequestFails(response: MockResponse) {
+  private fun assertRequestFails(response: MockResponse, errorMessage: String? = null) {
     mockServer.enqueue(response)
     val partnerToken = PartnerToken("partnerToken")
     val ssoAuthProvider = SSOAuthProvider(FakePartnerTokenProvider(partnerToken))
@@ -98,16 +105,16 @@ class SSOAuthProviderTest {
     launchActivity<FragmentActivity>().onActivity { activity ->
       val handled =
           ssoAuthProvider.login(activity) {
-            print("XXX inside UI Thread")
-            assertFalse(it.isSuccess)
+            when (it) {
+              is Ok -> fail("Error is supposed to fail")
+              is Err -> if (errorMessage != null) assertEquals(errorMessage, it.value.message)
+            }
             assertRequest(partnerToken)
             callbackCalled = true
-            print("callback changed")
           }
       assertTrue(handled)
     }
     await.until { callbackCalled }
-    print("XXX DONE")
   }
 
   private fun assertRequest(partnerToken: PartnerToken) {

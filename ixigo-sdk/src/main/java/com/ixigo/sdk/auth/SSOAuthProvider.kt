@@ -26,6 +26,7 @@ class SSOAuthProvider(private val partnerTokenProvider: PartnerTokenProvider) : 
   private val client: OkHttpClient by lazy { OkHttpClient() }
   private val moshi by lazy { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
   private val responseJsonAdapter by lazy { moshi.adapter(RequestResponse::class.java) }
+  private val errorResponseJsonAdapter by lazy { moshi.adapter(ErrorResponse::class.java) }
 
   override var authData: AuthData? = null
     private set
@@ -61,9 +62,10 @@ class SSOAuthProvider(private val partnerTokenProvider: PartnerTokenProvider) : 
               }
 
               override fun onResponse(call: Call, response: Response) {
-                val token = getAccessToken(response)
+                val body = response.body?.string()
+                val token = getAccessToken(body)
                 if (token == null) {
-                  callback(Err(Error("Could not get SSO Token")))
+                  callback(Err(getError(body)))
                 } else {
                   val authData = AuthData(token)
                   this@SSOAuthProvider.authData = authData
@@ -71,17 +73,30 @@ class SSOAuthProvider(private val partnerTokenProvider: PartnerTokenProvider) : 
                 }
               }
 
-              private fun getAccessToken(response: Response): String? =
+              private fun getAccessToken(body: String?): String? =
                   try {
-                    responseJsonAdapter.fromJson(response.body!!.source())?.data?.accessToken
+                    responseJsonAdapter.fromJson(body)?.data?.accessToken
                   } catch (e: Exception) {
                     Timber.w(e, "Error trying to parse access_token")
                     null
+                  }
+
+              private fun getError(body: String?): Error =
+                  try {
+                    val message = errorResponseJsonAdapter.fromJson(body)?.errors?.message
+                    Error(message)
+                  } catch (e: Exception) {
+                    Timber.w(e, "Error trying to parse error message")
+                    Error("Could not get SSO Token")
                   }
             })
     return true
   }
 }
+
+private data class ErrorResponse(val errors: ErrorResponseErrors)
+
+private data class ErrorResponseErrors(val message: String)
 
 private data class RequestResponse(val data: RequestResponseData)
 
