@@ -78,7 +78,13 @@ internal constructor(
       if (INSTANCE != null) {
         throw IllegalStateException("IxigoSDK has already been initialized")
       }
-      INSTANCE = IxigoSDK(appInfo, authProvider, paymentProvider, analyticsProvider, config)
+      INSTANCE =
+          IxigoSDK(
+              appInfo.replaceDefaults(UUIDFactory(context), DeviceIdFactory(context)),
+              authProvider,
+              paymentProvider,
+              analyticsProvider,
+              config)
 
       analyticsProvider.logEvent(
           Event(
@@ -158,24 +164,4 @@ internal constructor(
       false
     }
   }
-}
-
-/**
- * Information about the host App
- *
- * @property clientId
- * @property apiKey
- * @property appVersion
- * @property deviceId
- * @property uuid
- */
-data class AppInfo(
-    val clientId: String,
-    val apiKey: String,
-    val appVersion: Long,
-    val deviceId: String,
-    val uuid: String
-) {
-  val appVersionString
-    get() = appVersion.toString()
 }
