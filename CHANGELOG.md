@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0](https://git.ixigo.com/android/ixigo-android-sdk/compare/ixigo-sdk-1.4.0...ixigo-sdk-1.5.0) (2021-12-24)
+
+
+### Features
+
+* make UUID optional ([222a4ee](https://git.ixigo.com/android/ixigo-android-sdk/commit/222a4ee5e2497b64187df7f6203f11191768bfbc))
+
+
+### Bug Fixes
+
+* make app version a long ([41b2452](https://git.ixigo.com/android/ixigo-android-sdk/commit/41b2452b5ea420c692b440f8c1d78dd48169eb34))
+
 ## [1.4.0](https://git.ixigo.com/android/ixigo-android-sdk/compare/ixigo-sdk-1.3.0...ixigo-sdk-1.4.0) (2021-12-22)
 
 
