@@ -132,3 +132,13 @@ You can configure the appearance of certain UI elements presented by the sdk by 
 </resources>
 
 ```
+
+## Entry Points / Functionality
+
+### Start Flights Funnel
+
+```kotlin
+IxigoSDK.getInstance().flightsStartHome(context)
+```
+
+
