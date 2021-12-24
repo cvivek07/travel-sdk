@@ -2,6 +2,10 @@
 
 ## Setup development environment
 
+# Development
+
+## Setup development environment
+
 1. Add a personal Gitlab Token as an environment variable called `NPM_TOKEN`
    1. This is needed to use [Gitlab NPM Registry](https://docs.gitlab.com/ee/user/packages/npm_registry/) for some custom npm dependencies needed for build process.
    1. [Create the personal token](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html#create-a-personal-access-token)
@@ -12,6 +16,15 @@
    1. `git clone git@git.ixigo.com:android/ixigo-android-sdk.git`
    1. `cd ixigo-android-sdk.git`
    1. `yarn install`
+1. Install latest [Android Studio](https://developer.android.com/studio/install)
+1. Import `ixigo-android-sdk` project in Android Studio
+1. Run the sample App
+
+## Development
+
+Most of the development should be done agains Unit Tets and against our Sample App.
+
+![](images/sample_app.png)
 
 ## Code Format
 
