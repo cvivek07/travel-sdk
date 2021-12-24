@@ -52,7 +52,11 @@ dependencies {
 
 ## Initialize the SDK
 
-Initialize the SDK calling `IxigoSDK.init(...)` in your App creation flow.
+Initialize the SDK calling in your App creation flow.
+
+```kotlin
+IxigoSDK.init(...)
+```
 
 ## Authentication
 
