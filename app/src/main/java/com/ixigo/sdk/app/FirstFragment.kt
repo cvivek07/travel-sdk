@@ -275,7 +275,7 @@ class FirstFragment : Fragment() {
   private val presets =
       listOf(
           Preset(
-              label = "ConfirmTk",
+              label = "ConfirmTkt",
               clientId = "confirmtckt",
               apiKey = "confirmtckt!2\$",
               ssoPartnerToken = "D5DCFBD21CF7867B74D5273A57A0254D1785773799EEDD0E683B0EE5C6E56878"),
