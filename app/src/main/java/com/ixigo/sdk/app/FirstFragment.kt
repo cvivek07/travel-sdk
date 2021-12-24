@@ -1,5 +1,6 @@
 package com.ixigo.sdk.app
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -40,6 +41,7 @@ class FirstFragment : Fragment() {
 
   private var _binding: FragmentFirstBinding? = null
   private var sdkInitialized: Boolean = false
+  private val progressDialog by lazy { ProgressDialog(requireActivity()) }
 
   // This property is only valid between onCreateView and
   // onDestroyView.
@@ -63,9 +65,13 @@ class FirstFragment : Fragment() {
 
     binding.buttonSSOTest.setOnClickListener {
       initSDK()
-
+      
       val enabled = getAuthProvider().login(requireActivity()) {
+        progressDialog.hide()
         Snackbar.make(binding.buttonSSOTest, getSsoAuthMessage(it), Snackbar.LENGTH_LONG).show()
+      }
+      if (enabled) {
+        progressDialog.show()
       }
       if (!enabled) {
         Snackbar.make(binding.buttonSSOTest, "No partner token found", Snackbar.LENGTH_LONG).show()
