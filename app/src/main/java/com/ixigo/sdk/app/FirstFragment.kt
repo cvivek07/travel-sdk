@@ -1,6 +1,5 @@
 package com.ixigo.sdk.app
 
-import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -65,11 +64,12 @@ class FirstFragment : Fragment() {
 
     binding.buttonSSOTest.setOnClickListener {
       initSDK()
-      
-      val enabled = getAuthProvider().login(requireActivity()) {
-        progressDialog.hide()
-        Snackbar.make(binding.buttonSSOTest, getSsoAuthMessage(it), Snackbar.LENGTH_LONG).show()
-      }
+
+      val enabled =
+          getAuthProvider().login(requireActivity()) {
+            progressDialog.hide()
+            Snackbar.make(binding.buttonSSOTest, getSsoAuthMessage(it), Snackbar.LENGTH_LONG).show()
+          }
       if (enabled) {
         progressDialog.show()
       }
@@ -215,14 +215,14 @@ class FirstFragment : Fragment() {
 
     IxigoSDK.init(
         requireContext(),
-        getAuthProvider(),
-        DisabledPaymentProvider,
         AppInfo(
             clientId = clientId,
             apiKey = apiKey,
             appVersion = appVersion,
             uuid = uuid,
             deviceId = deviceId),
+        getAuthProvider(),
+        DisabledPaymentProvider,
         config = ixigoConfig.config)
 
     sdkInitialized = true

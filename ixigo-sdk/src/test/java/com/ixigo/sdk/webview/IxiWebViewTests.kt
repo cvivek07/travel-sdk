@@ -99,9 +99,9 @@ class IxiWebViewTests {
     val paymentInput = paymentInputAdapter.fromJson(paymentInputStr)!!
     IxigoSDK.init(
         fragmentActivity,
+        appInfo,
         EmptyAuthProvider,
         FakePaymentProvider(fragmentActivity, mapOf(paymentInput to Ok(PaymentResponse(nextUrl)))),
-        appInfo,
         analyticsProvider)
     val startNativePaymentMethod =
         ixiWebView.javaClass.getDeclaredMethod("executeNativePayment", String::class.java)
@@ -128,9 +128,9 @@ class IxiWebViewTests {
     val paymentInput = paymentInputAdapter.fromJson(paymentInputStr)!!
     IxigoSDK.init(
         fragmentActivity,
+        appInfo,
         EmptyAuthProvider,
         FakePaymentProvider(fragmentActivity, mapOf(paymentInput to Err(Error()))),
-        appInfo,
         analyticsProvider)
     val startNativePaymentMethod =
         ixiWebView.javaClass.getDeclaredMethod("executeNativePayment", String::class.java)
@@ -145,9 +145,9 @@ class IxiWebViewTests {
   fun `test invalid payment`() {
     IxigoSDK.init(
         fragmentActivity,
+        appInfo,
         EmptyAuthProvider,
         FakePaymentProvider(fragmentActivity, mapOf()),
-        appInfo,
         analyticsProvider)
     val paymentInputStr =
         """
@@ -170,7 +170,7 @@ class IxiWebViewTests {
     val intent = Intent()
     val paymentProvider = mock<ActivityResultPaymentProvider>()
 
-    IxigoSDK.init(fragmentActivity, EmptyAuthProvider, paymentProvider, appInfo, analyticsProvider)
+    IxigoSDK.init(fragmentActivity, appInfo, EmptyAuthProvider, paymentProvider, analyticsProvider)
 
     scenario.onFragment { fragment ->
       fragment.onActivityResult(requestCode, responseCode, intent)
@@ -213,9 +213,9 @@ class IxiWebViewTests {
   private fun testLogin(token: String?) {
     IxigoSDK.init(
         fragmentActivity,
+        appInfo,
         FakeAuthProvider(token),
         DisabledPaymentProvider,
-        appInfo,
         analyticsProvider)
     val successJs = "success"
     val failureJs = "failure"

@@ -52,9 +52,9 @@ class FlightsFunnelTest {
   fun `test flightsStartHome launches WebActivity`() {
     IxigoSDK.init(
         activity,
+        appInfo,
         EmptyAuthProvider,
         DisabledPaymentProvider,
-        appInfo,
         mockAnalyticsProvider,
         config)
     assertFlightsHome()
@@ -64,9 +64,9 @@ class FlightsFunnelTest {
   fun `test flightsStartHome launches WebActivity with Auth Token`() {
     IxigoSDK.init(
         activity,
+        appInfo,
         FakeAuthProvider("token", AuthData("token")),
         DisabledPaymentProvider,
-        appInfo,
         mockAnalyticsProvider,
         config)
     assertFlightsHome()
@@ -149,9 +149,9 @@ class FlightsFunnelTest {
   private fun assertFlightSearch(searchData: FlightSearchData, expectedUrl: String) {
     IxigoSDK.init(
         activity,
+        appInfo,
         EmptyAuthProvider,
         DisabledPaymentProvider,
-        appInfo,
         mockAnalyticsProvider,
         config)
     scenario.onActivity { activity ->

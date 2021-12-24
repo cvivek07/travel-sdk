@@ -53,25 +53,25 @@ internal constructor(
     @JvmStatic
     fun init(
         context: Context,
+        appInfo: AppInfo,
         authProvider: AuthProvider,
         paymentProvider: PaymentProvider = DisabledPaymentProvider,
-        appInfo: AppInfo,
         config: Config = ProdConfig
     ) {
       init(
           context,
+          appInfo,
           authProvider,
           paymentProvider,
-          appInfo,
           createGoogleAnalyticsProvider(context),
           config)
     }
 
     internal fun init(
         context: Context,
+        appInfo: AppInfo,
         authProvider: AuthProvider,
         paymentProvider: PaymentProvider,
-        appInfo: AppInfo,
         analyticsProvider: AnalyticsProvider = createGoogleAnalyticsProvider(context),
         config: Config = ProdConfig
     ) {

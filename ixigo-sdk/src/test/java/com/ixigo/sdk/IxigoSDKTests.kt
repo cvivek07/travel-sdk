@@ -76,7 +76,7 @@ class IxigoSDKTests {
     val analyticsProvider: AnalyticsProvider = mock()
     val context: Context = mock()
     IxigoSDK.init(
-        context, EmptyAuthProvider, DisabledPaymentProvider, FakeAppInfo, analyticsProvider)
+        context, FakeAppInfo, EmptyAuthProvider, DisabledPaymentProvider, analyticsProvider)
     verify(analyticsProvider)
         .logEvent(
             Event(

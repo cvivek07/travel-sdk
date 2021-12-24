@@ -52,7 +52,7 @@ dependencies {
 
 ## Initialize the SDK
 
-Initialize the SDK calling in your App creation flow. You can only initialize it once. 
+Initialize the SDK calling in your App creation flow. You can only initialize it once.
 
 ```kotlin
 val appInfo = AppInfo(
@@ -60,7 +60,7 @@ val appInfo = AppInfo(
   apiKey = "<API_KEY"),
   appVersion = BuildConfig.VERSION_CODE.toLong()
 )
-IxigoSDK.init(context, authProvider, appInfo)
+IxigoSDK.init(context, appInfo, authProvider, /* Other params */)
 ```
 
 Access the SDK via its singleton Accessor from an Activity or Fragment
@@ -155,5 +155,3 @@ You can configure the appearance of certain UI elements presented by the sdk by 
 ```kotlin
 IxigoSDK.getInstance().flightsStartHome(context)
 ```
-
-
