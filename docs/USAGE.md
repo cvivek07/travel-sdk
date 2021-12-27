@@ -69,6 +69,22 @@ Access the SDK via its singleton Accessor from an Activity or Fragment
 IxigoSDK.getInstance().flightsStartHome()
 ```
 
+### Use staging servers
+
+For development purposes, you might want to point the SDK to one of ixigo's staging servers: `build1.ixigo.com`, `build2.ixigo.com`...
+
+You can configure your endpoint while initializing the SDK like this:
+
+```kotlin
+IxigoSDK.init(context = context, config = Config.StagingBuildConfig("build7"), /* Other params */)
+```
+
+If you want to use a non standard enpoint, you can use `Config` constructor directly:
+
+```kotlin
+val config = Config(apiBaseUrl = "http://mycustomhost.com/api")
+```
+
 ## Authentication
 
 ### SSO Authentication (Recommended)

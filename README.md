@@ -1,6 +1,6 @@
 This repository is the entry point to using Ixigo Android SDK.
 
-## [Usage](docs/Usage.md)
+## [Usage](docs/USAGE.md)
 
 Find Usage docs [here](docs/USAGE.md)
 
