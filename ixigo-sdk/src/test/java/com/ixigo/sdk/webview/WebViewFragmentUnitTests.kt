@@ -6,10 +6,7 @@ import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ixigo.sdk.IxigoSDK
-import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.payment.*
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
@@ -23,15 +20,11 @@ import org.robolectric.shadows.ShadowWebView
 class WebViewFragmentUnitTests {
 
   private lateinit var scenario: FragmentScenario<WebViewFragment>
-  private val fragmentDelegate = mock<WebViewFragmentDelegate>()
   private val initialPageData =
       InitialPageData("https://www.ixigo.com", mapOf("header1" to "header1Value"))
   private lateinit var shadowWebView: ShadowWebView
   private lateinit var fragmentActivity: Activity
-  private val analyticsProvider = mock<AnalyticsProvider>()
-
-  private val moshi by lazy { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
-  private val paymentInputAdapter by lazy { moshi.adapter(PaymentInput::class.java) }
+  private lateinit var fragment: WebViewFragment
 
   @Before
   fun setup() {
@@ -41,9 +34,10 @@ class WebViewFragmentUnitTests {
               it.putParcelable(WebViewFragment.INITIAL_PAGE_DATA_ARGS, initialPageData)
             })
     scenario.onFragment {
+      fragment = it
       shadowWebView = shadowOf(it.webView)
+      shadowWebView.performSuccessfulPageLoadClientCallbacks()
       shadowWebView.pushEntryToHistory(initialPageData.url)
-      it.delegate = fragmentDelegate
       fragmentActivity = it.requireActivity()
     }
   }
@@ -73,5 +67,22 @@ class WebViewFragmentUnitTests {
   fun `test that IxiWebView is loaded`() {
     val ixiWebView: IxiWebView = shadowWebView.getJavascriptInterface("IxiWebView") as IxiWebView
     assertNotNull(ixiWebView)
+  }
+
+  @Test
+  fun `test that back button navigates back in WebView when possible`() {
+    val url = "https://www.ixigo.com/page2"
+    shadowWebView.pushEntryToHistory(url)
+    shadowWebView.webViewClient.doUpdateVisitedHistory(fragment.webView, url, false)
+    assertEquals(0, shadowWebView.goBackInvocations)
+    fragmentActivity.onBackPressed()
+    assertEquals(1, shadowWebView.goBackInvocations)
+  }
+
+  @Test
+  fun `test that back button finishes activitry if WebView can not go back`() {
+    fragmentActivity.onBackPressed()
+    assertEquals(0, shadowWebView.goBackInvocations)
+    assert(fragmentActivity.isFinishing)
   }
 }

@@ -28,13 +28,13 @@ import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.robolectric.Shadows
+import org.robolectric.Shadows.shadowOf
 import org.robolectric.shadows.ShadowWebView
 
 @RunWith(AndroidJUnit4::class)
 class IxiWebViewTests {
 
   private lateinit var scenario: FragmentScenario<WebViewFragment>
-  private val fragmentDelegate = mock<WebViewFragmentDelegate>()
   private val initialPageData =
       InitialPageData("https://www.ixigo.com", mapOf("header1" to "header1Value"))
   private lateinit var shadowWebView: ShadowWebView
@@ -55,7 +55,6 @@ class IxiWebViewTests {
     scenario.onFragment {
       shadowWebView = Shadows.shadowOf(it.webView)
       shadowWebView.pushEntryToHistory(initialPageData.url)
-      it.delegate = fragmentDelegate
       fragmentActivity = it.requireActivity()
       ixiWebView = IxiWebView(it)
     }
@@ -80,7 +79,7 @@ class IxiWebViewTests {
   fun `test quit`() {
     val quitMethod = ixiWebView.javaClass.getDeclaredMethod("quit")
     quitMethod.invoke(ixiWebView)
-    verify(fragmentDelegate).quit()
+    assertTrue(fragmentActivity.isFinishing)
   }
 
   @Test
@@ -176,20 +175,6 @@ class IxiWebViewTests {
       fragment.onActivityResult(requestCode, responseCode, intent)
       verify(paymentProvider).handle(requestCode, responseCode, intent)
     }
-  }
-
-  @Test
-  fun `test backButton goes back if Webview can go back`() {
-    shadowWebView.pushEntryToHistory("https://www.ixigo.com/page1")
-    fragmentActivity.onBackPressed()
-    assertEquals(1, shadowWebView.goBackInvocations)
-  }
-
-  @Test
-  fun `test backButton calls quit if Webview can not go back`() {
-    fragmentActivity.onBackPressed()
-    assertEquals(0, shadowWebView.goBackInvocations)
-    verify(fragmentDelegate).quit()
   }
 
   @Test

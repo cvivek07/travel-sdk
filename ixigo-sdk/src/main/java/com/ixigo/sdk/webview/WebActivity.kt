@@ -8,7 +8,7 @@ import androidx.core.view.WindowInsetsControllerCompat
 import com.ixigo.sdk.R
 import com.ixigo.sdk.databinding.WebActivityBinding
 
-class WebActivity : AppCompatActivity(), WebViewFragmentDelegate {
+class WebActivity : AppCompatActivity() {
 
   private lateinit var binding: WebActivityBinding
   private lateinit var webViewFragment: WebViewFragment
@@ -18,7 +18,6 @@ class WebActivity : AppCompatActivity(), WebViewFragmentDelegate {
 
     webViewFragment = WebViewFragment()
     webViewFragment.arguments = intent.extras
-    webViewFragment.delegate = this
 
     binding = WebActivityBinding.inflate(layoutInflater)
 
@@ -31,10 +30,6 @@ class WebActivity : AppCompatActivity(), WebViewFragmentDelegate {
     setStatusBarColor()
 
     supportFragmentManager.executePendingTransactions()
-  }
-
-  override fun quit() {
-    finish()
   }
 
   private fun setStatusBarColor() {

@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebChromeClient
+import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.VisibleForTesting
@@ -25,8 +26,6 @@ class WebViewFragment : Fragment() {
   internal val webView
     get() = binding.webView
   val viewModel: WebViewViewModel by viewModels()
-
-  lateinit var delegate: WebViewFragmentDelegate
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -48,17 +47,7 @@ class WebViewFragment : Fragment() {
           loadUrl(url)
         })
 
-    activity?.onBackPressedDispatcher?.addCallback(
-        this,
-        object : OnBackPressedCallback(true) {
-          override fun handleOnBackPressed() {
-            if (webView.canGoBack()) {
-              webView.goBack()
-            } else {
-              delegate.quit()
-            }
-          }
-        })
+    requireActivity().onBackPressedDispatcher.addCallback(webViewBackPressHandler)
   }
 
   @SuppressLint("SetJavaScriptEnabled")
@@ -71,7 +60,7 @@ class WebViewFragment : Fragment() {
 
     binding = WebviewLayoutBinding.inflate(layoutInflater)
 
-    webView.webViewClient = WebViewClient()
+    webView.webViewClient = CustomWebViewClient()
     webView.webChromeClient = WebChromeClient()
     webView.settings.javaScriptEnabled = true
 
@@ -102,10 +91,23 @@ class WebViewFragment : Fragment() {
   companion object {
     const val INITIAL_PAGE_DATA_ARGS = "InitialPageData"
   }
-}
 
-interface WebViewFragmentDelegate {
-  fun quit()
+  private val webViewBackPressHandler by lazy {
+    object : OnBackPressedCallback(false) {
+      override fun handleOnBackPressed() {
+        webView.goBack()
+      }
+    }
+  }
+
+  private inner class CustomWebViewClient : WebViewClient() {
+
+    override fun doUpdateVisitedHistory(view: WebView?, url: String?, isReload: Boolean) {
+      super.doUpdateVisitedHistory(view, url, isReload)
+      webViewBackPressHandler.isEnabled = view?.canGoBack() ?: false
+      print(webViewBackPressHandler.isEnabled)
+    }
+  }
 }
 
 @Parcelize

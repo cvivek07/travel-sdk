@@ -24,7 +24,7 @@ class IxiWebView(val fragment: WebViewFragment) : JsInterface {
 
   @JavascriptInterface
   fun quit() {
-    runOnUiThread { fragment.delegate.quit() }
+    runOnUiThread { fragment.activity?.onBackPressed() }
   }
 
   @JavascriptInterface
