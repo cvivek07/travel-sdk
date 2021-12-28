@@ -29,6 +29,9 @@ import com.ixigo.sdk.flights.flightsStartSearch
 import com.ixigo.sdk.payment.PaymentCallback
 import com.ixigo.sdk.payment.PaymentInput
 import com.ixigo.sdk.payment.PaymentProvider
+import com.ixigo.sdk.webview.InitialPageData
+import com.ixigo.sdk.webview.WebActivity
+import com.ixigo.sdk.webview.WebViewFragment
 import java.time.LocalDate
 import kotlin.reflect.full.companionObject
 import kotlin.reflect.full.companionObjectInstance
@@ -75,6 +78,13 @@ class FirstFragment : Fragment() {
       }
       if (!enabled) {
         Snackbar.make(binding.buttonSSOTest, "No partner token found", Snackbar.LENGTH_LONG).show()
+      }
+    }
+
+    binding.buttonFlightMultiModule.setOnClickListener {
+      if (initSDK()) {
+        val intent = Intent(requireContext(), MultiModelActivity::class.java)
+        requireContext().startActivity(intent)
       }
     }
 
@@ -137,7 +147,7 @@ class FirstFragment : Fragment() {
     binding.deviceId.setText(preset.deviceId, TextView.BufferType.EDITABLE)
     (binding.presetInput.editText as AutoCompleteTextView).setText(preset.label, false)
 
-//    binding.buttonFlightMultiModule.isEnabled = preset.buttonsState.flightsMultiModule
+    binding.buttonFlightMultiModule.isEnabled = preset.buttonsState.flightsMultiModule
     binding.buttonFlightSearch.isEnabled = preset.buttonsState.flightsSearch
     binding.buttonFlightHome.isEnabled = preset.buttonsState.flightsHome
   }

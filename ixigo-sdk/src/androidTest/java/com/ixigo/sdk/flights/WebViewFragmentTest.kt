@@ -23,7 +23,6 @@ import com.ixigo.sdk.payment.PaymentResponse
 import com.ixigo.sdk.test.util.FileDispatcher
 import com.ixigo.sdk.webview.InitialPageData
 import com.ixigo.sdk.webview.WebViewFragment
-import com.ixigo.sdk.webview.WebViewFragmentDelegate
 import okhttp3.mockwebserver.MockWebServer
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.After
@@ -37,7 +36,6 @@ import org.mockito.kotlin.verify
 class WebViewFragmentTest {
   private lateinit var mockServer: MockWebServer
   private lateinit var scenario: FragmentScenario<WebViewFragment>
-  private val fragmentDelegate = mock<WebViewFragmentDelegate>()
   private val analyticsProvider = mock<AnalyticsProvider>()
 
   @Before

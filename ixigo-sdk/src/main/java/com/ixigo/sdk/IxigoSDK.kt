@@ -142,7 +142,7 @@ internal constructor(
     context.startActivity(intent)
   }
 
-  private fun getHeaders(url: String): Map<String, String> {
+  internal fun getHeaders(url: String): Map<String, String> {
     if (!isIxigoUrl(url)) {
       return mapOf()
     }

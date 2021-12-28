@@ -241,6 +241,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="SSO Test" />
+
+                <Button
+                    android:id="@+id/buttonFlightMultiModule"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Flights Multi Module" />
             </androidx.appcompat.widget.LinearLayoutCompat>
 
         </androidx.appcompat.widget.LinearLayoutCompat>

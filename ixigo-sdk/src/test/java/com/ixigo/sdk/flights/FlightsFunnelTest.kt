@@ -17,11 +17,14 @@ import com.ixigo.sdk.payment.DisabledPaymentProvider
 import com.ixigo.sdk.webview.InitialPageData
 import com.ixigo.sdk.webview.WebActivity
 import com.ixigo.sdk.webview.WebViewFragment
+import com.ixigo.sdk.webview.WebViewFragment.Companion.INITIAL_PAGE_DATA_ARGS
 import java.time.LocalDate
 import org.hamcrest.BaseMatcher
 import org.hamcrest.Description
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.After
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -134,6 +137,32 @@ class FlightsFunnelTest {
                 passengerData = FlightPassengerData(adults = 1, children = 0, infants = 0)),
         expectedUrl =
             "https://baseUrl.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=1&deviceId=deviceId&languageCode=en&page=FLIGHT_LISTING&orgn=DEL&dstn=BOM&departDate=${tomorrowStr}&returnDate=&adults=1&children=0&infants=0&class=e&source=FlightSearchFormFragment")
+  }
+
+  @Test
+  fun `test flightMultiModelFragment returns WebViewFragment`() {
+    IxigoSDK.init(
+        activity,
+        appInfo,
+        EmptyAuthProvider,
+        DisabledPaymentProvider,
+        mockAnalyticsProvider,
+        config)
+    val searchData =
+        FlightSearchData(
+            origin = "DEL",
+            destination = "BOM",
+            departDateStr = "22102021",
+            returnDateStr = "26102021",
+            source = "FlightSearchFormFragment",
+            flightClass = "e",
+            passengerData = FlightPassengerData(adults = 1, children = 0, infants = 0))
+    val fragment = IxigoSDK.getInstance().flightsMultiModelFragment(searchData)
+    assertNotNull(fragment as? WebViewFragment)
+    val url =
+        "https://baseUrl.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=1&deviceId=deviceId&languageCode=en&page=FLIGHT_LISTING_MULTI_MODEL&orgn=DEL&dstn=BOM&departDate=22102021&returnDate=26102021&adults=1&children=0&infants=0&class=e&source=FlightSearchFormFragment"
+    val expectedInitialData = InitialPageData(url, expectedHeaders())
+    assertEquals(expectedInitialData, fragment.arguments!!.getParcelable(INITIAL_PAGE_DATA_ARGS))
   }
 
   private fun assertFlightsHome() {
