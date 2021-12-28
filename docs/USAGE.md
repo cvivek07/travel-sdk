@@ -89,6 +89,8 @@ val config = Config(apiBaseUrl = "http://mycustomhost.com/api")
 
 ### SSO Authentication (Recommended)
 
+> **Note**: SSO Authentication is not available in Prod yet. You will need to use a `build7` staging server when initializing IxigoSDK, as described in [Use staging servers](#use-staging-servers)
+
 To use SSO Authentication, initialize `IxigoSDK` with an instance of `SSOAuthProvider`.
 
 You will need to pass a `PartnerTokenProvider` so that we can retrieve your App access token and exchange it for an Ixigo access token.
