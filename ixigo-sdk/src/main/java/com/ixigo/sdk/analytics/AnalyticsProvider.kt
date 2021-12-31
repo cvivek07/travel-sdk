@@ -4,15 +4,9 @@ interface AnalyticsProvider {
   fun logEvent(event: Event)
 }
 
-data class Event(
-    val category: String = "action",
-    val action: String,
-    val value: Long? = null,
-    val label: String? = null,
-    val dimensions: Map<EventDimension, String> = mapOf()
-)
-
-enum class EventDimension(val index: Int) {
-  CLIENT_ID(1),
-  SDK_VERSION(2)
+data class Event(val name: String, val properties: Map<String, String> = mapOf()) {
+  companion object {
+    fun with(action: String, label: String? = null): Event =
+        Event(name = action, properties = label?.let { mapOf("label" to it) } ?: mapOf())
+  }
 }

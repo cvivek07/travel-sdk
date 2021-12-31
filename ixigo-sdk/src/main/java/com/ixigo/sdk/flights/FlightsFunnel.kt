@@ -16,14 +16,14 @@ import java.time.format.DateTimeFormatter
 fun IxigoSDK.flightsStartHome(context: Context) {
   val url = getUrl(mapOf("page" to "FLIGHT_HOME"))
   launchWebActivity(context, url)
-  analyticsProvider.logEvent(Event(action = "flightsStartHome"))
+  analyticsProvider.logEvent(Event.with(action = "flightsStartHome"))
 }
 
 fun IxigoSDK.flightsStartSearch(context: Context, searchData: FlightSearchData) {
   val url = getUrl(getFlightsSearchParams("FLIGHT_LISTING", searchData))
   launchWebActivity(context, url)
 
-  analyticsProvider.logEvent(Event(action = "flightsStartSearch"))
+  analyticsProvider.logEvent(Event.with(action = "flightsStartSearch"))
 }
 
 fun IxigoSDK.flightsMultiModelFragment(searchData: FlightSearchData): Fragment {

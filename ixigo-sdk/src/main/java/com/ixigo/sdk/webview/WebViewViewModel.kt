@@ -19,9 +19,9 @@ class WebViewViewModel : ViewModel() {
 
   fun login(fragmentActivity: FragmentActivity, params: LoginParams): Boolean {
     IxigoSDK.getInstance().apply {
-      analyticsProvider.logEvent(Event(action = "loginStart"))
+      analyticsProvider.logEvent(Event.with(action = "loginStart"))
       return IxigoSDK.getInstance().authProvider.login(fragmentActivity) {
-        analyticsProvider.logEvent(Event(action = "loginFinished", label = it.simpleString()))
+        analyticsProvider.logEvent(Event.with(action = "loginFinished", label = it.simpleString()))
         loginResult.postValue(LoginResult(params, it))
       }
     }
@@ -29,11 +29,11 @@ class WebViewViewModel : ViewModel() {
 
   fun startNativePayment(activity: FragmentActivity, input: PaymentInput): Boolean {
     IxigoSDK.getInstance().apply {
-      analyticsProvider.logEvent(Event(action = "paymentStart"))
+      analyticsProvider.logEvent(Event.with(action = "paymentStart"))
       return paymentProvider.startPayment(activity, input) {
         IxigoSDK.getInstance()
             .analyticsProvider
-            .logEvent(Event(action = "paymentFinished", label = it.simpleString()))
+            .logEvent(Event.with(action = "paymentFinished", label = it.simpleString()))
         paymentResult.postValue(NativePaymentResult(input, it))
       }
     }

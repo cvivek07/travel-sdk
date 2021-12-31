@@ -171,7 +171,7 @@ class FlightsFunnelTest {
       assertLaunchedIntent(
           activity,
           "https://baseUrl.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=1&deviceId=deviceId&languageCode=en&page=FLIGHT_HOME")
-      verify(mockAnalyticsProvider).logEvent(Event(action = "flightsStartHome"))
+      verify(mockAnalyticsProvider).logEvent(Event.with(action = "flightsStartHome"))
     }
   }
 
@@ -186,13 +186,13 @@ class FlightsFunnelTest {
     scenario.onActivity { activity ->
       IxigoSDK.getInstance().flightsStartSearch(activity, searchData)
       assertLaunchedIntent(activity, expectedUrl)
-      verify(mockAnalyticsProvider).logEvent(Event(action = "flightsStartSearch"))
+      verify(mockAnalyticsProvider).logEvent(Event.with(action = "flightsStartSearch"))
     }
   }
 
   private fun assertLaunchedIntent(activity: Activity, url: String) {
     val intent = Intent(activity, WebActivity::class.java)
-    intent.putExtra(WebViewFragment.INITIAL_PAGE_DATA_ARGS, InitialPageData(url, expectedHeaders()))
+    intent.putExtra(INITIAL_PAGE_DATA_ARGS, InitialPageData(url, expectedHeaders()))
     val shadowActivity = shadowOf(activity)
     val nextIntent = shadowActivity.nextStartedActivity
     assertThat(nextIntent, IntentMatcher(intent))

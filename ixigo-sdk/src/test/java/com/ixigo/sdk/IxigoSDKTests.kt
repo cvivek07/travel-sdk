@@ -8,7 +8,6 @@ import androidx.test.core.app.launchActivity
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
-import com.ixigo.sdk.analytics.EventDimension
 import com.ixigo.sdk.auth.AuthData
 import com.ixigo.sdk.auth.EmptyAuthProvider
 import com.ixigo.sdk.auth.test.FakeAuthProvider
@@ -80,11 +79,11 @@ class IxigoSDKTests {
     verify(analyticsProvider)
         .logEvent(
             Event(
-                action = "sdkInit",
-                dimensions =
+                name = "sdkInit",
+                properties =
                     mapOf(
-                        EventDimension.CLIENT_ID to FakeAppInfo.clientId,
-                        EventDimension.SDK_VERSION to BuildConfig.SDK_VERSION)))
+                        "clientId" to FakeAppInfo.clientId,
+                        "sdkVersion" to BuildConfig.SDK_VERSION)))
   }
 
   private fun testLaunchActivity(

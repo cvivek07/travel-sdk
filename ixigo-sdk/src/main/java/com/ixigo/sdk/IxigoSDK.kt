@@ -8,7 +8,6 @@ import com.ixigo.sdk.IxigoSDK.Companion.getInstance
 import com.ixigo.sdk.IxigoSDK.Companion.init
 import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
-import com.ixigo.sdk.analytics.EventDimension
 import com.ixigo.sdk.analytics.GoogleAnalyticsProvider
 import com.ixigo.sdk.auth.AuthProvider
 import com.ixigo.sdk.payment.DisabledPaymentProvider
@@ -88,11 +87,9 @@ internal constructor(
 
       analyticsProvider.logEvent(
           Event(
-              action = "sdkInit",
-              dimensions =
-                  mapOf(
-                      EventDimension.CLIENT_ID to appInfo.clientId,
-                      EventDimension.SDK_VERSION to BuildConfig.SDK_VERSION)))
+              name = "sdkInit",
+              properties =
+                  mapOf("clientId" to appInfo.clientId, "sdkVersion" to BuildConfig.SDK_VERSION)))
     }
 
     /**
