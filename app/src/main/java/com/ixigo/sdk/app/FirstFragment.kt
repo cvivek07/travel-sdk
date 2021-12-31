@@ -293,13 +293,13 @@ class FirstFragment : Fragment() {
               clientId = "confirmtckt",
               apiKey = "confirmtckt!2\$",
               ssoPartnerToken = "D5DCFBD21CF7867B74D5273A57A0254D1785773799EEDD0E683B0EE5C6E56878",
-              buttonsState = ButtonsState(flightsHome = false, flightsMultiModule = false)),
+              buttonsState = ButtonsState(flightsSearch = false, flightsMultiModule = false)),
           Preset(
               label = "Abhibus",
               clientId = "abhibus",
               apiKey = "abhibus!2\$",
               ssoPartnerToken = "RQjsRqkORTji8R9+AQkLFyl9yeLQxX2II01n4rvVh1vpoH6pVx4eiw==",
-              buttonsState = ButtonsState(flightsHome = false, flightsMultiModule = false)),
+              buttonsState = ButtonsState(flightsSearch = false, flightsMultiModule = false)),
           Preset(label = "Ixigo Trains", clientId = "iximatr", apiKey = "iximatr!2\$"),
           Preset(
               label = "Other",
