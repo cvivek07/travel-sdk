@@ -20,20 +20,21 @@ class WebActivityTest {
   private val initialPageData =
       InitialPageData("https://www.ixigo.com", mapOf("header1" to "header1Value"))
 
-  //  @Test
-  //  fun `test calling quit finishes activity`() {
-  //    withWebActivity { activity ->
-  //      activity.quit()
-  //      val webViewFragment = activity.supportFragmentManager.fragments[0] as WebViewFragment
-  //      assertSame(activity, webViewFragment.delegate)
-  //      assertEquals(
-  //          initialPageData,
-  //          webViewFragment
-  //              .requireArguments()
-  //              .getParcelable<InitialPageData>(WebViewFragment.INITIAL_PAGE_DATA_ARGS))
-  //      assertTrue(activity.isFinishing)
-  //    }
-  //  }
+  @Test
+  fun `test calling onQuit finishes activity`() {
+    withWebActivity { activity ->
+      activity.onQuit()
+      val webViewFragment = activity.supportFragmentManager.fragments[0] as WebViewFragment
+      assertSame(activity, webViewFragment.delegate)
+      assertSame(activity, webViewFragment.delegate)
+      assertEquals(
+          initialPageData,
+          webViewFragment
+              .requireArguments()
+              .getParcelable<InitialPageData>(WebViewFragment.INITIAL_PAGE_DATA_ARGS))
+      assertTrue(activity.isFinishing)
+    }
+  }
 
   @Test
   fun `test with light statusBar color`() {

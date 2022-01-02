@@ -39,6 +39,7 @@ class IxiWebViewTests {
       InitialPageData("https://www.ixigo.com", mapOf("header1" to "header1Value"))
   private lateinit var shadowWebView: ShadowWebView
   private lateinit var fragmentActivity: Activity
+  private lateinit var fragment: WebViewFragment
   private val analyticsProvider = mock<AnalyticsProvider>()
 
   private val moshi by lazy { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
@@ -53,6 +54,7 @@ class IxiWebViewTests {
               it.putParcelable(WebViewFragment.INITIAL_PAGE_DATA_ARGS, initialPageData)
             })
     scenario.onFragment {
+      fragment = it
       shadowWebView = Shadows.shadowOf(it.webView)
       shadowWebView.pushEntryToHistory(initialPageData.url)
       fragmentActivity = it.requireActivity()
@@ -77,9 +79,12 @@ class IxiWebViewTests {
 
   @Test
   fun `test quit`() {
+    val delegate: WebViewDelegate = mock()
+    fragment.delegate = delegate
     val quitMethod = ixiWebView.javaClass.getDeclaredMethod("quit")
-    quitMethod.invoke(ixiWebView)
-    assertTrue(fragmentActivity.isFinishing)
+    assertNotNull(quitMethod.getAnnotation(JavascriptInterface::class.java))
+    ixiWebView.quit()
+    verify(delegate).onQuit()
   }
 
   @Test
@@ -188,6 +193,7 @@ class IxiWebViewTests {
       val openWindowMethod =
           ixiWebView.javaClass.getDeclaredMethod(
               "openWindow", String::class.java, String::class.java)
+      assertNotNull(openWindowMethod.getAnnotation(JavascriptInterface::class.java))
       val url = "openWindowUrl"
       openWindowMethod.invoke(ixiWebView, url, "title")
 

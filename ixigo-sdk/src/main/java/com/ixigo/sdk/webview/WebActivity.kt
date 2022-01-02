@@ -8,7 +8,7 @@ import androidx.core.view.WindowInsetsControllerCompat
 import com.ixigo.sdk.R
 import com.ixigo.sdk.databinding.WebActivityBinding
 
-class WebActivity : AppCompatActivity() {
+class WebActivity : AppCompatActivity(), WebViewDelegate {
 
   private lateinit var binding: WebActivityBinding
   private lateinit var webViewFragment: WebViewFragment
@@ -17,6 +17,7 @@ class WebActivity : AppCompatActivity() {
     super.onCreate(savedInstanceState)
 
     webViewFragment = WebViewFragment()
+    webViewFragment.delegate = this
     webViewFragment.arguments = intent.extras
 
     binding = WebActivityBinding.inflate(layoutInflater)
@@ -42,5 +43,9 @@ class WebActivity : AppCompatActivity() {
         }
     val isLightColor = luminance > 0.5
     WindowInsetsControllerCompat(window, binding.root).isAppearanceLightStatusBars = isLightColor
+  }
+
+  override fun onQuit() {
+    finish()
   }
 }

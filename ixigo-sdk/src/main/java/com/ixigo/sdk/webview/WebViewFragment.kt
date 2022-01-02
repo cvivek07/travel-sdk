@@ -27,6 +27,8 @@ class WebViewFragment : Fragment() {
     get() = binding.webView
   val viewModel: WebViewViewModel by viewModels()
 
+  var delegate: WebViewDelegate? = null
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
@@ -120,4 +122,8 @@ data class InitialPageData(
 
 interface JsInterface {
   val name: String
+}
+
+interface WebViewDelegate {
+  fun onQuit()
 }
