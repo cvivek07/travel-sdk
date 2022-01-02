@@ -29,9 +29,6 @@ import com.ixigo.sdk.flights.flightsStartSearch
 import com.ixigo.sdk.payment.PaymentCallback
 import com.ixigo.sdk.payment.PaymentInput
 import com.ixigo.sdk.payment.PaymentProvider
-import com.ixigo.sdk.webview.InitialPageData
-import com.ixigo.sdk.webview.WebActivity
-import com.ixigo.sdk.webview.WebViewFragment
 import java.time.LocalDate
 import kotlin.reflect.full.companionObject
 import kotlin.reflect.full.companionObjectInstance
@@ -237,6 +234,7 @@ class FirstFragment : Fragment() {
             deviceId = deviceId),
         getAuthProvider(),
         DisabledPaymentProvider,
+        analyticsProvider = ToastAnalyticsProvider(requireContext()),
         config = ixigoConfig.config)
 
     sdkInitialized = true

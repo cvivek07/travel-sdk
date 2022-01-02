@@ -7,6 +7,7 @@ import com.ixigo.sdk.Config.Companion.ProdConfig
 import com.ixigo.sdk.IxigoSDK.Companion.getInstance
 import com.ixigo.sdk.IxigoSDK.Companion.init
 import com.ixigo.sdk.analytics.AnalyticsProvider
+import com.ixigo.sdk.analytics.ChainAnalyticsProvider
 import com.ixigo.sdk.analytics.Event
 import com.ixigo.sdk.analytics.GoogleAnalyticsProvider
 import com.ixigo.sdk.auth.AuthProvider
@@ -55,6 +56,7 @@ internal constructor(
         appInfo: AppInfo,
         authProvider: AuthProvider,
         paymentProvider: PaymentProvider = DisabledPaymentProvider,
+        analyticsProvider: AnalyticsProvider? = null,
         config: Config = ProdConfig
     ) {
       init(
@@ -62,7 +64,7 @@ internal constructor(
           appInfo,
           authProvider,
           paymentProvider,
-          createGoogleAnalyticsProvider(context),
+          createAnalyticsProvider(context, analyticsProvider),
           config)
     }
 
@@ -71,7 +73,7 @@ internal constructor(
         appInfo: AppInfo,
         authProvider: AuthProvider,
         paymentProvider: PaymentProvider,
-        analyticsProvider: AnalyticsProvider = createGoogleAnalyticsProvider(context),
+        analyticsProvider: AnalyticsProvider,
         config: Config = ProdConfig
     ) {
       if (INSTANCE != null) {
@@ -120,9 +122,13 @@ internal constructor(
       INSTANCE = newInstance
     }
 
-    private fun createGoogleAnalyticsProvider(context: Context): GoogleAnalyticsProvider {
+    private fun createAnalyticsProvider(
+        context: Context,
+        clientAnalyticsProvider: AnalyticsProvider?
+    ): AnalyticsProvider {
       val tracker = GoogleAnalytics.getInstance(context).newTracker(R.xml.global_tracker)
-      return GoogleAnalyticsProvider(tracker)
+      val googleAnalyticsProvider = GoogleAnalyticsProvider(tracker)
+      return ChainAnalyticsProvider(googleAnalyticsProvider, clientAnalyticsProvider)
     }
   }
 
