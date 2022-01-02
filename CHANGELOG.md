@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.1](https://git.ixigo.com/android/ixigo-android-sdk/compare/ixigo-sdk-1.6.0...ixigo-sdk-1.6.1) (2022-01-02)
+
+
+### Bug Fixes
+
+* correct quit behavior ([928697e](https://git.ixigo.com/android/ixigo-android-sdk/commit/928697ebe3ca24624d81d04c85b3b64134f07d8c))
+
 ## [1.6.0](https://git.ixigo.com/android/ixigo-android-sdk/compare/ixigo-sdk-1.5.0...ixigo-sdk-1.6.0) (2022-01-02)
 
 
