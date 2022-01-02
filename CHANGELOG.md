@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.6.0](https://git.ixigo.com/android/ixigo-android-sdk/compare/ixigo-sdk-1.5.0...ixigo-sdk-1.6.0) (2022-01-02)
+
+
+### Features
+
+* add multi model flight search ([73d93cf](https://git.ixigo.com/android/ixigo-android-sdk/commit/73d93cf04249a15aae607c552027b3055fe3d794))
+* introduce ChainAnalyticsProvider ([4022f27](https://git.ixigo.com/android/ixigo-android-sdk/commit/4022f277a71d1690ec7c90847726c733a2d8a185))
+
+
+### Bug Fixes
+
+* read proper error message from SSOAuth error ([f38b165](https://git.ixigo.com/android/ixigo-android-sdk/commit/f38b1650d297d53dc4274caaec9958437980842b))
+* remove webview delegate ([52bcb60](https://git.ixigo.com/android/ixigo-android-sdk/commit/52bcb60eea178383260131982220867670ae1c32))
+
 ## [1.5.0](https://git.ixigo.com/android/ixigo-android-sdk/compare/ixigo-sdk-1.4.0...ixigo-sdk-1.5.0) (2021-12-24)
 
 
