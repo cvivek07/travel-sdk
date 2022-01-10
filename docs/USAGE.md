@@ -78,7 +78,7 @@ For development purposes, you might want to point the SDK to one of ixigo's stag
 You can configure your endpoint while initializing the SDK like this:
 
 ```kotlin
-IxigoSDK.init(context = context, config = Config.StagingBuildConfig("build7"), /* Other params */)
+IxigoSDK.init(context = context, config = Config.StagingBuildConfig("build3"), /* Other params */)
 ```
 
 If you want to use a non standard enpoint, you can use `Config` constructor directly:
@@ -91,7 +91,7 @@ val config = Config(apiBaseUrl = "http://mycustomhost.com/api")
 
 ### SSO Authentication (Recommended)
 
-> **Note**: SSO Authentication is not available in Prod yet. You will need to use a `build7` staging server when initializing IxigoSDK, as described in [Use staging servers](#use-staging-servers)
+> **Note**: SSO Authentication is not available in Prod yet. You will need to use a `build3` staging server when initializing IxigoSDK, as described in [Use staging servers](#use-staging-servers)
 
 To use SSO Authentication, initialize `IxigoSDK` with an instance of `SSOAuthProvider`.
 
