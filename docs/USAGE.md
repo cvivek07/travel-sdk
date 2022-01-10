@@ -26,6 +26,8 @@ dependencies {
 
 ## Use Snapshots
 
+If you want to test the latest development that is not yet published as a new version, you can add a dependency to our snapshot repository instead.
+
 Inside **root/build.gradle**
 
 ```groovy
