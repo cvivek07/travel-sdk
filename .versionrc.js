@@ -31,9 +31,28 @@ const gradleUpdater = {
   },
 };
 
+const gradleDependencyUpdater = {
+  readVersion: function (contents) {
+    const match = /com\.ixigo\.sdk:ixigo-sdk:(\d+\.\d+\.\d+)/.exec(contents);
+    const version = match[1];
+    return version;
+  },
+  writeVersion: function (contents, version) {
+    return contents.replace(
+      /(.*com\.ixigo\.sdk:ixigo-sdk:)(\d+\.\d+\.\d+)(.*)/,
+      `\$1${version}\$3`
+    );
+  },
+};
+
 const gradleTracker = {
   filename: "ixigo-sdk/build.gradle",
   updater: gradleUpdater,
+};
+
+const gradleAppDependencyTracker = {
+  filename: "app/build.gradle",
+  updater: gradleDependencyUpdater,
 };
 
 const gradleAppTracker = {
@@ -42,6 +61,6 @@ const gradleAppTracker = {
 };
 
 module.exports = {
-  bumpFiles: [readmeTracker, gradleTracker, gradleAppTracker],
+  bumpFiles: [readmeTracker, gradleTracker, gradleAppTracker, gradleAppDependencyTracker],
   packageFiles: [gradleTracker],
 };

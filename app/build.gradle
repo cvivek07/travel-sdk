@@ -71,9 +71,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics-ktx'
 
     implementation project(path: ':ixigo-sdk')
-//    implementation("com.ixigo.sdk:ixigo-sdk:1.0-SNAPSHOT") {
-//        changing = true
-//    }
+    // Comment line above and uncomment line below to use a specific sdk version
+//    implementation("com.ixigo.sdk:ixigo-sdk:1.6.1")
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
