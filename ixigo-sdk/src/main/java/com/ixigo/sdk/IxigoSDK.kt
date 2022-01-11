@@ -2,15 +2,13 @@ package com.ixigo.sdk
 
 import android.content.Context
 import android.content.Intent
-import com.google.android.gms.analytics.GoogleAnalytics
 import com.ixigo.sdk.Config.Companion.ProdConfig
 import com.ixigo.sdk.IxigoSDK.Companion.getInstance
 import com.ixigo.sdk.IxigoSDK.Companion.init
 import com.ixigo.sdk.analytics.AnalyticsProvider
-import com.ixigo.sdk.analytics.ChainAnalyticsProvider
 import com.ixigo.sdk.analytics.Event
-import com.ixigo.sdk.analytics.GoogleAnalyticsProvider
 import com.ixigo.sdk.auth.AuthProvider
+import com.ixigo.sdk.common.SdkSingleton
 import com.ixigo.sdk.payment.DisabledPaymentProvider
 import com.ixigo.sdk.payment.PaymentProvider
 import com.ixigo.sdk.webview.InitialPageData
@@ -35,8 +33,7 @@ internal constructor(
     internal val config: Config = ProdConfig
 ) {
 
-  companion object {
-    private var INSTANCE: IxigoSDK? = null
+  companion object : SdkSingleton<IxigoSDK>("IxigoSDK") {
 
     /**
      * Initializes IxigoSDK with required parameters. This method needs to be called before
@@ -64,7 +61,7 @@ internal constructor(
           appInfo,
           authProvider,
           paymentProvider,
-          createAnalyticsProvider(context, analyticsProvider),
+          commonAnalyticsProvider(context, analyticsProvider),
           config)
     }
 
@@ -76,9 +73,7 @@ internal constructor(
         analyticsProvider: AnalyticsProvider,
         config: Config = ProdConfig
     ) {
-      if (INSTANCE != null) {
-        throw IllegalStateException("IxigoSDK has already been initialized")
-      }
+      assertNotCreated()
       INSTANCE =
           IxigoSDK(
               appInfo.replaceDefaults(UUIDFactory(context), DeviceIdFactory(context)),
@@ -92,43 +87,6 @@ internal constructor(
               name = "sdkInit",
               properties =
                   mapOf("clientId" to appInfo.clientId, "sdkVersion" to BuildConfig.SDK_VERSION)))
-    }
-
-    /**
-     * Returns IxigoSDK singleton.
-     *
-     * Will throw an Exception if it has not been initialized yet by calling [init]
-     *
-     * @return IxigoSDK singleton
-     */
-    @JvmStatic
-    fun getInstance(): IxigoSDK {
-      return INSTANCE
-          ?: throw IllegalStateException(
-              "IxigoSDK has not been initialized. Call `IxigoSDK.init()` to initialize it.")
-    }
-
-    /** Resets IxigoSDK singleton. Used only for tests */
-    internal fun clearInstance() {
-      INSTANCE = null
-    }
-
-    /**
-     * Replaces IxigoSDK singleton. Used only for tests
-     *
-     * @param newInstance
-     */
-    internal fun replaceInstance(newInstance: IxigoSDK) {
-      INSTANCE = newInstance
-    }
-
-    private fun createAnalyticsProvider(
-        context: Context,
-        clientAnalyticsProvider: AnalyticsProvider?
-    ): AnalyticsProvider {
-      val tracker = GoogleAnalytics.getInstance(context).newTracker(R.xml.global_tracker)
-      val googleAnalyticsProvider = GoogleAnalyticsProvider(tracker)
-      return ChainAnalyticsProvider(googleAnalyticsProvider, clientAnalyticsProvider)
     }
   }
 

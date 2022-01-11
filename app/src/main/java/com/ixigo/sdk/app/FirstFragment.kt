@@ -33,6 +33,7 @@ import java.time.LocalDate
 import kotlin.reflect.full.companionObject
 import kotlin.reflect.full.companionObjectInstance
 import kotlin.reflect.full.declaredFunctions
+import kotlin.reflect.full.functions
 import kotlin.reflect.jvm.isAccessible
 
 /** A simple [Fragment] subclass as the default destination in the navigation. */
@@ -197,7 +198,7 @@ class FirstFragment : Fragment() {
   private fun clearSDK() {
     val companionObject = IxigoSDK::class.companionObject!!
     val companionInstance = IxigoSDK::class.companionObjectInstance
-    val method = companionObject.declaredFunctions.first { it.name == "clearInstance" }
+    val method = companionObject.functions.first { it.name == "clearInstance" }
     method.isAccessible = true
     method.call(companionInstance)
   }
