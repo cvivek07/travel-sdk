@@ -2,14 +2,13 @@ package com.ixigo.sdk.webview
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.WebChromeClient
-import android.webkit.WebView
-import android.webkit.WebViewClient
+import android.webkit.*
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.VisibleForTesting
 import androidx.fragment.app.Fragment
@@ -18,6 +17,9 @@ import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.common.ActivityResultHandler
 import com.ixigo.sdk.common.Generated
 import com.ixigo.sdk.databinding.WebviewLayoutBinding
+import com.ixigo.sdk.ui.Failed
+import com.ixigo.sdk.ui.Loaded
+import com.ixigo.sdk.ui.Loading
 import kotlinx.parcelize.Parcelize
 
 class WebViewFragment : Fragment() {
@@ -25,6 +27,9 @@ class WebViewFragment : Fragment() {
   @VisibleForTesting
   internal val webView
     get() = binding.webView
+  @VisibleForTesting
+  internal val loadableView
+    get() = binding.loadableView
   val viewModel: WebViewViewModel by viewModels()
 
   var delegate: WebViewDelegate? = null
@@ -61,6 +66,7 @@ class WebViewFragment : Fragment() {
     super.onCreate(savedInstanceState)
 
     binding = WebviewLayoutBinding.inflate(layoutInflater)
+    loadableView.onGoBack = { activity?.onBackPressed() }
 
     webView.webViewClient = CustomWebViewClient()
     webView.webChromeClient = WebChromeClient()
@@ -107,7 +113,28 @@ class WebViewFragment : Fragment() {
     override fun doUpdateVisitedHistory(view: WebView?, url: String?, isReload: Boolean) {
       super.doUpdateVisitedHistory(view, url, isReload)
       webViewBackPressHandler.isEnabled = view?.canGoBack() ?: false
-      print(webViewBackPressHandler.isEnabled)
+    }
+
+    override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+      super.onPageStarted(view, url, favicon)
+
+      loadableView.status = Loading()
+    }
+
+    override fun onPageFinished(view: WebView?, url: String?) {
+      super.onPageFinished(view, url)
+      if (loadableView.status is Loading) {
+        loadableView.status = Loaded
+      }
+    }
+
+    override fun onReceivedError(
+        view: WebView?,
+        request: WebResourceRequest?,
+        error: WebResourceError?
+    ) {
+      super.onReceivedError(view, request, error)
+      loadableView.status = Failed()
     }
   }
 }

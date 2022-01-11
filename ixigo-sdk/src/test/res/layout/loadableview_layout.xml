@@ -6,11 +6,12 @@
     <com.ixigo.sdk.ui.LoadableViewContainer
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/loadableView">
-        <WebView
-            android:id="@+id/webView"
+        android:id="@+id/test_loadable_view">
+        <View
+            android:id="@+id/test_content_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent"
+            android:background="#ff0000"/>
     </com.ixigo.sdk.ui.LoadableViewContainer>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

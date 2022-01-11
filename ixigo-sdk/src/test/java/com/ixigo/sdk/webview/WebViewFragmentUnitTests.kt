@@ -6,7 +6,10 @@ import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ixigo.sdk.IxigoSDK
-import com.ixigo.sdk.payment.*
+import com.ixigo.sdk.ui.Failed
+import com.ixigo.sdk.ui.Loaded
+import com.ixigo.sdk.ui.Loading
+import com.ixigo.sdk.ui.Status
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
@@ -80,9 +83,52 @@ class WebViewFragmentUnitTests {
   }
 
   @Test
-  fun `test that back button finishes activitry if WebView can not go back`() {
+  fun `test that back button finishes activity if WebView can not go back`() {
     fragmentActivity.onBackPressed()
     assertEquals(0, shadowWebView.goBackInvocations)
     assert(fragmentActivity.isFinishing)
+  }
+
+  @Test
+  fun `test that initial loadingView status is Loaded`() {
+    assertEquals(Loaded, fragment.loadableView.status)
+  }
+
+  @Test
+  fun `test that loadingView status is updated for successful page load`() {
+    shadowWebView.webViewClient.onPageStarted(fragment.webView, initialPageData.url, null)
+    assertLoadableViewStatus(Loading())
+    shadowWebView.webViewClient.onPageFinished(fragment.webView, initialPageData.url)
+    assertLoadableViewStatus(Loaded)
+  }
+
+  @Test
+  fun `test that loadingView status is updated when an error happens`() {
+    shadowWebView.webViewClient.onPageStarted(fragment.webView, initialPageData.url, null)
+    assertLoadableViewStatus(Loading())
+    shadowWebView.webViewClient.onReceivedError(fragment.webView, mock(), mock())
+    assertLoadableViewStatus(Failed())
+    shadowWebView.webViewClient.onPageFinished(fragment.webView, initialPageData.url)
+    assertLoadableViewStatus(Failed())
+  }
+
+  @Test
+  fun `test that goBack finishes Activity when loadingView onGoBack is called and there is no navigation stack`() {
+    val url = "https://www.ixigo.com/page2"
+    shadowWebView.pushEntryToHistory(url)
+    shadowWebView.webViewClient.doUpdateVisitedHistory(fragment.webView, url, false)
+    assertEquals(0, shadowWebView.goBackInvocations)
+    fragment.loadableView.onGoBack?.invoke()
+    assertEquals(1, shadowWebView.goBackInvocations)
+  }
+
+  @Test
+  fun `test that goBack navigates back when loadingView onGoBack is called and there is navigation stack`() {
+    fragment.loadableView.onGoBack?.invoke()
+    assert(fragmentActivity.isFinishing)
+  }
+
+  private fun assertLoadableViewStatus(status: Status) {
+    assertEquals(status, fragment.loadableView.status)
   }
 }
