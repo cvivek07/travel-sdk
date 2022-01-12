@@ -66,5 +66,3 @@ class MainActivity : AppCompatActivity() {
                 || super.onSupportNavigateUp()
     }
 }
-
-private class FakePartnerTokenProvider(override val partnerToken: PartnerToken?) : PartnerTokenProvider

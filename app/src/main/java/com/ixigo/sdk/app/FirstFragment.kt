@@ -235,7 +235,7 @@ class FirstFragment : Fragment() {
             deviceId = deviceId),
         getAuthProvider(),
         DisabledPaymentProvider,
-        analyticsProvider = ToastAnalyticsProvider(requireContext()),
+        analyticsProvider = ToastAnalyticsProvider(requireActivity()),
         config = ixigoConfig.config)
 
     sdkInitialized = true
@@ -256,13 +256,14 @@ class FirstFragment : Fragment() {
     val token = binding.ssoPartnerToken.text.toString()
     return SSOAuthProvider(
         object : PartnerTokenProvider {
-          override val partnerToken: PartnerToken?
-            get() =
-                if (token.isNullOrEmpty()) {
-                  null
-                } else {
-                  PartnerToken(token)
-                }
+
+          override fun fetchPartnerToken(callback: PartnerTokenCallback) {
+            if (token.isNullOrEmpty()) {
+              callback(Err(Error()))
+            } else {
+              callback(Ok(PartnerToken(token)))
+            }
+          }
         })
   }
 

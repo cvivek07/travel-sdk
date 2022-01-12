@@ -66,14 +66,21 @@ class SSOAuthProviderTest {
   }
 
   @Test
-  fun `test that login returns false if no partnerToken is provided`() {
+  fun `test that login returns Error if no partnerToken is provided`() {
     val ssoAuthProvider = SSOAuthProvider(FakePartnerTokenProvider(null))
 
+    var callbackCalled = false
     launchActivity<FragmentActivity>().onActivity { activity ->
-      val handled = ssoAuthProvider.login(activity) { fail("block should not have been called") }
-      assertFalse(handled)
-      assertEquals(0, mockServer.requestCount)
+      val handled =
+          ssoAuthProvider.login(activity) {
+            when (it) {
+              is Ok -> fail("Error is supposed to fail")
+              is Err -> callbackCalled = true
+            }
+          }
+      assertTrue(handled)
     }
+    await.until { callbackCalled }
   }
 
   @Test

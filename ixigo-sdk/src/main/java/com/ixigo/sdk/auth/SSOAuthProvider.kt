@@ -3,7 +3,6 @@ package com.ixigo.sdk.auth
 import androidx.fragment.app.FragmentActivity
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.common.Err
-import com.ixigo.sdk.common.Generated
 import com.ixigo.sdk.common.Ok
 import com.squareup.moshi.Json
 import com.squareup.moshi.Moshi
@@ -32,12 +31,16 @@ class SSOAuthProvider(private val partnerTokenProvider: PartnerTokenProvider) : 
     private set
 
   override fun login(fragmentActivity: FragmentActivity, callback: AuthCallback): Boolean {
-    val partnerToken = partnerTokenProvider.partnerToken
-    if (partnerToken == null) {
-      Timber.e("Unable to find a partner token when attempting SSO login")
-      return false
+    partnerTokenProvider.fetchPartnerToken {
+      when (it) {
+        is Ok -> exchangeToken(it.value, callback)
+        is Err -> callback(it)
+      }
     }
+    return true
+  }
 
+  private fun exchangeToken(partnerToken: PartnerToken, callback: AuthCallback) {
     val formBody: FormBody = FormBody.Builder().add("authCode", partnerToken.token).build()
 
     val appInfo = IxigoSDK.getInstance().appInfo
@@ -90,7 +93,6 @@ class SSOAuthProvider(private val partnerTokenProvider: PartnerTokenProvider) : 
                     Error("Could not get SSO Token")
                   }
             })
-    return true
   }
 }
 
@@ -101,9 +103,3 @@ private data class ErrorResponseErrors(val message: String)
 private data class RequestResponse(val data: RequestResponseData)
 
 private data class RequestResponseData(@Json(name = "access_token") val accessToken: String)
-
-interface PartnerTokenProvider {
-  val partnerToken: PartnerToken?
-}
-
-@Generated data class PartnerToken(val token: String)
