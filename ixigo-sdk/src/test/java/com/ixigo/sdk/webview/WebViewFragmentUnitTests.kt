@@ -6,7 +6,6 @@ import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ixigo.sdk.IxigoSDK
-import com.ixigo.sdk.bus.AbhiBusWebView
 import com.ixigo.sdk.ui.Failed
 import com.ixigo.sdk.ui.Loaded
 import com.ixigo.sdk.ui.Loading
@@ -69,14 +68,8 @@ class WebViewFragmentUnitTests {
 
   @Test
   fun `test that IxiWebView is loaded`() {
-    val ixiWebView = shadowWebView.getJavascriptInterface("IxiWebView") as IxiWebView
+    val ixiWebView: IxiWebView = shadowWebView.getJavascriptInterface("IxiWebView") as IxiWebView
     assertNotNull(ixiWebView)
-  }
-
-  @Test
-  fun `test that AbhibusWebView is loaded`() {
-    val abhiBusWebView = shadowWebView.getJavascriptInterface("AbhibusWebView") as AbhiBusWebView
-    assertNotNull(abhiBusWebView)
   }
 
   @Test

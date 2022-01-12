@@ -14,7 +14,6 @@ import androidx.annotation.VisibleForTesting
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.ixigo.sdk.IxigoSDK
-import com.ixigo.sdk.bus.AbhiBusWebView
 import com.ixigo.sdk.common.ActivityResultHandler
 import com.ixigo.sdk.common.Generated
 import com.ixigo.sdk.databinding.WebviewLayoutBinding
@@ -73,10 +72,7 @@ class WebViewFragment : Fragment() {
     webView.webChromeClient = WebChromeClient()
     webView.settings.javaScriptEnabled = true
 
-    // TODO: Do not hardcode JsInterfaces and generalize this so that WebViewFragment is not aware
-    // of specific SDKs
     addJavascriptInterface(IxiWebView(this))
-    addJavascriptInterface(AbhiBusWebView(this))
 
     val initialPageData = arguments?.getParcelable<InitialPageData>(INITIAL_PAGE_DATA_ARGS)
     if (initialPageData != null) {
