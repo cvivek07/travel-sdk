@@ -86,10 +86,7 @@ internal constructor(
           Event(
               name = "sdkInit",
               properties =
-                  mapOf(
-                      "clientId" to appInfo.clientId,
-                      "sdkVersion" to BuildConfig.SDK_VERSION,
-                      "sdk" to "ixigo")))
+                  mapOf("clientId" to appInfo.clientId, "sdkVersion" to BuildConfig.SDK_VERSION)))
     }
   }
 

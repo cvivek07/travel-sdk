@@ -21,7 +21,6 @@ internal class GoogleAnalyticsProvider(private val tracker: Tracker) : Analytics
 
   enum class EventDimension(val index: Int, val propertyName: String) {
     CLIENT_ID(1, "clientId"),
-    SDK_VERSION(2, "sdkVersion"),
-    SDK(3, "sdk")
+    SDK_VERSION(2, "sdkVersion")
   }
 }

@@ -83,7 +83,6 @@ class IxigoSDKTests {
                 name = "sdkInit",
                 properties =
                     mapOf(
-                        "sdk" to "ixigo",
                         "clientId" to FakeAppInfo.clientId,
                         "sdkVersion" to BuildConfig.SDK_VERSION)))
   }
