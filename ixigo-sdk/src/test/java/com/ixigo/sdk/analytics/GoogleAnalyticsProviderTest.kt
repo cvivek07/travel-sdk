@@ -29,6 +29,7 @@ class GoogleAnalyticsProviderTest {
                 mapOf(
                     "clientId" to "clientIdValue",
                     "sdkVersion" to "sdkVersionValue",
+                    "sdk" to "sdkValue",
                     "label" to "labelValue",
                     "value" to "123"))
     provider.logEvent(event)
@@ -43,6 +44,7 @@ class GoogleAnalyticsProviderTest {
                     GoogleAnalyticsProvider.EventDimension.CLIENT_ID.index, "clientIdValue")
                 .setCustomDimension(
                     GoogleAnalyticsProvider.EventDimension.SDK_VERSION.index, "sdkVersionValue")
+                .setCustomDimension(GoogleAnalyticsProvider.EventDimension.SDK.index, "sdkValue")
                 .build())
   }
 }
