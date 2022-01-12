@@ -54,7 +54,7 @@ Metrics of the SDK are collected using [Google Analytics](https://developers.goo
 - We can't use Firebase Analytics since it only works with 1 Firebase App, and analytics would go to the host Firebase App.
 - GA4 for mobile forces you to use Firebase
 
-Analytics Account Id: `211766096`. Contact miguel@travenues (or rajnish@travenues) for access if needed.
+Analytics Account Id: [211766096](https://analytics.google.com/analytics/web/#/report-home/a211766096w295339199p256394053). Contact miguel@travenues (or rajnish@travenues) for access if needed.
 
 ## Release a new version
 
