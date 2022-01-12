@@ -11,6 +11,7 @@ import com.ixigo.sdk.analytics.ChainAnalyticsProvider
 import com.ixigo.sdk.analytics.Event
 import com.ixigo.sdk.analytics.GoogleAnalyticsProvider
 import com.ixigo.sdk.auth.AuthProvider
+import com.ixigo.sdk.auth.PartnerTokenProvider
 import com.ixigo.sdk.payment.DisabledPaymentProvider
 import com.ixigo.sdk.payment.PaymentProvider
 import com.ixigo.sdk.webview.InitialPageData
@@ -29,7 +30,7 @@ import java.net.URL
 class IxigoSDK
 internal constructor(
     internal val appInfo: AppInfo,
-    internal val authProvider: AuthProvider,
+    internal val partnerTokenProvider: PartnerTokenProvider,
     internal val paymentProvider: PaymentProvider,
     internal val analyticsProvider: AnalyticsProvider,
     internal val config: Config = ProdConfig
@@ -54,7 +55,7 @@ internal constructor(
     fun init(
         context: Context,
         appInfo: AppInfo,
-        authProvider: AuthProvider,
+        partnerTokenProvider: PartnerTokenProvider,
         paymentProvider: PaymentProvider = DisabledPaymentProvider,
         analyticsProvider: AnalyticsProvider? = null,
         config: Config = ProdConfig
@@ -62,7 +63,7 @@ internal constructor(
       init(
           context,
           appInfo,
-          authProvider,
+          partnerTokenProvider,
           paymentProvider,
           createAnalyticsProvider(context, analyticsProvider),
           config)
@@ -71,7 +72,7 @@ internal constructor(
     internal fun init(
         context: Context,
         appInfo: AppInfo,
-        authProvider: AuthProvider,
+        partnerTokenProvider: PartnerTokenProvider,
         paymentProvider: PaymentProvider,
         analyticsProvider: AnalyticsProvider,
         config: Config = ProdConfig
@@ -82,7 +83,7 @@ internal constructor(
       INSTANCE =
           IxigoSDK(
               appInfo.replaceDefaults(UUIDFactory(context), DeviceIdFactory(context)),
-              authProvider,
+              partnerTokenProvider,
               paymentProvider,
               analyticsProvider,
               config)
@@ -156,7 +157,8 @@ internal constructor(
             "apiKey" to appInfo.apiKey,
             "deviceId" to appInfo.deviceId,
             "uuid" to appInfo.uuid)
-    authProvider.authData?.let { headers["Authorization"] = it.token }
+    // TODO: Figure out a way of getting an Ixigo token at this point if available
+    //    authProvider.authData?.let { headers["Authorization"] = it.token }
     return headers
   }
 

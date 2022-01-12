@@ -8,6 +8,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.launchActivity
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ixigo.sdk.test.R
+import com.ixigo.sdk.test.initializeTestIxigoSDK
 import com.ixigo.sdk.webview.WebActivity
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -29,6 +30,7 @@ class LoadableViewTests {
 
   @Before
   fun setup() {
+    initializeTestIxigoSDK()
     val scenario = launchActivity<WebActivity>().moveToState(Lifecycle.State.CREATED)
     scenario.onActivity {
       activity = it

@@ -8,9 +8,7 @@ import androidx.test.core.app.launchActivity
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
-import com.ixigo.sdk.auth.AuthData
-import com.ixigo.sdk.auth.EmptyAuthProvider
-import com.ixigo.sdk.auth.test.FakeAuthProvider
+import com.ixigo.sdk.auth.EmptyPartnerTokenProvider
 import com.ixigo.sdk.payment.DisabledPaymentProvider
 import com.ixigo.sdk.test.IntentMatcher
 import com.ixigo.sdk.test.TestData.DisabledAnalyticsProvider
@@ -31,51 +29,23 @@ class IxigoSDKTests {
   private lateinit var scenario: ActivityScenario<Activity>
 
   @Test
-  fun `test launchWebActivity for logged in user`() {
-    val ixigoSDK =
-        IxigoSDK(
-            FakeAppInfo,
-            FakeAuthProvider(null, AuthData("token")),
-            DisabledPaymentProvider,
-            DisabledAnalyticsProvider)
-    testLaunchActivity("https://www.ixigo.com/page", ixigoSDK)
-  }
-
-  @Test
   fun `test launchWebActivity for logged out user`() {
     val ixigoSDK =
-        IxigoSDK(FakeAppInfo, EmptyAuthProvider, DisabledPaymentProvider, DisabledAnalyticsProvider)
+        IxigoSDK(
+            FakeAppInfo,
+            EmptyPartnerTokenProvider,
+            DisabledPaymentProvider,
+            DisabledAnalyticsProvider)
     testLaunchActivity("https://www.ixigo.com/page", ixigoSDK)
-  }
-
-  @Test
-  fun `test launchWebActivity for non ixigo website does not append headers`() {
-    val ixigoSDK =
-        IxigoSDK(
-            FakeAppInfo,
-            FakeAuthProvider(null, AuthData("token")),
-            DisabledPaymentProvider,
-            DisabledAnalyticsProvider)
-    testLaunchActivity("https://www.booking.com/page", ixigoSDK, mapOf())
-  }
-
-  @Test
-  fun `test launchWebActivity for malformed url does not append headers`() {
-    val ixigoSDK =
-        IxigoSDK(
-            FakeAppInfo,
-            FakeAuthProvider(null, AuthData("token")),
-            DisabledPaymentProvider,
-            DisabledAnalyticsProvider)
-    testLaunchActivity("www.ixigo.com/page", ixigoSDK, mapOf())
   }
 
   @Test
   fun `test init sends correct analytics event`() {
     val analyticsProvider: AnalyticsProvider = mock()
     val context: Context = mock()
+    IxigoSDK.clearInstance()
     IxigoSDK.init(
-        context, FakeAppInfo, EmptyAuthProvider, DisabledPaymentProvider, analyticsProvider)
+        context, FakeAppInfo, EmptyPartnerTokenProvider, DisabledPaymentProvider, analyticsProvider)
     verify(analyticsProvider)
         .logEvent(
             Event(
@@ -119,11 +89,5 @@ class IxigoSDKTests {
         "deviceId" to appInfo.deviceId,
         "uuid" to appInfo.uuid,
     )
-        .also {
-          val authData = ixigoSDK.authProvider.authData
-          if (authData != null) {
-            it["Authorization"] = authData.token
-          }
-        }
   }
 }

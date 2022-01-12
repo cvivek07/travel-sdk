@@ -232,7 +232,7 @@ class FirstFragment : Fragment() {
             appVersion = appVersion,
             uuid = uuid,
             deviceId = deviceId),
-        getAuthProvider(),
+        getPartnerTokenProvider(),
         DisabledPaymentProvider,
         analyticsProvider = ToastAnalyticsProvider(requireActivity()),
         config = ixigoConfig.config)
@@ -252,18 +252,21 @@ class FirstFragment : Fragment() {
   }
 
   private fun getAuthProvider(): AuthProvider {
-    val token = binding.ssoPartnerToken.text.toString()
     return SSOAuthProvider(
-        object : PartnerTokenProvider {
+        getPartnerTokenProvider())
+  }
 
-          override fun fetchPartnerToken(callback: PartnerTokenCallback) {
-            if (token.isNullOrEmpty()) {
-              callback(Err(Error()))
-            } else {
-              callback(Ok(PartnerToken(token)))
-            }
-          }
-        })
+  private fun getPartnerTokenProvider(): PartnerTokenProvider {
+    val token = binding.ssoPartnerToken.text.toString()
+    return object : PartnerTokenProvider {
+      override fun fetchPartnerToken(callback: PartnerTokenCallback) {
+        if (token.isNullOrEmpty()) {
+          callback(Err(Error()))
+        } else {
+          callback(Ok(PartnerToken(token)))
+        }
+      }
+    }
   }
 
   override fun onDestroyView() {

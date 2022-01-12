@@ -6,6 +6,7 @@ import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ixigo.sdk.IxigoSDK
+import com.ixigo.sdk.test.initializeTestIxigoSDK
 import com.ixigo.sdk.ui.Failed
 import com.ixigo.sdk.ui.Loaded
 import com.ixigo.sdk.ui.Loading
@@ -31,6 +32,7 @@ class WebViewFragmentUnitTests {
 
   @Before
   fun setup() {
+    initializeTestIxigoSDK()
     scenario =
         launchFragmentInContainer(
             Bundle().also {

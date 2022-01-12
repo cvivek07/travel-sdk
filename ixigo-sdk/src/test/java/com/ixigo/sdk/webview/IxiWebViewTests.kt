@@ -1,17 +1,16 @@
 package com.ixigo.sdk.webview
 
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.os.Looper
 import android.webkit.JavascriptInterface
+import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.analytics.AnalyticsProvider
-import com.ixigo.sdk.auth.EmptyAuthProvider
-import com.ixigo.sdk.auth.test.FakeAuthProvider
+import com.ixigo.sdk.auth.*
 import com.ixigo.sdk.common.Err
 import com.ixigo.sdk.common.Ok
 import com.ixigo.sdk.payment.*
@@ -23,10 +22,7 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.times
-import org.mockito.kotlin.verify
+import org.mockito.kotlin.*
 import org.robolectric.Shadows
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.shadows.ShadowWebView
@@ -38,7 +34,7 @@ class IxiWebViewTests {
   private val initialPageData =
       InitialPageData("https://www.ixigo.com", mapOf("header1" to "header1Value"))
   private lateinit var shadowWebView: ShadowWebView
-  private lateinit var fragmentActivity: Activity
+  private lateinit var fragmentActivity: FragmentActivity
   private lateinit var fragment: WebViewFragment
   private val analyticsProvider = mock<AnalyticsProvider>()
 
@@ -46,8 +42,17 @@ class IxiWebViewTests {
   private val paymentInputAdapter by lazy { moshi.adapter(PaymentInput::class.java) }
   private lateinit var ixiWebView: IxiWebView
 
+  private lateinit var ssoAuthProvider: SSOAuthProvider
+  private lateinit var paymentProvider: PaymentProvider
+
   @Before
   fun setup() {
+    ssoAuthProvider = mock()
+    paymentProvider = mock()
+
+    IxigoSDK.replaceInstance(
+        IxigoSDK(appInfo, EmptyPartnerTokenProvider, DisabledPaymentProvider, analyticsProvider))
+
     scenario =
         launchFragmentInContainer(
             Bundle().also {
@@ -58,7 +63,7 @@ class IxiWebViewTests {
       shadowWebView = Shadows.shadowOf(it.webView)
       shadowWebView.pushEntryToHistory(initialPageData.url)
       fragmentActivity = it.requireActivity()
-      ixiWebView = IxiWebView(it)
+      ixiWebView = IxiWebView(it, ssoAuthProvider)
     }
   }
 
@@ -101,12 +106,13 @@ class IxiWebViewTests {
             |   }
             |}""".trimMargin()
     val paymentInput = paymentInputAdapter.fromJson(paymentInputStr)!!
-    IxigoSDK.init(
-        fragmentActivity,
-        appInfo,
-        EmptyAuthProvider,
-        FakePaymentProvider(fragmentActivity, mapOf(paymentInput to Ok(PaymentResponse(nextUrl)))),
-        analyticsProvider)
+    IxigoSDK.replaceInstance(
+        IxigoSDK(
+            appInfo,
+            EmptyPartnerTokenProvider,
+            FakePaymentProvider(
+                fragmentActivity, mapOf(paymentInput to Ok(PaymentResponse(nextUrl)))),
+            analyticsProvider))
     val startNativePaymentMethod =
         ixiWebView.javaClass.getDeclaredMethod("executeNativePayment", String::class.java)
     val paymentReturn = startNativePaymentMethod.invoke(ixiWebView, paymentInputStr) as Boolean
@@ -130,12 +136,12 @@ class IxiWebViewTests {
             |   }
             |}""".trimMargin()
     val paymentInput = paymentInputAdapter.fromJson(paymentInputStr)!!
-    IxigoSDK.init(
-        fragmentActivity,
-        appInfo,
-        EmptyAuthProvider,
-        FakePaymentProvider(fragmentActivity, mapOf(paymentInput to Err(Error()))),
-        analyticsProvider)
+    IxigoSDK.replaceInstance(
+        IxigoSDK(
+            appInfo,
+            EmptyPartnerTokenProvider,
+            FakePaymentProvider(fragmentActivity, mapOf(paymentInput to Err(Error()))),
+            analyticsProvider))
     val startNativePaymentMethod =
         ixiWebView.javaClass.getDeclaredMethod("executeNativePayment", String::class.java)
     val paymentReturn = startNativePaymentMethod.invoke(ixiWebView, paymentInputStr) as Boolean
@@ -147,12 +153,6 @@ class IxiWebViewTests {
 
   @Test
   fun `test invalid payment`() {
-    IxigoSDK.init(
-        fragmentActivity,
-        appInfo,
-        EmptyAuthProvider,
-        FakePaymentProvider(fragmentActivity, mapOf()),
-        analyticsProvider)
     val paymentInputStr =
         """
             |{
@@ -161,7 +161,7 @@ class IxiWebViewTests {
     val startNativePaymentMethod =
         ixiWebView.javaClass.getDeclaredMethod("executeNativePayment", String::class.java)
     val paymentReturn = startNativePaymentMethod.invoke(ixiWebView, paymentInputStr) as Boolean
-    Shadows.shadowOf(Looper.getMainLooper()).idle()
+    shadowOf(Looper.getMainLooper()).idle()
 
     assertFalse(paymentReturn)
     assertEquals(initialPageData.url, shadowWebView.lastLoadedUrl)
@@ -174,7 +174,8 @@ class IxiWebViewTests {
     val intent = Intent()
     val paymentProvider = mock<ActivityResultPaymentProvider>()
 
-    IxigoSDK.init(fragmentActivity, appInfo, EmptyAuthProvider, paymentProvider, analyticsProvider)
+    IxigoSDK.replaceInstance(
+        IxigoSDK(appInfo, EmptyPartnerTokenProvider, paymentProvider, analyticsProvider))
 
     scenario.onFragment { fragment ->
       fragment.onActivityResult(requestCode, responseCode, intent)
@@ -186,7 +187,7 @@ class IxiWebViewTests {
   fun `test openWindow starts a new WebViewActivity`() {
     val mockIxigoSDK: IxigoSDK = mock {
       on { appInfo } doReturn appInfo
-      on { authProvider } doReturn EmptyAuthProvider
+      on { partnerTokenProvider } doReturn EmptyPartnerTokenProvider
     }
     IxigoSDK.replaceInstance(mockIxigoSDK)
     scenario.onFragment { fragment ->
@@ -202,12 +203,18 @@ class IxiWebViewTests {
   }
 
   private fun testLogin(token: String?) {
-    IxigoSDK.init(
-        fragmentActivity,
-        appInfo,
-        FakeAuthProvider(token),
-        DisabledPaymentProvider,
-        analyticsProvider)
+    doAnswer {
+          val callback: AuthCallback = it.getArgument(1)
+          if (token == null) {
+            callback(Err(Error()))
+          } else {
+            callback(Ok(AuthData(token)))
+          }
+          true
+        }
+        .`when`(ssoAuthProvider)
+        .login(eq(fragmentActivity), any())
+
     val successJs = "success"
     val failureJs = "failure"
 

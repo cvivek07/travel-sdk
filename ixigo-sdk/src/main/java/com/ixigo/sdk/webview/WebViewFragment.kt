@@ -44,16 +44,6 @@ class WebViewFragment : Fragment() {
           paymentResult.result.onSuccess { loadUrl(it.nextUrl) }
         })
 
-    viewModel.loginResult.observe(
-        this,
-        { loginResult ->
-          val url =
-              loginResult.result.mapBoth(
-                  { loginResult.loginParams.successJSFunction.replace("AUTH_TOKEN", it.token) },
-                  { loginResult.loginParams.failureJSFunction })
-          loadUrl(url)
-        })
-
     requireActivity().onBackPressedDispatcher.addCallback(webViewBackPressHandler)
   }
 
@@ -92,7 +82,7 @@ class WebViewFragment : Fragment() {
     webView.addJavascriptInterface(jsInterface, jsInterface.name)
   }
 
-  private fun loadUrl(url: String, headers: Map<String, String> = mapOf()) {
+  internal fun loadUrl(url: String, headers: Map<String, String> = mapOf()) {
     webView.loadUrl(url, headers)
   }
 

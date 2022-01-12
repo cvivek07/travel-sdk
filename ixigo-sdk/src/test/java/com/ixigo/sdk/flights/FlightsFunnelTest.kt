@@ -10,9 +10,7 @@ import com.ixigo.sdk.Config
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
-import com.ixigo.sdk.auth.AuthData
-import com.ixigo.sdk.auth.EmptyAuthProvider
-import com.ixigo.sdk.auth.test.FakeAuthProvider
+import com.ixigo.sdk.auth.EmptyPartnerTokenProvider
 import com.ixigo.sdk.payment.DisabledPaymentProvider
 import com.ixigo.sdk.webview.InitialPageData
 import com.ixigo.sdk.webview.WebActivity
@@ -44,6 +42,7 @@ class FlightsFunnelTest {
   fun setup() {
     scenario = launchActivity()
     scenario.onActivity { activity = it }
+    IxigoSDK.clearInstance()
   }
 
   @After
@@ -56,19 +55,7 @@ class FlightsFunnelTest {
     IxigoSDK.init(
         activity,
         appInfo,
-        EmptyAuthProvider,
-        DisabledPaymentProvider,
-        mockAnalyticsProvider,
-        config)
-    assertFlightsHome()
-  }
-
-  @Test
-  fun `test flightsStartHome launches WebActivity with Auth Token`() {
-    IxigoSDK.init(
-        activity,
-        appInfo,
-        FakeAuthProvider("token", AuthData("token")),
+        EmptyPartnerTokenProvider,
         DisabledPaymentProvider,
         mockAnalyticsProvider,
         config)
@@ -144,7 +131,7 @@ class FlightsFunnelTest {
     IxigoSDK.init(
         activity,
         appInfo,
-        EmptyAuthProvider,
+        EmptyPartnerTokenProvider,
         DisabledPaymentProvider,
         mockAnalyticsProvider,
         config)
@@ -179,7 +166,7 @@ class FlightsFunnelTest {
     IxigoSDK.init(
         activity,
         appInfo,
-        EmptyAuthProvider,
+        EmptyPartnerTokenProvider,
         DisabledPaymentProvider,
         mockAnalyticsProvider,
         config)
@@ -214,12 +201,6 @@ class FlightsFunnelTest {
           "deviceId" to appInfo.deviceId,
           "uuid" to appInfo.uuid,
       )
-          .also {
-            val authData = IxigoSDK.getInstance().authProvider.authData
-            if (authData != null) {
-              it["Authorization"] = authData.token
-            }
-          }
 
   private class IntentMatcher(val intent: Intent) : BaseMatcher<Intent>() {
     override fun describeTo(description: Description?) {}

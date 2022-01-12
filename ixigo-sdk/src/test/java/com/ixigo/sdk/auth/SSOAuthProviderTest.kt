@@ -32,7 +32,7 @@ class SSOAuthProviderTest {
     IxigoSDK.replaceInstance(
         IxigoSDK(
             FakeAppInfo,
-            EmptyAuthProvider,
+            EmptyPartnerTokenProvider,
             DisabledPaymentProvider,
             FakeAnalyticsProvider(),
             Config(mockServer.url("").toString())))
@@ -67,7 +67,7 @@ class SSOAuthProviderTest {
 
   @Test
   fun `test that login returns Error if no partnerToken is provided`() {
-    val ssoAuthProvider = SSOAuthProvider(FakePartnerTokenProvider(null))
+    val ssoAuthProvider = SSOAuthProvider(FakePartnerTokenProvider(partnerToken = null))
 
     var callbackCalled = false
     launchActivity<FragmentActivity>().onActivity { activity ->

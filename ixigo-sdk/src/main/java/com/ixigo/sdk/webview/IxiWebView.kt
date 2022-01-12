@@ -2,11 +2,16 @@ package com.ixigo.sdk.webview
 
 import android.webkit.JavascriptInterface
 import com.ixigo.sdk.IxigoSDK
+import com.ixigo.sdk.auth.SSOAuthProvider
 import com.ixigo.sdk.payment.PaymentInput
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 
-class IxiWebView(val fragment: WebViewFragment) : JsInterface {
+class IxiWebView(
+    private val fragment: WebViewFragment,
+    private val ssoAuthProvider: SSOAuthProvider =
+        SSOAuthProvider(IxigoSDK.getInstance().partnerTokenProvider)
+) : JsInterface {
 
   private val moshi by lazy { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
   private val paymentInputAdapter by lazy { moshi.adapter(PaymentInput::class.java) }
@@ -16,10 +21,17 @@ class IxiWebView(val fragment: WebViewFragment) : JsInterface {
 
   @JavascriptInterface
   fun loginUser(logInSuccessJsFunction: String, logInFailureJsFunction: String): Boolean {
-    return fragment.viewModel.login(
-        fragment.requireActivity(),
-        LoginParams(
-            successJSFunction = logInSuccessJsFunction, failureJSFunction = logInFailureJsFunction))
+    val activity = fragment.requireActivity()
+    ssoAuthProvider.login(activity) { authResult ->
+      activity.runOnUiThread {
+        val url =
+            authResult.mapBoth(
+                { logInSuccessJsFunction.replace("AUTH_TOKEN", it.token) },
+                { logInFailureJsFunction })
+        fragment.loadUrl(url)
+      }
+    }
+    return true
   }
 
   @JavascriptInterface

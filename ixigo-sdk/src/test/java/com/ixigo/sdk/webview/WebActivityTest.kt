@@ -9,7 +9,9 @@ import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.core.app.launchActivity
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ixigo.sdk.R
+import com.ixigo.sdk.test.initializeTestIxigoSDK
 import org.junit.Assert.*
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
@@ -19,6 +21,11 @@ class WebActivityTest {
 
   private val initialPageData =
       InitialPageData("https://www.ixigo.com", mapOf("header1" to "header1Value"))
+
+  @Before
+  fun setup() {
+    initializeTestIxigoSDK()
+  }
 
   @Test
   fun `test calling onQuit finishes activity`() {
