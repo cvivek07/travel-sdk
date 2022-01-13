@@ -259,7 +259,7 @@ class FirstFragment : Fragment() {
   private fun getPartnerTokenProvider(): PartnerTokenProvider {
     val token = binding.ssoPartnerToken.text.toString()
     return object : PartnerTokenProvider {
-      override fun fetchPartnerToken(callback: PartnerTokenCallback) {
+      override fun fetchPartnerToken(requester: PartnerTokenProvider.Requester, callback: PartnerTokenCallback) {
         if (token.isNullOrEmpty()) {
           callback(Err(Error()))
         } else {

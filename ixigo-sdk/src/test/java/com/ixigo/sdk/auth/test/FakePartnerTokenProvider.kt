@@ -6,15 +6,29 @@ import com.ixigo.sdk.auth.PartnerTokenProvider
 import com.ixigo.sdk.common.Err
 import com.ixigo.sdk.common.Ok
 
-class FakePartnerTokenProvider(val partnerToken: PartnerToken?) : PartnerTokenProvider {
+class FakePartnerTokenProvider(
+    val partnerTokenMap: Map<PartnerTokenProvider.Requester, PartnerToken?> = mapOf()
+) : PartnerTokenProvider {
 
+  constructor(
+      partnerToken: PartnerToken?
+  ) : this(PartnerTokenProvider.Requester.values().map { Pair(it, partnerToken) }.toMap())
   constructor(token: String?) : this(token?.let { PartnerToken((it)) } ?: null)
 
-  override fun fetchPartnerToken(callback: PartnerTokenCallback) {
+  override fun fetchPartnerToken(
+      requester: PartnerTokenProvider.Requester,
+      callback: PartnerTokenCallback
+  ) {
+    val partnerToken = partnerTokenMap[requester]
     if (partnerToken == null) {
       callback(Err(Error()))
     } else {
       callback(Ok(partnerToken))
     }
+  }
+
+  companion object {
+    fun forCustomer(partnerToken: PartnerToken?) =
+        FakePartnerTokenProvider(mapOf(PartnerTokenProvider.Requester.CUSTOMER to partnerToken))
   }
 }

@@ -48,7 +48,7 @@ class SSOAuthProviderTest {
     val expectedAccessToken = "expectedAccessToken"
     mockServer.enqueue(MockResponse().setBody(validJsonResponse(expectedAccessToken)))
     val partnerToken = PartnerToken("partnerToken")
-    val ssoAuthProvider = SSOAuthProvider(FakePartnerTokenProvider(partnerToken))
+    val ssoAuthProvider = SSOAuthProvider(FakePartnerTokenProvider.forCustomer(partnerToken))
     assertNull(ssoAuthProvider.authData)
 
     var callbackCalled = false
@@ -67,7 +67,7 @@ class SSOAuthProviderTest {
 
   @Test
   fun `test that login returns Error if no partnerToken is provided`() {
-    val ssoAuthProvider = SSOAuthProvider(FakePartnerTokenProvider(partnerToken = null))
+    val ssoAuthProvider = SSOAuthProvider(FakePartnerTokenProvider.forCustomer(null))
 
     var callbackCalled = false
     launchActivity<FragmentActivity>().onActivity { activity ->
@@ -106,7 +106,7 @@ class SSOAuthProviderTest {
   private fun assertRequestFails(response: MockResponse, errorMessage: String? = null) {
     mockServer.enqueue(response)
     val partnerToken = PartnerToken("partnerToken")
-    val ssoAuthProvider = SSOAuthProvider(FakePartnerTokenProvider(partnerToken))
+    val ssoAuthProvider = SSOAuthProvider(FakePartnerTokenProvider.forCustomer(partnerToken))
 
     var callbackCalled = false
     launchActivity<FragmentActivity>().onActivity { activity ->
