@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.7.0](https://git.ixigo.com/android/ixigo-android-sdk/compare/ixigo-sdk-1.6.1...ixigo-sdk-1.7.0) (2022-01-13)
+
+
+### Features
+
+* add loading and error views to WebView ([a3ce91e](https://git.ixigo.com/android/ixigo-android-sdk/commit/a3ce91e6c8f48eef8b6c27033e5e99a1032cd7c2))
+* log sdk type from IxigoSDK ([f20f200](https://git.ixigo.com/android/ixigo-android-sdk/commit/f20f2004ef2dcf2d828ffeb2c8bc89ae4b155e7a))
+
+
+### Bug Fixes
+
+* make partnerTokenProvider asynchronous ([2a6c4ee](https://git.ixigo.com/android/ixigo-android-sdk/commit/2a6c4eed5679b9c49e3eb3e1518bee0aeee8fda5))
+
 ### [1.6.1](https://git.ixigo.com/android/ixigo-android-sdk/compare/ixigo-sdk-1.6.0...ixigo-sdk-1.6.1) (2022-01-02)
 
 
