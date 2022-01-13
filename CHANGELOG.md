@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.8.0](https://git.ixigo.com/android/ixigo-android-sdk/compare/ixigo-sdk-1.7.0...ixigo-sdk-1.8.0) (2022-01-13)
+
+
+### Features
+
+* allow passing a requester to TokenProvider ([060be4b](https://git.ixigo.com/android/ixigo-android-sdk/commit/060be4bce8a0ccfb80348d517a75ecd9be80b169))
+
 ## [1.7.0](https://git.ixigo.com/android/ixigo-android-sdk/compare/ixigo-sdk-1.6.1...ixigo-sdk-1.7.0) (2022-01-13)
 
 
