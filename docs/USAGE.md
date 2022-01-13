@@ -89,43 +89,30 @@ val config = Config(apiBaseUrl = "http://mycustomhost.com/api")
 
 ## Authentication
 
-### SSO Authentication (Recommended)
-
 > **Note**: SSO Authentication is not available in Prod yet. You will need to use a `build3` staging server when initializing IxigoSDK, as described in [Use staging servers](#use-staging-servers)
 
-To use SSO Authentication, initialize `IxigoSDK` with an instance of `SSOAuthProvider`.
-
-You will need to pass a `PartnerTokenProvider` so that we can retrieve your App access token and exchange it for an Ixigo access token.
+When opening ixigo SDK it is possible to login the user automatically into their ixigo account by exchanging the host App token for an ixigo token. To do that, you need to implement `PartnerTokenProvider` and pass it when initializing `IxigoSDK` 
 
 ```kotlin
 class MyAppPartnerTokenProvider(): PartnerTokenProvider {
-  override val partnerToken: PartnerToken?
-        get() = TODO("Logic to retrieve MyApp access token")
-}
-
-// Inside your Application initialization code
-IxigoSDK.init(context, SSOAuthProvider(MyAppPartnerTokenProvider()), /* Other Params */)
-
-```
-
-### Custom Authentication
-
-If your App has other means of getting an Ixigo access token, you can implement `AuthProvider` and use it when initializing `IxigoSDK`.
-
-```kotlin
-private class MyAppAuthProvider(): AuthProvider {
-  override val authData: AuthData?
-    get() = TODO("Return an authToken if already available")
-
-  override fun login(fragmentActivity: FragmentActivity, callback: AuthCallback): Boolean {
-    TODO("Perform login")
+  override fun fetchPartnerToken(
+      requester: PartnerTokenProvider.Requester,
+      callback: PartnerTokenCallback
+  ) {
+    // Fetch your Host App token if available
+    val partnerToken = /* TODO */
+    if (partnerToken == null) {
+      // If you could not find it, return an error.
+      callback(Err(Error()))
+    } else {
+      // Return the Token
+      callback(Ok(partnerToken))
+    }
   }
 }
-
-// Inside your Application initialization code
-IxigoSDK.init(context, MyAppAuthProvider, /* Other Params */)
-
 ```
+
+`PartnerTokenProvider.Requester` should be use by your implementation to determine how to obtain the token. For instance, if we pass `CUSTOMER`, it would be OK to present a LoginDialog since the Customer initiated this request. Otherwise, we should not show any UI to the customer.
 
 ### Payment
 
