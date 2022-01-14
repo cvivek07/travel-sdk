@@ -2,6 +2,7 @@ package com.ixigo.sdk.test
 
 import com.ixigo.sdk.AppInfo
 import com.ixigo.sdk.IxigoSDK
+import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.test.FakeAnalyticsProvider
 import com.ixigo.sdk.auth.EmptyPartnerTokenProvider
 import com.ixigo.sdk.payment.DisabledPaymentProvider
@@ -12,11 +13,13 @@ object TestData {
   val DisabledAnalyticsProvider = FakeAnalyticsProvider()
 }
 
-fun initializeTestIxigoSDK() {
+fun initializeTestIxigoSDK(
+    analyticsProvider: AnalyticsProvider = TestData.DisabledAnalyticsProvider
+) {
   IxigoSDK.replaceInstance(
       IxigoSDK(
           TestData.FakeAppInfo,
           EmptyPartnerTokenProvider,
           DisabledPaymentProvider,
-          TestData.DisabledAnalyticsProvider))
+          analyticsProvider))
 }

@@ -24,7 +24,7 @@ class MultiModelActivity: FragmentActivity() {
       flightClass = "e",
       passengerData = FlightPassengerData(adults = 1, children = 0, infants = 0)
     )
-    val fragment = IxigoSDK.getInstance().flightsMultiModelFragment(searchData)
+    val fragment = IxigoSDK.instance.flightsMultiModelFragment(searchData)
 
     binding = ActivityMultiModelBinding.inflate(layoutInflater)
 

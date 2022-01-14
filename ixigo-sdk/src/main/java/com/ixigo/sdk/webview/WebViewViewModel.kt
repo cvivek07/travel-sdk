@@ -16,12 +16,11 @@ class WebViewViewModel : ViewModel() {
   }
 
   fun startNativePayment(activity: FragmentActivity, input: PaymentInput): Boolean {
-    IxigoSDK.getInstance().apply {
+    IxigoSDK.instance.apply {
       analyticsProvider.logEvent(Event.with(action = "paymentStart"))
       return paymentProvider.startPayment(activity, input) {
-        IxigoSDK.getInstance()
-            .analyticsProvider
-            .logEvent(Event.with(action = "paymentFinished", label = it.simpleString()))
+        IxigoSDK.instance.analyticsProvider.logEvent(
+            Event.with(action = "paymentFinished", label = it.simpleString()))
         paymentResult.postValue(NativePaymentResult(input, it))
       }
     }

@@ -61,7 +61,10 @@ class WebViewFragment : Fragment() {
     webView.webViewClient = CustomWebViewClient()
     webView.webChromeClient = WebChromeClient()
     webView.settings.javaScriptEnabled = true
+    webView.settings.domStorageEnabled = true
 
+    // TODO: Do not hardcode JsInterfaces and generalize this so that WebViewFragment is not aware
+    // of specific SDKs
     addJavascriptInterface(IxiWebView(this))
 
     val initialPageData = arguments?.getParcelable<InitialPageData>(INITIAL_PAGE_DATA_ARGS)
@@ -73,7 +76,7 @@ class WebViewFragment : Fragment() {
   }
 
   override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-    val activityResultHandler = IxigoSDK.getInstance().paymentProvider as ActivityResultHandler?
+    val activityResultHandler = IxigoSDK.instance.paymentProvider as ActivityResultHandler?
     activityResultHandler?.handle(requestCode, resultCode, data)
   }
 

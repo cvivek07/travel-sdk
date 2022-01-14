@@ -10,7 +10,7 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 class IxiWebView(
     private val fragment: WebViewFragment,
     private val ssoAuthProvider: SSOAuthProvider =
-        SSOAuthProvider(IxigoSDK.getInstance().partnerTokenProvider)
+        SSOAuthProvider(IxigoSDK.instance.partnerTokenProvider)
 ) : JsInterface {
 
   private val moshi by lazy { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
@@ -51,7 +51,7 @@ class IxiWebView(
 
   @JavascriptInterface
   fun openWindow(url: String, @Suppress("UNUSED_PARAMETER") title: String) {
-    runOnUiThread { IxigoSDK.getInstance().launchWebActivity(fragment.requireActivity(), url) }
+    runOnUiThread { IxigoSDK.instance.launchWebActivity(fragment.requireActivity(), url) }
   }
 
   private fun runOnUiThread(runnable: Runnable) {

@@ -144,7 +144,7 @@ class FlightsFunnelTest {
             source = "FlightSearchFormFragment",
             flightClass = "e",
             passengerData = FlightPassengerData(adults = 1, children = 0, infants = 0))
-    val fragment = IxigoSDK.getInstance().flightsMultiModelFragment(searchData)
+    val fragment = IxigoSDK.instance.flightsMultiModelFragment(searchData)
     assertNotNull(fragment as? WebViewFragment)
     val url =
         "https://baseUrl.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=1&deviceId=deviceId&languageCode=en&page=FLIGHT_LISTING_MULTI_MODEL&orgn=DEL&dstn=BOM&departDate=22102021&returnDate=26102021&adults=1&children=0&infants=0&class=e&source=FlightSearchFormFragment"
@@ -154,7 +154,7 @@ class FlightsFunnelTest {
 
   private fun assertFlightsHome() {
     scenario.onActivity { activity ->
-      IxigoSDK.getInstance().flightsStartHome(activity)
+      IxigoSDK.instance.flightsStartHome(activity)
       assertLaunchedIntent(
           activity,
           "https://baseUrl.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=1&deviceId=deviceId&languageCode=en&page=FLIGHT_HOME")
@@ -171,7 +171,7 @@ class FlightsFunnelTest {
         mockAnalyticsProvider,
         config)
     scenario.onActivity { activity ->
-      IxigoSDK.getInstance().flightsStartSearch(activity, searchData)
+      IxigoSDK.instance.flightsStartSearch(activity, searchData)
       assertLaunchedIntent(activity, expectedUrl)
       verify(mockAnalyticsProvider).logEvent(Event.with(action = "flightsStartSearch"))
     }

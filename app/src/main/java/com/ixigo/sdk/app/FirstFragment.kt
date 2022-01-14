@@ -19,6 +19,7 @@ import com.ixigo.sdk.Config
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.app.databinding.FragmentFirstBinding
 import com.ixigo.sdk.auth.*
+import com.ixigo.sdk.bus.BusSDK
 import com.ixigo.sdk.common.Err
 import com.ixigo.sdk.common.Ok
 import com.ixigo.sdk.common.Result
@@ -30,9 +31,11 @@ import com.ixigo.sdk.payment.PaymentCallback
 import com.ixigo.sdk.payment.PaymentInput
 import com.ixigo.sdk.payment.PaymentProvider
 import java.time.LocalDate
+import kotlin.reflect.KClass
 import kotlin.reflect.full.companionObject
 import kotlin.reflect.full.companionObjectInstance
 import kotlin.reflect.full.declaredFunctions
+import kotlin.reflect.full.functions
 import kotlin.reflect.jvm.isAccessible
 
 /** A simple [Fragment] subclass as the default destination in the navigation. */
@@ -87,13 +90,19 @@ class FirstFragment : Fragment() {
 
     binding.buttonFlightHome.setOnClickListener {
       if (initSDK()) {
-        IxigoSDK.getInstance().flightsStartHome(requireContext())
+        IxigoSDK.instance.flightsStartHome(requireContext())
+      }
+    }
+
+    binding.buttonBusHome.setOnClickListener {
+      if (initSDK()) {
+        BusSDK.instance.launchHome(requireContext())
       }
     }
 
     binding.buttonFlightSearch.setOnClickListener {
       if (initSDK()) {
-        IxigoSDK.getInstance()
+        IxigoSDK.instance
             .flightsStartSearch(
                 requireContext(),
                 FlightSearchData(
@@ -195,9 +204,15 @@ class FirstFragment : Fragment() {
   }
 
   private fun clearSDK() {
-    val companionObject = IxigoSDK::class.companionObject!!
-    val companionInstance = IxigoSDK::class.companionObjectInstance
-    val method = companionObject.declaredFunctions.first { it.name == "clearInstance" }
+    // Clear IxigoSDK
+    clearSDK(IxigoSDK::class)
+    clearSDK(BusSDK::class)
+  }
+
+  private fun <T:Any>clearSDK(sdkClass: KClass<T>) {
+    val companionObject = sdkClass.companionObject!!
+    val companionInstance = sdkClass.companionObjectInstance
+    val method = companionObject.functions.first { it.name == "clearInstance" }
     method.isAccessible = true
     method.call(companionInstance)
   }
@@ -237,6 +252,7 @@ class FirstFragment : Fragment() {
         analyticsProvider = ToastAnalyticsProvider(requireActivity()),
         config = ixigoConfig.config)
 
+    BusSDK.init()
     sdkInitialized = true
     return true
   }

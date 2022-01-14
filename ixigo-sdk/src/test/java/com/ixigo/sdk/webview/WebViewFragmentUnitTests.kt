@@ -53,6 +53,14 @@ class WebViewFragmentUnitTests {
   }
 
   @Test
+  fun `test that webview is correctly configured`() {
+    with(fragment.webView.settings) {
+      assertTrue(domStorageEnabled)
+      assertTrue(javaScriptEnabled)
+    }
+  }
+
+  @Test
   fun `test that initial Url is loaded`() {
     assertEquals(initialPageData.url, shadowWebView.lastLoadedUrl)
     assertEquals(initialPageData.headers, shadowWebView.lastAdditionalHttpHeaders)
@@ -70,7 +78,7 @@ class WebViewFragmentUnitTests {
 
   @Test
   fun `test that IxiWebView is loaded`() {
-    val ixiWebView: IxiWebView = shadowWebView.getJavascriptInterface("IxiWebView") as IxiWebView
+    val ixiWebView = shadowWebView.getJavascriptInterface("IxiWebView") as IxiWebView
     assertNotNull(ixiWebView)
   }
 

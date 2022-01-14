@@ -68,7 +68,7 @@ IxigoSDK.init(context, appInfo, authProvider, /* Other params */)
 Access the SDK via its singleton Accessor from an Activity or Fragment
 
 ```kotlin
-IxigoSDK.getInstance().flightsStartHome()
+IxigoSDK.instance.flightsStartHome()
 ```
 
 ### Use staging servers
@@ -91,7 +91,7 @@ val config = Config(apiBaseUrl = "http://mycustomhost.com/api")
 
 > **Note**: SSO Authentication is not available in Prod yet. You will need to use a `build3` staging server when initializing IxigoSDK, as described in [Use staging servers](#use-staging-servers)
 
-When opening ixigo SDK it is possible to login the user automatically into their ixigo account by exchanging the host App token for an ixigo token. To do that, you need to implement `PartnerTokenProvider` and pass it when initializing `IxigoSDK` 
+When opening ixigo SDK it is possible to login the user automatically into their ixigo account by exchanging the host App token for an ixigo token. To do that, you need to implement `PartnerTokenProvider` and pass it when initializing `IxigoSDK`
 
 ```kotlin
 class MyAppPartnerTokenProvider(): PartnerTokenProvider {
@@ -175,8 +175,25 @@ You can configure the appearance of certain UI elements presented by the sdk by 
 
 ## Entry Points / Functionality
 
-### Start Flights Funnel
+### Flights
+
+#### Start Flights Funnel
 
 ```kotlin
-IxigoSDK.getInstance().flightsStartHome(context)
+IxigoSDK.instance.flightsStartHome(context)
+```
+
+### Buses
+
+In order to access Buses functionality, you need to initialize `BusSDK` after `IxigoSDK` initialization
+
+```kotlin
+IxigoSDK.init(...)
+BusSDK.init(...)
+```
+
+#### Start Bus Funnel
+
+```kotlin
+BusSDK.instance.launchHome(context)
 ```

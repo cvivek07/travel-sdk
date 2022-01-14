@@ -16,6 +16,7 @@ import com.ixigo.sdk.test.TestData.FakeAppInfo
 import com.ixigo.sdk.webview.InitialPageData
 import com.ixigo.sdk.webview.WebActivity
 import com.ixigo.sdk.webview.WebViewFragment
+import java.lang.IllegalStateException
 import org.hamcrest.MatcherAssert
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -54,6 +55,16 @@ class IxigoSDKTests {
                     mapOf(
                         "clientId" to FakeAppInfo.clientId,
                         "sdkVersion" to BuildConfig.SDK_VERSION)))
+  }
+
+  @Test(expected = IllegalStateException::class)
+  fun `test calling init twice throws an exception`() {
+    val analyticsProvider: AnalyticsProvider = mock()
+    val context: Context = mock()
+    IxigoSDK.init(
+        context, FakeAppInfo, EmptyPartnerTokenProvider, DisabledPaymentProvider, analyticsProvider)
+    IxigoSDK.init(
+        context, FakeAppInfo, EmptyPartnerTokenProvider, DisabledPaymentProvider, analyticsProvider)
   }
 
   private fun testLaunchActivity(

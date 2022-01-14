@@ -132,7 +132,7 @@ class SSOAuthProviderTest {
     assertEquals("/api/v2/oauth/sso/login/token", request.path)
     assertEquals("[text=authCode=${partnerToken.token}]", request.body.toString())
 
-    val appInfo = IxigoSDK.getInstance().appInfo
+    val appInfo = IxigoSDK.instance.appInfo
 
     assertTrue(request.headers.contains(Pair("ixiSrc", appInfo.clientId)))
     assertTrue(request.headers.contains(Pair("clientId", appInfo.clientId)))

@@ -43,8 +43,8 @@ class SSOAuthProvider(private val partnerTokenProvider: PartnerTokenProvider) : 
   private fun exchangeToken(partnerToken: PartnerToken, callback: AuthCallback) {
     val formBody: FormBody = FormBody.Builder().add("authCode", partnerToken.token).build()
 
-    val appInfo = IxigoSDK.getInstance().appInfo
-    val config = IxigoSDK.getInstance().config
+    val appInfo = IxigoSDK.instance.appInfo
+    val config = IxigoSDK.instance.config
     val request =
         Request.Builder()
             .url(config.createUrl("api/v2/oauth/sso/login/token"))
