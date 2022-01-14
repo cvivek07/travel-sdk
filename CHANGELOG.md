@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.9.0](https://git.ixigo.com/android/ixigo-android-sdk/compare/ixigo-sdk-1.8.0...ixigo-sdk-1.9.0) (2022-01-14)
+
+
+### Features
+
+* introduce bus sdk ([03c3961](https://git.ixigo.com/android/ixigo-android-sdk/commit/03c39617f2c43138b812b96cd8cbb2bcfea08a5e))
+* introduce htmlOutJsInterface ([d6b556c](https://git.ixigo.com/android/ixigo-android-sdk/commit/d6b556c65b94ac8bbd1b829d51de8d0b0373c245))
+
 ## [1.8.0](https://git.ixigo.com/android/ixigo-android-sdk/compare/ixigo-sdk-1.7.0...ixigo-sdk-1.8.0) (2022-01-13)
 
 
