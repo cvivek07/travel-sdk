@@ -7,6 +7,6 @@ object EmptyPartnerTokenProvider : PartnerTokenProvider {
       requester: PartnerTokenProvider.Requester,
       callback: PartnerTokenCallback
   ) {
-    callback(Err(Error()))
+    callback(Err(PartnerTokenErrorServer()))
   }
 }

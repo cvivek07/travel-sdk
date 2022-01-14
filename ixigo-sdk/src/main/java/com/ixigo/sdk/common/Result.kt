@@ -8,7 +8,7 @@ package com.ixigo.sdk.common
  *
  * @param T The type of a successful response
  */
-sealed class Result<out T> {
+sealed class Result<out T, out E> {
   val isSuccess: Boolean by lazy {
     when (this) {
       is Ok -> true
@@ -23,7 +23,7 @@ sealed class Result<out T> {
     }
   }
 
-  fun <S> mapBoth(success: (T) -> S, failure: (Throwable) -> S): S {
+  fun <S> mapBoth(success: (T) -> S, failure: (E) -> S): S {
     return when (this) {
       is Ok -> success(value)
       is Err -> failure(value)
@@ -43,7 +43,7 @@ sealed class Result<out T> {
   }
 }
 
-class Ok<T>(val value: T) : Result<T>() {
+class Ok<T>(val value: T) : Result<T, Nothing>() {
   override fun equals(other: Any?): Boolean {
     @Suppress("UNCHECKED_CAST") val otherOk = other as? Ok<T> ?: return false
     return otherOk.value == value
@@ -54,10 +54,10 @@ class Ok<T>(val value: T) : Result<T>() {
   }
 }
 
-class Err(val value: Throwable) : Result<Nothing>() {
+class Err<E>(val value: E) : Result<Nothing, E>() {
   override fun equals(other: Any?): Boolean {
-    val otherErr = other as? Err ?: return false
-    return otherErr.value::class == value::class
+    @Suppress("UNCHECKED_CAST") val otherErr = other as? Err<E> ?: return false
+    return otherErr.value == value
   }
 
   override fun hashCode(): Int {

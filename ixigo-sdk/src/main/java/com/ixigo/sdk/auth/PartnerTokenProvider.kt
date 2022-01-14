@@ -3,7 +3,7 @@ package com.ixigo.sdk.auth
 import com.ixigo.sdk.common.Generated
 import com.ixigo.sdk.common.Result
 
-typealias PartnerTokenResult = Result<PartnerToken>
+typealias PartnerTokenResult = Result<PartnerToken, PartnerTokenError>
 
 typealias PartnerTokenCallback = (PartnerTokenResult) -> Unit
 
@@ -24,3 +24,16 @@ interface PartnerTokenProvider {
 }
 
 @Generated data class PartnerToken(val token: String)
+
+sealed class PartnerTokenError(val code: Int, val message: String)
+
+class PartnerTokenErrorUserNotLoggedIn(message: String = "User not logged into the app") :
+    PartnerTokenError(101, message)
+
+class PartnerTokenErrorUserDeniedLogin(
+    message: String = "User denied to grant access of login details"
+) : PartnerTokenError(102, message)
+
+class PartnerTokenErrorServer(message: String = "Server Error") : PartnerTokenError(103, message)
+
+class PartnerTokenErrorSDK(message: String = "SDK Error") : PartnerTokenError(104, message)

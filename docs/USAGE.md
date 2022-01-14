@@ -100,10 +100,10 @@ class MyAppPartnerTokenProvider(): PartnerTokenProvider {
       callback: PartnerTokenCallback
   ) {
     // Fetch your Host App token if available
-    val partnerToken = /* TODO */
+    val partnerToken: PartnerToken = /* TODO */
     if (partnerToken == null) {
-      // If you could not find it, return an error.
-      callback(Err(Error()))
+      // If you could not find it, return the appropiate error.
+      callback(Err(PartnerTokenErrorNotLoggedIn()))
     } else {
       // Return the Token
       callback(Ok(partnerToken))

@@ -3,7 +3,7 @@ package com.ixigo.sdk.auth
 import androidx.fragment.app.FragmentActivity
 import com.ixigo.sdk.common.Result
 
-typealias AuthResult = Result<AuthData>
+typealias AuthResult = Result<AuthData, Error>
 
 typealias AuthCallback = (AuthResult) -> Unit
 

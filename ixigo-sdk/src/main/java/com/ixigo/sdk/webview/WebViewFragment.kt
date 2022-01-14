@@ -66,6 +66,7 @@ class WebViewFragment : Fragment() {
     // TODO: Do not hardcode JsInterfaces and generalize this so that WebViewFragment is not aware
     // of specific SDKs
     addJavascriptInterface(IxiWebView(this))
+    addJavascriptInterface(HtmlOutJsInterface(this, IxigoSDK.instance.partnerTokenProvider))
 
     val initialPageData = arguments?.getParcelable<InitialPageData>(INITIAL_PAGE_DATA_ARGS)
     if (initialPageData != null) {

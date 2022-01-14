@@ -2,6 +2,7 @@ package com.ixigo.sdk.auth.test
 
 import com.ixigo.sdk.auth.PartnerToken
 import com.ixigo.sdk.auth.PartnerTokenCallback
+import com.ixigo.sdk.auth.PartnerTokenErrorSDK
 import com.ixigo.sdk.auth.PartnerTokenProvider
 import com.ixigo.sdk.common.Err
 import com.ixigo.sdk.common.Ok
@@ -21,7 +22,7 @@ class FakePartnerTokenProvider(
   ) {
     val partnerToken = partnerTokenMap[requester]
     if (partnerToken == null) {
-      callback(Err(Error()))
+      callback(Err(PartnerTokenErrorSDK()))
     } else {
       callback(Ok(partnerToken))
     }

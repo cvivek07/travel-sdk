@@ -19,9 +19,8 @@ class ResultTest {
 
   @Test
   fun testErrEquals() {
-    assertEquals(Err(Error("error1")), Err(Error("error1")))
-    assertEquals(Err(Exception("error1")), Err(Exception("error2")))
-    assertNotEquals(Err(Error("error1")), Error("error1"))
+    assertEquals(Err("error1"), Err("error1"))
+    assertNotEquals(Err("error1"), Error("error2"))
   }
 
   @Test

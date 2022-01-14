@@ -137,7 +137,7 @@ class FirstFragment : Fragment() {
     loadPreset(presets[0])
   }
 
-  private fun getSsoAuthMessage(it: Result<AuthData>): String {
+  private fun getSsoAuthMessage(it: AuthResult): String {
     return when (it) {
       is Ok -> "Auth Successful. Ixigo Token=${it.value.token}"
       is Err -> "Auth Error. Error=${it.value.message}"
@@ -277,7 +277,7 @@ class FirstFragment : Fragment() {
     return object : PartnerTokenProvider {
       override fun fetchPartnerToken(requester: PartnerTokenProvider.Requester, callback: PartnerTokenCallback) {
         if (token.isNullOrEmpty()) {
-          callback(Err(Error()))
+          callback(Err(PartnerTokenErrorUserNotLoggedIn()))
         } else {
           callback(Ok(PartnerToken(token)))
         }

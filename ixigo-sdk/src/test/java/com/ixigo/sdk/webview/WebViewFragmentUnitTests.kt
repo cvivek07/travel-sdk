@@ -16,7 +16,7 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.kotlin.*
+import org.mockito.kotlin.mock
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.shadows.ShadowWebView
 
@@ -80,6 +80,12 @@ class WebViewFragmentUnitTests {
   fun `test that IxiWebView is loaded`() {
     val ixiWebView = shadowWebView.getJavascriptInterface("IxiWebView") as IxiWebView
     assertNotNull(ixiWebView)
+  }
+
+  @Test
+  fun `test that HtmlOut is loaded`() {
+    val htmlOut = shadowWebView.getJavascriptInterface("HTMLOUT") as HtmlOutJsInterface
+    assertNotNull(htmlOut)
   }
 
   @Test

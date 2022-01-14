@@ -18,4 +18,4 @@ interface PaymentProvider {
 
 typealias PaymentCallback = (PaymentResult) -> Unit
 
-typealias PaymentResult = Result<PaymentResponse>
+typealias PaymentResult = Result<PaymentResponse, Error>

@@ -34,7 +34,7 @@ class SSOAuthProvider(private val partnerTokenProvider: PartnerTokenProvider) : 
     partnerTokenProvider.fetchPartnerToken(PartnerTokenProvider.Requester.CUSTOMER) {
       when (it) {
         is Ok -> exchangeToken(it.value, callback)
-        is Err -> callback(it)
+        is Err -> callback(Err(Error(it.value.message)))
       }
     }
     return true
