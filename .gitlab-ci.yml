@@ -151,6 +151,7 @@ release-preview:
     - yarn install
     - yarn run release -- -t ixigo-sdk-
     - yarn run pdf-changelog
+    - yarn run slack-new-version
   artifacts:
     name: CHANGELOG
     paths:

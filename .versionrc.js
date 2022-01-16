@@ -1,3 +1,5 @@
+const fs = require("fs").promises;
+
 const readmeUpdater = {
   readVersion: function (contents) {
     const match = /com\.ixigo\.sdk:ixigo-sdk:(\d+\.\d+\.\d+)/.exec(contents);
@@ -60,7 +62,18 @@ const gradleAppTracker = {
   updater: gradleUpdater,
 };
 
+const readCurrentVersion = async () => {
+  const contents = await fs.readFile(gradleTracker.filename);
+  return gradleTracker.updater.readVersion(contents);
+};
+
 module.exports = {
-  bumpFiles: [readmeTracker, gradleTracker, gradleAppTracker, gradleAppDependencyTracker],
+  bumpFiles: [
+    readmeTracker,
+    gradleTracker,
+    gradleAppTracker,
+    gradleAppDependencyTracker,
+  ],
   packageFiles: [gradleTracker],
+  readCurrentVersion,
 };
