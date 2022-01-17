@@ -133,6 +133,7 @@ release:
     - git push --follow-tags http://root:$REPO_ACCESS_TOKEN@$CI_SERVER_HOST/$CI_PROJECT_PATH.git HEAD:development
     - yarn run pdf-changelog
     - "./gradlew ixigo-sdk:publishReleasePublicationToNexusRepository --stacktrace"
+    - yarn run slack-new-version
   artifacts:
     name: CHANGELOG
     paths:
@@ -151,7 +152,6 @@ release-preview:
     - yarn install
     - yarn run release -- -t ixigo-sdk-
     - yarn run pdf-changelog
-    - yarn run slack-new-version
   artifacts:
     name: CHANGELOG
     paths:
