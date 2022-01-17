@@ -45,10 +45,12 @@ class HtmlOutJsInterface(
 
   private fun executeSSOCallback(ssoInput: SSOInput, ssoResult: SSOResult) {
     val ssoResultJson = ssoResultAdapter.toJson(ssoResult)
-    webViewFragment.webView.loadUrl("javascript:{${ssoInput.callback}('${ssoResultJson}');};")
+    webViewFragment.activity?.runOnUiThread {
+      webViewFragment.webView.loadUrl("javascript:{${ssoInput.callBack}('${ssoResultJson}');};")
+    }
   }
 
-  data class SSOInput(val callback: String, val provider: String, val promiseId: String)
+  data class SSOInput(val callBack: String, val provider: String, val promiseId: String)
   data class SSOResult(val promiseId: String, val data: SSOResultData)
   data class SSOResultData(
       val responseCode: Int,

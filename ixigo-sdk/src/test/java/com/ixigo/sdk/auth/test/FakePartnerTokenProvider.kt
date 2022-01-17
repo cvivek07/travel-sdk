@@ -8,7 +8,7 @@ import com.ixigo.sdk.common.Err
 import com.ixigo.sdk.common.Ok
 
 class FakePartnerTokenProvider(
-    val partnerTokenMap: Map<PartnerTokenProvider.Requester, PartnerToken?> = mapOf()
+    var partnerTokenMap: Map<PartnerTokenProvider.Requester, PartnerToken?> = mapOf(),
 ) : PartnerTokenProvider {
 
   constructor(

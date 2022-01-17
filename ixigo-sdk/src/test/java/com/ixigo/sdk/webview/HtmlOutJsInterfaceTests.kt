@@ -8,8 +8,7 @@ import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.auth.*
-import com.ixigo.sdk.common.Err
-import com.ixigo.sdk.common.Ok
+import com.ixigo.sdk.auth.test.FakePartnerTokenProvider
 import com.ixigo.sdk.test.initializeTestIxigoSDK
 import org.junit.After
 import org.junit.Assert.*
@@ -30,12 +29,12 @@ class HtmlOutJsInterfaceTests {
   private lateinit var fragment: WebViewFragment
 
   private lateinit var htmlOut: HtmlOutJsInterface
-  private lateinit var mockPartnerTokenProvider: PartnerTokenProvider
+  private lateinit var fakePartnerTokenProvider: FakePartnerTokenProvider
 
   @Before
   fun setup() {
     initializeTestIxigoSDK()
-    mockPartnerTokenProvider = mock()
+    fakePartnerTokenProvider = FakePartnerTokenProvider()
     scenario =
         launchFragmentInContainer(
             Bundle().also {
@@ -45,7 +44,7 @@ class HtmlOutJsInterfaceTests {
       fragment = it
       shadowWebView = shadowOf(it.webView)
       shadowWebView.pushEntryToHistory(initialPageData.url)
-      htmlOut = HtmlOutJsInterface(it, mockPartnerTokenProvider)
+      htmlOut = HtmlOutJsInterface(it, fakePartnerTokenProvider)
     }
   }
 
@@ -68,25 +67,17 @@ class HtmlOutJsInterfaceTests {
   fun `test failed incorrect input json`() {
     htmlOut.invokeSSOLogin("Wrong Json")
     assertEquals(initialPageData.url, shadowWebView.lastLoadedUrl)
-    verifyNoInteractions(mockPartnerTokenProvider)
   }
 
   private fun testLogin(token: String?) {
-    doAnswer {
-          val callback: PartnerTokenCallback = it.getArgument(1)
-          if (token == null) {
-            callback(Err(PartnerTokenErrorSDK()))
-          } else {
-            callback(Ok(PartnerToken(token)))
-          }
-          true
-        }
-        .`when`(mockPartnerTokenProvider)
-        .fetchPartnerToken(eq(PartnerTokenProvider.Requester.CUSTOMER), any())
+    token?.let {
+      fakePartnerTokenProvider.partnerTokenMap =
+          mapOf(PartnerTokenProvider.Requester.CUSTOMER to PartnerToken(it))
+    }
 
     val jsonInput =
         """{
-      |"callback": "myCallback",
+      |"callBack": "myCallback",
       |"provider": "myProvider",
       |"promiseId": "myPromiseId"
       |}""".trimMargin()
