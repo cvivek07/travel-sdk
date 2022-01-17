@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.9.1](https://git.ixigo.com/android/ixigo-android-sdk/compare/ixigo-sdk-1.9.0...ixigo-sdk-1.9.1) (2022-01-17)
+
+
+### Bug Fixes
+
+* fix typo in JSON data for HtmlOut JS Interface ([a1a071e](https://git.ixigo.com/android/ixigo-android-sdk/commit/a1a071eb8c94a28e93078553309159f47ae0ced9))
+* run slack release script when releasing and not in preview ([71fc575](https://git.ixigo.com/android/ixigo-android-sdk/commit/71fc575a55b8428765cd09cbe8c72a0911d51631))
+
 ## [1.9.0](https://git.ixigo.com/android/ixigo-android-sdk/compare/ixigo-sdk-1.8.0...ixigo-sdk-1.9.0) (2022-01-14)
 
 
