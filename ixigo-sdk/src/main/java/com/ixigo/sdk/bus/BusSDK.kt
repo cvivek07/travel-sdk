@@ -16,7 +16,7 @@ import com.ixigo.sdk.common.SdkSingleton
  * Before using it, you need to call [BusSDK.init(...)][init] once when you start-up your
  * Application.
  */
-class BusSDK {
+class BusSDK(private val config: Config) {
 
   /** Opens Abhibus PWA home to search for Bus trips */
   fun launchHome(context: Context) {
@@ -43,7 +43,7 @@ class BusSDK {
           "iximatr" -> "ixigo"
           else -> clientId
         }
-    "https://www.abhibus.com/$path"
+    config.createUrl(path)
   }
 
   companion object : SdkSingleton<BusSDK>("BusSDK") {
@@ -55,11 +55,11 @@ class BusSDK {
      * Call this method when you initialize your Application. eg: `Application.onCreate`
      */
     @JvmStatic
-    fun init(): BusSDK {
+    fun init(config: Config = ProdConfig): BusSDK {
       assertIxigoSDKIsInitialized()
       assertNotCreated()
 
-      val instance = BusSDK()
+      val instance = BusSDK(config = config)
       INSTANCE = instance
 
       IxigoSDK.instance.analyticsProvider.logEvent(
@@ -73,5 +73,8 @@ class BusSDK {
       // This will throw an exception if IxigoSDK is not initialized
       IxigoSDK.instance
     }
+
+    val ProdConfig = Config("https://www.abhibus.com/")
+    val StagingConfig = Config("https://demo.abhibus.com/")
   }
 }

@@ -55,6 +55,11 @@ class BusSDKTests {
   }
 
   @Test
+  fun `test bus home for confitmTkt and staging`() {
+    testBusHome(clientId = "confirmtckt", expectedPath = "confirmtkt", useStaging = true)
+  }
+
+  @Test
   fun `test bus home for ixigo trains`() {
     testBusHome(clientId = "iximatr", expectedPath = "ixigo")
   }
@@ -64,15 +69,18 @@ class BusSDKTests {
     testBusHome(clientId = "other", expectedPath = "other")
   }
 
-  private fun testBusHome(clientId: String, expectedPath: String) {
+  private fun testBusHome(clientId: String, expectedPath: String, useStaging: Boolean = false) {
     val mockIxigoSDK: IxigoSDK = mock {
       on { appInfo } doReturn AppInfo(clientId = clientId, apiKey = "any", appVersion = 1)
       on { analyticsProvider } doReturn mock()
     }
     val application: Application = getApplicationContext()
     IxigoSDK.replaceInstance(mockIxigoSDK)
-    BusSDK.init().launchHome(application)
-    verify(mockIxigoSDK).launchWebActivity(application, "https://www.abhibus.com/$expectedPath")
+    val busSDK = if (useStaging) BusSDK.init(config = BusSDK.StagingConfig) else BusSDK.init()
+    busSDK.launchHome(application)
+    val subdomain = if (useStaging) "demo" else "www"
+    verify(mockIxigoSDK)
+        .launchWebActivity(application, "https://${subdomain}.abhibus.com/$expectedPath")
   }
 
   @Test

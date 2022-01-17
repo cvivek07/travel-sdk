@@ -252,7 +252,8 @@ class FirstFragment : Fragment() {
         analyticsProvider = ToastAnalyticsProvider(requireActivity()),
         config = ixigoConfig.config)
 
-    BusSDK.init()
+    val busConfig = if (ixigoConfig.config == Config.ProdConfig) BusSDK.ProdConfig else BusSDK.StagingConfig
+    BusSDK.init(config = busConfig)
     sdkInitialized = true
     return true
   }
