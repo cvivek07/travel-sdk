@@ -1,11 +1,10 @@
 package com.ixigo.sdk.ui
 
 import android.content.Context
-import android.content.res.ColorStateList
 import android.util.AttributeSet
 import android.view.View
+import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.RelativeLayout
@@ -15,7 +14,12 @@ import com.ixigo.sdk.R
 class LoadableViewContainer(context: Context, attrs: AttributeSet) :
     RelativeLayout(context, attrs) {
 
+  init {
+    inflate(context, R.layout.loadableview_layout, this)
+  }
+
   var onGoBack: (() -> Unit)? = null
+  var onRetry: (() -> Unit)? = null
 
   var status: Status = Loaded
     set(value) {
@@ -33,35 +37,26 @@ class LoadableViewContainer(context: Context, attrs: AttributeSet) :
 
   @VisibleForTesting
   internal val contentView: View by lazy {
-    getChildAt(0).apply {
-      layoutParams = LayoutParams(MATCH_PARENT, MATCH_PARENT)
-      visibility = VISIBLE
+    getChildAt(1).also {
+      removeView(it)
+      it.layoutParams = LayoutParams(MATCH_PARENT, MATCH_PARENT)
+      it.visibility = VISIBLE
+      val container: ViewGroup = findViewById(R.id.container)
+      container.addView(it)
     }
   }
 
   @VisibleForTesting
-  internal val loadingView: ProgressBar by lazy {
-    ProgressBar(context, null, android.R.attr.progressBarStyleLarge).also {
-      val layoutParams = LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
-      layoutParams.addRule(CENTER_IN_PARENT, TRUE)
-      it.layoutParams = layoutParams
-      it.visibility = GONE
-      it.indeterminateTintList =
-          ColorStateList.valueOf(resources.getColor(R.color.ixigosdk_primary_color))
-      addView(it)
-    }
+  internal val loadingView by lazy {
+    findViewById<ProgressBar>(R.id.progressView).apply { visibility = GONE }
   }
 
   @VisibleForTesting
-  internal val errorView: View by lazy {
-    Button(context).also { button ->
-      val layoutParams = LayoutParams(WRAP_CONTENT, WRAP_CONTENT)
-      layoutParams.addRule(CENTER_IN_PARENT, TRUE)
-      button.layoutParams = layoutParams
-      button.visibility = GONE
-      button.text = "Go Back"
-      button.setOnClickListener { onGoBack?.invoke() }
-      addView(button)
+  internal val errorView by lazy {
+    findViewById<View>(R.id.errorView).apply {
+      visibility = GONE
+      findViewById<Button>(R.id.retryButton).setOnClickListener { onRetry?.invoke() }
+      findViewById<Button>(R.id.backButton).setOnClickListener { onGoBack?.invoke() }
     }
   }
 }

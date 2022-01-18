@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="not_connected">Maybe you are not connected to the internet? Please try again later.</string>
+    <string name="retry">Retry</string>
+    <string name="go_back">Go Back</string>
+</resources>

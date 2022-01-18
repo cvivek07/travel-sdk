@@ -144,6 +144,13 @@ class WebViewFragmentUnitTests {
     assert(fragmentActivity.isFinishing)
   }
 
+  @Test
+  fun `test that onRetry reloads Webview`() {
+    assertEquals(0, shadowWebView.reloadInvocations)
+    fragment.loadableView.onRetry?.invoke()
+    assertEquals(1, shadowWebView.reloadInvocations)
+  }
+
   private fun assertLoadableViewStatus(status: Status) {
     assertEquals(status, fragment.loadableView.status)
   }

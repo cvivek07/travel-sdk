@@ -57,6 +57,7 @@ class WebViewFragment : Fragment() {
 
     binding = WebviewLayoutBinding.inflate(layoutInflater)
     loadableView.onGoBack = { activity?.onBackPressed() }
+    loadableView.onRetry = { webView.reload() }
 
     webView.webViewClient = CustomWebViewClient()
     webView.webChromeClient = WebChromeClient()
