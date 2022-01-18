@@ -48,6 +48,7 @@ internal constructor(
      * @param analyticsProvider [AnalyticsProvider] used throughout the SDK
      */
     @JvmStatic
+    @JvmOverloads
     fun init(
         context: Context,
         appInfo: AppInfo,

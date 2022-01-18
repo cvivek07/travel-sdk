@@ -11,7 +11,9 @@ package com.ixigo.sdk
  * @property uuid UUID uniquely identifies a specific user. Do not set unless you have a specific
  * use.
  */
-data class AppInfo(
+data class AppInfo
+@JvmOverloads
+constructor(
     val clientId: String,
     val apiKey: String,
     val appVersion: Long,
