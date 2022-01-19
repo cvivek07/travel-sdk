@@ -71,6 +71,7 @@ class WebViewFragment : Fragment() {
 
     val initialPageData = arguments?.getParcelable<InitialPageData>(INITIAL_PAGE_DATA_ARGS)
     if (initialPageData != null) {
+      loadableView.status = Loading()
       webView.loadUrl(initialPageData.url, initialPageData.headers)
     }
 

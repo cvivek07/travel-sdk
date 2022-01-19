@@ -106,8 +106,8 @@ class WebViewFragmentUnitTests {
   }
 
   @Test
-  fun `test that initial loadingView status is Loaded`() {
-    assertEquals(Loaded, fragment.loadableView.status)
+  fun `test that initial loadingView status is Loading`() {
+    assertEquals(Loading(), fragment.loadableView.status)
   }
 
   @Test
