@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.9.2](https://git.ixigo.com/android/ixigo-android-sdk/compare/ixigo-sdk-1.9.1...ixigo-sdk-1.9.2) (2022-01-19)
+
+
+### Bug Fixes
+
+* add quit method to htmlOut ([cf73615](https://git.ixigo.com/android/ixigo-android-sdk/commit/cf73615d9b41a5493eee16a6b2613bcdfd096cf8))
+* improve loadable error view ([734d77a](https://git.ixigo.com/android/ixigo-android-sdk/commit/734d77a206a69e2fc76378a328a9c648e704455b))
+* show loading state by default ([365c57a](https://git.ixigo.com/android/ixigo-android-sdk/commit/365c57a0952b2c1061bd016d4e4fd49fdd5dddbf))
+
 ### [1.9.1](https://git.ixigo.com/android/ixigo-android-sdk/compare/ixigo-sdk-1.9.0...ixigo-sdk-1.9.1) (2022-01-17)
 
 
