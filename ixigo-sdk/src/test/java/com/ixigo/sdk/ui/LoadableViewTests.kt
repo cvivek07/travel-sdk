@@ -24,9 +24,9 @@ class LoadableViewTests {
   private val contentView: View
     get() = loadableView.contentView
   private val loadingView: View
-    get() = loadableView.loadingView
+    get() = loadableView.findViewById(R.id.progressView)
   private val errorView: View
-    get() = loadableView.errorView
+    get() = loadableView.findViewById(R.id.errorView)
 
   @Before
   fun setup() {

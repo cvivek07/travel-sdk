@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_margin="10dp"
-        android:visibility="visible"
+        android:visibility="gone"
         android:layout_centerInParent="true">
             <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="150dp"
