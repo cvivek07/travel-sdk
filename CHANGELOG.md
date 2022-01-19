@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.9.3](https://git.ixigo.com/android/ixigo-android-sdk/compare/ixigo-sdk-1.9.2...ixigo-sdk-1.9.3) (2022-01-19)
+
+
+### Bug Fixes
+
+* fix issue showing errorView while loading ([3e3b0f0](https://git.ixigo.com/android/ixigo-android-sdk/commit/3e3b0f02f7cee5001dc0b7a39c6aaca8901dc191))
+
 ### [1.9.2](https://git.ixigo.com/android/ixigo-android-sdk/compare/ixigo-sdk-1.9.1...ixigo-sdk-1.9.2) (2022-01-19)
 
 
