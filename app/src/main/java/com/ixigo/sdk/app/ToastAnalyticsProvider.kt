@@ -7,9 +7,13 @@ import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
 
 class ToastAnalyticsProvider(private val activity: Activity): AnalyticsProvider {
+  var enabled = false
   override fun logEvent(event: Event) {
+    if (!enabled) {
+      return
+    }
     activity.runOnUiThread {
-      Toast.makeText(activity, event.toString(), Toast.LENGTH_LONG).show()
+      Toast.makeText(activity, event.toString(), Toast.LENGTH_SHORT).show()
     }
   }
 }

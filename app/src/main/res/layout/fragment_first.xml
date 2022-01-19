@@ -237,12 +237,6 @@
                     android:text="Flights Home" />
 
                 <Button
-                    android:id="@+id/buttonSSOTest"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="SSO Test" />
-
-                <Button
                     android:id="@+id/buttonFlightMultiModule"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -253,6 +247,18 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Bus Home" />
+
+                <Button
+                    android:id="@+id/buttonTrainsHome"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Trains Home" />
+
+                <Button
+                    android:id="@+id/buttonSSOTest"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="SSO Test" />
             </androidx.appcompat.widget.LinearLayoutCompat>
 
         </androidx.appcompat.widget.LinearLayoutCompat>

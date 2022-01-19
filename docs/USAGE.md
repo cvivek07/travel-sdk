@@ -197,3 +197,18 @@ BusSDK.init(...)
 ```kotlin
 BusSDK.instance.launchHome(context)
 ```
+
+### Trains
+
+In order to access Buses functionality, you need to initialize `TrainsSDK` after `IxigoSDK` initialization
+
+```kotlin
+IxigoSDK.init(...)
+TrainsSDK.init(...)
+```
+
+#### Start Trains Funnel
+
+```kotlin
+TrainsSDK.instance.launchHome(context)
+```

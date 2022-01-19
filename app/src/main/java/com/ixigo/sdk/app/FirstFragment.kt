@@ -30,6 +30,7 @@ import com.ixigo.sdk.flights.flightsStartSearch
 import com.ixigo.sdk.payment.PaymentCallback
 import com.ixigo.sdk.payment.PaymentInput
 import com.ixigo.sdk.payment.PaymentProvider
+import com.ixigo.sdk.trains.TrainsSDK
 import java.time.LocalDate
 import kotlin.reflect.KClass
 import kotlin.reflect.full.companionObject
@@ -100,6 +101,12 @@ class FirstFragment : Fragment() {
       }
     }
 
+    binding.buttonTrainsHome.setOnClickListener {
+      if (initSDK()) {
+        TrainsSDK.instance.launchHome(requireContext())
+      }
+    }
+
     binding.buttonFlightSearch.setOnClickListener {
       if (initSDK()) {
         IxigoSDK.instance
@@ -156,6 +163,8 @@ class FirstFragment : Fragment() {
     binding.buttonFlightMultiModule.isEnabled = preset.buttonsState.flightsMultiModule
     binding.buttonFlightSearch.isEnabled = preset.buttonsState.flightsSearch
     binding.buttonFlightHome.isEnabled = preset.buttonsState.flightsHome
+    binding.buttonTrainsHome.isEnabled = preset.buttonsState.trainsHome
+    binding.buttonBusHome.isEnabled = preset.buttonsState.busHome
   }
 
   private fun loadSettings() {
@@ -207,6 +216,7 @@ class FirstFragment : Fragment() {
     // Clear IxigoSDK
     clearSDK(IxigoSDK::class)
     clearSDK(BusSDK::class)
+    clearSDK(TrainsSDK::class)
   }
 
   private fun <T:Any>clearSDK(sdkClass: KClass<T>) {
@@ -254,6 +264,7 @@ class FirstFragment : Fragment() {
 
     val busConfig = if (ixigoConfig.config == Config.ProdConfig) BusSDK.ProdConfig else BusSDK.StagingConfig
     BusSDK.init(config = busConfig)
+    TrainsSDK.init()
     sdkInitialized = true
     return true
   }
@@ -312,14 +323,15 @@ class FirstFragment : Fragment() {
               clientId = "confirmtckt",
               apiKey = "confirmtckt!2\$",
               ssoPartnerToken = "D5DCFBD21CF7867B74D5273A57A0254D1785773799EEDD0E683B0EE5C6E56878",
-              buttonsState = ButtonsState(flightsSearch = false, flightsMultiModule = false)),
+              buttonsState = ButtonsState(flightsSearch = false, flightsMultiModule = false, trainsHome = false)),
           Preset(
               label = "Abhibus",
               clientId = "abhibus",
               apiKey = "abhibus!2\$",
               ssoPartnerToken = "RQjsRqkORTji8R9+AQkLFyl9yeLQxX2II01n4rvVh1vpoH6pVx4eiw==",
-              buttonsState = ButtonsState(flightsSearch = false, flightsMultiModule = false)),
-          Preset(label = "Ixigo Trains", clientId = "iximatr", apiKey = "iximatr!2\$"),
+              buttonsState = ButtonsState(flightsSearch = false, flightsMultiModule = false, busHome = false)),
+          Preset(label = "Ixigo Trains", clientId = "iximatr", apiKey = "iximatr!2\$", buttonsState = ButtonsState(trainsHome = false)),
+          Preset(label = "Ixigo Flights", clientId = "iximaad", apiKey = "iximaad!2\$", buttonsState = ButtonsState(trainsHome = false, flightsMultiModule = false, flightsHome = false, flightsSearch = false)),
           Preset(
               label = "Other",
               clientId = "",
@@ -348,7 +360,9 @@ data class Preset(
 data class ButtonsState(
     val flightsSearch: Boolean = true,
     val flightsHome: Boolean = true,
-    val flightsMultiModule: Boolean = true
+    val flightsMultiModule: Boolean = true,
+    val trainsHome: Boolean = true,
+    val busHome: Boolean = true
 )
 
 data class IxigoConfig(val label: String, val config: Config) {
