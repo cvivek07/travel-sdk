@@ -43,6 +43,11 @@ class HtmlOutJsInterface(
     }
   }
 
+  @JavascriptInterface
+  fun quit() {
+    webViewFragment.delegate?.let { webViewFragment.activity?.runOnUiThread { it.onQuit() } }
+  }
+
   private fun executeSSOCallback(ssoInput: SSOInput, ssoResult: SSOResult) {
     val ssoResultJson = ssoResultAdapter.toJson(ssoResult)
     webViewFragment.activity?.runOnUiThread {

@@ -69,6 +69,16 @@ class HtmlOutJsInterfaceTests {
     assertEquals(initialPageData.url, shadowWebView.lastLoadedUrl)
   }
 
+  @Test
+  fun `test quit`() {
+    val delegate: WebViewDelegate = mock()
+    fragment.delegate = delegate
+    val quitMethod = htmlOut.javaClass.getDeclaredMethod("quit")
+    assertNotNull(quitMethod.getAnnotation(JavascriptInterface::class.java))
+    htmlOut.quit()
+    verify(delegate).onQuit()
+  }
+
   private fun testLogin(token: String?) {
     token?.let {
       fakePartnerTokenProvider.partnerTokenMap =
