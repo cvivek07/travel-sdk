@@ -110,6 +110,8 @@ class MyAppPartnerTokenProvider(): PartnerTokenProvider {
     }
   }
 }
+
+IxigoSDK.init(authProvider = MyAppPartnerTokenProvider(), /* Other params*/)
 ```
 
 `PartnerTokenProvider.Requester` should be used by your implementation to determine how to obtain the token. For instance, if we pass `CUSTOMER`, it would be OK to present a LoginDialog since the Customer initiated this request. Otherwise, we should not show any UI to the customer.
