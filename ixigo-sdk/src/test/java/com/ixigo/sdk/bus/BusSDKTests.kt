@@ -104,9 +104,10 @@ class BusSDKTests {
   }
 
   private fun testBusMultiModule(clientId: String, expectedUrl: String, config: BusConfig? = null) {
+    val mockAnalyticsProvider: AnalyticsProvider = mock()
     val mockIxigoSDK: IxigoSDK = mock {
       on { appInfo } doReturn AppInfo(clientId = clientId, apiKey = "any", appVersion = 1)
-      on { analyticsProvider } doReturn mock()
+      on { analyticsProvider } doReturn mockAnalyticsProvider
     }
 
     IxigoSDK.replaceInstance(mockIxigoSDK)
@@ -125,18 +126,21 @@ class BusSDKTests {
     Assert.assertEquals(
         expectedInitialData,
         fragment.arguments!!.getParcelable(WebViewFragment.INITIAL_PAGE_DATA_ARGS))
+    verify(mockAnalyticsProvider).logEvent(Event("busStartMultiModel"))
   }
 
   private fun testBusHome(clientId: String, expectedUrl: String, config: BusConfig? = null) {
+    val mockAnalyticsProvider: AnalyticsProvider = mock()
     val mockIxigoSDK: IxigoSDK = mock {
       on { appInfo } doReturn AppInfo(clientId = clientId, apiKey = "any", appVersion = 1)
-      on { analyticsProvider } doReturn mock()
+      on { analyticsProvider } doReturn mockAnalyticsProvider
     }
     val application: Application = getApplicationContext()
     IxigoSDK.replaceInstance(mockIxigoSDK)
     val busSDK = if (config != null) BusSDK.init(config = config) else BusSDK.init()
     busSDK.launchHome(application)
     verify(mockIxigoSDK).launchWebActivity(application, expectedUrl)
+    verify(mockAnalyticsProvider).logEvent(Event("busStartHome"))
   }
 
   @Test

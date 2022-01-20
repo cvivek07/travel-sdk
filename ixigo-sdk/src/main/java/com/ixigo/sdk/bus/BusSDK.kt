@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.ixigo.sdk.*
 import com.ixigo.sdk.IxigoSDK.Companion.init
+import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
 import com.ixigo.sdk.bus.BusSDK.Companion.init
 import com.ixigo.sdk.common.SdkSingleton
@@ -21,8 +22,12 @@ import com.ixigo.sdk.webview.WebViewFragment
  */
 class BusSDK(private val config: Config) {
 
+  val analyticsProvider: AnalyticsProvider
+    get() = IxigoSDK.instance.analyticsProvider
+
   /** Opens Abhibus PWA home to search for Bus trips */
   fun launchHome(context: Context) {
+    analyticsProvider.logEvent(Event.with(action = "busStartHome"))
     IxigoSDK.instance.launchWebActivity(context, config.createUrl(null, addSkinParam()))
   }
 
@@ -50,6 +55,7 @@ class BusSDK(private val config: Config) {
    * @return Fragment with search data content
    */
   fun multiModelFragment(searchData: BusSearchData): Fragment {
+    analyticsProvider.logEvent(Event.with(action = "busStartMultiModel"))
     val arguments =
         Bundle().apply {
           val url =

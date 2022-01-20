@@ -3,13 +3,18 @@ package com.ixigo.sdk.trains
 import android.content.Context
 import com.ixigo.sdk.BuildConfig
 import com.ixigo.sdk.IxigoSDK
+import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
 import com.ixigo.sdk.common.SdkSingleton
 
 class TrainsSDK(private val config: Config) {
 
+  val analyticsProvider: AnalyticsProvider
+    get() = IxigoSDK.instance.analyticsProvider
+
   /** Opens ConfitmTkt PWA home to search for Train trips */
   fun launchHome(context: Context) {
+    analyticsProvider.logEvent(Event("trainsStartHome"))
     IxigoSDK.instance.launchWebActivity(context, getBaseUrl())
   }
 
