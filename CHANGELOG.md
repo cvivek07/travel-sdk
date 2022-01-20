@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.11.1](https://git.ixigo.com/android/ixigo-android-sdk/compare/ixigo-sdk-1.11.0...ixigo-sdk-1.11.1) (2022-01-20)
+
+
+### Bug Fixes
+
+* only show error view for errors loading webview url ([13a2e9e](https://git.ixigo.com/android/ixigo-android-sdk/commit/13a2e9e9d2f3b6f110a9e6c0a08ad51e367c5dd8))
+* skip git hooks with standard release ([d7a2158](https://git.ixigo.com/android/ixigo-android-sdk/commit/d7a21581a5d1fbbe60cf1a88632b62a653bd9c1a))
+
 ## [1.11.0](https://git.ixigo.com/android/ixigo-android-sdk/compare/ixigo-sdk-1.10.1...ixigo-sdk-1.11.0) (2022-01-20)
 
 
