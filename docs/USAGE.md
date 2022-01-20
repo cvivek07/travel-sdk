@@ -19,7 +19,7 @@ Inside **app/build.gradle**
 ```groovy
 dependencies {
   // Other dependencies...
-  implementation "com.ixigo.sdk:ixigo-sdk:1.10.1"
+  implementation "com.ixigo.sdk:ixigo-sdk:1.10.0"
 }
 
 ```
@@ -45,7 +45,7 @@ Inside **app/build.gradle**
 ```groovy
 dependencies {
   // Other dependencies...
-  implementation "com.ixigo.sdk:ixigo-sdk:1.10.1-SNAPSHOT"
+  implementation "com.ixigo.sdk:ixigo-sdk:1.10.0-SNAPSHOT"
 }
 
 ```
@@ -175,25 +175,18 @@ You can configure the appearance of certain UI elements presented by the sdk by 
 
 ## Entry Points / Functionality
 
+| Flights                             | Trains                      | Bus                             |
+| ----------------------------------- | --------------------------- | ------------------------------- |
+| ![](images/flights_home.png)        | ![](images/trains_home.png) | ![](images/bus_home.png)        |
+| ![](images/flights_search.png)      |                             | ![](images/bus_multimodule.png) |
+| ![](images/flights_multimodule.png) |                             |                                 |
+
 ### Flights
 
 #### Start Flights Funnel
 
-<img src="images/flights_home.png" style="float: right"/>
-
 ```kotlin
 IxigoSDK.instance.flightsStartHome(context)
-```
-
-
-#### MultiModel Flights Search View
-
-Use MultiModel when you want to embed Flights Search Results in an existing page. Common usage is that you already have a trip search from and want to offer a Flight alternative.
-
-```kotlin
-val searchData = FlightSearchData(...)
-val fragment = IxigoSDK.instance.flightsMultiModelFragment(searchData)
-// Add the fragment to your Activity/Fragment hierarchy
 ```
 
 ### Buses
@@ -209,16 +202,6 @@ BusSDK.init(...)
 
 ```kotlin
 BusSDK.instance.launchHome(context)
-```
-
-#### MultiModel Bus Search View
-
-Use MultiModel when you want to embed Bus Search Results in an existing page. Common usage is that you already have a trip search from and want to offer a Bus alternative.
-
-```kotlin
-val searchData = BusSearchData(...)
-val fragment = BusSDK.instance.multiModelFragment(searchData)
-// Add the fragment to your Activity/Fragment hierarchy
 ```
 
 ### Trains
