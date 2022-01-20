@@ -249,6 +249,12 @@
                     android:text="Bus Home" />
 
                 <Button
+                    android:id="@+id/buttonBusMultiModule"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Bus MultiModule" />
+
+                <Button
                     android:id="@+id/buttonTrainsHome"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

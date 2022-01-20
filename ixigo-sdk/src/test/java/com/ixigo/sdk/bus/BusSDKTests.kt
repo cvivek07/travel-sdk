@@ -9,6 +9,10 @@ import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
 import com.ixigo.sdk.test.initializeTestIxigoSDK
+import com.ixigo.sdk.webview.InitialPageData
+import com.ixigo.sdk.webview.WebViewFragment
+import java.time.LocalDate
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -28,7 +32,9 @@ class BusSDKTests {
   @Test
   fun `test init sends correct analytics event`() {
     val mockAnalyticsProvider: AnalyticsProvider = mock()
-    initializeTestIxigoSDK(analyticsProvider = mockAnalyticsProvider)
+    initializeTestIxigoSDK(
+        analyticsProvider = mockAnalyticsProvider,
+        AppInfo(clientId = "iximatr", apiKey = "any", appVersion = 1))
     BusSDK.init()
     verify(mockAnalyticsProvider)
         .logEvent(
@@ -44,43 +50,93 @@ class BusSDKTests {
 
   @Test(expected = IllegalStateException::class)
   fun `test calling init twice throws an exception`() {
-    initializeTestIxigoSDK()
+    initializeTestIxigoSDK(appInfo = AppInfo(clientId = "iximatr", apiKey = "any", appVersion = 1))
     BusSDK.init()
     BusSDK.init()
   }
 
   @Test
   fun `test bus home for confitmTkt`() {
-    testBusHome(clientId = "confirmtckt", expectedPath = "confirmtkt")
+    testBusHome(clientId = "confirmtckt", "https://trains.abhibus.com")
   }
 
   @Test
   fun `test bus home for confitmTkt and staging`() {
-    testBusHome(clientId = "confirmtckt", expectedPath = "confirmtkt", useStaging = true)
+    testBusHome(clientId = "confirmtckt", "https://demo.abhibus.com/confirmtkt", BusConfig.STAGING)
   }
 
   @Test
   fun `test bus home for ixigo trains`() {
-    testBusHome(clientId = "iximatr", expectedPath = "ixigo")
+    testBusHome(clientId = "iximatr", "https://www.abhibus.com/ixigopwa?source=ixtrains")
   }
 
   @Test
-  fun `test bus home for other clientId`() {
-    testBusHome(clientId = "other", expectedPath = "other")
+  fun `test bus home for ixigo trains staging`() {
+    testBusHome(
+        clientId = "iximatr",
+        "https://demo.abhibus.com/ixigopwa?source=ixtrains",
+        BusConfig.STAGING)
   }
 
-  private fun testBusHome(clientId: String, expectedPath: String, useStaging: Boolean = false) {
+  @Test
+  fun `test bus home for ixigo flights`() {
+    testBusHome(clientId = "iximaad", "https://www.abhibus.com/ixigopwa?source=ixflights")
+  }
+
+  @Test
+  fun `test bus home for ixigo flights staging`() {
+    testBusHome(
+        clientId = "iximaad",
+        "https://demo.abhibus.com/ixigopwa?source=ixflights",
+        BusConfig.STAGING)
+  }
+
+  @Test(expected = IllegalArgumentException::class)
+  fun `test bus home for other clientId`() {
+    testBusHome(clientId = "other", "")
+  }
+
+  @Test
+  fun `test multi module`() {
+    testBusMultiModule(
+        "iximatr",
+        "https://www.abhibus.com/ixigopwa/search?action=search&jdate=22-01-2022&srcid=3&srcname=Hyderabad&destid=5&destname=Vijayawada&hideHeader=1&source=ixtrains")
+  }
+
+  private fun testBusMultiModule(clientId: String, expectedUrl: String, config: BusConfig? = null) {
+    val mockIxigoSDK: IxigoSDK = mock {
+      on { appInfo } doReturn AppInfo(clientId = clientId, apiKey = "any", appVersion = 1)
+      on { analyticsProvider } doReturn mock()
+    }
+
+    IxigoSDK.replaceInstance(mockIxigoSDK)
+    val busSDK = if (config != null) BusSDK.init(config = config) else BusSDK.init()
+
+    val searchData =
+        BusSearchData(
+            sourceId = 3,
+            sourceName = "Hyderabad",
+            destinationId = 5,
+            destinationName = "Vijayawada",
+            date = LocalDate.parse("2022-01-22"))
+    val fragment = busSDK.multiModelFragment(searchData)
+    Assert.assertNotNull(fragment as? WebViewFragment)
+    val expectedInitialData = InitialPageData(expectedUrl)
+    Assert.assertEquals(
+        expectedInitialData,
+        fragment.arguments!!.getParcelable(WebViewFragment.INITIAL_PAGE_DATA_ARGS))
+  }
+
+  private fun testBusHome(clientId: String, expectedUrl: String, config: BusConfig? = null) {
     val mockIxigoSDK: IxigoSDK = mock {
       on { appInfo } doReturn AppInfo(clientId = clientId, apiKey = "any", appVersion = 1)
       on { analyticsProvider } doReturn mock()
     }
     val application: Application = getApplicationContext()
     IxigoSDK.replaceInstance(mockIxigoSDK)
-    val busSDK = if (useStaging) BusSDK.init(config = BusSDK.StagingConfig) else BusSDK.init()
+    val busSDK = if (config != null) BusSDK.init(config = config) else BusSDK.init()
     busSDK.launchHome(application)
-    val subdomain = if (useStaging) "demo" else "www"
-    verify(mockIxigoSDK)
-        .launchWebActivity(application, "https://${subdomain}.abhibus.com/$expectedPath")
+    verify(mockIxigoSDK).launchWebActivity(application, expectedUrl)
   }
 
   @Test

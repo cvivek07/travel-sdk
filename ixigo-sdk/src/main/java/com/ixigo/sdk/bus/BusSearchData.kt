@@ -1,3 +1,18 @@
 package com.ixigo.sdk.bus
 
-data class BusSearchData(val origin: String, val destination: String)
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+
+data class BusSearchData(
+    val sourceName: String,
+    val sourceId: Int,
+    val destinationName: String,
+    val destinationId: Int,
+    val date: LocalDate
+) {
+  companion object {
+    private val formatter: DateTimeFormatter by lazy { DateTimeFormatter.ofPattern("dd-MM-yyyy") }
+  }
+  val dateString: String
+    get() = formatter.format(date)
+}

@@ -25,6 +25,7 @@
         </activity>
 
         <activity android:name=".MultiModelActivity"></activity>
+        <activity android:name=".BusMultiModelActivity"></activity>
     </application>
 
 </manifest>
