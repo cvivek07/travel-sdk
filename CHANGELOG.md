@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.10.1](https://git.ixigo.com/android/ixigo-android-sdk/compare/ixigo-sdk-1.10.0...ixigo-sdk-1.10.1) (2022-01-20)
+
+
+### Bug Fixes
+
+* fixes to BusSDK ([bb315ce](https://git.ixigo.com/android/ixigo-android-sdk/commit/bb315cec721085a116ef7013e8e0e29aa6a61c32))
+* handle http errors ([8a206d0](https://git.ixigo.com/android/ixigo-android-sdk/commit/8a206d03c0b80a41af909678dddf5f92864e65e2))
+* make progressBar use correct color ([90f88f5](https://git.ixigo.com/android/ixigo-android-sdk/commit/90f88f562d317021cd2f045ba42a99907ae5d57b))
+* only show error state if we were loading a page ([f014267](https://git.ixigo.com/android/ixigo-android-sdk/commit/f014267432902424d2723153546daa970798a40f))
+
 ## [1.10.0](https://git.ixigo.com/android/ixigo-android-sdk/compare/ixigo-sdk-1.9.3...ixigo-sdk-1.10.0) (2022-01-19)
 
 
