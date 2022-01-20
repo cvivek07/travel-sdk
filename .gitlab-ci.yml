@@ -129,8 +129,8 @@ release:
     - git config --global user.email "${GITLAB_USER_EMAIL}"
   script:
     - yarn install
-    - yarn run release -- -t ixigo-sdk-
-    - git push --follow-tags http://root:$REPO_ACCESS_TOKEN@$CI_SERVER_HOST/$CI_PROJECT_PATH.git HEAD:development
+    - yarn run release -- -t ixigo-sdk- --no-verify
+    - git push --no-verify --follow-tags http://root:$REPO_ACCESS_TOKEN@$CI_SERVER_HOST/$CI_PROJECT_PATH.git HEAD:development
     - yarn run pdf-changelog
     - "./gradlew ixigo-sdk:publishReleasePublicationToNexusRepository --stacktrace"
     - yarn run slack-new-version
@@ -150,7 +150,7 @@ release-preview:
     - git config --global user.email "${GITLAB_USER_EMAIL}"
   script:
     - yarn install
-    - yarn run release -- -t ixigo-sdk-
+    - yarn run release -- -t ixigo-sdk- --no-verify
     - yarn run pdf-changelog
   artifacts:
     name: CHANGELOG
