@@ -183,6 +183,17 @@ You can configure the appearance of certain UI elements presented by the sdk by 
 IxigoSDK.instance.flightsStartHome(context)
 ```
 
+
+#### MultiModel Flights Search View
+
+Use MultiModel when you want to embed Flights Search Results in an existing page. Common usage is that you already have a trip search from and want to offer a Flight alternative.
+
+```kotlin
+val searchData = FlightSearchData(...)
+val fragment = IxigoSDK.instance.flightsMultiModelFragment(searchData)
+// Add the fragment to your Activity/Fragment hierarchy
+```
+
 ### Buses
 
 In order to access Buses functionality, you need to initialize `BusSDK` after `IxigoSDK` initialization
@@ -196,6 +207,16 @@ BusSDK.init(...)
 
 ```kotlin
 BusSDK.instance.launchHome(context)
+```
+
+#### MultiModel Bus Search View
+
+Use MultiModel when you want to embed Bus Search Results in an existing page. Common usage is that you already have a trip search from and want to offer a Bus alternative.
+
+```kotlin
+val searchData = BusSearchData(...)
+val fragment = BusSDK.instance.multiModelFragment(searchData)
+// Add the fragment to your Activity/Fragment hierarchy
 ```
 
 ### Trains
