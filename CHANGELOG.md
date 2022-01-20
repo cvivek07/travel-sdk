@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.11.0](https://git.ixigo.com/android/ixigo-android-sdk/compare/ixigo-sdk-1.10.1...ixigo-sdk-1.11.0) (2022-01-20)
+
+
+### Features
+
+* add Cheapest Fare ([f86316c](https://git.ixigo.com/android/ixigo-android-sdk/commit/f86316cea2f0026218aedd801e7c409472a6b814))
+
+
+### Bug Fixes
+
+* add missing SDK start logs for Bus and Trains ([395ded4](https://git.ixigo.com/android/ixigo-android-sdk/commit/395ded48560f024a3a1b7355138619104f5bd15b))
+* fix Trains crash in sample app ([f8cf575](https://git.ixigo.com/android/ixigo-android-sdk/commit/f8cf575a485253aab20b0e3a926db47490b4cbc1))
+* log webview errors ([8f0b0ac](https://git.ixigo.com/android/ixigo-android-sdk/commit/8f0b0ac24e9641586610a3723a76f1a76700deae))
+
 ### [1.10.1](https://git.ixigo.com/android/ixigo-android-sdk/compare/ixigo-sdk-1.10.0...ixigo-sdk-1.10.1) (2022-01-20)
 
 
