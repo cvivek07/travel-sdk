@@ -129,6 +129,14 @@ class WebViewFragmentUnitTests {
   }
 
   @Test
+  fun `test that loadingView status is not set to error when an error happens but we were not loading a page`() {
+    shadowWebView.webViewClient.onPageFinished(fragment.webView, initialPageData.url)
+    assertLoadableViewStatus(Loaded)
+    shadowWebView.webViewClient.onReceivedError(fragment.webView, mock(), mock())
+    assertLoadableViewStatus(Loaded)
+  }
+
+  @Test
   fun `test that goBack finishes Activity when loadingView onGoBack is called and there is no navigation stack`() {
     val url = "https://www.ixigo.com/page2"
     shadowWebView.pushEntryToHistory(url)

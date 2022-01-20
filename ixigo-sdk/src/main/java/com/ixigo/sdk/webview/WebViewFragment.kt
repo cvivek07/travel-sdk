@@ -113,7 +113,6 @@ class WebViewFragment : Fragment() {
 
     override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
       super.onPageStarted(view, url, favicon)
-
       loadableView.status = Loading()
     }
 
@@ -130,7 +129,10 @@ class WebViewFragment : Fragment() {
         error: WebResourceError?
     ) {
       super.onReceivedError(view, request, error)
-      loadableView.status = Failed()
+      when (loadableView.status) {
+        is Loading -> loadableView.status = Failed()
+        else -> Unit
+      }
     }
   }
 }
