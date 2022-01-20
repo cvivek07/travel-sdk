@@ -123,12 +123,25 @@ class WebViewFragment : Fragment() {
       }
     }
 
+    override fun onReceivedHttpError(
+        view: WebView?,
+        request: WebResourceRequest?,
+        errorResponse: WebResourceResponse?
+    ) {
+      super.onReceivedHttpError(view, request, errorResponse)
+      handleError()
+    }
+
     override fun onReceivedError(
         view: WebView?,
         request: WebResourceRequest?,
         error: WebResourceError?
     ) {
       super.onReceivedError(view, request, error)
+      handleError()
+    }
+
+    private fun handleError() {
       when (loadableView.status) {
         is Loading -> loadableView.status = Failed()
         else -> Unit

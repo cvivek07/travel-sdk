@@ -129,6 +129,16 @@ class WebViewFragmentUnitTests {
   }
 
   @Test
+  fun `test that loadingView status is updated when an http error happens`() {
+    shadowWebView.webViewClient.onPageStarted(fragment.webView, initialPageData.url, null)
+    assertLoadableViewStatus(Loading())
+    shadowWebView.webViewClient.onReceivedHttpError(fragment.webView, mock(), mock())
+    assertLoadableViewStatus(Failed())
+    shadowWebView.webViewClient.onPageFinished(fragment.webView, initialPageData.url)
+    assertLoadableViewStatus(Failed())
+  }
+
+  @Test
   fun `test that loadingView status is not set to error when an error happens but we were not loading a page`() {
     shadowWebView.webViewClient.onPageFinished(fragment.webView, initialPageData.url)
     assertLoadableViewStatus(Loaded)
