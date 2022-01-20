@@ -20,10 +20,22 @@ import com.ixigo.sdk.webview.WebViewFragment
  * Before using it, you need to call [BusSDK.init(...)][init] once when you start-up your
  * Application.
  */
-class BusSDK(private val config: Config) {
+class BusSDK(internal val config: Config) {
 
   val analyticsProvider: AnalyticsProvider
     get() = IxigoSDK.instance.analyticsProvider
+
+  private val cheapestFairCall: CheapestFairCall by lazy { CheapestFairCall(config) }
+
+  /**
+   * Get the cheapest fair for a specific trip
+   *
+   * @param cheapestFareInput
+   * @param callback
+   */
+  fun getCheapestFair(cheapestFareInput: CheapestFareInput, callback: CheapestFareCallback) {
+    cheapestFairCall.execute(cheapestFareInput, callback)
+  }
 
   /** Opens Abhibus PWA home to search for Bus trips */
   fun launchHome(context: Context) {

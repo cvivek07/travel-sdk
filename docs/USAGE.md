@@ -198,6 +198,19 @@ BusSDK.init(...)
 BusSDK.instance.launchHome(context)
 ```
 
+#### Get Cheapest Fare
+
+Use this method to get the cheapest bus fare for a given trip
+
+```kotlin
+BusSDK.instance.getCheapestFareTrip(CheapestFareInput(...)) {
+  when (it) {
+    is Ok -> // `it` contains CheapestFareOutput
+    is Err -> // Handle Error
+  }
+}
+```
+
 ### Trains
 
 In order to access Trains functionality, you need to initialize `TrainsSDK` after `IxigoSDK` initialization

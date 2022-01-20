@@ -11,7 +11,7 @@ data class BusSearchData(
     val date: LocalDate
 ) {
   companion object {
-    private val formatter: DateTimeFormatter by lazy { DateTimeFormatter.ofPattern("dd-MM-yyyy") }
+    internal val formatter: DateTimeFormatter by lazy { DateTimeFormatter.ofPattern("dd-MM-yyyy") }
   }
   val dateString: String
     get() = formatter.format(date)
