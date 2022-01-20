@@ -175,12 +175,6 @@ You can configure the appearance of certain UI elements presented by the sdk by 
 
 ## Entry Points / Functionality
 
-| Flights                             | Trains                      | Bus                             |
-| ----------------------------------- | --------------------------- | ------------------------------- |
-| ![](images/flights_home.png)        | ![](images/trains_home.png) | ![](images/bus_home.png)        |
-| ![](images/flights_search.png)      |                             | ![](images/bus_multimodule.png) |
-| ![](images/flights_multimodule.png) |                             |                                 |
-
 ### Flights
 
 #### Start Flights Funnel
@@ -218,3 +212,11 @@ TrainsSDK.init(...)
 ```kotlin
 TrainsSDK.instance.launchHome(context)
 ```
+
+### Screenshots
+
+| Flights                                                   | Trains                                     | Bus                                               |
+| --------------------------------------------------------- | ------------------------------------------ | ------------------------------------------------- |
+| Flights Home<br>![](images/flights_home.png)              | Trains Home<br>![](images/trains_home.png) | Bus Home<br>![](images/bus_home.png)              |
+| Flights Search<br>![](images/flights_search.png)          |                                            | Bus MultiModel<br>![](images/bus_multimodule.png) |
+| Flights MultiModel<br>![](images/flights_multimodule.png) |                                            |                                                   |
