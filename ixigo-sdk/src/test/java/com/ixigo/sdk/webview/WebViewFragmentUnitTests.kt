@@ -1,6 +1,7 @@
 package com.ixigo.sdk.webview
 
 import android.app.Activity
+import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
@@ -128,7 +129,8 @@ class WebViewFragmentUnitTests {
   fun `test that loadingView status is updated when an error happens`() {
     shadowWebView.webViewClient.onPageStarted(fragment.webView, initialPageData.url, null)
     assertLoadableViewStatus(Loading())
-    shadowWebView.webViewClient.onReceivedError(fragment.webView, mock(), mock())
+    shadowWebView.webViewClient.onReceivedError(
+        fragment.webView, mock { on { url } doReturn Uri.parse(initialPageData.url) }, mock())
     assertLoadableViewStatus(Failed())
     shadowWebView.webViewClient.onPageFinished(fragment.webView, initialPageData.url)
     assertLoadableViewStatus(Failed())
@@ -138,10 +140,22 @@ class WebViewFragmentUnitTests {
   fun `test that loadingView status is updated when an http error happens`() {
     shadowWebView.webViewClient.onPageStarted(fragment.webView, initialPageData.url, null)
     assertLoadableViewStatus(Loading())
-    shadowWebView.webViewClient.onReceivedHttpError(fragment.webView, mock(), mock())
+    shadowWebView.webViewClient.onReceivedHttpError(
+        fragment.webView, mock { on { url } doReturn Uri.parse(initialPageData.url) }, mock())
     assertLoadableViewStatus(Failed())
     shadowWebView.webViewClient.onPageFinished(fragment.webView, initialPageData.url)
     assertLoadableViewStatus(Failed())
+  }
+
+  @Test
+  fun `test that http error is ignored if it is not the loading url`() {
+    shadowWebView.webViewClient.onPageStarted(fragment.webView, initialPageData.url, null)
+    assertLoadableViewStatus(Loading())
+    shadowWebView.webViewClient.onReceivedHttpError(
+        fragment.webView, mock { on { url } doReturn Uri.parse("https://random.com") }, mock())
+    assertLoadableViewStatus(Loading())
+    shadowWebView.webViewClient.onPageFinished(fragment.webView, initialPageData.url)
+    assertLoadableViewStatus(Loaded)
   }
 
   @Test
@@ -163,7 +177,9 @@ class WebViewFragmentUnitTests {
   @Test
   fun `test that http error sends an analytics event`() {
     shadowWebView.webViewClient.onReceivedHttpError(
-        fragment.webView, mock(), mock { on { statusCode } doReturn 404 })
+        fragment.webView,
+        mock { on { url } doReturn Uri.parse(initialPageData.url) },
+        mock { on { statusCode } doReturn 404 })
     verify(mockAnalyticsProvider).logEvent(Event.with(action = "webviewError", label = "404"))
   }
 

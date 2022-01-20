@@ -134,9 +134,11 @@ class WebViewFragment : Fragment() {
         errorResponse: WebResourceResponse?
     ) {
       super.onReceivedHttpError(view, request, errorResponse)
-      analyticsProvider.logEvent(
-          Event.with(action = "webviewError", label = errorResponse?.statusCode.toString()))
-      handleError()
+      if (request?.url.toString() == webView.url) {
+        analyticsProvider.logEvent(
+            Event.with(action = "webviewError", label = errorResponse?.statusCode.toString()))
+        handleError()
+      }
     }
 
     override fun onReceivedError(
