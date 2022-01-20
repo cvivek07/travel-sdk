@@ -6,6 +6,8 @@ import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ixigo.sdk.IxigoSDK
+import com.ixigo.sdk.analytics.AnalyticsProvider
+import com.ixigo.sdk.analytics.Event
 import com.ixigo.sdk.test.initializeTestIxigoSDK
 import com.ixigo.sdk.ui.Failed
 import com.ixigo.sdk.ui.Loaded
@@ -16,7 +18,9 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.verify
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.shadows.ShadowWebView
 
@@ -29,10 +33,12 @@ class WebViewFragmentUnitTests {
   private lateinit var shadowWebView: ShadowWebView
   private lateinit var fragmentActivity: Activity
   private lateinit var fragment: WebViewFragment
+  private lateinit var mockAnalyticsProvider: AnalyticsProvider
 
   @Before
   fun setup() {
-    initializeTestIxigoSDK()
+    mockAnalyticsProvider = mock()
+    initializeTestIxigoSDK(analyticsProvider = mockAnalyticsProvider)
     scenario =
         launchFragmentInContainer(
             Bundle().also {
@@ -144,6 +150,21 @@ class WebViewFragmentUnitTests {
     assertLoadableViewStatus(Loaded)
     shadowWebView.webViewClient.onReceivedError(fragment.webView, mock(), mock())
     assertLoadableViewStatus(Loaded)
+  }
+
+  @Test
+  fun `test that error sends an analytics event`() {
+    shadowWebView.webViewClient.onReceivedError(
+        fragment.webView, mock(), mock { on { toString() } doReturn "errorMessage" })
+    verify(mockAnalyticsProvider)
+        .logEvent(Event.with(action = "webviewError", label = "errorMessage"))
+  }
+
+  @Test
+  fun `test that http error sends an analytics event`() {
+    shadowWebView.webViewClient.onReceivedHttpError(
+        fragment.webView, mock(), mock { on { statusCode } doReturn 404 })
+    verify(mockAnalyticsProvider).logEvent(Event.with(action = "webviewError", label = "404"))
   }
 
   @Test

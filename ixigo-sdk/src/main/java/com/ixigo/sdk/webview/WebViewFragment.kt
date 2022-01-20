@@ -14,6 +14,8 @@ import androidx.annotation.VisibleForTesting
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.ixigo.sdk.IxigoSDK
+import com.ixigo.sdk.analytics.AnalyticsProvider
+import com.ixigo.sdk.analytics.Event
 import com.ixigo.sdk.common.ActivityResultHandler
 import com.ixigo.sdk.common.Generated
 import com.ixigo.sdk.databinding.WebviewLayoutBinding
@@ -31,6 +33,9 @@ class WebViewFragment : Fragment() {
   internal val loadableView
     get() = binding.loadableView
   val viewModel: WebViewViewModel by viewModels()
+
+  val analyticsProvider: AnalyticsProvider
+    get() = IxigoSDK.instance.analyticsProvider
 
   var delegate: WebViewDelegate? = null
 
@@ -129,6 +134,8 @@ class WebViewFragment : Fragment() {
         errorResponse: WebResourceResponse?
     ) {
       super.onReceivedHttpError(view, request, errorResponse)
+      analyticsProvider.logEvent(
+          Event.with(action = "webviewError", label = errorResponse?.statusCode.toString()))
       handleError()
     }
 
@@ -138,6 +145,7 @@ class WebViewFragment : Fragment() {
         error: WebResourceError?
     ) {
       super.onReceivedError(view, request, error)
+      analyticsProvider.logEvent(Event.with(action = "webviewError", label = error?.toString()))
       handleError()
     }
 
