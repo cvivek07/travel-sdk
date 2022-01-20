@@ -97,20 +97,20 @@ class FirstFragment : Fragment() {
     }
 
     binding.buttonBusHome.setOnClickListener {
-      if (initSDK()) {
+      if (initSDK() && initBusSDK()) {
         BusSDK.instance.launchHome(requireContext())
       }
     }
 
     binding.buttonBusMultiModule.setOnClickListener {
-      if (initSDK()) {
+      if (initSDK() && initBusSDK()) {
         val intent = Intent(requireContext(), BusMultiModelActivity::class.java)
         requireContext().startActivity(intent)
       }
     }
 
     binding.buttonTrainsHome.setOnClickListener {
-      if (initSDK()) {
+      if (initSDK() && initTrainsSDK()) {
         TrainsSDK.instance.launchHome(requireContext())
       }
     }
@@ -243,8 +243,7 @@ class FirstFragment : Fragment() {
     val appVersion = getFieldValue(binding.appVersion, "App Version")?.toLongOrNull()
     val uuid = getFieldValue(binding.uuid, "UUID")
     val deviceId = getFieldValue(binding.deviceId, "Device Id")
-    val ixigoConfig =
-        ixigoConfigs.find { it.label == binding.configInput.editText?.text.toString() }
+    val ixigoConfig = ixigoConfig()
     if (ixigoConfig == null) {
       binding.configInput.error = "Config can not be empty"
     }
@@ -270,12 +269,22 @@ class FirstFragment : Fragment() {
         analyticsProvider = ToastAnalyticsProvider(requireActivity()),
         config = ixigoConfig.config)
 
-    val busConfig = if (ixigoConfig.config == Config.ProdConfig) BusConfig.PROD else BusConfig.STAGING
-    BusSDK.init(config = busConfig)
-    TrainsSDK.init()
     sdkInitialized = true
     return true
   }
+
+  private fun initBusSDK(): Boolean {
+    val busConfig = if (ixigoConfig()?.config == Config.ProdConfig) BusConfig.PROD else BusConfig.STAGING
+    BusSDK.init(config = busConfig)
+    return true
+  }
+
+  private fun initTrainsSDK(): Boolean {
+    TrainsSDK.init()
+    return true
+  }
+
+  private fun ixigoConfig() = ixigoConfigs.find { it.label == binding.configInput.editText?.text.toString() }
 
   private fun getFieldValue(editText: EditText, fieldName: String): String? {
     val value = editText.text.toString()

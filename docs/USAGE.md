@@ -179,6 +179,8 @@ You can configure the appearance of certain UI elements presented by the sdk by 
 
 #### Start Flights Funnel
 
+<img src="images/flights_home.png" style="float: right"/>
+
 ```kotlin
 IxigoSDK.instance.flightsStartHome(context)
 ```
