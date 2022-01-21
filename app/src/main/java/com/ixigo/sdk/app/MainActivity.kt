@@ -1,26 +1,21 @@
 package com.ixigo.sdk.app
 
+import android.app.ActivityManager
 import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.webkit.CookieManager
+import android.webkit.WebStorage
 import android.webkit.WebView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
-import com.ixigo.sdk.AppInfo
-import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.app.databinding.ActivityMainBinding
-import com.ixigo.sdk.auth.PartnerToken
-import com.ixigo.sdk.auth.PartnerTokenProvider
-import com.ixigo.sdk.auth.SSOAuthProvider
-import com.ixigo.sdk.flights.FlightPassengerData
-import com.ixigo.sdk.flights.FlightSearchData
-import com.ixigo.sdk.flights.flightsStartSearch
-import java.time.LocalDate
 
 class MainActivity : AppCompatActivity() {
 
@@ -55,7 +50,13 @@ class MainActivity : AppCompatActivity() {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
-            R.id.action_settings -> true
+            R.id.action_clear_storage -> {
+                WebView(this).clearCache(true)
+                CookieManager.getInstance().removeAllCookies(null)
+                CookieManager.getInstance().flush()
+                Toast.makeText(this, "Storage cleared", Toast.LENGTH_SHORT).show()
+                return true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }
