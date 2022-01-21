@@ -2,11 +2,13 @@ package com.ixigo.sdk.webview
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.webkit.*
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.VisibleForTesting
@@ -21,7 +23,9 @@ import com.ixigo.sdk.databinding.WebviewLayoutBinding
 import com.ixigo.sdk.ui.Failed
 import com.ixigo.sdk.ui.Loaded
 import com.ixigo.sdk.ui.Loading
+import java.lang.Exception
 import kotlinx.parcelize.Parcelize
+import timber.log.Timber
 
 class WebViewFragment : Fragment() {
   private lateinit var binding: WebviewLayoutBinding
@@ -120,6 +124,7 @@ class WebViewFragment : Fragment() {
       if (loadableView.status is Loading) {
         loadableView.status = Loaded
       }
+      setStatusBarColorFromThemeColor()
     }
 
     override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
@@ -149,6 +154,19 @@ class WebViewFragment : Fragment() {
       if (request?.url.toString() == webView.url) {
         analyticsProvider.logEvent(Event.with(action = "webviewError", label = error))
         loadableView.status = Failed()
+      }
+    }
+
+    private fun setStatusBarColorFromThemeColor() {
+      webView.evaluateJavascript("document.querySelector('meta[name=\"theme-color\"]').content") {
+        try {
+          val color = Color.parseColor(it.replace("\"", ""))
+          val window = this@WebViewFragment.activity?.window
+          window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+          window?.statusBarColor = color
+        } catch (e: Exception) {
+          Timber.e(e, "Error trying to parse theme-color from value=$it")
+        }
       }
     }
   }

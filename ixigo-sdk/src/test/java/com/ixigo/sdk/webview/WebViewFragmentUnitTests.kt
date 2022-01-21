@@ -1,9 +1,12 @@
 package com.ixigo.sdk.webview
 
 import android.app.Activity
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.webkit.ValueCallback
 import android.webkit.WebResourceRequest
+import android.webkit.WebView
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -24,15 +27,18 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.robolectric.Shadows.shadowOf
+import org.robolectric.annotation.Config
+import org.robolectric.annotation.Implements
 import org.robolectric.shadows.ShadowWebView
 
 @RunWith(AndroidJUnit4::class)
+@Config(shadows = [CustomShadowWebview::class])
 class WebViewFragmentUnitTests {
 
   private lateinit var scenario: FragmentScenario<WebViewFragment>
   private val initialPageData =
       InitialPageData("https://www.ixigo.com", mapOf("header1" to "header1Value"))
-  private lateinit var shadowWebView: ShadowWebView
+  private lateinit var shadowWebView: CustomShadowWebview
   private lateinit var fragmentActivity: Activity
   private lateinit var fragment: WebViewFragment
   private lateinit var mockAnalyticsProvider: AnalyticsProvider
@@ -48,7 +54,7 @@ class WebViewFragmentUnitTests {
             })
     scenario.onFragment {
       fragment = it
-      shadowWebView = shadowOf(it.webView)
+      shadowWebView = shadowOf(it.webView) as CustomShadowWebview
       shadowWebView.performSuccessfulPageLoadClientCallbacks()
       shadowWebView.pushEntryToHistory(initialPageData.url)
       fragmentActivity = it.requireActivity()
@@ -228,7 +234,24 @@ class WebViewFragmentUnitTests {
     assertEquals(1, shadowWebView.reloadInvocations)
   }
 
+  @Test
+  fun `test statusBar color is updated from theme-color`() {
+    shadowWebView.jsCallbacks["document.querySelector('meta[name=\"theme-color\"]').content"] =
+        "#00FF00"
+    shadowWebView.webViewClient.onPageFinished(fragment.webView, initialPageData.url)
+    assertEquals(Color.parseColor("#00FF00"), fragmentActivity.window.statusBarColor)
+  }
+
   private fun assertLoadableViewStatus(status: Status) {
     assertEquals(status, fragment.loadableView.status)
+  }
+}
+
+@Implements(WebView::class)
+class CustomShadowWebview : ShadowWebView() {
+  var jsCallbacks: MutableMap<String, String> = mutableMapOf()
+  override fun evaluateJavascript(script: String?, callback: ValueCallback<String>?) {
+    super.evaluateJavascript(script, callback)
+    jsCallbacks[script]?.let { callback?.onReceiveValue(it) }
   }
 }
