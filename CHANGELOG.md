@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.11.2](https://git.ixigo.com/android/ixigo-android-sdk/compare/ixigo-sdk-1.11.1...ixigo-sdk-1.11.2) (2022-01-21)
+
+
+### Bug Fixes
+
+* add bus trips SDK ([169e832](https://git.ixigo.com/android/ixigo-android-sdk/commit/169e832f4392012923773beb17e3ae5400f503ec))
+* disable bus multimodel and trains home buttons when needed in sample app ([f6eff56](https://git.ixigo.com/android/ixigo-android-sdk/commit/f6eff564e1bf70ecbbaf9afc0039047395294e05))
+* remove confirmtkt abhibus integration as it is not ready yet ([a3dce31](https://git.ixigo.com/android/ixigo-android-sdk/commit/a3dce31ed1daa2e992fe56341be46639aba1e250))
+* use shouldOverrideUrl instead of PageStarted to set the Loading status ([acdd874](https://git.ixigo.com/android/ixigo-android-sdk/commit/acdd87423d9f9d2e1b8e3630120538bc0e435046))
+
 ### [1.11.1](https://git.ixigo.com/android/ixigo-android-sdk/compare/ixigo-sdk-1.11.0...ixigo-sdk-1.11.1) (2022-01-20)
 
 
