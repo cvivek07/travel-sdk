@@ -2,7 +2,6 @@ package com.ixigo.sdk.webview
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.LayoutInflater
@@ -116,16 +115,16 @@ class WebViewFragment : Fragment() {
       webViewBackPressHandler.isEnabled = view?.canGoBack() ?: false
     }
 
-    override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
-      super.onPageStarted(view, url, favicon)
-      loadableView.status = Loading()
-    }
-
     override fun onPageFinished(view: WebView?, url: String?) {
       super.onPageFinished(view, url)
       if (loadableView.status is Loading) {
         loadableView.status = Loaded
       }
+    }
+
+    override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+      loadableView.status = Loading()
+      return super.shouldOverrideUrlLoading(view, request)
     }
 
     override fun onReceivedHttpError(
@@ -134,11 +133,7 @@ class WebViewFragment : Fragment() {
         errorResponse: WebResourceResponse?
     ) {
       super.onReceivedHttpError(view, request, errorResponse)
-      if (request?.url.toString() == webView.url) {
-        analyticsProvider.logEvent(
-            Event.with(action = "webviewError", label = errorResponse?.statusCode.toString()))
-        handleError()
-      }
+      handleError(request, errorResponse?.statusCode.toString())
     }
 
     override fun onReceivedError(
@@ -147,14 +142,13 @@ class WebViewFragment : Fragment() {
         error: WebResourceError?
     ) {
       super.onReceivedError(view, request, error)
-      analyticsProvider.logEvent(Event.with(action = "webviewError", label = error?.toString()))
-      handleError()
+      handleError(request, error?.toString())
     }
 
-    private fun handleError() {
-      when (loadableView.status) {
-        is Loading -> loadableView.status = Failed()
-        else -> Unit
+    private fun handleError(request: WebResourceRequest?, error: String?) {
+      if (request?.url.toString() == webView.url) {
+        analyticsProvider.logEvent(Event.with(action = "webviewError", label = error))
+        loadableView.status = Failed()
       }
     }
   }

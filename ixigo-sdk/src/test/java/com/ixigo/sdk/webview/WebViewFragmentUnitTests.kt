@@ -3,6 +3,7 @@ package com.ixigo.sdk.webview
 import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
+import android.webkit.WebResourceRequest
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -118,8 +119,21 @@ class WebViewFragmentUnitTests {
   }
 
   @Test
+  fun `test that status is Loading after loading new url`() {
+    assertEquals(Loading(), fragment.loadableView.status)
+    shadowWebView.webViewClient.onPageFinished(fragment.webView, initialPageData.url)
+    assertLoadableViewStatus(Loaded)
+    shadowWebView.webViewClient.shouldOverrideUrlLoading(
+        fragment.webView,
+        mock<WebResourceRequest> { on { url } doReturn Uri.parse("https://www.ixigo.com/page2") })
+    assertLoadableViewStatus(Loading())
+  }
+
+  @Test
   fun `test that loadingView status is updated for successful page load`() {
-    shadowWebView.webViewClient.onPageStarted(fragment.webView, initialPageData.url, null)
+    shadowWebView.webViewClient.shouldOverrideUrlLoading(
+        fragment.webView,
+        mock<WebResourceRequest> { on { url } doReturn Uri.parse(initialPageData.url) })
     assertLoadableViewStatus(Loading())
     shadowWebView.webViewClient.onPageFinished(fragment.webView, initialPageData.url)
     assertLoadableViewStatus(Loaded)
@@ -127,7 +141,9 @@ class WebViewFragmentUnitTests {
 
   @Test
   fun `test that loadingView status is updated when an error happens`() {
-    shadowWebView.webViewClient.onPageStarted(fragment.webView, initialPageData.url, null)
+    shadowWebView.webViewClient.shouldOverrideUrlLoading(
+        fragment.webView,
+        mock<WebResourceRequest> { on { url } doReturn Uri.parse(initialPageData.url) })
     assertLoadableViewStatus(Loading())
     shadowWebView.webViewClient.onReceivedError(
         fragment.webView, mock { on { url } doReturn Uri.parse(initialPageData.url) }, mock())
@@ -138,7 +154,9 @@ class WebViewFragmentUnitTests {
 
   @Test
   fun `test that loadingView status is updated when an http error happens`() {
-    shadowWebView.webViewClient.onPageStarted(fragment.webView, initialPageData.url, null)
+    shadowWebView.webViewClient.shouldOverrideUrlLoading(
+        fragment.webView,
+        mock<WebResourceRequest> { on { url } doReturn Uri.parse(initialPageData.url) })
     assertLoadableViewStatus(Loading())
     shadowWebView.webViewClient.onReceivedHttpError(
         fragment.webView, mock { on { url } doReturn Uri.parse(initialPageData.url) }, mock())
@@ -149,7 +167,9 @@ class WebViewFragmentUnitTests {
 
   @Test
   fun `test that http error is ignored if it is not the loading url`() {
-    shadowWebView.webViewClient.onPageStarted(fragment.webView, initialPageData.url, null)
+    shadowWebView.webViewClient.shouldOverrideUrlLoading(
+        fragment.webView,
+        mock<WebResourceRequest> { on { url } doReturn Uri.parse(initialPageData.url) })
     assertLoadableViewStatus(Loading())
     shadowWebView.webViewClient.onReceivedHttpError(
         fragment.webView, mock { on { url } doReturn Uri.parse("https://random.com") }, mock())
@@ -169,7 +189,9 @@ class WebViewFragmentUnitTests {
   @Test
   fun `test that error sends an analytics event`() {
     shadowWebView.webViewClient.onReceivedError(
-        fragment.webView, mock(), mock { on { toString() } doReturn "errorMessage" })
+        fragment.webView,
+        mock { on { url } doReturn Uri.parse(initialPageData.url) },
+        mock { on { toString() } doReturn "errorMessage" })
     verify(mockAnalyticsProvider)
         .logEvent(Event.with(action = "webviewError", label = "errorMessage"))
   }
