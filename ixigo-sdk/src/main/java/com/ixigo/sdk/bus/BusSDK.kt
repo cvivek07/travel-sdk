@@ -37,7 +37,21 @@ class BusSDK(internal val config: Config) {
     cheapestFairCall.execute(cheapestFareInput, callback)
   }
 
-  /** Opens Abhibus PWA home to search for Bus trips */
+  /**
+   * Opens Abhibus PWA trips page
+   *
+   * @param context
+   */
+  fun launchTrips(context: Context) {
+    analyticsProvider.logEvent(Event.with(action = "busStartTrips"))
+    IxigoSDK.instance.launchWebActivity(context, config.createUrl("trips", addSkinParam()))
+  }
+
+  /**
+   * Opens Abhibus PWA home to search for Bus trips
+   *
+   * @param context
+   */
   fun launchHome(context: Context) {
     analyticsProvider.logEvent(Event.with(action = "busStartHome"))
     IxigoSDK.instance.launchWebActivity(context, config.createUrl(null, addSkinParam()))

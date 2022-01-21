@@ -185,6 +185,18 @@ You can configure the appearance of certain UI elements presented by the sdk by 
 IxigoSDK.instance.flightsStartHome(context)
 ```
 
+#### Flights Multimodel Search
+
+Use this method to get a Fragment showing Flight trips for a particular search input.
+This is useful to integrate in your App's UI where you already have a search form
+
+```kotlin
+val searchData = FlightSearchData(...)
+
+val fragment = IxigoSDK.instance.multiModelFragment(searchData)
+// Add this fragment to your Activity/Fragment
+```
+
 ### Buses
 
 In order to access Buses functionality, you need to initialize `BusSDK` after `IxigoSDK` initialization
@@ -198,6 +210,26 @@ BusSDK.init(...)
 
 ```kotlin
 BusSDK.instance.launchHome(context)
+```
+
+#### Open Bus Trips
+
+Use this method to open a view showing your Bus bookings
+
+```kotlin
+BusSDK.instance.launchTrips(context)
+```
+
+#### Bus Multimodel Search
+
+Use this method to get a Fragment showing Bus trips for a particular search input.
+This is useful to integrate in your App's UI where you already have a search form
+
+```kotlin
+val searchData = BusSearchData(...)
+
+val fragment = BusSDK.instance.multiModelFragment(searchData)
+// Add this fragment to your Activity/Fragment
 ```
 
 #### Get Cheapest Fare

@@ -91,6 +91,16 @@ class BusSDKTests {
         BusConfig.STAGING)
   }
 
+  @Test
+  fun `test bus trips for ixigo flights`() {
+    testBusTrips(clientId = "iximaad", "https://www.abhibus.com/ixigopwa/trips?source=ixflights")
+  }
+
+  @Test
+  fun `test bus trips for ixigo trains`() {
+    testBusTrips(clientId = "iximatr", "https://www.abhibus.com/ixigopwa/trips?source=ixtrains")
+  }
+
   @Test(expected = IllegalArgumentException::class)
   fun `test bus home for other clientId`() {
     testBusHome(clientId = "other", "")
@@ -143,8 +153,17 @@ class BusSDKTests {
     verify(mockAnalyticsProvider).logEvent(Event("busStartHome"))
   }
 
-  @Test
-  fun `test bus multimodel fragment`() {
-    // TODO: Redo after implementation of `BusSDK.busHome` is done
+  private fun testBusTrips(clientId: String, expectedUrl: String, config: BusConfig? = null) {
+    val mockAnalyticsProvider: AnalyticsProvider = mock()
+    val mockIxigoSDK: IxigoSDK = mock {
+      on { appInfo } doReturn AppInfo(clientId = clientId, apiKey = "any", appVersion = 1)
+      on { analyticsProvider } doReturn mockAnalyticsProvider
+    }
+    val application: Application = getApplicationContext()
+    IxigoSDK.replaceInstance(mockIxigoSDK)
+    val busSDK = if (config != null) BusSDK.init(config = config) else BusSDK.init()
+    busSDK.launchTrips(application)
+    verify(mockIxigoSDK).launchWebActivity(application, expectedUrl)
+    verify(mockAnalyticsProvider).logEvent(Event("busStartTrips"))
   }
 }
