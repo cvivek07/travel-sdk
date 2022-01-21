@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.11.3](https://git.ixigo.com/android/ixigo-android-sdk/compare/ixigo-sdk-1.11.2...ixigo-sdk-1.11.3) (2022-01-21)
+
+
+### Bug Fixes
+
+* modify status bar color using theme-color ([ab2e44a](https://git.ixigo.com/android/ixigo-android-sdk/commit/ab2e44af45a53300b42280d57db0b5122ddc8fd9))
+
 ### [1.11.2](https://git.ixigo.com/android/ixigo-android-sdk/compare/ixigo-sdk-1.11.1...ixigo-sdk-1.11.2) (2022-01-21)
 
 
