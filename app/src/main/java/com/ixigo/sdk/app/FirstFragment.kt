@@ -332,7 +332,7 @@ class FirstFragment : Fragment() {
   }
 
   private val ixigoConfigs =
-      listOf(IxigoConfig("Prod", Config.ProdConfig)) +
+      listOf(IxigoConfig("Prod", Config.ProdConfig)) + IxigoConfig("dev (local)", Config("http://dev.ixigo.com")) +
           (1..8).map { IxigoConfig("Build $it", Config.StagingBuildConfig("build$it")) }
 
   private val presets =
