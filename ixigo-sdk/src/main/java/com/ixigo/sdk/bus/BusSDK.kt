@@ -128,12 +128,6 @@ class BusSDK(internal val config: Config) {
     private fun getPwaBaseUrl(config: BusConfig): String {
       val clientId = IxigoSDK.instance.appInfo.clientId
       return when (clientId) {
-        "confirmtckt" -> {
-          when (config) {
-            BusConfig.PROD -> "https://trains.abhibus.com"
-            BusConfig.STAGING -> "https://demo.abhibus.com/confirmtkt"
-          }
-        }
         "iximatr", "iximaad" -> {
           when (config) {
             BusConfig.PROD -> "https://www.abhibus.com/ixigopwa"

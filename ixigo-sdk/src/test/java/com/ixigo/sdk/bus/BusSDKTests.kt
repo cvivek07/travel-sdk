@@ -56,16 +56,6 @@ class BusSDKTests {
   }
 
   @Test
-  fun `test bus home for confitmTkt`() {
-    testBusHome(clientId = "confirmtckt", "https://trains.abhibus.com")
-  }
-
-  @Test
-  fun `test bus home for confitmTkt and staging`() {
-    testBusHome(clientId = "confirmtckt", "https://demo.abhibus.com/confirmtkt", BusConfig.STAGING)
-  }
-
-  @Test
   fun `test bus home for ixigo trains`() {
     testBusHome(clientId = "iximatr", "https://www.abhibus.com/ixigopwa?source=ixtrains")
   }

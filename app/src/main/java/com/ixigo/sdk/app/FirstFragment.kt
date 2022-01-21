@@ -342,7 +342,7 @@ class FirstFragment : Fragment() {
               clientId = "confirmtckt",
               apiKey = "confirmtckt!2\$",
               ssoPartnerToken = "D5DCFBD21CF7867B74D5273A57A0254D1785773799EEDD0E683B0EE5C6E56878",
-              buttonsState = ButtonsState(flightsSearch = false, flightsMultiModule = false, trainsHome = false)),
+              buttonsState = ButtonsState(flightsSearch = false, flightsMultiModule = false, trainsHome = false, busHome = false, busMultiModel = false)),
           Preset(
               label = "Abhibus",
               clientId = "abhibus",
