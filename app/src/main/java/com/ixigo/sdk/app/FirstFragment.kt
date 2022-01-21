@@ -173,6 +173,8 @@ class FirstFragment : Fragment() {
     binding.buttonFlightHome.isEnabled = preset.buttonsState.flightsHome
     binding.buttonTrainsHome.isEnabled = preset.buttonsState.trainsHome
     binding.buttonBusHome.isEnabled = preset.buttonsState.busHome
+    binding.buttonBusMultiModule.isEnabled = preset.buttonsState.busMultiModel
+    binding.buttonTrainsHome.isEnabled = preset.buttonsState.trainsHome
   }
 
   private fun loadSettings() {
