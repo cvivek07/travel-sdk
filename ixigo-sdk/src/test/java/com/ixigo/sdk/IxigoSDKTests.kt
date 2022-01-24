@@ -3,6 +3,7 @@ package com.ixigo.sdk
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.webkit.CookieManager
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.launchActivity
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -13,11 +14,13 @@ import com.ixigo.sdk.payment.DisabledPaymentProvider
 import com.ixigo.sdk.test.IntentMatcher
 import com.ixigo.sdk.test.TestData.DisabledAnalyticsProvider
 import com.ixigo.sdk.test.TestData.FakeAppInfo
+import com.ixigo.sdk.test.initializeTestIxigoSDK
 import com.ixigo.sdk.webview.InitialPageData
 import com.ixigo.sdk.webview.WebActivity
 import com.ixigo.sdk.webview.WebViewFragment
 import java.lang.IllegalStateException
 import org.hamcrest.MatcherAssert
+import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.kotlin.mock
@@ -65,6 +68,16 @@ class IxigoSDKTests {
         context, FakeAppInfo, EmptyPartnerTokenProvider, DisabledPaymentProvider, analyticsProvider)
     IxigoSDK.init(
         context, FakeAppInfo, EmptyPartnerTokenProvider, DisabledPaymentProvider, analyticsProvider)
+  }
+
+  @Test
+  fun `test onLogout removes all Cookies`() {
+    initializeTestIxigoSDK()
+    val cookieManager = CookieManager.getInstance()
+    cookieManager.setCookie("https://www.ixigo.com", "cookieName=cookieValue")
+    assert(cookieManager.hasCookies())
+    IxigoSDK.instance.onLogout()
+    assertFalse(cookieManager.hasCookies())
   }
 
   private fun testLaunchActivity(

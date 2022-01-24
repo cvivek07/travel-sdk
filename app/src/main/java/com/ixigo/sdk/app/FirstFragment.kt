@@ -5,13 +5,10 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
-import android.widget.EditText
-import android.widget.TextView
+import android.view.*
+import android.webkit.CookieManager
+import android.webkit.WebView
+import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.google.android.material.snackbar.Snackbar
@@ -53,6 +50,35 @@ class FirstFragment : Fragment() {
   // onDestroyView.
   private val binding
     get() = _binding!!
+
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+
+    setHasOptionsMenu(true)
+  }
+
+  override fun onCreateOptionsMenu(menu: Menu, menuInflater: MenuInflater) {
+    menuInflater.inflate(R.menu.menu_main, menu)
+    super.onCreateOptionsMenu(menu, menuInflater)
+  }
+
+  override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    // Handle action bar item clicks here. The action bar will
+    // automatically handle clicks on the Home/Up button, so long
+    // as you specify a parent activity in AndroidManifest.xml.
+    return when (item.itemId) {
+      R.id.action_clear_storage -> {
+        initSDK()
+        IxigoSDK.instance.onLogout()
+//        WebView(this).clearCache(true)
+//        CookieManager.getInstance().removeAllCookies(null)
+//        CookieManager.getInstance().flush()
+        Toast.makeText(requireContext(), "Storage cleared", Toast.LENGTH_SHORT).show()
+        return true
+      }
+      else -> super.onOptionsItemSelected(item)
+    }
+  }
 
   override fun onCreateView(
       inflater: LayoutInflater,

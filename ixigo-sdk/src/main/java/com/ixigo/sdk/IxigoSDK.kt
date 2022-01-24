@@ -2,6 +2,7 @@ package com.ixigo.sdk
 
 import android.content.Context
 import android.content.Intent
+import android.webkit.CookieManager
 import com.ixigo.sdk.Config.Companion.ProdConfig
 import com.ixigo.sdk.IxigoSDK.Companion.init
 import com.ixigo.sdk.analytics.AnalyticsProvider
@@ -11,9 +12,7 @@ import com.ixigo.sdk.auth.PartnerTokenProvider
 import com.ixigo.sdk.common.SdkSingleton
 import com.ixigo.sdk.payment.DisabledPaymentProvider
 import com.ixigo.sdk.payment.PaymentProvider
-import com.ixigo.sdk.webview.InitialPageData
-import com.ixigo.sdk.webview.WebActivity
-import com.ixigo.sdk.webview.WebViewFragment
+import com.ixigo.sdk.webview.*
 import java.net.URL
 
 /**
@@ -118,6 +117,14 @@ internal constructor(
     // TODO: Figure out a way of getting an Ixigo token at this point if available
     //    authProvider.authData?.let { headers["Authorization"] = it.token }
     return headers
+  }
+
+  /**
+   * Call this method when the user logs out of the Host App This method will remove every
+   * cached/stored user info in the SDK
+   */
+  fun onLogout() {
+    CookieManager.getInstance().removeAllCookies(null)
   }
 
   private fun isIxigoUrl(url: String): Boolean {
