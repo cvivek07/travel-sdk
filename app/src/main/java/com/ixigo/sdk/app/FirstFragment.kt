@@ -349,7 +349,7 @@ class FirstFragment : Fragment() {
               apiKey = "abhibus!2\$",
               ssoPartnerToken = "RQjsRqkORTji8R9+AQkLFyl9yeLQxX2II01n4rvVh1vpoH6pVx4eiw==",
               buttonsState = ButtonsState(flightsSearch = false, flightsMultiModule = false, busHome = false, busMultiModel = false)),
-          Preset(label = "Ixigo Trains", clientId = "iximatr", apiKey = "iximatr!2\$", buttonsState = ButtonsState(trainsHome = false)),
+          Preset(label = "Ixigo Trains", clientId = "iximatr", apiKey = "iximatr!2\$", buttonsState = ButtonsState(trainsHome = false), appVersion = "1801"),
           Preset(label = "Ixigo Flights", clientId = "iximaad", apiKey = "iximaad!2\$", buttonsState = ButtonsState(trainsHome = false, flightsMultiModule = false, flightsHome = false, flightsSearch = false)),
           Preset(
               label = "Other",

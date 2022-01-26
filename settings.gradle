@@ -9,6 +9,19 @@ dependencyResolutionManagement {
         jcenter() // Warning: this repository is going to shut down soon
     }
 }
-rootProject.name = "ixigo-android-sdk"
+rootProject.name = 'ixigo-android-sdk'
 include ':app'
 include ':ixigo-sdk'
+
+// When running in CI we enable our remote cache
+boolean isCiServer = System.getenv().containsKey('CI_PIPELINE_SOURCE')
+buildCache {
+    remote(HttpBuildCache) {
+        url = 'http://gradle-cache.devops.svc.cluster.local:80/cache/'
+        // URL to access it from your Desktop
+        // url = 'http://build-k8s-node.ixigo.com:30053/cache/'
+        allowUntrustedServer = true
+        enabled = isCiServer
+        push = isCiServer
+    }
+}

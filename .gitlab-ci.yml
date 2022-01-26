@@ -33,7 +33,7 @@ cache:
   key: ${CI_PROJECT_ID}
   paths:
     - .gradle/wrapper
-    - .gradle/caches
+    - node_modules
 
 build-all:
   stage: build
@@ -53,10 +53,6 @@ slack-test-app-upload:
   rules:
     - if: '$CI_COMMIT_BRANCH == "development"'
       when: manual
-  cache:
-    key: ${CI_PROJECT_ID}_node
-    paths:
-      - node_modules/
   script:
     - yarn install
     - yarn run upload-app-to-slack
@@ -97,10 +93,6 @@ danger:
     - coverage:mergeRequest
   rules:
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-  cache:
-    key: ${CI_PROJECT_ID}_node
-    paths:
-      - node_modules/
   script:
     - yarn install
     - yarn danger ci -f -d danger/dangerfile.ts
