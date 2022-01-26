@@ -21,6 +21,7 @@ buildCache {
         // URL to access it from your Desktop
         // url = 'http://build-k8s-node.ixigo.com:30053/cache/'
         allowUntrustedServer = true
+        allowInsecureProtocol = true
         enabled = isCiServer
         push = isCiServer
     }
