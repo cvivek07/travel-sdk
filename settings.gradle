@@ -10,6 +10,9 @@ dependencyResolutionManagement {
         maven {
             url 'https://nexus.ixigo.com/nexus/content/repositories/androidshared'
         }
+        maven {
+            url "https://maven.juspay.in/jp-build-packages/hyper-sdk/"
+        }
         jcenter() // Warning: this repository is going to shut down soon
     }
 }

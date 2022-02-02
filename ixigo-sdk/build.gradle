@@ -76,6 +76,10 @@ dependencies {
     // Analytics
     implementation 'com.google.android.gms:play-services-analytics:17.0.1'
 
+    // PaymentsSDK
+    // JusPay
+    implementation 'in.juspay:hypersdk:2.0.3-rc.78'
+
     // Unit Tests
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
     testImplementation("androidx.fragment:fragment-testing:$fragmentVersion")

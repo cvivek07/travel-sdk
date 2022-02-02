@@ -25,6 +25,9 @@ import com.ixigo.sdk.payment.PaymentInput
 import com.ixigo.sdk.payment.PaymentProvider
 import com.ixigo.sdk.trains.TrainsSDK
 import com.ixigo.sdk.webview.FunnelConfig
+import com.ixigo.sdk.webview.InitialPageData
+import com.ixigo.sdk.webview.WebActivity
+import com.ixigo.sdk.webview.WebViewFragment
 import java.time.LocalDate
 import kotlin.reflect.KClass
 import kotlin.reflect.full.companionObject
@@ -77,8 +80,6 @@ class FirstFragment : Fragment() {
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
 
-    binding.buttonRestart.setOnClickListener { restartApp() }
-
     binding.buttonSSOTest.setOnClickListener {
       initSDK()
 
@@ -108,6 +109,7 @@ class FirstFragment : Fragment() {
         requireContext().startActivity(intent)
       }
     }
+
 
     binding.buttonFlightHome.setOnClickListener {
       if (initSDK()) {
@@ -177,6 +179,14 @@ class FirstFragment : Fragment() {
                     source = "FlightSearchFormFragment",
                     flightClass = "e",
                     passengerData = FlightPassengerData(adults = 1, children = 0, infants = 0)))
+      }
+    }
+
+    binding.paymentPlayground.setOnClickListener {
+      if (initSDK()) {
+        val intent = Intent(requireContext(), WebActivity::class.java)
+        intent.putExtra(WebViewFragment.INITIAL_PAGE_DATA_ARGS, InitialPageData("file:///android_asset/paymentPlayground.html"))
+        startActivity(intent)
       }
     }
 

@@ -4,15 +4,20 @@ import IxigoSDKAndroid
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import android.webkit.CookieManager
 import android.webkit.WebStorage
+import androidx.fragment.app.testing.FragmentScenario
+import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.core.app.ActivityScenario
+import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.core.app.launchActivity
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
 import com.ixigo.sdk.auth.EmptyPartnerTokenProvider
 import com.ixigo.sdk.payment.DisabledPaymentProvider
+import com.ixigo.sdk.payment.PaymentJsInterface
 import com.ixigo.sdk.test.IntentMatcher
 import com.ixigo.sdk.test.TestData.DisabledAnalyticsProvider
 import com.ixigo.sdk.test.TestData.FakeAppInfo
@@ -124,6 +129,27 @@ class IxigoSDKTests {
   }
 
   @Test
+  fun `test that PaymentJsInterface is added to Js Interfaces for ixigo url`() {
+    testJsInterface(Config.ProdConfig.createUrl("testUrl")) { interfaces ->
+      assertTrue(interfaces.any { (it as? PaymentJsInterface) != null })
+    }
+  }
+
+  @Test
+  fun `test that PaymentJsInterface is added to Js Interfaces for file url`() {
+    testJsInterface("file://anything") { interfaces ->
+      assertTrue(interfaces.any { (it as? PaymentJsInterface) != null })
+    }
+  }
+
+  @Test
+  fun `test that PaymentJsInterface is NOT added to Js Interfaces for Non ixigo url`() {
+    testJsInterface("https://www.confirmtkt.com/test") { interfaces ->
+      assertFalse(interfaces.any { (it as? PaymentJsInterface) != null })
+    }
+  }
+
+  @Test
   fun `test initialized`() {
     assertFalse(IxigoSDK.initialized)
     initializeTestIxigoSDK()
@@ -131,13 +157,23 @@ class IxigoSDKTests {
   }
 
   private fun testJsInterface(url: String, check: (List<JsInterface>) -> Unit) {
-    val context: Context = mock()
     val analyticsProvider: AnalyticsProvider = mock()
     IxigoSDK.init(
-        context, FakeAppInfo, EmptyPartnerTokenProvider, DisabledPaymentProvider, analyticsProvider)
-    val webViewFragment: WebViewFragment = mock()
-    val interfaces = IxigoSDK.instance.webViewConfig.getMatchingJsInterfaces(url, webViewFragment)
-    check(interfaces)
+        getApplicationContext(),
+        FakeAppInfo,
+        EmptyPartnerTokenProvider,
+        DisabledPaymentProvider,
+        analyticsProvider)
+    val scenario: FragmentScenario<WebViewFragment> =
+        launchFragmentInContainer(
+            Bundle().also {
+              it.putParcelable(
+                  WebViewFragment.INITIAL_PAGE_DATA_ARGS, InitialPageData("https://www.ixigo.com"))
+            })
+    scenario.onFragment { webViewFragment ->
+      val interfaces = IxigoSDK.instance.webViewConfig.getMatchingJsInterfaces(url, webViewFragment)
+      check(interfaces)
+    }
   }
 
   private fun testLaunchActivity(

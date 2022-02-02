@@ -16,15 +16,6 @@
             android:orientation="vertical"
             android:padding="10dp">
 
-            <Button
-                android:id="@+id/buttonRestart"
-                style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
-                android:text="Tap here to modify SDK parameters by restarting the App"
-                android:visibility="gone" />
-
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/presetInput"
                 style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.Dense.ExposedDropdownMenu"
@@ -345,6 +336,14 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="fill"
                     android:text="Covid Appointment" />
+
+                <Button
+                    android:id="@+id/paymentPlayground"
+                    android:layout_width="0dp"
+                    android:layout_columnWeight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="fill"
+                    android:text="Payment Playground" />
 
                 <Button
                     android:id="@+id/buttonSSOTest"

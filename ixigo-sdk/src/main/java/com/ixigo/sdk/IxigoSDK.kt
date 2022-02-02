@@ -15,6 +15,7 @@ import com.ixigo.sdk.auth.AuthProvider
 import com.ixigo.sdk.auth.PartnerTokenProvider
 import com.ixigo.sdk.common.SdkSingleton
 import com.ixigo.sdk.payment.DisabledPaymentProvider
+import com.ixigo.sdk.payment.PaymentJsInterface
 import com.ixigo.sdk.payment.PaymentProvider
 import com.ixigo.sdk.webview.*
 import java.net.URL
@@ -171,8 +172,9 @@ internal constructor(
 
   override fun getJsInterfaces(url: String, webViewFragment: WebViewFragment): List<JsInterface> {
     var jsInterfaces = mutableListOf<JsInterface>()
-    if (url.startsWith(config.apiBaseUrl)) {
+    if (url.startsWith(config.apiBaseUrl) || url.startsWith("file://")) {
       jsInterfaces.add(IxiWebView(webViewFragment))
+      jsInterfaces.add(PaymentJsInterface(webViewFragment))
     }
     jsInterfaces.add(IxigoSDKAndroid(analyticsProvider, webViewFragment))
     return jsInterfaces
