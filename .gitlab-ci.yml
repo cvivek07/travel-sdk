@@ -5,7 +5,10 @@ default:
   tags:
     - docker-shared
 
-#variables:
+variables:
+  GRADLE_SCAN:
+    value: ""
+    description: "Set to `true` if you want to run a Gradle Scan on this build"
 #  CI_DEBUG_TRACE: "true"
 
 workflow:
@@ -41,7 +44,7 @@ build-all:
   script:
     # `overallCoverageReport` builds everything and creates coverage info
     # `app:lintDebug` is used as an unmbrella project at the moment to run all module Lints
-    - "./gradlew overallCoverageReport app:assembleDebug app:lintDebug spotlessCheck --stacktrace"
+    - "./gradlew overallCoverageReport app:assembleDebug app:lintDebug spotlessCheck --stacktrace $GRADLE_SCAN"
   artifacts:
     paths:
       - "**/build/reports"
