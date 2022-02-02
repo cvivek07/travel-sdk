@@ -116,6 +116,8 @@ IxigoSDK.init(authProvider = MyAppPartnerTokenProvider(), /* Other params*/)
 
 `PartnerTokenProvider.Requester` should be used by your implementation to determine how to obtain the token. For instance, if we pass `CUSTOMER`, it would be OK to present a LoginDialog since the Customer initiated this request. Otherwise, we should not show any UI to the customer.
 
+### Using Activity for Result 
+
 If your `PartnerTokenProvider` implementation starts another activity for result (eg: open login dialog), you can implement as well `ActivityResultHandler` to get a callback when the Activity is finished
 
 ```kotlin
