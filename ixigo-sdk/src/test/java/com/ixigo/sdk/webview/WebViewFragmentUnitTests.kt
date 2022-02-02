@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.webkit.ValueCallback
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -189,6 +190,20 @@ class WebViewFragmentUnitTests {
     shadowWebView.webViewClient.onPageFinished(fragment.webView, initialPageData.url)
     assertLoadableViewStatus(Loaded)
     shadowWebView.webViewClient.onReceivedError(fragment.webView, mock(), mock())
+    assertLoadableViewStatus(Loaded)
+  }
+
+  @Test
+  fun `test that loadingView status is not set to error when an we received an unknown Error`() {
+    shadowWebView.webViewClient.shouldOverrideUrlLoading(
+        fragment.webView,
+        mock<WebResourceRequest> { on { url } doReturn Uri.parse(initialPageData.url) })
+    shadowWebView.webViewClient.onPageFinished(fragment.webView, initialPageData.url)
+    assertLoadableViewStatus(Loaded)
+    shadowWebView.webViewClient.onReceivedError(
+        fragment.webView,
+        mock { on { url } doReturn Uri.parse(initialPageData.url) },
+        mock { on { errorCode } doReturn WebViewClient.ERROR_UNKNOWN })
     assertLoadableViewStatus(Loaded)
   }
 

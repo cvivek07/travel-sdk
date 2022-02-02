@@ -3,6 +3,7 @@ package com.ixigo.sdk.webview
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
 import android.view.LayoutInflater
@@ -147,13 +148,28 @@ class WebViewFragment : Fragment() {
         error: WebResourceError?
     ) {
       super.onReceivedError(view, request, error)
-      handleError(request, error?.toString())
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        when (error?.errorCode) {
+          ERROR_UNKNOWN ->
+              // Unknown Errors can be Cache misses, for which we don't want to show an error view
+              handleError(request, error?.toString(), showErrorViewIfNeeded = false)
+          else -> handleError(request, error?.toString())
+        }
+      } else {
+        handleError(request, error?.toString())
+      }
     }
 
-    private fun handleError(request: WebResourceRequest?, error: String?) {
+    private fun handleError(
+        request: WebResourceRequest?,
+        error: String?,
+        showErrorViewIfNeeded: Boolean = true
+    ) {
       if (request?.url.toString() == webView.url) {
         analyticsProvider.logEvent(Event.with(action = "webviewError", label = error))
-        loadableView.status = Failed()
+        if (showErrorViewIfNeeded) {
+          loadableView.status = Failed()
+        }
       }
     }
 
