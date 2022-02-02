@@ -1,6 +1,5 @@
 package com.ixigo.sdk.webview
 
-import android.content.Intent
 import android.os.Bundle
 import android.os.Looper
 import android.webkit.JavascriptInterface
@@ -165,22 +164,6 @@ class IxiWebViewTests {
 
     assertFalse(paymentReturn)
     assertEquals(initialPageData.url, shadowWebView.lastLoadedUrl)
-  }
-
-  @Test
-  fun `test activity result is forwarded to paymentProvider`() {
-    val requestCode = 123
-    val responseCode = 456
-    val intent = Intent()
-    val paymentProvider = mock<ActivityResultPaymentProvider>()
-
-    IxigoSDK.replaceInstance(
-        IxigoSDK(appInfo, EmptyPartnerTokenProvider, paymentProvider, analyticsProvider))
-
-    scenario.onFragment { fragment ->
-      fragment.onActivityResult(requestCode, responseCode, intent)
-      verify(paymentProvider).handle(requestCode, responseCode, intent)
-    }
   }
 
   @Test

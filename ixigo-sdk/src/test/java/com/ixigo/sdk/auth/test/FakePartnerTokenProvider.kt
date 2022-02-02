@@ -4,8 +4,11 @@ import com.ixigo.sdk.auth.PartnerToken
 import com.ixigo.sdk.auth.PartnerTokenCallback
 import com.ixigo.sdk.auth.PartnerTokenErrorSDK
 import com.ixigo.sdk.auth.PartnerTokenProvider
+import com.ixigo.sdk.common.ActivityResultHandler
 import com.ixigo.sdk.common.Err
 import com.ixigo.sdk.common.Ok
+
+interface ActivityResultPartnerTokenProvider : PartnerTokenProvider, ActivityResultHandler
 
 class FakePartnerTokenProvider(
     var partnerTokenMap: Map<PartnerTokenProvider.Requester, PartnerToken?> = mapOf(),

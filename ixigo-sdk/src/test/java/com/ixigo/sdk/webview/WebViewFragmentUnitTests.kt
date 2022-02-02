@@ -1,6 +1,7 @@
 package com.ixigo.sdk.webview
 
 import android.app.Activity
+import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
@@ -14,6 +15,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
+import com.ixigo.sdk.auth.test.ActivityResultPartnerTokenProvider
+import com.ixigo.sdk.payment.ActivityResultPaymentProvider
 import com.ixigo.sdk.test.initializeTestIxigoSDK
 import com.ixigo.sdk.ui.Failed
 import com.ixigo.sdk.ui.Loaded
@@ -255,6 +258,24 @@ class WebViewFragmentUnitTests {
         "#00FF00"
     shadowWebView.webViewClient.onPageFinished(fragment.webView, initialPageData.url)
     assertEquals(Color.parseColor("#00FF00"), fragmentActivity.window.statusBarColor)
+  }
+
+  @Test
+  fun `test activity result is forwarded to paymentProvider and partnerTokenProvider`() {
+    val requestCode = 123
+    val responseCode = 456
+    val intent = Intent()
+    val paymentProvider = mock<ActivityResultPaymentProvider>()
+    val partnerTokenProvider = mock<ActivityResultPartnerTokenProvider>()
+
+    initializeTestIxigoSDK(
+        paymentProvider = paymentProvider, partnerTokenProvider = partnerTokenProvider)
+
+    scenario.onFragment { fragment ->
+      fragment.onActivityResult(requestCode, responseCode, intent)
+      verify(paymentProvider).handle(requestCode, responseCode, intent)
+      verify(partnerTokenProvider).handle(requestCode, responseCode, intent)
+    }
   }
 
   private fun assertLoadableViewStatus(status: Status) {

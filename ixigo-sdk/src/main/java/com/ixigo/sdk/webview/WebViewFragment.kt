@@ -88,8 +88,11 @@ class WebViewFragment : Fragment() {
   }
 
   override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-    val activityResultHandler = IxigoSDK.instance.paymentProvider as ActivityResultHandler?
-    activityResultHandler?.handle(requestCode, resultCode, data)
+    val handlers =
+        arrayOf(IxigoSDK.instance.paymentProvider, IxigoSDK.instance.partnerTokenProvider)
+    handlers.forEach {
+      (it as? ActivityResultHandler)?.apply { handle(requestCode, resultCode, data) }
+    }
   }
 
   @SuppressLint("JavascriptInterface")

@@ -5,7 +5,9 @@ import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.test.FakeAnalyticsProvider
 import com.ixigo.sdk.auth.EmptyPartnerTokenProvider
+import com.ixigo.sdk.auth.PartnerTokenProvider
 import com.ixigo.sdk.payment.DisabledPaymentProvider
+import com.ixigo.sdk.payment.PaymentProvider
 import com.ixigo.sdk.test.TestData.FakeAppInfo
 
 object TestData {
@@ -16,8 +18,10 @@ object TestData {
 
 fun initializeTestIxigoSDK(
     analyticsProvider: AnalyticsProvider = TestData.DisabledAnalyticsProvider,
-    appInfo: AppInfo = FakeAppInfo
+    appInfo: AppInfo = FakeAppInfo,
+    paymentProvider: PaymentProvider = DisabledPaymentProvider,
+    partnerTokenProvider: PartnerTokenProvider = EmptyPartnerTokenProvider
 ) {
   IxigoSDK.replaceInstance(
-      IxigoSDK(appInfo, EmptyPartnerTokenProvider, DisabledPaymentProvider, analyticsProvider))
+      IxigoSDK(appInfo, partnerTokenProvider, paymentProvider, analyticsProvider))
 }
