@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.11.4](https://git.ixigo.com/android/ixigo-android-sdk/compare/ixigo-sdk-1.11.3...ixigo-sdk-1.11.4) (2022-02-02)
+
+
+### Bug Fixes
+
+* allow activityForResult in PartnerTokenProvider ([240edde](https://git.ixigo.com/android/ixigo-android-sdk/commit/240edde3bab92634270cadcc4038368e10078dab))
+* fix issue showing errorView when a Cache miss occurs ([594e24e](https://git.ixigo.com/android/ixigo-android-sdk/commit/594e24e9506c40350cf09407d9fc7c7b0ca1dc11))
+
 ### [1.11.3](https://git.ixigo.com/android/ixigo-android-sdk/compare/ixigo-sdk-1.11.2...ixigo-sdk-1.11.3) (2022-01-21)
 
 
