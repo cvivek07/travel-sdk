@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-1.11.4...ixigo-sdk-2.0.0) (2022-02-02)
+
+
+### ⚠ BREAKING CHANGES
+
+* **auth:** Added activity parameter to fetchToken
+
+### Bug Fixes
+
+* **auth:** pass activity to partnerTokenProvider fetch method ([9a31ddf](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/9a31ddf5a7b2a7eccaa78d9b909d2851e4ddbbcb))
+* use correct gradle scan option ([2c961a7](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/2c961a71e0ffc11e70d3a9aaa4413aec1e8abed8))
+
 ### [1.11.4](https://git.ixigo.com/android/ixigo-android-sdk/compare/ixigo-sdk-1.11.3...ixigo-sdk-1.11.4) (2022-02-02)
 
 
