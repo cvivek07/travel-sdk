@@ -3,7 +3,7 @@ image: 119677764340.dkr.ecr.ap-south-1.amazonaws.com/jangrewe/gitlab-ci-android:
 
 default:
   tags:
-    - docker
+    - docker-shared
 
 #variables:
 #  CI_DEBUG_TRACE: "true"

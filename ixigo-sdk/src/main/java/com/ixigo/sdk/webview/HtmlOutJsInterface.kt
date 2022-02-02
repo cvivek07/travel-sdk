@@ -27,7 +27,8 @@ class HtmlOutJsInterface(
       Timber.e("Error parsing SSO json=$jsonInput")
       return
     }
-    partnerTokenProvider.fetchPartnerToken(PartnerTokenProvider.Requester.CUSTOMER) {
+    partnerTokenProvider.fetchPartnerToken(
+        webViewFragment.requireActivity(), PartnerTokenProvider.Requester.CUSTOMER) {
       when (it) {
         is Ok -> {
           Timber.i("Successfully fetched partnerToken=${it.value.token}")

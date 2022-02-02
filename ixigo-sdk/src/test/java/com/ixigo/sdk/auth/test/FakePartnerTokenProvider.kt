@@ -1,5 +1,6 @@
 package com.ixigo.sdk.auth.test
 
+import android.app.Activity
 import com.ixigo.sdk.auth.PartnerToken
 import com.ixigo.sdk.auth.PartnerTokenCallback
 import com.ixigo.sdk.auth.PartnerTokenErrorSDK
@@ -14,15 +15,19 @@ class FakePartnerTokenProvider(
     var partnerTokenMap: Map<PartnerTokenProvider.Requester, PartnerToken?> = mapOf(),
 ) : PartnerTokenProvider {
 
+  var passedActivity: Activity? = null
+
   constructor(
       partnerToken: PartnerToken?
   ) : this(PartnerTokenProvider.Requester.values().map { Pair(it, partnerToken) }.toMap())
   constructor(token: String?) : this(token?.let { PartnerToken((it)) } ?: null)
 
   override fun fetchPartnerToken(
+      activity: Activity,
       requester: PartnerTokenProvider.Requester,
       callback: PartnerTokenCallback
   ) {
+    passedActivity = activity
     val partnerToken = partnerTokenMap[requester]
     if (partnerToken == null) {
       callback(Err(PartnerTokenErrorSDK()))

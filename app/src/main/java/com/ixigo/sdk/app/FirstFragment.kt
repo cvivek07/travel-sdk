@@ -1,5 +1,6 @@
 package com.ixigo.sdk.app
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -306,7 +307,7 @@ class FirstFragment : Fragment() {
   private fun getPartnerTokenProvider(): PartnerTokenProvider {
     val token = binding.ssoPartnerToken.text.toString()
     return object : PartnerTokenProvider {
-      override fun fetchPartnerToken(requester: PartnerTokenProvider.Requester, callback: PartnerTokenCallback) {
+      override fun fetchPartnerToken(activity: Activity, requester: PartnerTokenProvider.Requester, callback: PartnerTokenCallback) {
         if (token.isNullOrEmpty()) {
           callback(Err(PartnerTokenErrorUserNotLoggedIn()))
         } else {

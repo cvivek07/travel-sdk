@@ -104,5 +104,6 @@ class HtmlOutJsInterfaceTests {
         else
             """javascript:{myCallback('{"promiseId":"myPromiseId","data":{"responseCode":200,"grantToken":"$token"}}');};"""
     assertEquals(expectedUrl, shadowWebView.lastLoadedUrl)
+    assertEquals(fragment.requireActivity(), fakePartnerTokenProvider.passedActivity)
   }
 }

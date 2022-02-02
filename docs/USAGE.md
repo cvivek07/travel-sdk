@@ -96,6 +96,7 @@ When opening ixigo SDK it is possible to login the user automatically into their
 ```kotlin
 class MyAppPartnerTokenProvider(): PartnerTokenProvider {
   override fun fetchPartnerToken(
+      activity: Activity,
       requester: PartnerTokenProvider.Requester,
       callback: PartnerTokenCallback
   ) {

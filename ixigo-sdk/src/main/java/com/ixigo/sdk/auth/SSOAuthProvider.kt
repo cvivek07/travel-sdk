@@ -31,7 +31,8 @@ class SSOAuthProvider(private val partnerTokenProvider: PartnerTokenProvider) : 
     private set
 
   override fun login(fragmentActivity: FragmentActivity, callback: AuthCallback): Boolean {
-    partnerTokenProvider.fetchPartnerToken(PartnerTokenProvider.Requester.CUSTOMER) {
+    partnerTokenProvider.fetchPartnerToken(
+        fragmentActivity, PartnerTokenProvider.Requester.CUSTOMER) {
       when (it) {
         is Ok -> exchangeToken(it.value, callback)
         is Err -> callback(Err(Error(it.value.message)))
