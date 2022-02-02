@@ -19,7 +19,7 @@ Inside **app/build.gradle**
 ```groovy
 dependencies {
   // Other dependencies...
-  implementation "com.ixigo.sdk:ixigo-sdk:1.11.4"
+  implementation "com.ixigo.sdk:ixigo-sdk:1.11.3"
 }
 
 ```
@@ -45,7 +45,7 @@ Inside **app/build.gradle**
 ```groovy
 dependencies {
   // Other dependencies...
-  implementation "com.ixigo.sdk:ixigo-sdk:1.11.4-SNAPSHOT"
+  implementation "com.ixigo.sdk:ixigo-sdk:1.11.3-SNAPSHOT"
 }
 
 ```
@@ -115,6 +115,18 @@ IxigoSDK.init(authProvider = MyAppPartnerTokenProvider(), /* Other params*/)
 ```
 
 `PartnerTokenProvider.Requester` should be used by your implementation to determine how to obtain the token. For instance, if we pass `CUSTOMER`, it would be OK to present a LoginDialog since the Customer initiated this request. Otherwise, we should not show any UI to the customer.
+
+If your `PartnerTokenProvider` implementation starts another activity for result (eg: open login dialog), you can implement as well `ActivityResultHandler` to get a callback when the Activity is finished
+
+```kotlin
+class MyPartnerTokenProvider(): PartnerTokenProvider, ActivityResultHandler {
+  
+  // ...
+
+  override fun handle(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
+    TODO("Handle Activity Result")
+  }
+}
 
 ### Payment
 
