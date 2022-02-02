@@ -44,7 +44,7 @@ build-all:
   script:
     # `overallCoverageReport` builds everything and creates coverage info
     # `app:lintDebug` is used as an unmbrella project at the moment to run all module Lints
-    - "./gradlew overallCoverageReport app:assembleDebug app:lintDebug spotlessCheck --stacktrace $GRADLE_SCAN"
+    - "./gradlew overallCoverageReport app:assembleDebug app:lintDebug spotlessCheck --stacktrace $GRADLE_SCAN_OPTION"
   artifacts:
     paths:
       - "**/build/reports"
@@ -67,7 +67,7 @@ coverage:mergeRequest:
   interruptible: true
   script:
     - git fetch origin $CI_MERGE_REQUEST_TARGET_BRANCH_NAME:$CI_MERGE_REQUEST_TARGET_BRANCH_NAME
-    - "./gradlew jacocoDiffCoverage -PtargetBranch=$CI_MERGE_REQUEST_TARGET_BRANCH_NAME --continue"
+    - "./gradlew jacocoDiffCoverage -PtargetBranch=$CI_MERGE_REQUEST_TARGET_BRANCH_NAME --continue $GRADLE_SCAN_OPTION"
   artifacts:
     when: always
     paths:
@@ -86,7 +86,7 @@ deploy:ixigo-sdk:
   rules:
     - if: '$CI_COMMIT_BRANCH == "development"'
   script:
-    - "./gradlew $LIB:publishSnapshotPublicationToNexusSnapshotRepository --stacktrace"
+    - "./gradlew $LIB:publishSnapshotPublicationToNexusSnapshotRepository --stacktrace $GRADLE_SCAN_OPTION"
 
 danger:
   stage: post-build
@@ -127,7 +127,7 @@ release:
     - yarn run release -- -t ixigo-sdk- --no-verify
     - git push --no-verify --follow-tags http://root:$REPO_ACCESS_TOKEN@$CI_SERVER_HOST/$CI_PROJECT_PATH.git HEAD:development
     - yarn run pdf-changelog
-    - "./gradlew ixigo-sdk:publishReleasePublicationToNexusRepository --stacktrace"
+    - "./gradlew ixigo-sdk:publishReleasePublicationToNexusRepository --stacktrace $GRADLE_SCAN_OPTION"
     - yarn run slack-new-version
   artifacts:
     name: CHANGELOG
