@@ -22,6 +22,7 @@ import com.ixigo.sdk.app.databinding.FragmentFirstBinding
 import com.ixigo.sdk.auth.*
 import com.ixigo.sdk.bus.BusConfig
 import com.ixigo.sdk.bus.BusSDK
+import com.ixigo.sdk.common.ActivityResultHandler
 import com.ixigo.sdk.common.Err
 import com.ixigo.sdk.common.Ok
 import com.ixigo.sdk.common.Result
@@ -306,15 +307,7 @@ class FirstFragment : Fragment() {
 
   private fun getPartnerTokenProvider(): PartnerTokenProvider {
     val token = binding.ssoPartnerToken.text.toString()
-    return object : PartnerTokenProvider {
-      override fun fetchPartnerToken(activity: Activity, requester: PartnerTokenProvider.Requester, callback: PartnerTokenCallback) {
-        if (token.isNullOrEmpty()) {
-          callback(Err(PartnerTokenErrorUserNotLoggedIn()))
-        } else {
-          callback(Ok(PartnerToken(token)))
-        }
-      }
-    }
+    return FakePartnerTokenProvider(token)
   }
 
   override fun onDestroyView() {

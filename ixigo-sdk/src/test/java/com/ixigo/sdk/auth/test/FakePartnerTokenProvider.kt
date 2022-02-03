@@ -1,6 +1,7 @@
 package com.ixigo.sdk.auth.test
 
 import android.app.Activity
+import androidx.fragment.app.FragmentActivity
 import com.ixigo.sdk.auth.PartnerToken
 import com.ixigo.sdk.auth.PartnerTokenCallback
 import com.ixigo.sdk.auth.PartnerTokenErrorSDK
@@ -23,7 +24,7 @@ class FakePartnerTokenProvider(
   constructor(token: String?) : this(token?.let { PartnerToken((it)) } ?: null)
 
   override fun fetchPartnerToken(
-      activity: Activity,
+      activity: FragmentActivity,
       requester: PartnerTokenProvider.Requester,
       callback: PartnerTokenCallback
   ) {

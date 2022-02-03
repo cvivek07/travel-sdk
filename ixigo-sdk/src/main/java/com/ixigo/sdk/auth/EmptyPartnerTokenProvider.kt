@@ -1,11 +1,11 @@
 package com.ixigo.sdk.auth
 
-import android.app.Activity
+import androidx.fragment.app.FragmentActivity
 import com.ixigo.sdk.common.Err
 
 object EmptyPartnerTokenProvider : PartnerTokenProvider {
   override fun fetchPartnerToken(
-      activity: Activity,
+      activity: FragmentActivity,
       requester: PartnerTokenProvider.Requester,
       callback: PartnerTokenCallback
   ) {

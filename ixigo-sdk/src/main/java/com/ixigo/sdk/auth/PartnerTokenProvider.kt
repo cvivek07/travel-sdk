@@ -1,6 +1,6 @@
 package com.ixigo.sdk.auth
 
-import android.app.Activity
+import androidx.fragment.app.FragmentActivity
 import com.ixigo.sdk.common.Generated
 import com.ixigo.sdk.common.Result
 
@@ -9,7 +9,11 @@ typealias PartnerTokenResult = Result<PartnerToken, PartnerTokenError>
 typealias PartnerTokenCallback = (PartnerTokenResult) -> Unit
 
 interface PartnerTokenProvider {
-  fun fetchPartnerToken(activity: Activity, requester: Requester, callback: PartnerTokenCallback)
+  fun fetchPartnerToken(
+      activity: FragmentActivity,
+      requester: Requester,
+      callback: PartnerTokenCallback
+  )
 
   /** Identifies who is requesting a partnerToken */
   enum class Requester {

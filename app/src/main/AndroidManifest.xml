@@ -26,6 +26,7 @@
 
         <activity android:name=".MultiModelActivity"></activity>
         <activity android:name=".BusMultiModelActivity"></activity>
+        <activity android:name=".FakeLoginActivity"></activity>
     </application>
 
 </manifest>

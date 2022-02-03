@@ -1,5 +1,6 @@
 package com.ixigo.sdk.webview
 
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -31,6 +32,11 @@ class WebActivity : AppCompatActivity(), WebViewDelegate {
     setStatusBarColor()
 
     supportFragmentManager.executePendingTransactions()
+  }
+
+  override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    super.onActivityResult(requestCode, resultCode, data)
+    webViewFragment.onActivityResult(requestCode, resultCode, data)
   }
 
   private fun setStatusBarColor() {
