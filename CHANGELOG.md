@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.1](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-2.0.0...ixigo-sdk-2.0.1) (2022-02-03)
+
+
+### Bug Fixes
+
+* make sure activity result is forwarded to PartnerTokenProvider ([705d138](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/705d1382dfae6eb430def4a7596f17cbc4df524b))
+
 ## [2.0.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-1.11.4...ixigo-sdk-2.0.0) (2022-02-02)
 
 
