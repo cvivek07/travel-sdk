@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.2](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-2.0.1...ixigo-sdk-2.0.2) (2022-02-04)
+
+
+### Bug Fixes
+
+* allow cookie deletion ([d09d813](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/d09d813669e111ee86d010cdef6504045f6c4c5a))
+* do not apply HTMLOut to ixigo PWAs ([cd1281e](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/cd1281e69967654efee4ec666646cbe15cd56423))
+
 ### [2.0.1](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-2.0.0...ixigo-sdk-2.0.1) (2022-02-03)
 
 
