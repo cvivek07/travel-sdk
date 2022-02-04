@@ -185,6 +185,21 @@ class IxiWebViewTests {
     }
   }
 
+  @Test
+  fun `should apply to ixigo`() {
+    assertTrue(ixiWebView.shouldApplyTo("https://www.ixigo.com/pwa"))
+  }
+
+  @Test
+  fun `should apply to confirmtkt`() {
+    assertTrue(ixiWebView.shouldApplyTo("https://www.confirmtkt.com/pwa"))
+  }
+
+  @Test
+  fun `should apply to abhibus`() {
+    assertTrue(ixiWebView.shouldApplyTo("https://www.abhibus.com/pwa"))
+  }
+
   private fun testLogin(token: String?) {
     doAnswer {
           val callback: AuthCallback = it.getArgument(1)

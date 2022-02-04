@@ -12,10 +12,13 @@ import timber.log.Timber
 class HtmlOutJsInterface(
     private val webViewFragment: WebViewFragment,
     private val partnerTokenProvider: PartnerTokenProvider
-) : JsInterface {
+) : JsInterfaceRegexApply {
   private val moshi by lazy { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
   private val ssoInputAdapter by lazy { moshi.adapter(SSOInput::class.java) }
   private val ssoResultAdapter by lazy { moshi.adapter(SSOResult::class.java) }
+
+  override val urlRegex: Regex
+    get() = Regex("abhibus\\.com|confirmtkt\\.com")
 
   override val name: String
     get() = "HTMLOUT"

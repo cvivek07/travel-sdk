@@ -85,25 +85,15 @@ class WebViewFragmentUnitTests {
   }
 
   @Test
-  fun `test that initial Url is not loaded if not present`() {
-    scenario = launchFragmentInContainer()
-    scenario.onFragment {
-      val shadowWebView = shadowOf(it.webView)
-      assertNull(shadowWebView.lastLoadedUrl)
-      assertNull(shadowWebView.lastAdditionalHttpHeaders)
-    }
-  }
-
-  @Test
   fun `test that IxiWebView is loaded`() {
     val ixiWebView = shadowWebView.getJavascriptInterface("IxiWebView") as IxiWebView
     assertNotNull(ixiWebView)
   }
 
   @Test
-  fun `test that HtmlOut is loaded`() {
-    val htmlOut = shadowWebView.getJavascriptInterface("HTMLOUT") as HtmlOutJsInterface
-    assertNotNull(htmlOut)
+  fun `test that HtmlOut is NOT loaded for ixigo website`() {
+    val htmlOut = shadowWebView.getJavascriptInterface("HTMLOUT") as? HtmlOutJsInterface
+    assertNull(htmlOut)
   }
 
   @Test

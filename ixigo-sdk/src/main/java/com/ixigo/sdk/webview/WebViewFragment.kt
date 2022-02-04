@@ -41,6 +41,9 @@ class WebViewFragment : Fragment() {
   val analyticsProvider: AnalyticsProvider
     get() = IxigoSDK.instance.analyticsProvider
 
+  val initialPageData: InitialPageData
+    get() = arguments?.getParcelable(INITIAL_PAGE_DATA_ARGS)!!
+
   var delegate: WebViewDelegate? = null
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,11 +81,8 @@ class WebViewFragment : Fragment() {
     addJavascriptInterface(IxiWebView(this))
     addJavascriptInterface(HtmlOutJsInterface(this, IxigoSDK.instance.partnerTokenProvider))
 
-    val initialPageData = arguments?.getParcelable<InitialPageData>(INITIAL_PAGE_DATA_ARGS)
-    if (initialPageData != null) {
-      loadableView.status = Loading()
-      webView.loadUrl(initialPageData.url, initialPageData.headers)
-    }
+    loadableView.status = Loading()
+    webView.loadUrl(initialPageData.url, initialPageData.headers)
 
     return binding.root
   }
@@ -97,7 +97,9 @@ class WebViewFragment : Fragment() {
 
   @SuppressLint("JavascriptInterface")
   private fun addJavascriptInterface(jsInterface: JsInterface) {
-    webView.addJavascriptInterface(jsInterface, jsInterface.name)
+    if (jsInterface.shouldApplyTo(initialPageData.url)) {
+      webView.addJavascriptInterface(jsInterface, jsInterface.name)
+    }
   }
 
   internal fun loadUrl(url: String, headers: Map<String, String> = mapOf()) {
@@ -201,6 +203,15 @@ data class InitialPageData(
 
 interface JsInterface {
   val name: String
+  fun shouldApplyTo(url: String): Boolean
+}
+
+interface JsInterfaceRegexApply : JsInterface {
+  val urlRegex: Regex
+
+  override fun shouldApplyTo(url: String): Boolean {
+    return urlRegex.containsMatchIn(url)
+  }
 }
 
 interface WebViewDelegate {

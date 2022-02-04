@@ -79,6 +79,21 @@ class HtmlOutJsInterfaceTests {
     verify(delegate).onQuit()
   }
 
+  @Test
+  fun `should NOT apply to ixigo`() {
+    assertFalse(htmlOut.shouldApplyTo("https://www.ixigo.com/pwa"))
+  }
+
+  @Test
+  fun `should apply to confirmtkt`() {
+    assertTrue(htmlOut.shouldApplyTo("https://www.confirmtkt.com/pwa"))
+  }
+
+  @Test
+  fun `should apply to abhibus`() {
+    assertTrue(htmlOut.shouldApplyTo("https://www.abhibus.com/pwa"))
+  }
+
   private fun testLogin(token: String?) {
     token?.let {
       fakePartnerTokenProvider.partnerTokenMap =

@@ -1,18 +1,22 @@
 package com.ixigo.sdk.ui
 
 import android.app.Activity
+import android.app.Application
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.ProgressBar
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.Lifecycle
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.core.app.launchActivity
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ixigo.sdk.test.R
 import com.ixigo.sdk.test.initializeTestIxigoSDK
+import com.ixigo.sdk.webview.InitialPageData
 import com.ixigo.sdk.webview.WebActivity
+import com.ixigo.sdk.webview.WebViewFragment
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -34,7 +38,14 @@ class LoadableViewTests {
   @Before
   fun setup() {
     initializeTestIxigoSDK()
-    val scenario = launchActivity<WebActivity>().moveToState(Lifecycle.State.CREATED)
+    val app = ApplicationProvider.getApplicationContext<Application>()
+    val intent =
+        Intent(app, WebActivity::class.java).also {
+          it.putExtra(
+              WebViewFragment.INITIAL_PAGE_DATA_ARGS,
+              InitialPageData(url = "https://www.ixigo.com/pwa"))
+        }
+    val scenario = launchActivity<WebActivity>(intent)
     scenario.onActivity {
       activity = it
       loadableView = it.findViewById(R.id.loadableView)
@@ -42,11 +53,11 @@ class LoadableViewTests {
   }
 
   @Test
-  fun testInitialStateIsLoaded() {
-    assertEquals(Loaded, loadableView.status)
-    assertEquals(VISIBLE, contentView.visibility)
+  fun testInitialStateIsLoading() {
+    assertEquals(Loading(), loadableView.status)
+    assertEquals(GONE, contentView.visibility)
     assertEquals(GONE, errorView.visibility)
-    assertEquals(GONE, loadingView.visibility)
+    assertEquals(VISIBLE, loadingView.visibility)
   }
 
   @Test

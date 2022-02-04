@@ -46,6 +46,7 @@ build-all:
     # `app:lintDebug` is used as an unmbrella project at the moment to run all module Lints
     - "./gradlew overallCoverageReport app:assembleDebug app:lintDebug spotlessCheck --stacktrace $GRADLE_SCAN_OPTION"
   artifacts:
+    when: always
     paths:
       - "**/build/reports"
       - "**/build/outputs"

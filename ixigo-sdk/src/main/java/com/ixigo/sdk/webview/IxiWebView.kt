@@ -11,10 +11,12 @@ class IxiWebView(
     private val fragment: WebViewFragment,
     private val ssoAuthProvider: SSOAuthProvider =
         SSOAuthProvider(IxigoSDK.instance.partnerTokenProvider)
-) : JsInterface {
+) : JsInterfaceRegexApply {
 
   private val moshi by lazy { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
   private val paymentInputAdapter by lazy { moshi.adapter(PaymentInput::class.java) }
+  override val urlRegex: Regex
+    get() = Regex("ixigo\\.com|abhibus\\.com|confirmtkt\\.com")
 
   override val name: String
     get() = "IxiWebView"
