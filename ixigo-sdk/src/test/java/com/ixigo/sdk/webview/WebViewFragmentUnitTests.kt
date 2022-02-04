@@ -85,15 +85,26 @@ class WebViewFragmentUnitTests {
   }
 
   @Test
-  fun `test that IxiWebView is loaded`() {
-    val ixiWebView = shadowWebView.getJavascriptInterface("IxiWebView") as IxiWebView
-    assertNotNull(ixiWebView)
-  }
-
-  @Test
-  fun `test that HtmlOut is NOT loaded for ixigo website`() {
-    val htmlOut = shadowWebView.getJavascriptInterface("HTMLOUT") as? HtmlOutJsInterface
-    assertNull(htmlOut)
+  fun `test that jsInterfaces are loaded`() {
+    val mockJsInterface: JsInterface = mock { on { name } doReturn "mockJsInterface" }
+    IxigoSDK.instance.webViewConfig.addJsInterfaceProvider(
+        object : JsInterfaceProvider {
+          override fun getJsInterfaces(
+              url: String,
+              webViewFragment: WebViewFragment
+          ): List<JsInterface> {
+            return listOf(mockJsInterface)
+          }
+        })
+    scenario =
+        launchFragmentInContainer(
+            Bundle().also {
+              it.putParcelable(WebViewFragment.INITIAL_PAGE_DATA_ARGS, initialPageData)
+            })
+    scenario.onFragment {
+      shadowWebView = shadowOf(it.webView) as CustomShadowWebview
+      assertEquals(mockJsInterface, shadowWebView.getJavascriptInterface("mockJsInterface"))
+    }
   }
 
   @Test

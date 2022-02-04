@@ -9,8 +9,7 @@ import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
 import com.ixigo.sdk.bus.BusSDK.Companion.init
 import com.ixigo.sdk.common.SdkSingleton
-import com.ixigo.sdk.webview.InitialPageData
-import com.ixigo.sdk.webview.WebViewFragment
+import com.ixigo.sdk.webview.*
 
 /**
  * This is the main entrypoint to interact with Bus SDK.
@@ -20,7 +19,7 @@ import com.ixigo.sdk.webview.WebViewFragment
  * Before using it, you need to call [BusSDK.init(...)][init] once when you start-up your
  * Application.
  */
-class BusSDK(internal val config: Config) {
+class BusSDK(internal val config: Config) : JsInterfaceProvider {
 
   val analyticsProvider: AnalyticsProvider
     get() = IxigoSDK.instance.analyticsProvider
@@ -118,6 +117,8 @@ class BusSDK(internal val config: Config) {
       val instance = BusSDK(config = Config(getPwaBaseUrl(config)))
       INSTANCE = instance
 
+      IxigoSDK.instance.webViewConfig.addJsInterfaceProvider(instance)
+
       IxigoSDK.instance.analyticsProvider.logEvent(
           Event(
               name = "sdkInit",
@@ -137,11 +138,15 @@ class BusSDK(internal val config: Config) {
         else -> throw IllegalArgumentException("Unsupported clientId=$clientId")
       }
     }
+  }
 
-    private fun assertIxigoSDKIsInitialized() {
-      // This will throw an exception if IxigoSDK is not initialized
-      IxigoSDK.instance
+  override fun getJsInterfaces(url: String, webViewFragment: WebViewFragment): List<JsInterface> {
+    var jsInterfaces = mutableListOf<JsInterface>()
+    if (url.startsWith(config.apiBaseUrl)) {
+      jsInterfaces.add(IxiWebView(webViewFragment))
+      jsInterfaces.add(HtmlOutJsInterface(webViewFragment))
     }
+    return jsInterfaces
   }
 }
 

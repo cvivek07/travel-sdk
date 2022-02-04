@@ -6,19 +6,24 @@ import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
 import com.ixigo.sdk.common.SdkSingleton
+import com.ixigo.sdk.webview.*
 
-class TrainsSDK(private val config: Config) {
+class TrainsSDK(private val config: Config) : JsInterfaceProvider {
 
   val analyticsProvider: AnalyticsProvider
     get() = IxigoSDK.instance.analyticsProvider
 
-  /** Opens ConfitmTkt PWA home to search for Train trips */
+  /**
+   * Opens ConfirmTkt PWA home to search for Train trips
+   *
+   * @param context
+   */
   fun launchHome(context: Context) {
     analyticsProvider.logEvent(Event("trainsStartHome"))
     IxigoSDK.instance.launchWebActivity(context, getBaseUrl())
   }
 
-  private fun getBaseUrl(): String {
+  internal fun getBaseUrl(): String {
     val clientId = IxigoSDK.instance.appInfo.clientId
     return when (clientId) {
       "abhibus" -> {
@@ -34,10 +39,13 @@ class TrainsSDK(private val config: Config) {
   companion object : SdkSingleton<TrainsSDK>("TrainsSDK") {
 
     fun init(config: Config = Config.PROD): TrainsSDK {
+      assertIxigoSDKIsInitialized()
       assertNotCreated()
 
       val instance = TrainsSDK(config = config)
       INSTANCE = instance
+
+      IxigoSDK.instance.webViewConfig.addJsInterfaceProvider(instance)
 
       IxigoSDK.instance.analyticsProvider.logEvent(
           Event(
@@ -50,5 +58,14 @@ class TrainsSDK(private val config: Config) {
   enum class Config {
     STAGING,
     PROD
+  }
+
+  override fun getJsInterfaces(url: String, webViewFragment: WebViewFragment): List<JsInterface> {
+    var jsInterfaces = mutableListOf<JsInterface>()
+    if (url.startsWith(getBaseUrl())) {
+      jsInterfaces.add(IxiWebView(webViewFragment))
+      jsInterfaces.add(HtmlOutJsInterface(webViewFragment))
+    }
+    return jsInterfaces
   }
 }

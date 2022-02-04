@@ -2,6 +2,7 @@ package com.ixigo.sdk.common
 
 import android.content.Context
 import com.google.android.gms.analytics.GoogleAnalytics
+import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.IxigoSDK.Companion.init
 import com.ixigo.sdk.R
 import com.ixigo.sdk.analytics.AnalyticsProvider
@@ -55,5 +56,10 @@ abstract class SdkSingleton<T>(private val sdkName: String) {
     if (INSTANCE != null) {
       throw IllegalStateException("BusSDK has already been initialized")
     }
+  }
+
+  internal fun assertIxigoSDKIsInitialized() {
+    // This will throw an exception if IxigoSDK is not initialized
+    IxigoSDK.instance
   }
 }

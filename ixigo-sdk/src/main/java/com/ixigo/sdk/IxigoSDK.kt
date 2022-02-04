@@ -30,7 +30,9 @@ internal constructor(
     internal val paymentProvider: PaymentProvider,
     internal val analyticsProvider: AnalyticsProvider,
     internal val config: Config = ProdConfig
-) {
+) : JsInterfaceProvider {
+
+  internal val webViewConfig = WebViewConfig()
 
   companion object : SdkSingleton<IxigoSDK>("IxigoSDK") {
 
@@ -74,13 +76,16 @@ internal constructor(
         config: Config = ProdConfig
     ) {
       assertNotCreated()
-      INSTANCE =
+      val ixigoSDK =
           IxigoSDK(
               appInfo.replaceDefaults(UUIDFactory(context), DeviceIdFactory(context)),
               partnerTokenProvider,
               paymentProvider,
               analyticsProvider,
               config)
+      INSTANCE = ixigoSDK
+
+      ixigoSDK.webViewConfig.addJsInterfaceProvider(ixigoSDK)
 
       analyticsProvider.logEvent(
           Event(
@@ -133,5 +138,13 @@ internal constructor(
     } catch (e: Exception) {
       false
     }
+  }
+
+  override fun getJsInterfaces(url: String, webViewFragment: WebViewFragment): List<JsInterface> {
+    var jsInterfaces = mutableListOf<JsInterface>()
+    if (url.startsWith(config.apiBaseUrl)) {
+      jsInterfaces.add(IxiWebView(webViewFragment))
+    }
+    return jsInterfaces
   }
 }

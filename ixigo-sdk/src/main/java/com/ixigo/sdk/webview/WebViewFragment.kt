@@ -76,10 +76,9 @@ class WebViewFragment : Fragment() {
     webView.settings.javaScriptEnabled = true
     webView.settings.domStorageEnabled = true
 
-    // TODO: Do not hardcode JsInterfaces and generalize this so that WebViewFragment is not aware
-    // of specific SDKs
-    addJavascriptInterface(IxiWebView(this))
-    addJavascriptInterface(HtmlOutJsInterface(this, IxigoSDK.instance.partnerTokenProvider))
+    val jsInterfaces =
+        IxigoSDK.instance.webViewConfig.getMatchingJsInterfaces(initialPageData.url, this)
+    jsInterfaces.iterator().forEach(this::addJavascriptInterface)
 
     loadableView.status = Loading()
     webView.loadUrl(initialPageData.url, initialPageData.headers)
@@ -97,9 +96,7 @@ class WebViewFragment : Fragment() {
 
   @SuppressLint("JavascriptInterface")
   private fun addJavascriptInterface(jsInterface: JsInterface) {
-    if (jsInterface.shouldApplyTo(initialPageData.url)) {
-      webView.addJavascriptInterface(jsInterface, jsInterface.name)
-    }
+    webView.addJavascriptInterface(jsInterface, jsInterface.name)
   }
 
   internal fun loadUrl(url: String, headers: Map<String, String> = mapOf()) {
@@ -203,15 +200,6 @@ data class InitialPageData(
 
 interface JsInterface {
   val name: String
-  fun shouldApplyTo(url: String): Boolean
-}
-
-interface JsInterfaceRegexApply : JsInterface {
-  val urlRegex: Regex
-
-  override fun shouldApplyTo(url: String): Boolean {
-    return urlRegex.containsMatchIn(url)
-  }
 }
 
 interface WebViewDelegate {

@@ -9,6 +9,11 @@ import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
 import com.ixigo.sdk.test.initializeTestIxigoSDK
+import com.ixigo.sdk.webview.HtmlOutJsInterface
+import com.ixigo.sdk.webview.IxiWebView
+import com.ixigo.sdk.webview.WebViewConfig
+import com.ixigo.sdk.webview.WebViewFragment
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -51,12 +56,12 @@ class TrainsSDKTests {
 
   @Test
   fun `test trains home for abhibus`() {
-    testBusHome(clientId = "abhibus", expectedUrl = "https://trains.abhibus.com/")
+    testTrainsHome(clientId = "abhibus", expectedUrl = "https://trains.abhibus.com/")
   }
 
   @Test
-  fun `test bus home for abhibus and staging`() {
-    testBusHome(
+  fun `test trains home for abhibus and staging`() {
+    testTrainsHome(
         clientId = "abhibus",
         expectedUrl = "https://abhibus-staging.confirmtkt.com/",
         config = TrainsSDK.Config.STAGING)
@@ -64,14 +69,19 @@ class TrainsSDKTests {
 
   @Test(expected = IllegalArgumentException::class)
   fun `test trains home for unknown clientId throws Exception`() {
-    testBusHome(clientId = "ixigo", expectedUrl = "nothing")
+    testTrainsHome(clientId = "ixigo", expectedUrl = "nothing")
   }
 
-  private fun testBusHome(clientId: String, expectedUrl: String, config: TrainsSDK.Config? = null) {
+  private fun testTrainsHome(
+      clientId: String,
+      expectedUrl: String,
+      config: TrainsSDK.Config? = null
+  ) {
     val mockAnalyticsProvider: AnalyticsProvider = mock()
     val mockIxigoSDK: IxigoSDK = mock {
       on { appInfo } doReturn AppInfo(clientId = clientId, apiKey = "any", appVersion = 1)
       on { analyticsProvider } doReturn mockAnalyticsProvider
+      on { webViewConfig } doReturn WebViewConfig()
     }
     val application: Application = getApplicationContext()
     IxigoSDK.replaceInstance(mockIxigoSDK)
@@ -79,5 +89,31 @@ class TrainsSDKTests {
     busSDK.launchHome(application)
     verify(mockIxigoSDK).launchWebActivity(application, expectedUrl)
     verify(mockAnalyticsProvider).logEvent(Event("trainsStartHome"))
+  }
+
+  @Test
+  fun `test that IxiWebView and HtmlOut are added to Js Interfaces for confirmtkt url`() {
+    initializeTestIxigoSDK(
+        appInfo = AppInfo(clientId = "abhibus", apiKey = "abhibus", appVersion = 1))
+    val trainsSDK = TrainsSDK.init()
+    val webViewFragment: WebViewFragment = mock()
+    val interfaces =
+        IxigoSDK.instance.webViewConfig.getMatchingJsInterfaces(
+            trainsSDK.getBaseUrl(), webViewFragment)
+    Assert.assertEquals(2, interfaces.size)
+    Assert.assertNotNull(interfaces[0] as IxiWebView)
+    Assert.assertNotNull(interfaces[1] as HtmlOutJsInterface)
+  }
+
+  @Test
+  fun `test that IxiWebView is NOT added to Js Interfaces for ixigo url`() {
+    initializeTestIxigoSDK(
+        appInfo = AppInfo(clientId = "abhibus", apiKey = "abhibus", appVersion = 1))
+    TrainsSDK.init()
+    val webViewFragment: WebViewFragment = mock()
+    val interfaces =
+        IxigoSDK.instance.webViewConfig.getMatchingJsInterfaces(
+            "https://www.ixigo.com/test", webViewFragment)
+    Assert.assertEquals(0, interfaces.size)
   }
 }
