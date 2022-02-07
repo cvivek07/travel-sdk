@@ -89,8 +89,6 @@ val config = Config(apiBaseUrl = "http://mycustomhost.com/api")
 
 ## Authentication
 
-> **Note**: SSO Authentication is not available in Prod yet. You will need to use a `build3` staging server when initializing IxigoSDK, as described in [Use staging servers](#use-staging-servers)
-
 When opening ixigo SDK it is possible to login the user automatically into their ixigo account by exchanging the host App token for an ixigo token. To do that, you need to implement `PartnerTokenProvider` and pass it when initializing `IxigoSDK`
 
 ```kotlin
