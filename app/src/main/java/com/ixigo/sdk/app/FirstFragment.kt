@@ -39,15 +39,12 @@ import kotlin.reflect.full.declaredFunctions
 import kotlin.reflect.full.functions
 import kotlin.reflect.jvm.isAccessible
 
-/** A simple [Fragment] subclass as the default destination in the navigation. */
 class FirstFragment : Fragment() {
 
   private var _binding: FragmentFirstBinding? = null
   private var sdkInitialized: Boolean = false
   private val progressDialog by lazy { ProgressDialog(requireActivity()) }
 
-  // This property is only valid between onCreateView and
-  // onDestroyView.
   private val binding
     get() = _binding!!
 
@@ -63,16 +60,10 @@ class FirstFragment : Fragment() {
   }
 
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
-    // Handle action bar item clicks here. The action bar will
-    // automatically handle clicks on the Home/Up button, so long
-    // as you specify a parent activity in AndroidManifest.xml.
     return when (item.itemId) {
       R.id.action_clear_storage -> {
         initSDK()
         IxigoSDK.instance.onLogout()
-//        WebView(this).clearCache(true)
-//        CookieManager.getInstance().removeAllCookies(null)
-//        CookieManager.getInstance().flush()
         Toast.makeText(requireContext(), "Storage cleared", Toast.LENGTH_SHORT).show()
         return true
       }
@@ -99,7 +90,7 @@ class FirstFragment : Fragment() {
       initSDK()
 
       val enabled =
-          getAuthProvider().login(requireActivity()) {
+          getSSOTestAuthProvider().login(requireActivity()) {
             progressDialog.hide()
             Snackbar.make(binding.buttonSSOTest, getSsoAuthMessage(it), Snackbar.LENGTH_LONG).show()
           }
@@ -326,9 +317,22 @@ class FirstFragment : Fragment() {
     }
   }
 
-  private fun getAuthProvider(): AuthProvider {
+  private fun getSSOTestAuthProvider(): AuthProvider {
+    val token = binding.ssoPartnerToken.text.toString()
     return SSOAuthProvider(
-        getPartnerTokenProvider())
+      object: PartnerTokenProvider {
+        override fun fetchPartnerToken(
+          activity: FragmentActivity,
+          requester: PartnerTokenProvider.Requester,
+          callback: PartnerTokenCallback
+        ) {
+          if (token.isNullOrBlank()) {
+            callback(Err(PartnerTokenErrorUserNotLoggedIn()))
+          } else {
+            callback(Ok(PartnerToken(token)))
+          }
+        }
+      })
   }
 
   private fun getPartnerTokenProvider(): PartnerTokenProvider {
