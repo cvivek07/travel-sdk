@@ -2,7 +2,10 @@ package com.ixigo.sdk
 
 import android.net.Uri
 
-data class Config(val apiBaseUrl: String) {
+data class Config(
+    val apiBaseUrl: String = "https://www.ixigo.com/",
+    val enableExitBar: Boolean = true
+) {
 
   fun createUrl(path: String?, parameters: Map<String, String> = mapOf()): String {
     val builder = Uri.parse(apiBaseUrl).buildUpon()
@@ -12,7 +15,7 @@ data class Config(val apiBaseUrl: String) {
   }
 
   companion object {
-    val ProdConfig = Config("https://www.ixigo.com/")
+    val ProdConfig = Config()
     fun StagingBuildConfig(buildId: String) = Config("https://${buildId}.ixigo.com/")
   }
 }

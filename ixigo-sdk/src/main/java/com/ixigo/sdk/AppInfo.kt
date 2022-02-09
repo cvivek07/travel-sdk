@@ -6,6 +6,7 @@ package com.ixigo.sdk
  * @property clientId
  * @property apiKey
  * @property appVersion
+ * @property appName App Name will be this displayed in certain dialogs while using Ixigo SDK
  * @property deviceId Device Id should be constant through the use of your App for a specific user.
  * Do not set unless you have a specific use.
  * @property uuid UUID uniquely identifies a specific user. Do not set unless you have a specific
@@ -17,6 +18,7 @@ constructor(
     val clientId: String,
     val apiKey: String,
     val appVersion: Long,
+    val appName: String,
     val deviceId: String = defaultDeviceId,
     val uuid: String = defaultUuid
 ) {
@@ -43,6 +45,7 @@ constructor(
         clientId = clientId,
         apiKey = apiKey,
         appVersion = appVersion,
+        appName = appName,
         uuid = newUuid,
         deviceId = newDeviceId)
   }

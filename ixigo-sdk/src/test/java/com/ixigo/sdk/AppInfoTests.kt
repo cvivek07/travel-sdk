@@ -20,13 +20,15 @@ class AppInfoTests {
     val expectedDeviceId = "deviceId"
     Mockito.`when`(mockUUIDFactory.uuid).thenReturn(expectedUuid)
     Mockito.`when`(mockDeviceIdFactory.deviceID).thenReturn(expectedDeviceId)
-    val appInfo = AppInfo(clientId = "clientId", apiKey = "apiKey", appVersion = 1)
+    val appInfo =
+        AppInfo(clientId = "clientId", apiKey = "apiKey", appVersion = 1, appName = "appName")
     val newAppInfo = appInfo.replaceDefaults(mockUUIDFactory, mockDeviceIdFactory)
     assertEquals(
         AppInfo(
             clientId = appInfo.clientId,
             apiKey = appInfo.apiKey,
             appVersion = appInfo.appVersion,
+            appName = appInfo.appName,
             uuid = expectedUuid.toString(),
             deviceId = expectedDeviceId),
         newAppInfo)
@@ -41,6 +43,7 @@ class AppInfoTests {
             clientId = "clientId",
             apiKey = "apiKey",
             appVersion = 1,
+            appName = "appName",
             uuid = customUuid,
             deviceId = customDeviceId)
     val newAppInfo = appInfo.replaceDefaults(mockUUIDFactory, mockDeviceIdFactory)
@@ -49,6 +52,7 @@ class AppInfoTests {
             clientId = appInfo.clientId,
             apiKey = appInfo.apiKey,
             appVersion = appInfo.appVersion,
+            appName = appInfo.appName,
             uuid = customUuid,
             deviceId = customDeviceId),
         newAppInfo)

@@ -1,16 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/topExitBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/exit_top_nav_bar_color"
+        android:orientation="horizontal"
+        android:padding="5dp"
+        android:textAlignment="center">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginEnd="10dp"
+            android:src="@drawable/outline_chevron_left_24"
+            android:tint="#FFFFFF"></androidx.appcompat.widget.AppCompatImageView>
+
+        <TextView
+            android:id="@+id/topExitBarTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="#FFFFFF">
+
+        </TextView>
+    </LinearLayout>
 
     <com.ixigo.sdk.ui.LoadableViewContainer
+        android:id="@+id/loadableView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/loadableView">
+        android:layout_height="match_parent">
+
         <WebView
             android:id="@+id/webView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="0dp"
+            android:layout_weight="1" />
     </com.ixigo.sdk.ui.LoadableViewContainer>
-
-</FrameLayout>
+</LinearLayout>

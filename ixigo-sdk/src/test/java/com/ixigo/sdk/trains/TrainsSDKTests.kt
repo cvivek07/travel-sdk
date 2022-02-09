@@ -79,7 +79,8 @@ class TrainsSDKTests {
   ) {
     val mockAnalyticsProvider: AnalyticsProvider = mock()
     val mockIxigoSDK: IxigoSDK = mock {
-      on { appInfo } doReturn AppInfo(clientId = clientId, apiKey = "any", appVersion = 1)
+      on { appInfo } doReturn
+          AppInfo(clientId = clientId, apiKey = "any", appVersion = 1, appName = "appName")
       on { analyticsProvider } doReturn mockAnalyticsProvider
       on { webViewConfig } doReturn WebViewConfig()
     }
@@ -94,7 +95,8 @@ class TrainsSDKTests {
   @Test
   fun `test that IxiWebView and HtmlOut are added to Js Interfaces for confirmtkt url`() {
     initializeTestIxigoSDK(
-        appInfo = AppInfo(clientId = "abhibus", apiKey = "abhibus", appVersion = 1))
+        appInfo =
+            AppInfo(clientId = "abhibus", apiKey = "abhibus", appVersion = 1, appName = "appName"))
     val trainsSDK = TrainsSDK.init()
     val webViewFragment: WebViewFragment = mock()
     val interfaces =
@@ -108,7 +110,8 @@ class TrainsSDKTests {
   @Test
   fun `test that IxiWebView is NOT added to Js Interfaces for ixigo url`() {
     initializeTestIxigoSDK(
-        appInfo = AppInfo(clientId = "abhibus", apiKey = "abhibus", appVersion = 1))
+        appInfo =
+            AppInfo(clientId = "abhibus", apiKey = "abhibus", appVersion = 1, appName = "appName"))
     TrainsSDK.init()
     val webViewFragment: WebViewFragment = mock()
     val interfaces =

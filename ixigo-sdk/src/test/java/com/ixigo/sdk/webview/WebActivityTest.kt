@@ -28,7 +28,7 @@ class WebActivityTest {
 
   @Before
   fun setup() {
-    initializeTestIxigoSDK()
+    initializeTestIxigoSDK(config = com.ixigo.sdk.Config(enableExitBar = false))
   }
 
   @Test

@@ -9,10 +9,17 @@ import android.webkit.ValueCallback
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.core.content.ContextCompat.getColor
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.matcher.RootMatchers.isDialog
+import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.ixigo.sdk.Config.Companion.ProdConfig
 import com.ixigo.sdk.IxigoSDK
+import com.ixigo.sdk.R
 import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
 import com.ixigo.sdk.auth.test.ActivityResultPartnerTokenProvider
@@ -30,9 +37,11 @@ import org.junit.runner.RunWith
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
+import org.mockito.kotlin.verifyNoInteractions
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.Implements
+import org.robolectric.shadows.ShadowAlertDialog
 import org.robolectric.shadows.ShadowWebView
 
 @RunWith(AndroidJUnit4::class)
@@ -45,6 +54,7 @@ class WebViewFragmentUnitTests {
   private lateinit var shadowWebView: CustomShadowWebview
   private lateinit var fragmentActivity: Activity
   private lateinit var fragment: WebViewFragment
+  private lateinit var delegate: WebViewDelegate
   private lateinit var mockAnalyticsProvider: AnalyticsProvider
 
   @Before
@@ -56,8 +66,10 @@ class WebViewFragmentUnitTests {
             Bundle().also {
               it.putParcelable(WebViewFragment.INITIAL_PAGE_DATA_ARGS, initialPageData)
             })
+    delegate = mock()
     scenario.onFragment {
       fragment = it
+      fragment.delegate = delegate
       shadowWebView = shadowOf(it.webView) as CustomShadowWebview
       shadowWebView.performSuccessfulPageLoadClientCallbacks()
       shadowWebView.pushEntryToHistory(initialPageData.url)
@@ -254,11 +266,29 @@ class WebViewFragmentUnitTests {
   }
 
   @Test
-  fun `test statusBar color is updated from theme-color`() {
-    shadowWebView.jsCallbacks["document.querySelector('meta[name=\"theme-color\"]').content"] =
-        "#00FF00"
-    shadowWebView.webViewClient.onPageFinished(fragment.webView, initialPageData.url)
-    assertEquals(Color.parseColor("#00FF00"), fragmentActivity.window.statusBarColor)
+  fun `test statusBar color is the same as exitBar when exitBar is enabled`() {
+    assertEquals(
+        getColor(fragmentActivity, R.color.exit_top_nav_bar_color),
+        fragmentActivity.window.statusBarColor)
+  }
+
+  @Test
+  fun `test statusBar color is updated from theme-color when exitBar is disabled`() {
+    initializeTestIxigoSDK(config = ProdConfig.copy(enableExitBar = false))
+    scenario =
+        launchFragmentInContainer(
+            Bundle().also {
+              it.putParcelable(WebViewFragment.INITIAL_PAGE_DATA_ARGS, initialPageData)
+            })
+    scenario.onFragment {
+      fragment = it
+      fragmentActivity = it.requireActivity()
+      shadowWebView = shadowOf(it.webView) as CustomShadowWebview
+      shadowWebView.jsCallbacks["document.querySelector('meta[name=\"theme-color\"]').content"] =
+          "#00FF00"
+      shadowWebView.webViewClient.onPageFinished(fragment.webView, initialPageData.url)
+      assertEquals(Color.parseColor("#00FF00"), fragmentActivity.window.statusBarColor)
+    }
   }
 
   @Test
@@ -277,6 +307,27 @@ class WebViewFragmentUnitTests {
       verify(paymentProvider).handle(requestCode, responseCode, intent)
       verify(partnerTokenProvider).handle(requestCode, responseCode, intent)
     }
+  }
+
+  @Test
+  fun `test that confirming ExitTopBar Dialog calls onQuit on delegate`() {
+    onView(withId(R.id.topExitBar)).perform(click())
+    onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click())
+    verify(delegate).onQuit()
+  }
+
+  @Test
+  fun `test that cancelling ExitTopBar Dialog does NOT call onQuit on delegate`() {
+    onView(withId(R.id.topExitBar)).perform(click())
+    onView(withId(android.R.id.button2)).inRoot(isDialog()).perform(click())
+    verifyNoInteractions(delegate)
+  }
+
+  @Test
+  fun `test that pressing on exitTopBar shows ExitDialog`() {
+    onView(withId(R.id.topExitBar)).perform(click())
+    val alertDialog = ShadowAlertDialog.getLatestAlertDialog()
+    assertNotNull(alertDialog)
   }
 
   private fun assertLoadableViewStatus(status: Status) {

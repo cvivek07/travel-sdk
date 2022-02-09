@@ -8,14 +8,18 @@ import android.os.Bundle
 import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.webkit.*
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.VisibleForTesting
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import com.ixigo.sdk.IxigoSDK
+import com.ixigo.sdk.R
 import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
 import com.ixigo.sdk.common.ActivityResultHandler
@@ -83,6 +87,8 @@ class WebViewFragment : Fragment() {
     loadableView.status = Loading()
     webView.loadUrl(initialPageData.url, initialPageData.headers)
 
+    configureTopExitBar()
+
     return binding.root
   }
 
@@ -113,6 +119,27 @@ class WebViewFragment : Fragment() {
         webView.goBack()
       }
     }
+  }
+
+  private val usingTopExitBar: Boolean by lazy { IxigoSDK.instance.config.enableExitBar }
+
+  private fun configureTopExitBar() {
+    if (usingTopExitBar) {
+      binding.topExitBarTitle.text = IxigoSDK.instance.appInfo.appName
+      updateStatusBarColor(ContextCompat.getColor(requireContext(), R.color.exit_top_nav_bar_color))
+      binding.topExitBar.setOnClickListener {
+        setFragmentResultListener(ExitConfirmationResultCode) { _, _ -> delegate?.onQuit() }
+        ExitConfirmationDialogFragment().show(parentFragmentManager, "exit-confirmation")
+      }
+    } else {
+      binding.topExitBar.visibility = GONE
+    }
+  }
+
+  private fun updateStatusBarColor(color: Int) {
+    val window = this@WebViewFragment.activity?.window
+    window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+    window?.statusBarColor = color
   }
 
   private inner class CustomWebViewClient : WebViewClient() {
@@ -176,12 +203,13 @@ class WebViewFragment : Fragment() {
     }
 
     private fun setStatusBarColorFromThemeColor() {
+      if (usingTopExitBar) {
+        return
+      }
       webView.evaluateJavascript("document.querySelector('meta[name=\"theme-color\"]').content") {
         try {
           val color = Color.parseColor(it.replace("\"", ""))
-          val window = this@WebViewFragment.activity?.window
-          window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-          window?.statusBarColor = color
+          updateStatusBarColor(color)
         } catch (e: Exception) {
           Timber.e(e, "Error trying to parse theme-color from value=$it")
         }

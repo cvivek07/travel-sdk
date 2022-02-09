@@ -34,7 +34,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/not_connected"
+                android:text="@string/ixigosdk_not_connected"
                 android:layout_gravity="center"
                 android:layout_marginHorizontal="15dp"
                 android:layout_marginBottom="15dp"
@@ -48,7 +48,7 @@
                 android:layout_gravity="center"
                 android:background="@color/ixigosdk_primary_color"
                 android:textColor="#FFFFFF"
-                android:text="@string/retry"/>
+                android:text="@string/ixigosdk_retry"/>
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/backButton"
@@ -56,7 +56,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:background="@android:color/transparent"
-            android:text="@string/go_back"/>
+            android:text="@string/ixigosdk_go_back"/>
 
         </LinearLayout>
 

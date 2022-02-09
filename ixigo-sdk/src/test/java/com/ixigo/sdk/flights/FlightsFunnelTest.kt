@@ -190,6 +190,7 @@ class FlightsFunnelTest {
           clientId = "clientId",
           apiKey = "apiKey",
           appVersion = 1,
+          appName = "appName",
           deviceId = "deviceId",
           uuid = "uuid")
 

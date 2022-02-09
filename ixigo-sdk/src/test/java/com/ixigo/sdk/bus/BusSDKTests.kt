@@ -33,7 +33,7 @@ class BusSDKTests {
     val mockAnalyticsProvider: AnalyticsProvider = mock()
     initializeTestIxigoSDK(
         analyticsProvider = mockAnalyticsProvider,
-        AppInfo(clientId = "iximatr", apiKey = "any", appVersion = 1))
+        AppInfo(clientId = "iximatr", apiKey = "any", appVersion = 1, appName = "Ixigo Trains"))
     BusSDK.init()
     verify(mockAnalyticsProvider)
         .logEvent(
@@ -49,7 +49,9 @@ class BusSDKTests {
 
   @Test(expected = IllegalStateException::class)
   fun `test calling init twice throws an exception`() {
-    initializeTestIxigoSDK(appInfo = AppInfo(clientId = "iximatr", apiKey = "any", appVersion = 1))
+    initializeTestIxigoSDK(
+        appInfo =
+            AppInfo(clientId = "iximatr", apiKey = "any", appVersion = 1, appName = "Ixigo Trains"))
     BusSDK.init()
     BusSDK.init()
   }
@@ -104,7 +106,9 @@ class BusSDKTests {
 
   @Test
   fun `test that IxiWebView and HtmlOut are added to Js Interfaces for abhibus url`() {
-    initializeTestIxigoSDK(appInfo = AppInfo(clientId = "iximatr", apiKey = "any", appVersion = 1))
+    initializeTestIxigoSDK(
+        appInfo =
+            AppInfo(clientId = "iximatr", apiKey = "any", appVersion = 1, appName = "Ixigo Trains"))
     val busSDK = BusSDK.init(config = BusConfig.PROD)
     val webViewFragment: WebViewFragment = mock()
     val interfaces =
@@ -117,7 +121,9 @@ class BusSDKTests {
 
   @Test
   fun `test that IxiWebView is NOT added to Js Interfaces for ixigo url`() {
-    initializeTestIxigoSDK(appInfo = AppInfo(clientId = "iximatr", apiKey = "any", appVersion = 1))
+    initializeTestIxigoSDK(
+        appInfo =
+            AppInfo(clientId = "iximatr", apiKey = "any", appVersion = 1, appName = "Ixigo Trains"))
     BusSDK.init(config = BusConfig.PROD)
     val webViewFragment: WebViewFragment = mock()
     val interfaces =
@@ -129,7 +135,8 @@ class BusSDKTests {
   private fun testBusMultiModule(clientId: String, expectedUrl: String, config: BusConfig? = null) {
     val mockAnalyticsProvider: AnalyticsProvider = mock()
     val mockIxigoSDK: IxigoSDK = mock {
-      on { appInfo } doReturn AppInfo(clientId = clientId, apiKey = "any", appVersion = 1)
+      on { appInfo } doReturn
+          AppInfo(clientId = clientId, apiKey = "any", appVersion = 1, appName = "Ixigo Trains")
       on { analyticsProvider } doReturn mockAnalyticsProvider
       on { webViewConfig } doReturn WebViewConfig()
     }
@@ -156,7 +163,8 @@ class BusSDKTests {
   private fun testBusHome(clientId: String, expectedUrl: String, config: BusConfig? = null) {
     val mockAnalyticsProvider: AnalyticsProvider = mock()
     val mockIxigoSDK: IxigoSDK = mock {
-      on { appInfo } doReturn AppInfo(clientId = clientId, apiKey = "any", appVersion = 1)
+      on { appInfo } doReturn
+          AppInfo(clientId = clientId, apiKey = "any", appVersion = 1, appName = "Ixigo Trains")
       on { analyticsProvider } doReturn mockAnalyticsProvider
       on { webViewConfig } doReturn WebViewConfig()
     }
@@ -171,7 +179,8 @@ class BusSDKTests {
   private fun testBusTrips(clientId: String, expectedUrl: String, config: BusConfig? = null) {
     val mockAnalyticsProvider: AnalyticsProvider = mock()
     val mockIxigoSDK: IxigoSDK = mock {
-      on { appInfo } doReturn AppInfo(clientId = clientId, apiKey = "any", appVersion = 1)
+      on { appInfo } doReturn
+          AppInfo(clientId = clientId, apiKey = "any", appVersion = 1, appName = "Ixigo Trains")
       on { analyticsProvider } doReturn mockAnalyticsProvider
       on { webViewConfig } doReturn WebViewConfig()
     }

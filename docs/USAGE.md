@@ -182,7 +182,9 @@ You can set your implementation of `AnalyticsProvider` while initializing the SD
 IxigoSDK.init(analyticsProvider = MyAppAnalyticsProvider(), /*...Other init params */)
 ```
 
-### Configure Appearance
+## Configure Appearance
+
+### Theming
 
 You can configure the appearance of certain UI elements presented by the sdk by providing the following keys in your resources
 
@@ -194,6 +196,23 @@ You can configure the appearance of certain UI elements presented by the sdk by 
 </resources>
 
 ```
+
+### Exit Top Bar
+
+The SDK will show a thin navigation bar on top of the content to allow the customer to exit at any time. If you want to remove it, pass `enableExitBar = false` inside `Config` object when initializing IxigoSDK.
+
+```kotlin
+IxigoSDK.init(context, config = Config(enableExitBar = false), /* other parameters */)
+```
+
+| ![](images/exit_top_bar.png) | ![](images/exit_top_bar_confirmation.png) |
+| ---------------------------- | ----------------------------------------- |
+
+### Customize Strings
+
+Strings used in the SDK can be overriden by the Host App by redeclaring these strings in the App resources `strings.xml` file.
+
+See the available string keys and values [here](ixigo-sdk/src/main/res/values/strings.xml)
 
 ## Entry Points / Functionality
 

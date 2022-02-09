@@ -182,6 +182,7 @@ class FirstFragment : Fragment() {
     binding.clientId.setText(preset.clientId, TextView.BufferType.EDITABLE)
     binding.apiKey.setText(preset.apiKey, TextView.BufferType.EDITABLE)
     binding.appVersion.setText(preset.appVersion, TextView.BufferType.EDITABLE)
+    binding.appName.setText(preset.label, TextView.BufferType.EDITABLE)
     binding.ssoPartnerToken.setText(preset.ssoPartnerToken, TextView.BufferType.EDITABLE)
     binding.uuid.setText(preset.uuid, TextView.BufferType.EDITABLE)
     binding.deviceId.setText(preset.deviceId, TextView.BufferType.EDITABLE)
@@ -262,6 +263,7 @@ class FirstFragment : Fragment() {
     val clientId = getFieldValue(binding.clientId, "Client Id")
     val apiKey = getFieldValue(binding.apiKey, "Api Key")
     val appVersion = getFieldValue(binding.appVersion, "App Version")?.toLongOrNull()
+    val appName = getFieldValue(binding.appName, "App Name")
     val uuid = getFieldValue(binding.uuid, "UUID")
     val deviceId = getFieldValue(binding.deviceId, "Device Id")
     val ixigoConfig = ixigoConfig()
@@ -271,6 +273,7 @@ class FirstFragment : Fragment() {
     if (appVersion == null ||
         apiKey == null ||
         clientId == null ||
+        appName == null ||
         uuid == null ||
         deviceId == null ||
         ixigoConfig == null) {
@@ -283,12 +286,13 @@ class FirstFragment : Fragment() {
             clientId = clientId,
             apiKey = apiKey,
             appVersion = appVersion,
+            appName = appName,
             uuid = uuid,
             deviceId = deviceId),
         getPartnerTokenProvider(),
         DisabledPaymentProvider,
         analyticsProvider = ToastAnalyticsProvider(requireActivity()),
-        config = ixigoConfig.config)
+        config =  ixigoConfig.config.copy(enableExitBar = binding.exitBarSwitch.isChecked))
 
     sdkInitialized = true
     return true
