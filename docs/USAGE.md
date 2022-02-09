@@ -60,7 +60,8 @@ Initialize the SDK calling in your App creation flow. You can only initialize it
 val appInfo = AppInfo(
   clientId = "<CLIENT_ID>",
   apiKey = "<API_KEY"),
-  appVersion = BuildConfig.VERSION_CODE.toLong()
+  appVersion = BuildConfig.VERSION_CODE.toLong(),
+  appName = "<APP_NAME>"
 )
 IxigoSDK.init(context, appInfo, authProvider, /* Other params */)
 ```
