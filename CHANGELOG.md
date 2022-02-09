@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.1.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-2.0.3...ixigo-sdk-2.1.0) (2022-02-09)
+
+
+### Features
+
+* add exitTopBar ([59966d0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/59966d0f1d39a23136ceea835e0acd26ca4b46a2))
+
 ### [2.0.3](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-2.0.2...ixigo-sdk-2.0.3) (2022-02-09)
 
 
