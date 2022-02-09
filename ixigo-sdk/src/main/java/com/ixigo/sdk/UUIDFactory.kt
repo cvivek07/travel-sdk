@@ -27,7 +27,7 @@ class UUIDFactory(private val context: Context) {
   }
 
   private fun readFromPreferences(): UUID? {
-    val uuidStr = prefs.getString(uuidKey, null)
-    return uuidStr.let { UUID.fromString(it) }
+    val uuidStr: String? = prefs.getString(uuidKey, null)
+    return uuidStr?.let { UUID.fromString(it) }
   }
 }
