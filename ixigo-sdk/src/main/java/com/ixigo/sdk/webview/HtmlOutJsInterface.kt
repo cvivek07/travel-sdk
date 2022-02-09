@@ -1,6 +1,7 @@
 package com.ixigo.sdk.webview
 
 import android.webkit.JavascriptInterface
+import androidx.annotation.Keep
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.auth.PartnerTokenError
 import com.ixigo.sdk.auth.PartnerTokenProvider
@@ -57,8 +58,8 @@ class HtmlOutJsInterface(
     }
   }
 
-  data class SSOInput(val callBack: String, val provider: String, val promiseId: String)
-  data class SSOResult(val promiseId: String, val data: SSOResultData)
+  @Keep data class SSOInput(val callBack: String, val provider: String, val promiseId: String)
+  @Keep data class SSOResult(val promiseId: String, val data: SSOResultData)
   data class SSOResultData(
       val responseCode: Int,
       val grantToken: String?,

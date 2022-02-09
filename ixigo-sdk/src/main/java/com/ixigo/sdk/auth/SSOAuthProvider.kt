@@ -1,5 +1,6 @@
 package com.ixigo.sdk.auth
 
+import androidx.annotation.Keep
 import androidx.fragment.app.FragmentActivity
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.common.Err
@@ -97,10 +98,10 @@ class SSOAuthProvider(private val partnerTokenProvider: PartnerTokenProvider) : 
   }
 }
 
-private data class ErrorResponse(val errors: ErrorResponseErrors)
+@Keep data class ErrorResponse(val errors: ErrorResponseErrors)
 
-private data class ErrorResponseErrors(val message: String)
+@Keep data class ErrorResponseErrors(val message: String)
 
-private data class RequestResponse(val data: RequestResponseData)
+@Keep data class RequestResponse(val data: RequestResponseData)
 
-private data class RequestResponseData(@Json(name = "access_token") val accessToken: String)
+@Keep data class RequestResponseData(@Json(name = "access_token") val accessToken: String)

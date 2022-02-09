@@ -1,5 +1,6 @@
 package com.ixigo.sdk.bus
 
+import androidx.annotation.Keep
 import com.ixigo.sdk.Config
 import com.ixigo.sdk.common.Err
 import com.ixigo.sdk.common.Ok
@@ -55,6 +56,7 @@ data class CheapestFareInput(val origin: String, val destination: String, val da
     get() = BusSearchData.formatter.format(date)
 }
 
+@Keep
 data class CheapestFareOutput(
     val minFare: String,
     val minTravelTime: String,
