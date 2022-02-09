@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.0.3](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-2.0.2...ixigo-sdk-2.0.3) (2022-02-09)
+
+
+### Bug Fixes
+
+* add Keep to moshi models ([d3c0ee2](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/d3c0ee2a48df818e216945f38d0155a8480e9677))
+* fix UUID NPE creation ([f31690e](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/f31690e8bbc5e987085f10eb6e5984b875351af4))
+
 ### [2.0.2](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-2.0.1...ixigo-sdk-2.0.2) (2022-02-04)
 
 
