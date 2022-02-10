@@ -153,10 +153,15 @@ class BusSDKTests {
             date = LocalDate.parse("2022-01-22"))
     val fragment = busSDK.multiModelFragment(searchData)
     Assert.assertNotNull(fragment as? WebViewFragment)
+
     val expectedInitialData = InitialPageData(expectedUrl)
     Assert.assertEquals(
         expectedInitialData,
         fragment.arguments!!.getParcelable(WebViewFragment.INITIAL_PAGE_DATA_ARGS))
+
+    val expectedConfig = WebViewFragmentConfig(enableExitBar = false)
+    Assert.assertEquals(expectedConfig, fragment.arguments!!.getParcelable(WebViewFragment.CONFIG))
+
     verify(mockAnalyticsProvider).logEvent(Event("busStartMultiModel"))
   }
 

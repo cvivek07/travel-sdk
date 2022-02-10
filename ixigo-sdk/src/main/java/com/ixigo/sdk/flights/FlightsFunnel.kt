@@ -10,6 +10,7 @@ import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.analytics.Event
 import com.ixigo.sdk.webview.InitialPageData
 import com.ixigo.sdk.webview.WebViewFragment
+import com.ixigo.sdk.webview.WebViewFragmentConfig
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -31,6 +32,7 @@ fun IxigoSDK.flightsMultiModelFragment(searchData: FlightSearchData): Fragment {
       Bundle().apply {
         val url = getUrl(getFlightsSearchParams("FLIGHT_LISTING_MULTI_MODEL", searchData))
         putParcelable(WebViewFragment.INITIAL_PAGE_DATA_ARGS, InitialPageData(url, getHeaders(url)))
+        putParcelable(WebViewFragment.CONFIG, WebViewFragmentConfig(enableExitBar = false))
       }
 
   return WebViewFragment().apply { this.arguments = arguments }

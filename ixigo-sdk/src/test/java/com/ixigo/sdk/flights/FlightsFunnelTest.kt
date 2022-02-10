@@ -16,6 +16,7 @@ import com.ixigo.sdk.webview.InitialPageData
 import com.ixigo.sdk.webview.WebActivity
 import com.ixigo.sdk.webview.WebViewFragment
 import com.ixigo.sdk.webview.WebViewFragment.Companion.INITIAL_PAGE_DATA_ARGS
+import com.ixigo.sdk.webview.WebViewFragmentConfig
 import java.time.LocalDate
 import org.hamcrest.BaseMatcher
 import org.hamcrest.Description
@@ -146,10 +147,14 @@ class FlightsFunnelTest {
             passengerData = FlightPassengerData(adults = 1, children = 0, infants = 0))
     val fragment = IxigoSDK.instance.flightsMultiModelFragment(searchData)
     assertNotNull(fragment as? WebViewFragment)
+
     val url =
         "https://baseUrl.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=1&deviceId=deviceId&languageCode=en&page=FLIGHT_LISTING_MULTI_MODEL&orgn=DEL&dstn=BOM&departDate=22102021&returnDate=26102021&adults=1&children=0&infants=0&class=e&source=FlightSearchFormFragment"
     val expectedInitialData = InitialPageData(url, expectedHeaders())
     assertEquals(expectedInitialData, fragment.arguments!!.getParcelable(INITIAL_PAGE_DATA_ARGS))
+
+    val expectedConfig = WebViewFragmentConfig(enableExitBar = false)
+    assertEquals(expectedConfig, fragment.arguments!!.getParcelable(WebViewFragment.CONFIG))
   }
 
   private fun assertFlightsHome() {

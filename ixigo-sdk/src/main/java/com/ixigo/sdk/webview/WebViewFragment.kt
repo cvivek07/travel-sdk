@@ -33,7 +33,7 @@ import kotlinx.parcelize.Parcelize
 import timber.log.Timber
 
 class WebViewFragment : Fragment() {
-  private lateinit var binding: WebviewLayoutBinding
+  @VisibleForTesting internal lateinit var binding: WebviewLayoutBinding
   @VisibleForTesting
   internal val webView
     get() = binding.webView
@@ -111,6 +111,7 @@ class WebViewFragment : Fragment() {
 
   companion object {
     const val INITIAL_PAGE_DATA_ARGS = "InitialPageData"
+    const val CONFIG = "WebViewFragmentConfig"
   }
 
   private val webViewBackPressHandler by lazy {
@@ -121,7 +122,10 @@ class WebViewFragment : Fragment() {
     }
   }
 
-  private val usingTopExitBar: Boolean by lazy { IxigoSDK.instance.config.enableExitBar }
+  private val usingTopExitBar: Boolean by lazy {
+    val config = arguments?.getParcelable<WebViewFragmentConfig>(CONFIG)
+    config?.enableExitBar ?: IxigoSDK.instance.config.enableExitBar
+  }
 
   private fun configureTopExitBar() {
     if (usingTopExitBar) {
@@ -224,6 +228,13 @@ class WebViewFragment : Fragment() {
 data class InitialPageData(
     val url: String,
     val headers: Map<String, String> = mapOf(),
+) : Parcelable
+
+@Parcelize
+@SuppressLint("ParcelCreator")
+@Generated
+data class WebViewFragmentConfig(
+    val enableExitBar: Boolean? = null,
 ) : Parcelable
 
 interface JsInterface {

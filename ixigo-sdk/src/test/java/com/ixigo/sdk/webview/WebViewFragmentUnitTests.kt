@@ -5,6 +5,8 @@ import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.webkit.ValueCallback
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
@@ -267,6 +269,7 @@ class WebViewFragmentUnitTests {
 
   @Test
   fun `test statusBar color is the same as exitBar when exitBar is enabled`() {
+    assertEquals(VISIBLE, fragment.binding.topExitBar.visibility)
     assertEquals(
         getColor(fragmentActivity, R.color.exit_top_nav_bar_color),
         fragmentActivity.window.statusBarColor)
@@ -279,6 +282,21 @@ class WebViewFragmentUnitTests {
         launchFragmentInContainer(
             Bundle().also {
               it.putParcelable(WebViewFragment.INITIAL_PAGE_DATA_ARGS, initialPageData)
+            })
+    scenario.onFragment {
+      fragment = it
+      assertEquals(GONE, fragment.binding.topExitBar.visibility)
+    }
+  }
+
+  @Test
+  fun `test exitBar is disabled if WebViewFragmentConfig has it disabled`() {
+    initializeTestIxigoSDK(config = ProdConfig.copy(enableExitBar = true))
+    scenario =
+        launchFragmentInContainer(
+            Bundle().also {
+              it.putParcelable(WebViewFragment.INITIAL_PAGE_DATA_ARGS, initialPageData)
+              it.putParcelable(WebViewFragment.CONFIG, WebViewFragmentConfig(enableExitBar = false))
             })
     scenario.onFragment {
       fragment = it
