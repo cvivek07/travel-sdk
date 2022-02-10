@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [2.1.1](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-2.1.0...ixigo-sdk-2.1.1) (2022-02-10)
+
+
+### Bug Fixes
+
+* disable top exit bar for multi module ([271d6e5](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/271d6e5278927ad6a62fdb854efc3ae20c08cfeb))
+* remove obfuscation from HTMLOUT json fields ([87e3ec3](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/87e3ec34db601c5e37b3ffaceee8b8da61ed63e4))
+
 ## [2.1.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-2.0.3...ixigo-sdk-2.1.0) (2022-02-09)
 
 
