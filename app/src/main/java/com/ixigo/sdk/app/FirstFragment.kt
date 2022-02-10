@@ -1,13 +1,10 @@
 package com.ixigo.sdk.app
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.*
-import android.webkit.CookieManager
-import android.webkit.WebView
 import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
@@ -19,10 +16,9 @@ import com.ixigo.sdk.app.databinding.FragmentFirstBinding
 import com.ixigo.sdk.auth.*
 import com.ixigo.sdk.bus.BusConfig
 import com.ixigo.sdk.bus.BusSDK
-import com.ixigo.sdk.common.ActivityResultHandler
 import com.ixigo.sdk.common.Err
 import com.ixigo.sdk.common.Ok
-import com.ixigo.sdk.common.Result
+import com.ixigo.sdk.covid.covidLaunchAppointments
 import com.ixigo.sdk.flights.FlightPassengerData
 import com.ixigo.sdk.flights.FlightSearchData
 import com.ixigo.sdk.flights.flightsStartHome
@@ -35,7 +31,6 @@ import java.time.LocalDate
 import kotlin.reflect.KClass
 import kotlin.reflect.full.companionObject
 import kotlin.reflect.full.companionObjectInstance
-import kotlin.reflect.full.declaredFunctions
 import kotlin.reflect.full.functions
 import kotlin.reflect.jvm.isAccessible
 
@@ -131,6 +126,12 @@ class FirstFragment : Fragment() {
     binding.buttonTrainsHome.setOnClickListener {
       if (initSDK() && initTrainsSDK()) {
         TrainsSDK.instance.launchHome(requireContext())
+      }
+    }
+
+    binding.buttonCovidAppointment.setOnClickListener {
+      if (initSDK()) {
+        IxigoSDK.instance.covidLaunchAppointments(requireContext())
       }
     }
 

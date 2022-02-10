@@ -2,6 +2,7 @@ package com.ixigo.sdk
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.webkit.CookieManager
 import com.ixigo.sdk.Config.Companion.ProdConfig
 import com.ixigo.sdk.IxigoSDK.Companion.init
@@ -130,6 +131,23 @@ internal constructor(
    */
   fun onLogout() {
     CookieManager.getInstance().removeAllCookies(null)
+  }
+
+  internal fun getUrl(properties: Map<String, String>): String {
+    val builder =
+        Uri.parse(config.apiBaseUrl)
+            .buildUpon()
+            .appendPath("pwa")
+            .appendPath("initialpage")
+            .appendQueryParameter("clientId", appInfo.clientId)
+            .appendQueryParameter("apiKey", appInfo.apiKey)
+            .appendQueryParameter("appVersion", appInfo.appVersionString)
+            .appendQueryParameter("deviceId", appInfo.deviceId)
+            .appendQueryParameter("languageCode", "en") // TODO
+    for (property in properties) {
+      builder.appendQueryParameter(property.key, property.value)
+    }
+    return builder.build().toString()
   }
 
   private fun isIxigoUrl(url: String): Boolean {

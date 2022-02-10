@@ -3,7 +3,6 @@
 package com.ixigo.sdk.flights
 
 import android.content.Context
-import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.ixigo.sdk.IxigoSDK
@@ -50,23 +49,6 @@ private fun IxigoSDK.getFlightsSearchParams(page: String, searchData: FlightSear
         "infants" to searchData.passengerData.infants.toString(),
         "class" to searchData.flightClass,
         "source" to searchData.source)
-
-private fun IxigoSDK.getUrl(properties: Map<String, String>): String {
-  val builder =
-      Uri.parse(config.apiBaseUrl)
-          .buildUpon()
-          .appendPath("pwa")
-          .appendPath("initialpage")
-          .appendQueryParameter("clientId", appInfo.clientId)
-          .appendQueryParameter("apiKey", appInfo.apiKey)
-          .appendQueryParameter("appVersion", appInfo.appVersionString)
-          .appendQueryParameter("deviceId", appInfo.deviceId)
-          .appendQueryParameter("languageCode", "en") // TODO
-  for (property in properties) {
-    builder.appendQueryParameter(property.key, property.value)
-  }
-  return builder.build().toString()
-}
 
 private val formatter: DateTimeFormatter? = DateTimeFormatter.ofPattern("ddMMyyyy")
 

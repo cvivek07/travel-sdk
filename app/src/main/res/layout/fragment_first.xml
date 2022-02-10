@@ -242,54 +242,79 @@
             </com.github.florent37.expansionpanel.ExpansionLayout>
 
 
-            <androidx.appcompat.widget.LinearLayoutCompat
+            <GridLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:columnCount="2"
+                android:alignmentMode="alignMargins"
+                android:useDefaultMargins="true">
 
                 <Button
                     android:id="@+id/buttonFlightSearch"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
+                    android:layout_columnWeight="1"
                     android:layout_height="wrap_content"
-                    android:text="Flights Search" />
+                    android:layout_gravity="fill"
+                    android:text="Flights Search"
+                    />
 
                 <Button
                     android:id="@+id/buttonFlightHome"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
+                    android:layout_columnWeight="1"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="fill"
                     android:text="Flights Home" />
 
                 <Button
                     android:id="@+id/buttonFlightMultiModule"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
+                    android:layout_columnWeight="1"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="fill"
                     android:text="Flights Multi Module" />
 
                 <Button
                     android:id="@+id/buttonBusHome"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
+                    android:layout_columnWeight="1"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="fill"
                     android:text="Bus Home" />
 
                 <Button
                     android:id="@+id/buttonBusMultiModule"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
+                    android:layout_columnWeight="1"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="fill"
                     android:text="Bus MultiModule" />
 
                 <Button
                     android:id="@+id/buttonTrainsHome"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
+                    android:layout_columnWeight="1"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="fill"
                     android:text="Trains Home" />
 
                 <Button
-                    android:id="@+id/buttonSSOTest"
-                    android:layout_width="match_parent"
+                    android:id="@+id/buttonCovidAppointment"
+                    android:layout_width="0dp"
+                    android:layout_columnWeight="1"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="fill"
+                    android:text="Covid Appointment" />
+
+                <Button
+                    android:id="@+id/buttonSSOTest"
+                    android:layout_width="0dp"
+                    android:layout_columnWeight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="fill"
                     android:text="SSO Test" />
 
-            </androidx.appcompat.widget.LinearLayoutCompat>
+            </GridLayout>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
     </ScrollView>

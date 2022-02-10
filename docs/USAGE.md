@@ -300,6 +300,14 @@ TrainsSDK.init(...)
 TrainsSDK.instance.launchHome(context)
 ```
 
+### Covid
+
+#### Open vaccination appointment
+
+```kotlin
+IxigoSDK.instance.covidLaunchAppointments(context)
+```
+
 ### Screenshots
 
 | Flights                                                   | Trains                                     | Bus                                               |
@@ -307,3 +315,4 @@ TrainsSDK.instance.launchHome(context)
 | Flights Home<br>![](images/flights_home.png)              | Trains Home<br>![](images/trains_home.png) | Bus Home<br>![](images/bus_home.png)              |
 | Flights Search<br>![](images/flights_search.png)          |                                            | Bus MultiModel<br>![](images/bus_multimodule.png) |
 | Flights MultiModel<br>![](images/flights_multimodule.png) |                                            |                                                   |
+| Covid Appintment<br>![](images/covid_appointment.png)     |                                            |                                                   |
