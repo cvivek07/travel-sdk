@@ -123,7 +123,7 @@ class WebViewFragment : Fragment() {
   }
 
   private val usingTopExitBar: Boolean by lazy {
-    val config = arguments?.getParcelable<WebViewFragmentConfig>(CONFIG)
+    val config = arguments?.getParcelable<FunnelConfig>(CONFIG)
     config?.enableExitBar ?: IxigoSDK.instance.config.enableExitBar
   }
 
@@ -228,13 +228,6 @@ class WebViewFragment : Fragment() {
 data class InitialPageData(
     val url: String,
     val headers: Map<String, String> = mapOf(),
-) : Parcelable
-
-@Parcelize
-@SuppressLint("ParcelCreator")
-@Generated
-data class WebViewFragmentConfig(
-    val enableExitBar: Boolean? = null,
 ) : Parcelable
 
 interface JsInterface {

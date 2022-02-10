@@ -296,7 +296,7 @@ class WebViewFragmentUnitTests {
         launchFragmentInContainer(
             Bundle().also {
               it.putParcelable(WebViewFragment.INITIAL_PAGE_DATA_ARGS, initialPageData)
-              it.putParcelable(WebViewFragment.CONFIG, WebViewFragmentConfig(enableExitBar = false))
+              it.putParcelable(WebViewFragment.CONFIG, FunnelConfig(enableExitBar = false))
             })
     scenario.onFragment {
       fragment = it

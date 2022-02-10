@@ -12,11 +12,11 @@ import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
 import com.ixigo.sdk.auth.EmptyPartnerTokenProvider
 import com.ixigo.sdk.payment.DisabledPaymentProvider
+import com.ixigo.sdk.webview.FunnelConfig
 import com.ixigo.sdk.webview.InitialPageData
 import com.ixigo.sdk.webview.WebActivity
 import com.ixigo.sdk.webview.WebViewFragment
 import com.ixigo.sdk.webview.WebViewFragment.Companion.INITIAL_PAGE_DATA_ARGS
-import com.ixigo.sdk.webview.WebViewFragmentConfig
 import java.time.LocalDate
 import org.hamcrest.BaseMatcher
 import org.hamcrest.Description
@@ -153,7 +153,7 @@ class FlightsFunnelTest {
     val expectedInitialData = InitialPageData(url, expectedHeaders())
     assertEquals(expectedInitialData, fragment.arguments!!.getParcelable(INITIAL_PAGE_DATA_ARGS))
 
-    val expectedConfig = WebViewFragmentConfig(enableExitBar = false)
+    val expectedConfig = FunnelConfig(enableExitBar = false)
     assertEquals(expectedConfig, fragment.arguments!!.getParcelable(WebViewFragment.CONFIG))
   }
 

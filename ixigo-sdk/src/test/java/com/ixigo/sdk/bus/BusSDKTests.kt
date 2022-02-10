@@ -159,7 +159,7 @@ class BusSDKTests {
         expectedInitialData,
         fragment.arguments!!.getParcelable(WebViewFragment.INITIAL_PAGE_DATA_ARGS))
 
-    val expectedConfig = WebViewFragmentConfig(enableExitBar = false)
+    val expectedConfig = FunnelConfig(enableExitBar = false)
     Assert.assertEquals(expectedConfig, fragment.arguments!!.getParcelable(WebViewFragment.CONFIG))
 
     verify(mockAnalyticsProvider).logEvent(Event("busStartMultiModel"))

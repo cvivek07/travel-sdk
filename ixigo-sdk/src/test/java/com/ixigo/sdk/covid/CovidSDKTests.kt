@@ -12,6 +12,7 @@ import com.ixigo.sdk.analytics.Event
 import com.ixigo.sdk.test.IntentMatcher
 import com.ixigo.sdk.test.TestData
 import com.ixigo.sdk.test.initializeTestIxigoSDK
+import com.ixigo.sdk.webview.FunnelConfig
 import com.ixigo.sdk.webview.InitialPageData
 import com.ixigo.sdk.webview.WebActivity
 import com.ixigo.sdk.webview.WebViewFragment
@@ -50,17 +51,30 @@ class CovidSDKTests {
         Config.StagingBuildConfig("build1"))
   }
 
-  private fun testVaccineAppointment(expectedUrl: String, config: Config) {
+  @Test
+  fun `test covidLaunchApointment with funnel config`() {
+    testVaccineAppointment(
+        "https://www.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=1&deviceId=deviceId&languageCode=en&page=VACCINE",
+        Config.ProdConfig,
+        FunnelConfig(enableExitBar = false))
+  }
+
+  private fun testVaccineAppointment(
+      expectedUrl: String,
+      config: Config,
+      funnelConfig: FunnelConfig? = null
+  ) {
     val mockAnalyticsProvider: AnalyticsProvider = mock()
     initializeTestIxigoSDK(analyticsProvider = mockAnalyticsProvider, config = config)
-    IxigoSDK.instance.covidLaunchAppointments(activity)
-    assertLaunchedIntent(activity, expectedUrl)
+    IxigoSDK.instance.covidLaunchAppointments(activity, funnelConfig)
+    assertLaunchedIntent(activity, expectedUrl, funnelConfig)
     verify(mockAnalyticsProvider).logEvent(Event("covidAppointmentHome"))
   }
 
-  private fun assertLaunchedIntent(activity: Activity, url: String) {
+  private fun assertLaunchedIntent(activity: Activity, url: String, config: FunnelConfig?) {
     val intent = Intent(activity, WebActivity::class.java)
     intent.putExtra(WebViewFragment.INITIAL_PAGE_DATA_ARGS, InitialPageData(url, expectedHeaders()))
+    config?.let { intent.putExtra(WebViewFragment.CONFIG, it) }
     val shadowActivity = Shadows.shadowOf(activity)
     val nextIntent = shadowActivity.nextStartedActivity
     MatcherAssert.assertThat(nextIntent, IntentMatcher(intent))

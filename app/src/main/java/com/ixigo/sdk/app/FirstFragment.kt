@@ -27,6 +27,7 @@ import com.ixigo.sdk.payment.PaymentCallback
 import com.ixigo.sdk.payment.PaymentInput
 import com.ixigo.sdk.payment.PaymentProvider
 import com.ixigo.sdk.trains.TrainsSDK
+import com.ixigo.sdk.webview.FunnelConfig
 import java.time.LocalDate
 import kotlin.reflect.KClass
 import kotlin.reflect.full.companionObject
@@ -131,7 +132,7 @@ class FirstFragment : Fragment() {
 
     binding.buttonCovidAppointment.setOnClickListener {
       if (initSDK()) {
-        IxigoSDK.instance.covidLaunchAppointments(requireContext())
+        IxigoSDK.instance.covidLaunchAppointments(requireContext(), FunnelConfig(enableExitBar = false))
       }
     }
 
@@ -378,8 +379,8 @@ class FirstFragment : Fragment() {
               apiKey = "abhibus!2\$",
               ssoPartnerToken = "RQjsRqkORTji8R9+AQkLFyl9yeLQxX2II01n4rvVh1vpoH6pVx4eiw==",
               buttonsState = ButtonsState(flightsSearch = false, flightsMultiModule = false, busHome = false, busMultiModel = false)),
-          Preset(label = "Ixigo Trains", clientId = "iximatr", apiKey = "iximatr!2\$", buttonsState = ButtonsState(trainsHome = false), appVersion = "1801"),
-          Preset(label = "Ixigo Flights", clientId = "iximaad", apiKey = "iximaad!2\$", buttonsState = ButtonsState(trainsHome = false, flightsMultiModule = false, flightsHome = false, flightsSearch = false)),
+          Preset(label = "ixigo trains", clientId = "iximatr", apiKey = "iximatr!2\$", buttonsState = ButtonsState(trainsHome = false), appVersion = "1801"),
+          Preset(label = "ixigo flights", clientId = "iximaad", apiKey = "iximaad!2\$", buttonsState = ButtonsState(trainsHome = false, flightsMultiModule = false, flightsHome = false, flightsSearch = false)),
           Preset(
               label = "Other",
               clientId = "",

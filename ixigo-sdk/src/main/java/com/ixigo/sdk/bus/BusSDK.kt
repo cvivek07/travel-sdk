@@ -96,7 +96,7 @@ class BusSDK(internal val config: Config) : JsInterfaceProvider {
                           "destname" to searchData.destinationName,
                           "hideHeader" to "1")))
           putParcelable(WebViewFragment.INITIAL_PAGE_DATA_ARGS, InitialPageData(url))
-          putParcelable(WebViewFragment.CONFIG, WebViewFragmentConfig(enableExitBar = false))
+          putParcelable(WebViewFragment.CONFIG, FunnelConfig(enableExitBar = false))
         }
 
     return WebViewFragment().apply { this.arguments = arguments }
