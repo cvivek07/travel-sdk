@@ -7,6 +7,7 @@ import com.ixigo.sdk.auth.PartnerTokenError
 import com.ixigo.sdk.auth.PartnerTokenProvider
 import com.ixigo.sdk.common.Err
 import com.ixigo.sdk.common.Ok
+import com.squareup.moshi.Json
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import timber.log.Timber
@@ -58,12 +59,22 @@ class HtmlOutJsInterface(
     }
   }
 
-  @Keep data class SSOInput(val callBack: String, val provider: String, val promiseId: String)
-  @Keep data class SSOResult(val promiseId: String, val data: SSOResultData)
+  @Keep
+  data class SSOInput(
+      @Json(name = "callBack") val callBack: String,
+      @Json(name = "provider") val provider: String,
+      @Json(name = "promiseId") val promiseId: String
+  )
+  @Keep
+  data class SSOResult(
+      @Json(name = "promiseId") val promiseId: String,
+      @Json(name = "data") val data: SSOResultData
+  )
+  @Keep
   data class SSOResultData(
-      val responseCode: Int,
-      val grantToken: String?,
-      val errorMessage: String?
+      @Json(name = "responseCode") val responseCode: Int,
+      @Json(name = "grantToken") val grantToken: String?,
+      @Json(name = "errorMessage") val errorMessage: String?
   ) {
     companion object {
       fun success(grantToken: String): SSOResultData {
