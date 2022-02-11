@@ -58,8 +58,8 @@ internal constructor(
         paymentProvider: PaymentProvider = DisabledPaymentProvider,
         analyticsProvider: AnalyticsProvider? = null,
         config: Config = ProdConfig
-    ) {
-      init(
+    ): IxigoSDK {
+      return init(
           context,
           appInfo,
           partnerTokenProvider,
@@ -75,7 +75,7 @@ internal constructor(
         paymentProvider: PaymentProvider,
         analyticsProvider: AnalyticsProvider,
         config: Config = ProdConfig
-    ) {
+    ): IxigoSDK {
       assertNotCreated()
       val ixigoSDK =
           IxigoSDK(
@@ -93,6 +93,8 @@ internal constructor(
               name = "sdkInit",
               properties =
                   mapOf("clientId" to appInfo.clientId, "sdkVersion" to BuildConfig.SDK_VERSION)))
+
+      return ixigoSDK
     }
   }
 
