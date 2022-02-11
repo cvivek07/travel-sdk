@@ -114,6 +114,13 @@ class IxigoSDKTests {
     assertEquals(0, interfaces.size)
   }
 
+  @Test
+  fun `test initialized`() {
+    assertFalse(IxigoSDK.initialized)
+    initializeTestIxigoSDK()
+    assertTrue(IxigoSDK.initialized)
+  }
+
   private fun testLaunchActivity(
       url: String,
       ixigoSDK: IxigoSDK,

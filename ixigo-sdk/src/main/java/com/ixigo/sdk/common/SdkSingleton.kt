@@ -31,7 +31,7 @@ abstract class SdkSingleton<T>(private val sdkName: String) {
   }
 
   /** Whether or not SDK has been initialized */
-  internal val initialized: Boolean
+  val initialized: Boolean
     get() = INSTANCE != null
 
   /**

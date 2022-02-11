@@ -10,6 +10,7 @@
     "upload-app-to-slack": "yarn tsc && node dist/slackUpload.js --unhandled-rejections=strict",
     "slack-new-version": "yarn tsc && node dist/slackNewVersion.js --unhandled-rejections=strict"
   },
+  "private": true,
   "license": "UNLICENSED",
   "devDependencies": {
     "@commitlint/cli": "^14.1.0",
