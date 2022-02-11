@@ -62,6 +62,14 @@ class BusSDKTests {
   }
 
   @Test
+  fun `test bus home for ixigo trains with Funnel Config`() {
+    testBusHome(
+        clientId = "iximatr",
+        "https://www.abhibus.com/ixigopwa?source=ixtrains",
+        funnelConfig = FunnelConfig(enableExitBar = false))
+  }
+
+  @Test
   fun `test bus home for ixigo trains staging`() {
     testBusHome(
         clientId = "iximatr",
@@ -165,7 +173,12 @@ class BusSDKTests {
     verify(mockAnalyticsProvider).logEvent(Event("busStartMultiModel"))
   }
 
-  private fun testBusHome(clientId: String, expectedUrl: String, config: BusConfig? = null) {
+  private fun testBusHome(
+      clientId: String,
+      expectedUrl: String,
+      config: BusConfig? = null,
+      funnelConfig: FunnelConfig? = null
+  ) {
     val mockAnalyticsProvider: AnalyticsProvider = mock()
     val mockIxigoSDK: IxigoSDK = mock {
       on { appInfo } doReturn
@@ -176,8 +189,8 @@ class BusSDKTests {
     val application: Application = getApplicationContext()
     IxigoSDK.replaceInstance(mockIxigoSDK)
     val busSDK = if (config != null) BusSDK.init(config = config) else BusSDK.init()
-    busSDK.launchHome(application)
-    verify(mockIxigoSDK).launchWebActivity(application, expectedUrl)
+    busSDK.launchHome(application, funnelConfig)
+    verify(mockIxigoSDK).launchWebActivity(application, expectedUrl, funnelConfig)
     verify(mockAnalyticsProvider).logEvent(Event("busStartHome"))
   }
 

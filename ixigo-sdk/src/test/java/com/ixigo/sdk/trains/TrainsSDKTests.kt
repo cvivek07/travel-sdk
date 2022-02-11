@@ -9,10 +9,7 @@ import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
 import com.ixigo.sdk.test.initializeTestIxigoSDK
-import com.ixigo.sdk.webview.HtmlOutJsInterface
-import com.ixigo.sdk.webview.IxiWebView
-import com.ixigo.sdk.webview.WebViewConfig
-import com.ixigo.sdk.webview.WebViewFragment
+import com.ixigo.sdk.webview.*
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -75,7 +72,8 @@ class TrainsSDKTests {
   private fun testTrainsHome(
       clientId: String,
       expectedUrl: String,
-      config: TrainsSDK.Config? = null
+      config: TrainsSDK.Config? = null,
+      funnelConfig: FunnelConfig? = null,
   ) {
     val mockAnalyticsProvider: AnalyticsProvider = mock()
     val mockIxigoSDK: IxigoSDK = mock {
@@ -88,7 +86,7 @@ class TrainsSDKTests {
     IxigoSDK.replaceInstance(mockIxigoSDK)
     val busSDK = if (config != null) TrainsSDK.init(config = config) else TrainsSDK.init()
     busSDK.launchHome(application)
-    verify(mockIxigoSDK).launchWebActivity(application, expectedUrl)
+    verify(mockIxigoSDK).launchWebActivity(application, expectedUrl, funnelConfig)
     verify(mockAnalyticsProvider).logEvent(Event("trainsStartHome"))
   }
 

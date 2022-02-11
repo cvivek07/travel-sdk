@@ -51,9 +51,10 @@ class BusSDK(internal val config: Config) : JsInterfaceProvider {
    *
    * @param context
    */
-  fun launchHome(context: Context) {
+  fun launchHome(context: Context, funnelConfig: FunnelConfig? = null) {
     analyticsProvider.logEvent(Event.with(action = "busStartHome"))
-    IxigoSDK.instance.launchWebActivity(context, config.createUrl(null, addSkinParam()))
+    IxigoSDK.instance.launchWebActivity(
+        context, config.createUrl(null, addSkinParam()), funnelConfig)
   }
 
   private val skin: String?

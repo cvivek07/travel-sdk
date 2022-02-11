@@ -18,9 +18,9 @@ class TrainsSDK(private val config: Config) : JsInterfaceProvider {
    *
    * @param context
    */
-  fun launchHome(context: Context) {
+  fun launchHome(context: Context, config: FunnelConfig? = null) {
     analyticsProvider.logEvent(Event("trainsStartHome"))
-    IxigoSDK.instance.launchWebActivity(context, getBaseUrl())
+    IxigoSDK.instance.launchWebActivity(context, getBaseUrl(), config)
   }
 
   internal fun getBaseUrl(): String {
