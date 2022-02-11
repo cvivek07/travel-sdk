@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.2.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-2.1.1...ixigo-sdk-2.2.0) (2022-02-11)
+
+
+### Features
+
+* add covid sdk ([57d0495](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/57d049577af49ca7855b166129bcdc115fffc06c))
+* allow funnel config in Bus and Trains ([3236447](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/3236447a6f85baee5b00d2be1cc229057f4cfb7e))
+* make SDK initialized public ([72bd537](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/72bd53703ba7d9a04d8711497341851330f067c1))
+
+
+### Bug Fixes
+
+* allow passing FunnelConfig when opening vaccines ([4954267](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/495426762affd0b1973a38d679477c1dd129b38d))
+
 ### [2.1.1](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-2.1.0...ixigo-sdk-2.1.1) (2022-02-10)
 
 
