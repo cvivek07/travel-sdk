@@ -1,5 +1,6 @@
 package com.ixigo.sdk
 
+import IxigoSDKAndroid
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -166,6 +167,7 @@ internal constructor(
     if (url.startsWith(config.apiBaseUrl)) {
       jsInterfaces.add(IxiWebView(webViewFragment))
     }
+    jsInterfaces.add(IxigoSDKAndroid(analyticsProvider, webViewFragment))
     return jsInterfaces
   }
 }

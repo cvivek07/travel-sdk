@@ -7,7 +7,7 @@ import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
 
 class ToastAnalyticsProvider(private val activity: Activity): AnalyticsProvider {
-  var enabled = false
+  var enabled = true
   override fun logEvent(event: Event) {
     if (!enabled) {
       return

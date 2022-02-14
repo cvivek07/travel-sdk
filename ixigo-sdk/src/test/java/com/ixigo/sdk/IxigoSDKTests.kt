@@ -1,5 +1,6 @@
 package com.ixigo.sdk
 
+import IxigoSDKAndroid
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -15,10 +16,7 @@ import com.ixigo.sdk.test.IntentMatcher
 import com.ixigo.sdk.test.TestData.DisabledAnalyticsProvider
 import com.ixigo.sdk.test.TestData.FakeAppInfo
 import com.ixigo.sdk.test.initializeTestIxigoSDK
-import com.ixigo.sdk.webview.InitialPageData
-import com.ixigo.sdk.webview.IxiWebView
-import com.ixigo.sdk.webview.WebActivity
-import com.ixigo.sdk.webview.WebViewFragment
+import com.ixigo.sdk.webview.*
 import java.lang.IllegalStateException
 import org.hamcrest.MatcherAssert
 import org.junit.Assert.*
@@ -97,29 +95,23 @@ class IxigoSDKTests {
 
   @Test
   fun `test that IxiWebView is added to Js Interfaces for ixigo url`() {
-    val context: Context = mock()
-    val analyticsProvider: AnalyticsProvider = mock()
-    IxigoSDK.init(
-        context, FakeAppInfo, EmptyPartnerTokenProvider, DisabledPaymentProvider, analyticsProvider)
-    val webViewFragment: WebViewFragment = mock()
-    val interfaces =
-        IxigoSDK.instance.webViewConfig.getMatchingJsInterfaces(
-            Config.ProdConfig.createUrl("testUrl"), webViewFragment)
-    assertEquals(1, interfaces.size)
-    assertNotNull(interfaces[0] as IxiWebView)
+    testJsInterface(Config.ProdConfig.createUrl("testUrl")) { interfaces ->
+      assertTrue(interfaces.any { (it as? IxiWebView) != null })
+    }
   }
 
   @Test
-  fun `test that IxiWebView is NOT added to Js Interfaces for ixigo url`() {
-    val context: Context = mock()
-    val analyticsProvider: AnalyticsProvider = mock()
-    IxigoSDK.init(
-        context, FakeAppInfo, EmptyPartnerTokenProvider, DisabledPaymentProvider, analyticsProvider)
-    val webViewFragment: WebViewFragment = mock()
-    val interfaces =
-        IxigoSDK.instance.webViewConfig.getMatchingJsInterfaces(
-            "https://www.confirmtkt.com/test", webViewFragment)
-    assertEquals(0, interfaces.size)
+  fun `test that IxiWebView is NOT added to Js Interfaces for Non ixigo url`() {
+    testJsInterface("https://www.confirmtkt.com/test") { interfaces ->
+      assertFalse(interfaces.any { (it as? IxiWebView) != null })
+    }
+  }
+
+  @Test
+  fun `test that IxigoAndroidSDK is added to Js Interfaces for any URL`() {
+    testJsInterface(Config.ProdConfig.createUrl("testUrl")) { interfaces ->
+      assertTrue(interfaces.any { (it as? IxigoSDKAndroid) != null })
+    }
   }
 
   @Test
@@ -127,6 +119,16 @@ class IxigoSDKTests {
     assertFalse(IxigoSDK.initialized)
     initializeTestIxigoSDK()
     assertTrue(IxigoSDK.initialized)
+  }
+
+  private fun testJsInterface(url: String, check: (List<JsInterface>) -> Unit) {
+    val context: Context = mock()
+    val analyticsProvider: AnalyticsProvider = mock()
+    IxigoSDK.init(
+        context, FakeAppInfo, EmptyPartnerTokenProvider, DisabledPaymentProvider, analyticsProvider)
+    val webViewFragment: WebViewFragment = mock()
+    val interfaces = IxigoSDK.instance.webViewConfig.getMatchingJsInterfaces(url, webViewFragment)
+    check(interfaces)
   }
 
   private fun testLaunchActivity(
