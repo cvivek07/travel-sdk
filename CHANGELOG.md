@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.3.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-2.2.0...ixigo-sdk-2.3.0) (2022-02-14)
+
+
+### Features
+
+* add ability to track events from Javascript ([9594b7c](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/9594b7c59b072b3ce6376472eeb81595eefe0c31))
+* add trips flights functionality ([39d773e](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/39d773e38465dab61122dcabab66c715c0135509))
+
+
+### Bug Fixes
+
+* ixigoSDK.init returns ixigoSDK object ([9f84cd1](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/9f84cd1a5fad2da009e8400a5397dbef4d9de309))
+
 ## [2.2.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-2.1.1...ixigo-sdk-2.2.0) (2022-02-11)
 
 
