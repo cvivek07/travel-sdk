@@ -267,6 +267,22 @@
                     android:text="Flights Home" />
 
                 <Button
+                    android:id="@+id/buttonFlightTrips"
+                    android:layout_width="0dp"
+                    android:layout_columnWeight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="fill"
+                    android:text="Flights Trips" />
+
+                <Button
+                    android:id="@+id/buttonFlightTripsFragment"
+                    android:layout_width="0dp"
+                    android:layout_columnWeight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="fill"
+                    android:text="Flights Trips Fragment" />
+
+                <Button
                     android:id="@+id/buttonFlightMultiModule"
                     android:layout_width="0dp"
                     android:layout_columnWeight="1"

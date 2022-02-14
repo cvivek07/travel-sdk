@@ -157,6 +157,42 @@ class FlightsFunnelTest {
     assertEquals(expectedConfig, fragment.arguments!!.getParcelable(WebViewFragment.CONFIG))
   }
 
+  @Test
+  fun `test flightsStartTrips launches WebActivity`() {
+    IxigoSDK.init(
+        activity,
+        appInfo,
+        EmptyPartnerTokenProvider,
+        DisabledPaymentProvider,
+        mockAnalyticsProvider,
+        config)
+    scenario.onActivity { activity ->
+      IxigoSDK.instance.flightsStartTrips(activity)
+      assertLaunchedIntent(activity, "https://baseUrl.ixigo.com/account/trips#flights")
+      verify(mockAnalyticsProvider).logEvent(Event.with(action = "flightsStartTrips"))
+    }
+  }
+
+  @Test
+  fun `test flightTripsFragment returns WebViewFragment with correct URL`() {
+    IxigoSDK.init(
+        activity,
+        appInfo,
+        EmptyPartnerTokenProvider,
+        DisabledPaymentProvider,
+        mockAnalyticsProvider,
+        config)
+    val fragment = IxigoSDK.instance.flightsTripsFragment()
+    assertNotNull(fragment as? WebViewFragment)
+
+    val url = "https://baseUrl.ixigo.com/account/trips#flights"
+    val expectedInitialData = InitialPageData(url, expectedHeaders())
+    assertEquals(expectedInitialData, fragment.arguments!!.getParcelable(INITIAL_PAGE_DATA_ARGS))
+
+    val expectedConfig = FunnelConfig(enableExitBar = false)
+    assertEquals(expectedConfig, fragment.arguments!!.getParcelable(WebViewFragment.CONFIG))
+  }
+
   private fun assertFlightsHome() {
     scenario.onActivity { activity ->
       IxigoSDK.instance.flightsStartHome(activity)

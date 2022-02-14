@@ -19,10 +19,7 @@ import com.ixigo.sdk.bus.BusSDK
 import com.ixigo.sdk.common.Err
 import com.ixigo.sdk.common.Ok
 import com.ixigo.sdk.covid.covidLaunchAppointments
-import com.ixigo.sdk.flights.FlightPassengerData
-import com.ixigo.sdk.flights.FlightSearchData
-import com.ixigo.sdk.flights.flightsStartHome
-import com.ixigo.sdk.flights.flightsStartSearch
+import com.ixigo.sdk.flights.*
 import com.ixigo.sdk.payment.PaymentCallback
 import com.ixigo.sdk.payment.PaymentInput
 import com.ixigo.sdk.payment.PaymentProvider
@@ -105,9 +102,22 @@ class FirstFragment : Fragment() {
       }
     }
 
+    binding.buttonFlightTripsFragment.setOnClickListener {
+      if (initSDK()) {
+        val intent = Intent(requireContext(), TripsFragmentActivity::class.java)
+        requireContext().startActivity(intent)
+      }
+    }
+
     binding.buttonFlightHome.setOnClickListener {
       if (initSDK()) {
         IxigoSDK.instance.flightsStartHome(requireContext())
+      }
+    }
+
+    binding.buttonFlightTrips.setOnClickListener {
+      if (initSDK()) {
+        IxigoSDK.instance.flightsStartTrips(requireContext())
       }
     }
 

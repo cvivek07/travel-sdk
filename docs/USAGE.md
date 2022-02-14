@@ -225,6 +225,21 @@ See the available string keys and values [here](ixigo-sdk/src/main/res/values/st
 IxigoSDK.instance.flightsStartHome(context)
 ```
 
+#### Start Flights Trips
+
+Displays a list of the flight trips booked by the customer
+
+```kotlin
+IxigoSDK.instance.flightsStartTrips(context)
+```
+
+You can also get a Fragment to embed it in your UI
+
+```kotlin
+val fragment = IxigoSDK.instance.flightsTripsFragment()
+// Add this fragment to your Activity/Fragment
+```
+
 #### Flights Multimodel Search
 
 Use this method to get a Fragment showing Flight trips for a particular search input.
@@ -315,4 +330,5 @@ IxigoSDK.instance.covidLaunchAppointments(context)
 | Flights Home<br>![](images/flights_home.png)              | Trains Home<br>![](images/trains_home.png) | Bus Home<br>![](images/bus_home.png)              |
 | Flights Search<br>![](images/flights_search.png)          |                                            | Bus MultiModel<br>![](images/bus_multimodule.png) |
 | Flights MultiModel<br>![](images/flights_multimodule.png) |                                            |                                                   |
+| Flights Trips<br>![](images/flights_trips.png)            |                                            |                                                   |
 | Covid Appintment<br>![](images/covid_appointment.png)     |                                            |                                                   |

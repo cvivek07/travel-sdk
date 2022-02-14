@@ -19,6 +19,23 @@ fun IxigoSDK.flightsStartHome(context: Context) {
   analyticsProvider.logEvent(Event.with(action = "flightsStartHome"))
 }
 
+fun IxigoSDK.flightsStartTrips(context: Context) {
+  val url = config.createUrl("account/trips#flights")
+  launchWebActivity(context, url)
+  analyticsProvider.logEvent(Event.with(action = "flightsStartTrips"))
+}
+
+fun IxigoSDK.flightsTripsFragment(): Fragment {
+  val arguments =
+      Bundle().apply {
+        val url = config.createUrl("account/trips#flights")
+        putParcelable(WebViewFragment.INITIAL_PAGE_DATA_ARGS, InitialPageData(url, getHeaders(url)))
+        putParcelable(WebViewFragment.CONFIG, FunnelConfig(enableExitBar = false))
+      }
+
+  return WebViewFragment().apply { this.arguments = arguments }
+}
+
 fun IxigoSDK.flightsStartSearch(context: Context, searchData: FlightSearchData) {
   val url = getUrl(getFlightsSearchParams("FLIGHT_LISTING", searchData))
   launchWebActivity(context, url)
