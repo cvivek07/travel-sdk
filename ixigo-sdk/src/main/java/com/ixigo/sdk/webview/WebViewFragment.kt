@@ -159,6 +159,21 @@ class WebViewFragment : Fragment() {
         loadableView.status = Loaded
       }
       setStatusBarColorFromThemeColor()
+
+      loadIxigoJsSDKIfNeeded()
+    }
+
+    private fun loadIxigoJsSDKIfNeeded() {
+      webView.evaluateJavascript(
+          """
+        if (!window.IxigoSDK) {
+          var script = document.createElement("script");
+          script.type = "text/javascript";
+          script.src = "https://rocket.ixigo.com/ixigo-js-sdk/latest/index.umd.js";
+          document.body.appendChild(script);
+        }
+      """.trimIndent(),
+          null)
     }
 
     override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {

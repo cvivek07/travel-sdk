@@ -348,6 +348,21 @@ class WebViewFragmentUnitTests {
     assertNotNull(alertDialog)
   }
 
+  @Test
+  fun `test Ixigo JS SDK is loaded if needed`() {
+    shadowWebView.webViewClient.onPageFinished(fragment.webView, initialPageData.url)
+    assertEquals(
+        """
+        if (!window.IxigoSDK) {
+          var script = document.createElement("script");
+          script.type = "text/javascript";
+          script.src = "https://rocket.ixigo.com/ixigo-js-sdk/latest/index.umd.js";
+          document.body.appendChild(script);
+        }
+      """.trimIndent(),
+        shadowWebView.lastEvaluatedJavascript)
+  }
+
   private fun assertLoadableViewStatus(status: Status) {
     assertEquals(status, fragment.loadableView.status)
   }
