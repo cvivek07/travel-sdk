@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.0.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-2.4.0...ixigo-sdk-3.0.0) (2022-02-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* **auth:** modify signature of PartnerTokenProvider.fetchToken
+
+### Bug Fixes
+
+* add hideHeader to flights trips fragment url ([c647ff5](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/c647ff5906149c041eb5ee8d504d911f5f41c0d1))
+* **auth:** pass partnerId to PartnerTokenProvider.fetchToken method ([31908ba](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/31908ba627c9a179d32ef6e3eedc7aab4870a50b))
+
 ## [2.4.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-2.3.0...ixigo-sdk-2.4.0) (2022-02-15)
 
 

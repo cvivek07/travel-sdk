@@ -4,7 +4,7 @@ plugins {
     id 'com.google.gms.google-services'
 }
 
-version = '2.4.0'
+version = '3.0.0'
 
 android {
     compileSdk 29
@@ -72,7 +72,7 @@ dependencies {
 
     implementation project(path: ':ixigo-sdk')
     // Comment line above and uncomment line below to use a specific sdk version
-//    implementation("com.ixigo.sdk:ixigo-sdk:2.4.0")
+//    implementation("com.ixigo.sdk:ixigo-sdk:3.0.0")
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
