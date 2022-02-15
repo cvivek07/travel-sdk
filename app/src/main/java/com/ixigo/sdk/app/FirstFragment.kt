@@ -140,6 +140,19 @@ class FirstFragment : Fragment() {
       }
     }
 
+    binding.buttonTrainsTrips.setOnClickListener {
+      if (initSDK() && initTrainsSDK()) {
+        TrainsSDK.instance.launchTrips(requireContext())
+      }
+    }
+
+    binding.buttonTrainsTripsFragment.setOnClickListener {
+      if (initSDK() && initTrainsSDK()) {
+        val intent = Intent(requireContext(), TrainsTripsFragmentActivity::class.java)
+        requireContext().startActivity(intent)
+      }
+    }
+
     binding.buttonCovidAppointment.setOnClickListener {
       if (initSDK()) {
         IxigoSDK.instance.covidLaunchAppointments(requireContext(), FunnelConfig(enableExitBar = false))
@@ -207,6 +220,8 @@ class FirstFragment : Fragment() {
     binding.buttonBusHome.isEnabled = preset.buttonsState.busHome
     binding.buttonBusMultiModule.isEnabled = preset.buttonsState.busMultiModel
     binding.buttonTrainsHome.isEnabled = preset.buttonsState.trainsHome
+    binding.buttonTrainsTripsFragment.isEnabled = preset.buttonsState.trainsTripsFragment
+    binding.buttonTrainsTrips.isEnabled = preset.buttonsState.trainsTrips
   }
 
   private fun loadSettings() {
@@ -388,7 +403,7 @@ class FirstFragment : Fragment() {
               clientId = "abhibus",
               apiKey = "abhibus!2\$",
               ssoPartnerToken = "RQjsRqkORTji8R9+AQkLFyl9yeLQxX2II01n4rvVh1vpoH6pVx4eiw==",
-              buttonsState = ButtonsState(flightsSearch = false, flightsMultiModule = false, busHome = false, busMultiModel = false)),
+              buttonsState = ButtonsState(trainsTrips = true, trainsTripsFragment = true, flightsSearch = false, flightsMultiModule = false, busHome = false, busMultiModel = false)),
           Preset(label = "ixigo trains", clientId = "iximatr", apiKey = "iximatr!2\$", buttonsState = ButtonsState(trainsHome = false), appVersion = "1801"),
           Preset(label = "ixigo flights", clientId = "iximaad", apiKey = "iximaad!2\$", buttonsState = ButtonsState(trainsHome = false, flightsMultiModule = false, flightsHome = false, flightsSearch = false)),
           Preset(
@@ -422,7 +437,9 @@ data class ButtonsState(
     val flightsMultiModule: Boolean = true,
     val trainsHome: Boolean = true,
     val busHome: Boolean = true,
-    val busMultiModel: Boolean = true
+    val busMultiModel: Boolean = true,
+    val trainsTripsFragment: Boolean = false,
+    val trainsTrips: Boolean = false
 )
 
 data class IxigoConfig(val label: String, val config: Config) {

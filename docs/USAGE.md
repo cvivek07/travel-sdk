@@ -315,6 +315,21 @@ TrainsSDK.init(...)
 TrainsSDK.instance.launchHome(context)
 ```
 
+#### Open Train Trips
+
+Displays a list of the train trips booked by the customer
+
+```kotlin
+TrainsSDK.instance.launchTrips(context)
+```
+
+You can also get a Fragment to embed it in your UI
+
+```kotlin
+val fragment = TrainsSDK.instance.tripsFragment()
+// Add this fragment to your Activity/Fragment
+```
+
 ### Covid
 
 #### Open vaccination appointment

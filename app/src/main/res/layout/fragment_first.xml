@@ -315,6 +315,22 @@
                     android:text="Trains Home" />
 
                 <Button
+                    android:id="@+id/buttonTrainsTrips"
+                    android:layout_width="0dp"
+                    android:layout_columnWeight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="fill"
+                    android:text="Trains Trips" />
+
+                <Button
+                    android:id="@+id/buttonTrainsTripsFragment"
+                    android:layout_width="0dp"
+                    android:layout_columnWeight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="fill"
+                    android:text="Trains Trips Fragment" />
+
+                <Button
                     android:id="@+id/buttonCovidAppointment"
                     android:layout_width="0dp"
                     android:layout_columnWeight="1"

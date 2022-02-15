@@ -1,7 +1,10 @@
 package com.ixigo.sdk.trains
 
 import android.content.Context
+import android.os.Bundle
+import androidx.fragment.app.Fragment
 import com.ixigo.sdk.BuildConfig
+import com.ixigo.sdk.Config
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
@@ -14,13 +17,36 @@ class TrainsSDK(private val config: Config) : JsInterfaceProvider {
     get() = IxigoSDK.instance.analyticsProvider
 
   /**
-   * Opens ConfirmTkt PWA home to search for Train trips
+   * Opens home to search for Train trips
    *
    * @param context
    */
   fun launchHome(context: Context, config: FunnelConfig? = null) {
     analyticsProvider.logEvent(Event("trainsStartHome"))
     IxigoSDK.instance.launchWebActivity(context, getBaseUrl(), config)
+  }
+
+  /**
+   * Opens view that displays all train trips the customer has booked
+   *
+   * @param context
+   */
+  fun launchTrips(context: Context, config: FunnelConfig? = null) {
+    analyticsProvider.logEvent(Event("trainsStartTrips"))
+    IxigoSDK.instance.launchWebActivity(context, Config(getBaseUrl()).createUrl("trips"), config)
+  }
+
+  /** Fragment that displays all train trips the customer has booked */
+  fun tripsFragment(): Fragment {
+    analyticsProvider.logEvent(Event("trainsTripsFragment"))
+    val arguments =
+        Bundle().apply {
+          val url: String = Config(getBaseUrl()).createUrl("trips", mapOf("showHeader" to "false"))
+          putParcelable(WebViewFragment.INITIAL_PAGE_DATA_ARGS, InitialPageData(url))
+          putParcelable(WebViewFragment.CONFIG, FunnelConfig(enableExitBar = false))
+        }
+
+    return WebViewFragment().apply { this.arguments = arguments }
   }
 
   internal fun getBaseUrl(): String {
