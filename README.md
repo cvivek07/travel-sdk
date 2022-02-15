@@ -8,6 +8,6 @@ Find Usage docs [here](docs/USAGE.md)
 
 Find development docs [here](docs/DEVELOPMENT.md)
 
-## [Docs](http://android.pages.ixigo.com/ixigo-android-sdk/docs/)
+## [Docs](http://ixigo-sdk.pages.ixigo.com/ixigo-android-sdk/docs/)
 
-You can find classes documentation here: http://android.pages.ixigo.com/ixigo-android-sdk/docs/
+You can find classes documentation here: http://ixigo-sdk.pages.ixigo.com/ixigo-android-sdk/docs/
