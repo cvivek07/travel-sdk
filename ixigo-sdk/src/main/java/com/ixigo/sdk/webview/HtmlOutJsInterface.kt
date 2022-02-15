@@ -31,7 +31,9 @@ class HtmlOutJsInterface(
       return
     }
     partnerTokenProvider.fetchPartnerToken(
-        webViewFragment.requireActivity(), PartnerTokenProvider.Requester.CUSTOMER) {
+        webViewFragment.requireActivity(),
+        PartnerTokenProvider.Requester(
+            ssoInput.provider, PartnerTokenProvider.RequesterType.CUSTOMER)) {
       when (it) {
         is Ok -> {
           Timber.i("Successfully fetched partnerToken=${it.value.token}")

@@ -83,7 +83,7 @@ class FirstFragment : Fragment() {
       initSDK()
 
       val enabled =
-          getSSOTestAuthProvider().login(requireActivity()) {
+          getSSOTestAuthProvider().login(requireActivity(), "iximad") {
             progressDialog.hide()
             Snackbar.make(binding.buttonSSOTest, getSsoAuthMessage(it), Snackbar.LENGTH_LONG).show()
           }

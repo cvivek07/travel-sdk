@@ -30,6 +30,7 @@ class HtmlOutJsInterfaceTests {
 
   private lateinit var htmlOut: HtmlOutJsInterface
   private lateinit var fakePartnerTokenProvider: FakePartnerTokenProvider
+  private val partnerId = "partnerId"
 
   @Before
   fun setup() {
@@ -82,13 +83,15 @@ class HtmlOutJsInterfaceTests {
   private fun testLogin(token: String?) {
     token?.let {
       fakePartnerTokenProvider.partnerTokenMap =
-          mapOf(PartnerTokenProvider.Requester.CUSTOMER to PartnerToken(it))
+          mapOf(
+              PartnerTokenProvider.Requester(
+                  partnerId, PartnerTokenProvider.RequesterType.CUSTOMER) to PartnerToken(it))
     }
 
     val jsonInput =
         """{
       |"callBack": "myCallback",
-      |"provider": "myProvider",
+      |"provider": "$partnerId",
       |"promiseId": "myPromiseId"
       |}""".trimMargin()
 

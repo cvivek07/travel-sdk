@@ -8,15 +8,26 @@ typealias PartnerTokenResult = Result<PartnerToken, PartnerTokenError>
 
 typealias PartnerTokenCallback = (PartnerTokenResult) -> Unit
 
+/** Interface to delegate to a Host App the creation/retrieval of a Host App token */
 interface PartnerTokenProvider {
+
+  /**
+   * Implementations of this method should create/retrieve a Host App auth token
+   *
+   * @param activity
+   * @param requester type of requester
+   * @param callback
+   */
   fun fetchPartnerToken(
       activity: FragmentActivity,
       requester: Requester,
       callback: PartnerTokenCallback
   )
 
+  data class Requester(val partnerId: String, val type: RequesterType)
+
   /** Identifies who is requesting a partnerToken */
-  enum class Requester {
+  enum class RequesterType {
     /**
      * Customer initiated this request. You are allow to show UI in order to get the partner token
      * if needed eg: display a login screen if the customer is not logged in.

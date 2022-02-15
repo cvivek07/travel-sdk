@@ -5,5 +5,9 @@ import androidx.fragment.app.FragmentActivity
 internal object EmptyAuthProvider : AuthProvider {
   override val authData: AuthData? = null
 
-  override fun login(fragmentActivity: FragmentActivity, callback: AuthCallback): Boolean = false
+  override fun login(
+      fragmentActivity: FragmentActivity,
+      partnerId: String,
+      callback: AuthCallback
+  ): Boolean = false
 }

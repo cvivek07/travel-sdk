@@ -15,6 +15,9 @@ class FakeLoginActivity: Activity() {
     binding = ActivityFakeLoginBinding.inflate(layoutInflater)
     setContentView(binding.root)
     val token: String = intent.extras?.getString("token")!!
+    val partnerId: String = intent.extras?.getString("partnerId")!!
+
+    binding.partnerId.text = "PartnerId=$partnerId"
 
     binding.loginSuccessfulButton.setOnClickListener {
       val data = Intent()

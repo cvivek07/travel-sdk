@@ -9,5 +9,5 @@ typealias AuthCallback = (AuthResult) -> Unit
 
 interface AuthProvider {
   val authData: AuthData?
-  fun login(fragmentActivity: FragmentActivity, callback: AuthCallback): Boolean
+  fun login(fragmentActivity: FragmentActivity, partnerId: String, callback: AuthCallback): Boolean
 }

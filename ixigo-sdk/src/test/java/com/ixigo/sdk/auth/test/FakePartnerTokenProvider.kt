@@ -19,9 +19,16 @@ class FakePartnerTokenProvider(
   var passedActivity: Activity? = null
 
   constructor(
+      partnerId: String,
       partnerToken: PartnerToken?
-  ) : this(PartnerTokenProvider.Requester.values().map { Pair(it, partnerToken) }.toMap())
-  constructor(token: String?) : this(token?.let { PartnerToken((it)) } ?: null)
+  ) : this(
+      PartnerTokenProvider.RequesterType.values()
+          .map { Pair(PartnerTokenProvider.Requester(partnerId, it), partnerToken) }
+          .toMap())
+  constructor(
+      partnerId: String,
+      token: String?
+  ) : this(partnerId, token?.let { PartnerToken((it)) } ?: null)
 
   override fun fetchPartnerToken(
       activity: FragmentActivity,
@@ -38,7 +45,10 @@ class FakePartnerTokenProvider(
   }
 
   companion object {
-    fun forCustomer(partnerToken: PartnerToken?) =
-        FakePartnerTokenProvider(mapOf(PartnerTokenProvider.Requester.CUSTOMER to partnerToken))
+    fun forCustomer(partnerId: String, partnerToken: PartnerToken?) =
+        FakePartnerTokenProvider(
+            mapOf(
+                PartnerTokenProvider.Requester(
+                    partnerId, PartnerTokenProvider.RequesterType.CUSTOMER) to partnerToken))
   }
 }

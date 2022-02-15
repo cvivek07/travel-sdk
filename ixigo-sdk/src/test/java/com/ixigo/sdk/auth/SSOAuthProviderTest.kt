@@ -25,6 +25,8 @@ class SSOAuthProviderTest {
 
   private lateinit var mockServer: MockWebServer
 
+  private val partnerId = "partnerId"
+
   @Before
   fun setup() {
     mockServer = MockWebServer()
@@ -48,13 +50,14 @@ class SSOAuthProviderTest {
     val expectedAccessToken = "expectedAccessToken"
     mockServer.enqueue(MockResponse().setBody(validJsonResponse(expectedAccessToken)))
     val partnerToken = PartnerToken("partnerToken")
-    val ssoAuthProvider = SSOAuthProvider(FakePartnerTokenProvider.forCustomer(partnerToken))
+    val ssoAuthProvider =
+        SSOAuthProvider(FakePartnerTokenProvider.forCustomer(partnerId, partnerToken))
     assertNull(ssoAuthProvider.authData)
 
     var callbackCalled = false
     launchActivity<FragmentActivity>().onActivity { activity ->
       val handled =
-          ssoAuthProvider.login(activity) {
+          ssoAuthProvider.login(activity, partnerId) {
             assertTrue(it.isSuccess)
             it.onSuccess { authData -> assertEquals(expectedAccessToken, authData.token) }
             assertRequest(partnerToken)
@@ -67,12 +70,12 @@ class SSOAuthProviderTest {
 
   @Test
   fun `test that login returns Error if no partnerToken is provided`() {
-    val ssoAuthProvider = SSOAuthProvider(FakePartnerTokenProvider.forCustomer(null))
+    val ssoAuthProvider = SSOAuthProvider(FakePartnerTokenProvider.forCustomer(partnerId, null))
 
     var callbackCalled = false
     launchActivity<FragmentActivity>().onActivity { activity ->
       val handled =
-          ssoAuthProvider.login(activity) {
+          ssoAuthProvider.login(activity, partnerId) {
             when (it) {
               is Ok -> fail("Error is supposed to fail")
               is Err -> callbackCalled = true
@@ -106,12 +109,13 @@ class SSOAuthProviderTest {
   private fun assertRequestFails(response: MockResponse, errorMessage: String? = null) {
     mockServer.enqueue(response)
     val partnerToken = PartnerToken("partnerToken")
-    val ssoAuthProvider = SSOAuthProvider(FakePartnerTokenProvider.forCustomer(partnerToken))
+    val ssoAuthProvider =
+        SSOAuthProvider(FakePartnerTokenProvider.forCustomer(partnerId, partnerToken))
 
     var callbackCalled = false
     launchActivity<FragmentActivity>().onActivity { activity ->
       val handled =
-          ssoAuthProvider.login(activity) {
+          ssoAuthProvider.login(activity, partnerId) {
             when (it) {
               is Ok -> fail("Error is supposed to fail")
               is Err -> if (errorMessage != null) assertEquals(errorMessage, it.value.message)

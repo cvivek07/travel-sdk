@@ -187,7 +187,7 @@ class IxiWebViewTests {
 
   private fun testLogin(token: String?) {
     doAnswer {
-          val callback: AuthCallback = it.getArgument(1)
+          val callback: AuthCallback = it.getArgument(2)
           if (token == null) {
             callback(Err(Error()))
           } else {
@@ -196,7 +196,7 @@ class IxiWebViewTests {
           true
         }
         .`when`(ssoAuthProvider)
-        .login(eq(fragmentActivity), any())
+        .login(eq(fragmentActivity), eq("iximaad"), any())
 
     val successJs = "success"
     val failureJs = "failure"
@@ -204,7 +204,7 @@ class IxiWebViewTests {
     val loginUserMethod =
         ixiWebView.javaClass.getDeclaredMethod("loginUser", String::class.java, String::class.java)
     val loginReturn = loginUserMethod.invoke(ixiWebView, successJs, failureJs) as Boolean
-    Shadows.shadowOf(Looper.getMainLooper()).idle()
+    shadowOf(Looper.getMainLooper()).idle()
     val expectedUrl = if (token == null) failureJs else successJs
     assertTrue(loginReturn)
     assertEquals(expectedUrl, shadowWebView.lastLoadedUrl)

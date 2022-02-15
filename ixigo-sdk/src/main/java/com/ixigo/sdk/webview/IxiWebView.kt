@@ -22,7 +22,9 @@ class IxiWebView(
   @JavascriptInterface
   fun loginUser(logInSuccessJsFunction: String, logInFailureJsFunction: String): Boolean {
     val activity = fragment.requireActivity()
-    ssoAuthProvider.login(activity) { authResult ->
+    // TODO: get partnerId programmatically
+    val partnerId = "iximaad"
+    ssoAuthProvider.login(activity, partnerId) { authResult ->
       activity.runOnUiThread {
         val url =
             authResult.mapBoth(

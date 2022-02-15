@@ -9,7 +9,11 @@ import com.ixigo.sdk.common.Ok
 
 class FakeAuthProvider(val token: String?, override val authData: AuthData? = null) : AuthProvider {
 
-  override fun login(fragmentActivity: FragmentActivity, callback: AuthCallback): Boolean {
+  override fun login(
+      fragmentActivity: FragmentActivity,
+      partnerId: String,
+      callback: AuthCallback
+  ): Boolean {
     return if (token == null) {
       callback(Err(Error()))
       true
