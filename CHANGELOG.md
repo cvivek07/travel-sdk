@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.4.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-2.3.0...ixigo-sdk-2.4.0) (2022-02-15)
+
+
+### Features
+
+* add train trips APIs ([c9992a3](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/c9992a38e15a0be55fc82052507c815f273eca8a))
+
 ## [2.3.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-2.2.0...ixigo-sdk-2.3.0) (2022-02-14)
 
 
