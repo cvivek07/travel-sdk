@@ -8,18 +8,14 @@ import android.os.Bundle
 import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.webkit.*
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.VisibleForTesting
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResultListener
 import androidx.fragment.app.viewModels
 import com.ixigo.sdk.IxigoSDK
-import com.ixigo.sdk.R
 import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
 import com.ixigo.sdk.common.ActivityResultHandler
@@ -28,7 +24,6 @@ import com.ixigo.sdk.databinding.WebviewLayoutBinding
 import com.ixigo.sdk.ui.Failed
 import com.ixigo.sdk.ui.Loaded
 import com.ixigo.sdk.ui.Loading
-import java.lang.Exception
 import kotlinx.parcelize.Parcelize
 import timber.log.Timber
 
@@ -87,8 +82,6 @@ class WebViewFragment : Fragment() {
     loadableView.status = Loading()
     webView.loadUrl(initialPageData.url, initialPageData.headers)
 
-    configureTopExitBar()
-
     return binding.root
   }
 
@@ -119,24 +112,6 @@ class WebViewFragment : Fragment() {
       override fun handleOnBackPressed() {
         webView.goBack()
       }
-    }
-  }
-
-  private val usingTopExitBar: Boolean by lazy {
-    val config = arguments?.getParcelable<FunnelConfig>(CONFIG)
-    config?.enableExitBar ?: IxigoSDK.instance.config.enableExitBar
-  }
-
-  private fun configureTopExitBar() {
-    if (usingTopExitBar) {
-      binding.topExitBarTitle.text = IxigoSDK.instance.appInfo.appName
-      updateStatusBarColor(ContextCompat.getColor(requireContext(), R.color.exit_top_nav_bar_color))
-      binding.topExitBar.setOnClickListener {
-        setFragmentResultListener(ExitConfirmationResultCode) { _, _ -> delegate?.onQuit() }
-        ExitConfirmationDialogFragment().show(parentFragmentManager, "exit-confirmation")
-      }
-    } else {
-      binding.topExitBar.visibility = GONE
     }
   }
 
@@ -222,13 +197,10 @@ class WebViewFragment : Fragment() {
     }
 
     private fun setStatusBarColorFromThemeColor() {
-      if (usingTopExitBar) {
-        return
-      }
       webView.evaluateJavascript("document.querySelector('meta[name=\"theme-color\"]').content") {
         try {
           val color = Color.parseColor(it.replace("\"", ""))
-          updateStatusBarColor(color)
+          delegate?.updateStatusBarColor(color)
         } catch (e: Exception) {
           Timber.e(e, "Error trying to parse theme-color from value=$it")
         }
@@ -251,4 +223,5 @@ interface JsInterface {
 
 interface WebViewDelegate {
   fun onQuit()
+  fun updateStatusBarColor(color: Int)
 }

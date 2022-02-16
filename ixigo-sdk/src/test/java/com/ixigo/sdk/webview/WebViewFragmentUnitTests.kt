@@ -5,23 +5,14 @@ import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.webkit.ValueCallback
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import androidx.core.content.ContextCompat.getColor
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
-import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.matcher.RootMatchers.isDialog
-import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.ixigo.sdk.Config.Companion.ProdConfig
 import com.ixigo.sdk.IxigoSDK
-import com.ixigo.sdk.R
 import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
 import com.ixigo.sdk.auth.test.ActivityResultPartnerTokenProvider
@@ -39,11 +30,9 @@ import org.junit.runner.RunWith
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
-import org.mockito.kotlin.verifyNoInteractions
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.Implements
-import org.robolectric.shadows.ShadowAlertDialog
 import org.robolectric.shadows.ShadowWebView
 
 @RunWith(AndroidJUnit4::class)
@@ -268,16 +257,8 @@ class WebViewFragmentUnitTests {
   }
 
   @Test
-  fun `test statusBar color is the same as exitBar when exitBar is enabled`() {
-    assertEquals(VISIBLE, fragment.binding.topExitBar.visibility)
-    assertEquals(
-        getColor(fragmentActivity, R.color.exit_top_nav_bar_color),
-        fragmentActivity.window.statusBarColor)
-  }
-
-  @Test
-  fun `test statusBar color is updated from theme-color when exitBar is disabled`() {
-    initializeTestIxigoSDK(config = ProdConfig.copy(enableExitBar = false))
+  fun `test statusBar color is updated from theme-color`() {
+    initializeTestIxigoSDK()
     scenario =
         launchFragmentInContainer(
             Bundle().also {
@@ -285,27 +266,13 @@ class WebViewFragmentUnitTests {
             })
     scenario.onFragment {
       fragment = it
-      assertEquals(GONE, fragment.binding.topExitBar.visibility)
-    }
-  }
-
-  @Test
-  fun `test exitBar is disabled if WebViewFragmentConfig has it disabled`() {
-    initializeTestIxigoSDK(config = ProdConfig.copy(enableExitBar = true))
-    scenario =
-        launchFragmentInContainer(
-            Bundle().also {
-              it.putParcelable(WebViewFragment.INITIAL_PAGE_DATA_ARGS, initialPageData)
-              it.putParcelable(WebViewFragment.CONFIG, FunnelConfig(enableExitBar = false))
-            })
-    scenario.onFragment {
-      fragment = it
+      fragment.delegate = delegate
       fragmentActivity = it.requireActivity()
       shadowWebView = shadowOf(it.webView) as CustomShadowWebview
       shadowWebView.jsCallbacks["document.querySelector('meta[name=\"theme-color\"]').content"] =
           "#00FF00"
       shadowWebView.webViewClient.onPageFinished(fragment.webView, initialPageData.url)
-      assertEquals(Color.parseColor("#00FF00"), fragmentActivity.window.statusBarColor)
+      verify(delegate).updateStatusBarColor(Color.parseColor("#00FF00"))
     }
   }
 
@@ -325,27 +292,6 @@ class WebViewFragmentUnitTests {
       verify(paymentProvider).handle(requestCode, responseCode, intent)
       verify(partnerTokenProvider).handle(requestCode, responseCode, intent)
     }
-  }
-
-  @Test
-  fun `test that confirming ExitTopBar Dialog calls onQuit on delegate`() {
-    onView(withId(R.id.topExitBar)).perform(click())
-    onView(withId(android.R.id.button1)).inRoot(isDialog()).perform(click())
-    verify(delegate).onQuit()
-  }
-
-  @Test
-  fun `test that cancelling ExitTopBar Dialog does NOT call onQuit on delegate`() {
-    onView(withId(R.id.topExitBar)).perform(click())
-    onView(withId(android.R.id.button2)).inRoot(isDialog()).perform(click())
-    verifyNoInteractions(delegate)
-  }
-
-  @Test
-  fun `test that pressing on exitTopBar shows ExitDialog`() {
-    onView(withId(R.id.topExitBar)).perform(click())
-    val alertDialog = ShadowAlertDialog.getLatestAlertDialog()
-    assertNotNull(alertDialog)
   }
 
   @Test
