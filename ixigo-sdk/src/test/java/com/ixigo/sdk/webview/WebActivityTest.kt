@@ -2,6 +2,7 @@ package com.ixigo.sdk.webview
 
 import android.app.Application
 import android.content.Intent
+import android.graphics.Color
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -126,6 +127,26 @@ class WebActivityTest {
     initializeTestIxigoSDK(config = com.ixigo.sdk.Config(enableExitBar = true))
     withWebActivity(FunnelConfig(enableExitBar = false)) { activity ->
       assertEquals(GONE, activity.binding.topExitBar.visibility)
+    }
+  }
+
+  @Test
+  fun `test statusBar color is updated from delegate if status bar is disabled`() {
+    initializeTestIxigoSDK(config = com.ixigo.sdk.Config(enableExitBar = false))
+    withWebActivity { activity ->
+      val color = Color.parseColor("#00FF00")
+      activity.updateStatusBarColor(color)
+      assertEquals(color, activity.window.statusBarColor)
+    }
+  }
+
+  @Test
+  fun `test statusBar color is NOT updated from delegate if status bar is enabled`() {
+    initializeTestIxigoSDK(config = com.ixigo.sdk.Config(enableExitBar = true))
+    withWebActivity { activity ->
+      activity.updateStatusBarColor(Color.parseColor("#00FF00"))
+      assertEquals(
+          getColor(activity, R.color.exit_top_nav_bar_color), activity.window.statusBarColor)
     }
   }
 
