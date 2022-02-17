@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.1.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.0.0...ixigo-sdk-3.1.0) (2022-02-17)
+
+
+### Features
+
+* add support for IxigoJS SDK ([02594d5](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/02594d5bd98bbcedaec169bf4c0dfd0399aa832c))
+
+
+### Bug Fixes
+
+* fix fragment changing status bar color ([cf74775](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/cf74775ca39312bbd8ced340cf1e08ef48a9c940))
+* remove hideHeader parameter which caused trips to not show up ([91e878e](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/91e878e5f646c91fc3721772f2f13e4859fe075e))
+
 ## [3.0.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-2.4.0...ixigo-sdk-3.0.0) (2022-02-15)
 
 
