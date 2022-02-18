@@ -127,6 +127,12 @@ class FirstFragment : Fragment() {
       }
     }
 
+    binding.buttonBusTrips.setOnClickListener {
+      if (initSDK() && initBusSDK()) {
+        BusSDK.instance.launchTrips(requireContext())
+      }
+    }
+
     binding.buttonBusMultiModule.setOnClickListener {
       if (initSDK() && initBusSDK()) {
         val intent = Intent(requireContext(), BusMultiModelActivity::class.java)
@@ -218,6 +224,7 @@ class FirstFragment : Fragment() {
     binding.buttonFlightHome.isEnabled = preset.buttonsState.flightsHome
     binding.buttonTrainsHome.isEnabled = preset.buttonsState.trainsHome
     binding.buttonBusHome.isEnabled = preset.buttonsState.busHome
+    binding.buttonBusTrips.isEnabled = preset.buttonsState.busTrips
     binding.buttonBusMultiModule.isEnabled = preset.buttonsState.busMultiModel
     binding.buttonTrainsHome.isEnabled = preset.buttonsState.trainsHome
     binding.buttonTrainsTripsFragment.isEnabled = preset.buttonsState.trainsTripsFragment
@@ -397,13 +404,13 @@ class FirstFragment : Fragment() {
               clientId = "confirmtckt",
               apiKey = "confirmtckt!2\$",
               ssoPartnerToken = "D5DCFBD21CF7867B74D5273A57A0254D1785773799EEDD0E683B0EE5C6E56878",
-              buttonsState = ButtonsState(flightsSearch = false, flightsMultiModule = false, trainsHome = false, busHome = false, busMultiModel = false)),
+              buttonsState = ButtonsState(flightsSearch = false, flightsMultiModule = false, trainsHome = false, busHome = false, busMultiModel = false, busTrips = false)),
           Preset(
               label = "Abhibus",
               clientId = "abhibus",
               apiKey = "abhibus!2\$",
               ssoPartnerToken = "RQjsRqkORTji8R9+AQkLFyl9yeLQxX2II01n4rvVh1vpoH6pVx4eiw==",
-              buttonsState = ButtonsState(trainsTrips = true, trainsTripsFragment = true, flightsSearch = false, flightsMultiModule = false, busHome = false, busMultiModel = false)),
+              buttonsState = ButtonsState(trainsTrips = true, trainsTripsFragment = true, flightsSearch = false, flightsMultiModule = false, busHome = false, busMultiModel = false, busTrips = false)),
           Preset(label = "ixigo trains", clientId = "iximatr", apiKey = "iximatr!2\$", buttonsState = ButtonsState(trainsHome = false), appVersion = "1801"),
           Preset(label = "ixigo flights", clientId = "iximaad", apiKey = "iximaad!2\$", buttonsState = ButtonsState(trainsHome = false, flightsMultiModule = false, flightsHome = false, flightsSearch = false)),
           Preset(
@@ -438,6 +445,7 @@ data class ButtonsState(
     val trainsHome: Boolean = true,
     val busHome: Boolean = true,
     val busMultiModel: Boolean = true,
+    val busTrips: Boolean = true,
     val trainsTripsFragment: Boolean = false,
     val trainsTrips: Boolean = false
 )
