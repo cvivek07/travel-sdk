@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.1.1](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.1.0...ixigo-sdk-3.1.1) (2022-02-21)
+
+
+### Bug Fixes
+
+* add funnel config to bus trips method ([86fed9a](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/86fed9a2ee04e2b98449d1feb94803a705b27156))
+* use correct flight trips URL ([1baa070](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/1baa07074984850a1c80f9b712f33f37de4bf5fa))
+
 ## [3.1.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.0.0...ixigo-sdk-3.1.0) (2022-02-17)
 
 
