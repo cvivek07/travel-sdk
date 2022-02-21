@@ -41,9 +41,10 @@ class BusSDK(internal val config: Config) : JsInterfaceProvider {
    *
    * @param context
    */
-  fun launchTrips(context: Context) {
+  fun launchTrips(context: Context, funnelConfig: FunnelConfig? = null) {
     analyticsProvider.logEvent(Event.with(action = "busStartTrips"))
-    IxigoSDK.instance.launchWebActivity(context, config.createUrl("trips", addSkinParam()))
+    IxigoSDK.instance.launchWebActivity(
+        context, config.createUrl("trips", addSkinParam()), funnelConfig)
   }
 
   /**

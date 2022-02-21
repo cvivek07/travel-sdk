@@ -100,6 +100,14 @@ class BusSDKTests {
     testBusTrips(clientId = "iximatr", "https://www.abhibus.com/ixigopwa/trips?source=ixtrains")
   }
 
+  @Test
+  fun `test bus trips for ixigo trains with Funnel Config`() {
+    testBusTrips(
+        clientId = "iximatr",
+        "https://www.abhibus.com/ixigopwa/trips?source=ixtrains",
+        funnelConfig = FunnelConfig(enableExitBar = false))
+  }
+
   @Test(expected = IllegalArgumentException::class)
   fun `test bus home for other clientId`() {
     testBusHome(clientId = "other", "")
@@ -194,7 +202,12 @@ class BusSDKTests {
     verify(mockAnalyticsProvider).logEvent(Event("busStartHome"))
   }
 
-  private fun testBusTrips(clientId: String, expectedUrl: String, config: BusConfig? = null) {
+  private fun testBusTrips(
+      clientId: String,
+      expectedUrl: String,
+      config: BusConfig? = null,
+      funnelConfig: FunnelConfig? = null
+  ) {
     val mockAnalyticsProvider: AnalyticsProvider = mock()
     val mockIxigoSDK: IxigoSDK = mock {
       on { appInfo } doReturn
@@ -205,8 +218,8 @@ class BusSDKTests {
     val application: Application = getApplicationContext()
     IxigoSDK.replaceInstance(mockIxigoSDK)
     val busSDK = if (config != null) BusSDK.init(config = config) else BusSDK.init()
-    busSDK.launchTrips(application)
-    verify(mockIxigoSDK).launchWebActivity(application, expectedUrl)
+    busSDK.launchTrips(application, funnelConfig)
+    verify(mockIxigoSDK).launchWebActivity(application, expectedUrl, funnelConfig)
     verify(mockAnalyticsProvider).logEvent(Event("busStartTrips"))
   }
 }
