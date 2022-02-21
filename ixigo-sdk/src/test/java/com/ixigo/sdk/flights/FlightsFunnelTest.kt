@@ -168,7 +168,9 @@ class FlightsFunnelTest {
         config)
     scenario.onActivity { activity ->
       IxigoSDK.instance.flightsStartTrips(activity)
-      assertLaunchedIntent(activity, "https://baseUrl.ixigo.com/account/trips#flights")
+      assertLaunchedIntent(
+          activity,
+          "https://baseUrl.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=1&deviceId=deviceId&languageCode=en&page=FLIGHT_TRIPS")
       verify(mockAnalyticsProvider).logEvent(Event.with(action = "flightsStartTrips"))
     }
   }
@@ -185,7 +187,8 @@ class FlightsFunnelTest {
     val fragment = IxigoSDK.instance.flightsTripsFragment()
     assertNotNull(fragment as? WebViewFragment)
 
-    val url = "https://baseUrl.ixigo.com/account/trips#flights"
+    val url =
+        "https://baseUrl.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=1&deviceId=deviceId&languageCode=en&page=FLIGHT_TRIPS"
     val expectedInitialData = InitialPageData(url, expectedHeaders())
     assertEquals(expectedInitialData, fragment.arguments!!.getParcelable(INITIAL_PAGE_DATA_ARGS))
 

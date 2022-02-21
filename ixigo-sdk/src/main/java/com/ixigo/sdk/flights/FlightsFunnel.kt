@@ -20,7 +20,7 @@ fun IxigoSDK.flightsStartHome(context: Context) {
 }
 
 fun IxigoSDK.flightsStartTrips(context: Context) {
-  val url = config.createUrl("account/trips#flights")
+  val url = getUrl(mapOf("page" to "FLIGHT_TRIPS"))
   launchWebActivity(context, url)
   analyticsProvider.logEvent(Event.with(action = "flightsStartTrips"))
 }
@@ -28,7 +28,7 @@ fun IxigoSDK.flightsStartTrips(context: Context) {
 fun IxigoSDK.flightsTripsFragment(): Fragment {
   val arguments =
       Bundle().apply {
-        val url = config.createUrl("account/trips#flights")
+        val url = getUrl(mapOf("page" to "FLIGHT_TRIPS"))
         putParcelable(WebViewFragment.INITIAL_PAGE_DATA_ARGS, InitialPageData(url, getHeaders(url)))
         putParcelable(WebViewFragment.CONFIG, FunnelConfig(enableExitBar = false))
       }
