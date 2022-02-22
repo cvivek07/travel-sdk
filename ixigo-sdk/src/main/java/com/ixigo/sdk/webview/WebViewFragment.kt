@@ -153,6 +153,8 @@ class WebViewFragment : Fragment() {
 
     override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
       loadableView.status = Loading()
+      analyticsProvider.logEvent(
+          Event.with(action = "webviewStartLoad", referrer = request?.url.toString()))
       return super.shouldOverrideUrlLoading(view, request)
     }
 
@@ -189,7 +191,8 @@ class WebViewFragment : Fragment() {
         showErrorViewIfNeeded: Boolean = true
     ) {
       if (request?.url.toString() == webView.url) {
-        analyticsProvider.logEvent(Event.with(action = "webviewError", label = error))
+        analyticsProvider.logEvent(
+            Event.with(action = "webviewError", label = error, referrer = request?.url.toString()))
         if (showErrorViewIfNeeded) {
           loadableView.status = Failed()
         }

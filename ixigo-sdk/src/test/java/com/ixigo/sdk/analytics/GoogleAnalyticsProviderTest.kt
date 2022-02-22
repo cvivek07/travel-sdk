@@ -29,6 +29,7 @@ class GoogleAnalyticsProviderTest {
                 mapOf(
                     "clientId" to "clientIdValue",
                     "sdkVersion" to "sdkVersionValue",
+                    "referrer" to "https://www.ixigo.com/mypage",
                     "label" to "labelValue",
                     "value" to "123"))
     provider.logEvent(event)
@@ -39,10 +40,9 @@ class GoogleAnalyticsProviderTest {
                 .setAction("actionValue")
                 .setValue(123)
                 .setLabel("labelValue")
-                .setCustomDimension(
-                    GoogleAnalyticsProvider.EventDimension.CLIENT_ID.index, "clientIdValue")
-                .setCustomDimension(
-                    GoogleAnalyticsProvider.EventDimension.SDK_VERSION.index, "sdkVersionValue")
+                .setCustomDimension(1, "clientIdValue")
+                .setCustomDimension(2, "sdkVersionValue")
+                .setCustomDimension(4, "https://www.ixigo.com/mypage")
                 .build())
   }
 }

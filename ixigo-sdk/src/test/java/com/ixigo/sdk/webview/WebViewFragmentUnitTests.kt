@@ -141,6 +141,8 @@ class WebViewFragmentUnitTests {
         fragment.webView,
         mock<WebResourceRequest> { on { url } doReturn Uri.parse("https://www.ixigo.com/page2") })
     assertLoadableViewStatus(Loading())
+    verify(mockAnalyticsProvider)
+        .logEvent(Event.with(action = "webviewStartLoad", referrer = "https://www.ixigo.com/page2"))
   }
 
   @Test
@@ -221,7 +223,11 @@ class WebViewFragmentUnitTests {
         mock { on { url } doReturn Uri.parse(initialPageData.url) },
         mock { on { toString() } doReturn "errorMessage" })
     verify(mockAnalyticsProvider)
-        .logEvent(Event.with(action = "webviewError", label = "errorMessage"))
+        .logEvent(
+            Event.with(
+                action = "webviewError",
+                label = "errorMessage",
+                referrer = "https://www.ixigo.com"))
   }
 
   @Test
@@ -230,7 +236,9 @@ class WebViewFragmentUnitTests {
         fragment.webView,
         mock { on { url } doReturn Uri.parse(initialPageData.url) },
         mock { on { statusCode } doReturn 404 })
-    verify(mockAnalyticsProvider).logEvent(Event.with(action = "webviewError", label = "404"))
+    verify(mockAnalyticsProvider)
+        .logEvent(
+            Event.with(action = "webviewError", label = "404", referrer = "https://www.ixigo.com"))
   }
 
   @Test
