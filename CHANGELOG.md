@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.1.2](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.1.1...ixigo-sdk-3.1.2) (2022-02-22)
+
+
+### Bug Fixes
+
+* **analytics:** log webviewStartLoad and add referrer to events ([d3fd855](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/d3fd8551b05708dae9318890cb2c3045af0d362f))
+
 ### [3.1.1](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.1.0...ixigo-sdk-3.1.1) (2022-02-21)
 
 
