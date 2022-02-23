@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.1.3](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.1.2...ixigo-sdk-3.1.3) (2022-02-23)
+
+
+### Bug Fixes
+
+* loader not appearing when pressing retry ([ce0b48f](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/ce0b48f47188fb1d3d0cb68770c4b87dbe5d85e8))
+
 ### [3.1.2](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.1.1...ixigo-sdk-3.1.2) (2022-02-22)
 
 
