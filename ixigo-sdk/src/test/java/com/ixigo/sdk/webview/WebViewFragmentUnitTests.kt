@@ -259,9 +259,22 @@ class WebViewFragmentUnitTests {
 
   @Test
   fun `test that onRetry reloads Webview`() {
+    // Simulate error
+    shadowWebView.webViewClient.shouldOverrideUrlLoading(
+        fragment.webView,
+        mock<WebResourceRequest> { on { url } doReturn Uri.parse(initialPageData.url) })
+    assertLoadableViewStatus(Loading())
+    shadowWebView.webViewClient.onReceivedError(
+        fragment.webView, mock { on { url } doReturn Uri.parse(initialPageData.url) }, mock())
+    assertLoadableViewStatus(Failed())
+    shadowWebView.webViewClient.onPageFinished(fragment.webView, initialPageData.url)
+    assertLoadableViewStatus(Failed())
+
+    // Reload
     assertEquals(0, shadowWebView.reloadInvocations)
     fragment.loadableView.onRetry?.invoke()
     assertEquals(1, shadowWebView.reloadInvocations)
+    assertEquals(Loading(), fragment.loadableView.status)
   }
 
   @Test
