@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.1.4](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.1.3...ixigo-sdk-3.1.4) (2022-02-24)
+
+
+### Bug Fixes
+
+* add displayMode=embedded to flight trips when displaying in a fragment ([01f1e43](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/01f1e43a6e385ea98e982ae0a402fd3857f6a67e))
+
 ### [3.1.3](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.1.2...ixigo-sdk-3.1.3) (2022-02-23)
 
 
