@@ -28,7 +28,7 @@ fun IxigoSDK.flightsStartTrips(context: Context) {
 fun IxigoSDK.flightsTripsFragment(): Fragment {
   val arguments =
       Bundle().apply {
-        val url = getUrl(mapOf("page" to "FLIGHT_TRIPS"))
+        val url = getUrl(mapOf("page" to "FLIGHT_TRIPS", "displayMode" to "embedded"))
         putParcelable(WebViewFragment.INITIAL_PAGE_DATA_ARGS, InitialPageData(url, getHeaders(url)))
         putParcelable(WebViewFragment.CONFIG, FunnelConfig(enableExitBar = false))
       }

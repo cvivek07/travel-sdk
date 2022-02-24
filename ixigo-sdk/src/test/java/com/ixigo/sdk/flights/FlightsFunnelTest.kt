@@ -188,7 +188,7 @@ class FlightsFunnelTest {
     assertNotNull(fragment as? WebViewFragment)
 
     val url =
-        "https://baseUrl.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=1&deviceId=deviceId&languageCode=en&page=FLIGHT_TRIPS"
+        "https://baseUrl.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=1&deviceId=deviceId&languageCode=en&page=FLIGHT_TRIPS&displayMode=embedded"
     val expectedInitialData = InitialPageData(url, expectedHeaders())
     assertEquals(expectedInitialData, fragment.arguments!!.getParcelable(INITIAL_PAGE_DATA_ARGS))
 
