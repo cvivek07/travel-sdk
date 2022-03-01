@@ -62,6 +62,9 @@ To enable desugaring, modify your `app/build.gradle` like this:
 compileOptions {
   // Flag to enable support for the new language APIs
   coreLibraryDesugaringEnabled true
+  // Sets Java compatibility to Java 8
+  sourceCompatibility JavaVersion.VERSION_1_8
+  targetCompatibility JavaVersion.VERSION_1_8
 }
 
 dependencies {
