@@ -2,6 +2,8 @@
 
 # Installation
 
+## Add dependency
+
 Inside **root/build.gradle**
 
 ```groovy
@@ -24,7 +26,7 @@ dependencies {
 
 ```
 
-## Use Snapshots
+### Use Snapshots
 
 If you want to test the latest development that is not yet published as a new version, you can add a dependency to our snapshot repository instead.
 
@@ -48,6 +50,24 @@ dependencies {
   implementation "com.ixigo.sdk:ixigo-sdk:3.1.4-SNAPSHOT"
 }
 
+```
+
+## Enable Desugaring if needed
+
+We use certain Java 8 features in the SDK. If you are targetting a minSDK < API 26, please [enable desugaring](https://developer.android.com/studio/write/java8-support#library-desugaring) on your App to make sure the App works correctly for older devices.
+
+To enable desugaring, modify your `app/build.gradle` like this:
+
+```kotlin
+compileOptions {
+  // Flag to enable support for the new language APIs
+  coreLibraryDesugaringEnabled true
+}
+
+dependencies {
+  // Other Deps
+  coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
+}
 ```
 
 # Usage
