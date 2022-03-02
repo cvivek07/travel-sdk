@@ -261,12 +261,13 @@
   resolved "https://registry.yarnpkg.com/@hutson/parse-repository-url/-/parse-repository-url-3.0.2.tgz#98c23c950a3d9b6c8f0daed06da6c3af06981340"
   integrity sha512-H9XAx3hc0BQHY6l+IFSWHDySypcXsvsuLhgYLUGywmJ5pswRVQJUHpOsobnLYp2ZUaUlKiKDrgWWhosOwAEM8Q==
 
-"@ixigo-packages/ixigo-danger-common@^2.1.3":
-  version "2.1.3"
-  resolved "https://git.ixigo.com/api/v4/projects/536/packages/npm/@ixigo-packages/ixigo-danger-common/-/@ixigo-packages/ixigo-danger-common-2.1.3.tgz#04bb7f8afaa26395cffd1ee7f33475fe4d34def2"
-  integrity sha1-BLt/ivqiY5XP/R7n8zR1/k003vI=
+"@ixigo-packages/ixigo-danger-common@^2.3.2":
+  version "2.3.2"
+  resolved "https://git.ixigo.com/api/v4/projects/536/packages/npm/@ixigo-packages/ixigo-danger-common/-/@ixigo-packages/ixigo-danger-common-2.3.2.tgz#bf60b00041a857c52daec2f4556ee46e726cbeb5"
+  integrity sha1-v2CwAEGoV8UtrsL0VW7kbnJsvrU=
   dependencies:
     "@commitlint/config-conventional" "^14.1.0"
+    "@slack/bolt" "^3.8.1"
     "@types/json2md" "^1.5.1"
     async-csv "^2.1.3"
     axios "^0.24.0"
@@ -276,6 +277,7 @@
     glob "^7.2.0"
     glob-promise "^4.2.2"
     json2md "^1.12.0"
+    poll "^2.0.1"
     pretty-bytes "^5.6.0"
 
 "@octokit/auth-token@^2.4.0":
@@ -4041,6 +4043,11 @@ please-upgrade-node@^3.2.0:
   integrity sha512-gQR3WpIgNIKwBMVLkpMUeR3e1/E1y42bqDQZfql+kDeXd8COYfM8PQA4X6y7a8u9Ua9FHmsrrmirW2vHs45hWg==
   dependencies:
     semver-compare "^1.0.0"
+
+poll@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/poll/-/poll-2.0.1.tgz#91eef9c1dbba9415e5f9d8c558ff33ea3aeeed29"
+  integrity sha512-NajlwqK1+H69uyeu3jsfD2ydkPLTfMnb3euBchyrA2tJv5F4099b23kXw6SDF36OKCNZpdRscVXg94o3nxBxhQ==
 
 prelude-ls@~1.1.2:
   version "1.1.2"

@@ -44,7 +44,7 @@ build-all:
   script:
     # `overallCoverageReport` builds everything and creates coverage info
     # `app:lintDebug` is used as an unmbrella project at the moment to run all module Lints
-    - "./gradlew overallCoverageReport app:assembleDebug app:lintDebug spotlessCheck --stacktrace $GRADLE_SCAN_OPTION"
+    - "./gradlew overallCoverageReport app:assembleDebug app:assembleAndroidTest app:lintDebug spotlessCheck --stacktrace $GRADLE_SCAN_OPTION"
   artifacts:
     when: always
     paths:
@@ -100,6 +100,14 @@ danger:
   script:
     - yarn install
     - yarn danger ci -f -d danger/dangerfile.ts
+
+run-ui-tests:
+  stage: post-build
+  when: manual
+  allow_failure: true
+  script:
+    - yarn install
+    - yarn runUITests
 
 pages:
   stage: deploy

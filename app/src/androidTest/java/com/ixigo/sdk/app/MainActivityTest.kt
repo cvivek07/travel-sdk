@@ -5,7 +5,12 @@ import android.view.ViewGroup
 import androidx.test.espresso.Espresso.onData
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.*
+import androidx.test.espresso.matcher.RootMatchers.isPlatformPopup
 import androidx.test.espresso.matcher.ViewMatchers.*
+import androidx.test.espresso.web.assertion.WebViewAssertions.webMatches
+import androidx.test.espresso.web.sugar.Web.onWebView
+import androidx.test.espresso.web.webdriver.DriverAtoms.*
+import androidx.test.espresso.web.webdriver.Locator
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
@@ -33,12 +38,9 @@ class MainActivityTest {
                 childAtPosition(childAtPosition(withId(R.id.presetInput), 0), 1)))
     materialAutoCompleteTextView.perform(scrollTo(), click())
 
-    val materialTextView =
-        onData(anything())
-            .inAdapterView(
-                childAtPosition(
-                    withClassName(`is`("android.widget.PopupWindow\$PopupBackgroundView")), 0))
-            .atPosition(1)
+    val materialTextView = onData(anything())
+      .inRoot(isPlatformPopup())
+      .atPosition(1)
     materialTextView.perform(click())
 
     val materialButton =
@@ -52,15 +54,11 @@ class MainActivityTest {
                     1)))
     materialButton.perform(scrollTo(), click())
 
-    val appCompatButton =
-        onView(
-            allOf(
-                withId(R.id.retryButton),
-                withText("Retry"),
-                childAtPosition(
-                    allOf(withId(R.id.errorView), childAtPosition(withId(R.id.container), 1)), 2),
-                isDisplayed()))
-    appCompatButton.perform(click())
+//    Thread.sleep(5000)
+//
+//    onWebView()
+//      .withElement(findElement(Locator.CSS_SELECTOR, "#content > div > div > div > div.home-widget-wrapper > div.featured-items-section.half-strips-cntnr > div:nth-child(1) > div.u-ib.text.strip-text")) // similar to onView(withId(...))
+//      .perform(webClick()) // Similar to perform(click())
 
     val linearLayout =
         onView(

@@ -8,7 +8,8 @@
     "prepare": "husky install",
     "pdf-changelog": "markdown-pdf CHANGELOG.md -o build/CHANGELOG.pdf",
     "upload-app-to-slack": "yarn tsc && node dist/slackUpload.js --unhandled-rejections=strict",
-    "slack-new-version": "yarn tsc && node dist/slackNewVersion.js --unhandled-rejections=strict"
+    "slack-new-version": "yarn tsc && node dist/slackNewVersion.js --unhandled-rejections=strict",
+    "runUITests": "yarn tsc && node dist/runUITests.js --unhandled-rejections=strict"
   },
   "private": true,
   "license": "UNLICENSED",
@@ -27,7 +28,7 @@
     "typescript": "^4.3.5"
   },
   "dependencies": {
-    "@ixigo-packages/ixigo-danger-common": "^2.1.3",
+    "@ixigo-packages/ixigo-danger-common": "^2.3.2",
     "git-format-staged": "^2.1.3",
     "glob-promise": "^4.2.2",
     "is-object": "^1.0.2",
