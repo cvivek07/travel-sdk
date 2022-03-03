@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.webkit.CookieManager
+import androidx.annotation.VisibleForTesting
+import androidx.test.espresso.idling.net.UriIdlingResource
 import com.ixigo.sdk.Config.Companion.ProdConfig
 import com.ixigo.sdk.IxigoSDK.Companion.init
 import com.ixigo.sdk.analytics.AnalyticsProvider
@@ -35,6 +37,11 @@ internal constructor(
 ) : JsInterfaceProvider {
 
   internal val webViewConfig = WebViewConfig()
+
+  @VisibleForTesting
+  val uriIdlingResource: UriIdlingResource by lazy {
+    UriIdlingResource("IxigoSDKUriIdlingResource", 1000)
+  }
 
   companion object : SdkSingleton<IxigoSDK>("IxigoSDK") {
 

@@ -70,8 +70,8 @@ class WebViewFragment : Fragment() {
     loadableView.onGoBack = { activity?.onBackPressed() }
     loadableView.onRetry =
         {
-          loadableView.status = Loading()
           webView.reload()
+          startedLoading()
         }
 
     webView.webViewClient = CustomWebViewClient()
@@ -83,8 +83,8 @@ class WebViewFragment : Fragment() {
         IxigoSDK.instance.webViewConfig.getMatchingJsInterfaces(initialPageData.url, this)
     jsInterfaces.iterator().forEach(this::addJavascriptInterface)
 
-    loadableView.status = Loading()
     webView.loadUrl(initialPageData.url, initialPageData.headers)
+    startedLoading()
 
     return binding.root
   }
@@ -125,6 +125,17 @@ class WebViewFragment : Fragment() {
     window?.statusBarColor = color
   }
 
+  private fun startedLoading(url: String = webView.url.toString()) {
+    if (loadableView.status != Loading()) {
+      loadableView.status = Loading()
+      IxigoSDK.instance.uriIdlingResource.beginLoad(webView.url.toString())
+    }
+  }
+
+  private fun stoppedLoading(url: String = webView.url.toString()) {
+    IxigoSDK.instance.uriIdlingResource.endLoad(url)
+  }
+
   private inner class CustomWebViewClient : WebViewClient() {
 
     override fun doUpdateVisitedHistory(view: WebView?, url: String?, isReload: Boolean) {
@@ -136,6 +147,7 @@ class WebViewFragment : Fragment() {
       super.onPageFinished(view, url)
       if (loadableView.status is Loading) {
         loadableView.status = Loaded
+        stoppedLoading()
       }
       setStatusBarColorFromThemeColor()
 
@@ -156,9 +168,12 @@ class WebViewFragment : Fragment() {
     }
 
     override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
-      loadableView.status = Loading()
-      analyticsProvider.logEvent(
-          Event.with(action = "webviewStartLoad", referrer = request?.url.toString()))
+      if (request != null) {
+        val url = request.url.toString()
+        startedLoading(url)
+        analyticsProvider.logEvent(Event.with(action = "webviewStartLoad", referrer = url))
+      }
+
       return super.shouldOverrideUrlLoading(view, request)
     }
 
@@ -199,6 +214,7 @@ class WebViewFragment : Fragment() {
             Event.with(action = "webviewError", label = error, referrer = request?.url.toString()))
         if (showErrorViewIfNeeded) {
           loadableView.status = Failed()
+          stoppedLoading()
         }
       }
     }

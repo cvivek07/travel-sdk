@@ -15,5 +15,5 @@ import { diffCoverage } from "./diffCoverage";
   });
   await commitlint();
   await diffCoverage();
-  await apkSize("app/build/outputs/**/*.apk", "build-all");
+  await apkSize("app/build/outputs/**/apk/debug/*.apk", "build-all");
 })();

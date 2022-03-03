@@ -2,8 +2,8 @@ package com.ixigo.sdk.app
 
 import android.view.View
 import android.view.ViewGroup
-import androidx.test.espresso.Espresso.onData
-import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.Espresso.*
+import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.action.ViewActions.*
 import androidx.test.espresso.matcher.RootMatchers.isPlatformPopup
 import androidx.test.espresso.matcher.ViewMatchers.*
@@ -14,6 +14,7 @@ import androidx.test.espresso.web.webdriver.Locator
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+import com.ixigo.sdk.IxigoSDK
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.*
@@ -54,28 +55,33 @@ class MainActivityTest {
                     1)))
     materialButton.perform(scrollTo(), click())
 
+    IdlingRegistry.getInstance().register(IxigoSDK.instance.uriIdlingResource)
+
 //    Thread.sleep(5000)
 //
-//    onWebView()
-//      .withElement(findElement(Locator.CSS_SELECTOR, "#content > div > div > div > div.home-widget-wrapper > div.featured-items-section.half-strips-cntnr > div:nth-child(1) > div.u-ib.text.strip-text")) // similar to onView(withId(...))
-//      .perform(webClick()) // Similar to perform(click())
+    onWebView()
+      .withElement(findElement(Locator.CSS_SELECTOR, "#content > div > div > div > div.home-widget-wrapper > div.featured-items-section.half-strips-cntnr > div:nth-child(1) > div.u-ib.text.strip-text")) // similar to onView(withId(...))
+      .perform(webClick()) // Similar to perform(click())
 
-    val linearLayout =
-        onView(
-            allOf(
-                withId(R.id.topExitBar),
-                childAtPosition(childAtPosition(withId(android.R.id.content), 0), 0),
-                isDisplayed()))
-    linearLayout.perform(click())
 
-    val appCompatButton2 =
-        onView(
-            allOf(
-                withId(android.R.id.button1),
-                withText("Go Back"),
-                childAtPosition(
-                    childAtPosition(withClassName(`is`("android.widget.ScrollView")), 0), 3)))
-    appCompatButton2.perform(scrollTo(), click())
+    Thread.sleep(5000)
+
+//    val linearLayout =
+//        onView(
+//            allOf(
+//                withId(R.id.topExitBar),
+//                childAtPosition(childAtPosition(withId(android.R.id.content), 0), 0),
+//                isDisplayed()))
+//    linearLayout.perform(click())
+//
+//    val appCompatButton2 =
+//        onView(
+//            allOf(
+//                withId(android.R.id.button1),
+//                withText("Go Back"),
+//                childAtPosition(
+//                    childAtPosition(withClassName(`is`("android.widget.ScrollView")), 0), 3)))
+//    appCompatButton2.perform(scrollTo(), click())
   }
 
   private fun childAtPosition(parentMatcher: Matcher<View>, position: Int): Matcher<View> {

@@ -81,5 +81,5 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0-alpha04'
     androidTestImplementation 'androidx.test:rules:1.4.1-alpha04'
     androidTestImplementation 'androidx.test.espresso:espresso-web:3.4.0'
-
+    androidTestImplementation 'androidx.test.espresso.idling:idling-net:3.4.0'
 }

@@ -103,6 +103,9 @@ dependencies {
     androidTestImplementation 'org.mockito.kotlin:mockito-kotlin:4.0.0'
     androidTestImplementation 'com.linkedin.dexmaker:dexmaker-mockito-inline:2.28.1'
     androidTestImplementation 'commons-io:commons-io:2.11.0' // Used to read html files when testing WebView
+
+    // Need this in implementation since IdlingResources are added in Prod code (although not registered)
+    implementation 'androidx.test.espresso.idling:idling-net:3.4.0'
 }
 
 afterEvaluate {
