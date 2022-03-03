@@ -261,10 +261,10 @@
   resolved "https://registry.yarnpkg.com/@hutson/parse-repository-url/-/parse-repository-url-3.0.2.tgz#98c23c950a3d9b6c8f0daed06da6c3af06981340"
   integrity sha512-H9XAx3hc0BQHY6l+IFSWHDySypcXsvsuLhgYLUGywmJ5pswRVQJUHpOsobnLYp2ZUaUlKiKDrgWWhosOwAEM8Q==
 
-"@ixigo-packages/ixigo-danger-common@^2.3.2":
-  version "2.3.2"
-  resolved "https://git.ixigo.com/api/v4/projects/536/packages/npm/@ixigo-packages/ixigo-danger-common/-/@ixigo-packages/ixigo-danger-common-2.3.2.tgz#bf60b00041a857c52daec2f4556ee46e726cbeb5"
-  integrity sha1-v2CwAEGoV8UtrsL0VW7kbnJsvrU=
+"@ixigo-packages/ixigo-danger-common@^2.3.3":
+  version "2.3.3"
+  resolved "https://git.ixigo.com/api/v4/projects/536/packages/npm/@ixigo-packages/ixigo-danger-common/-/@ixigo-packages/ixigo-danger-common-2.3.3.tgz#f228520ccf4e857faacd2613fe51d126abb91b8b"
+  integrity sha1-8ihSDM9OhX+qzSYT/lHRJqu5G4s=
   dependencies:
     "@commitlint/config-conventional" "^14.1.0"
     "@slack/bolt" "^3.8.1"
