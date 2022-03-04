@@ -9,7 +9,6 @@ import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.webkit.*
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.VisibleForTesting
@@ -117,12 +116,6 @@ class WebViewFragment : Fragment() {
         webView.goBack()
       }
     }
-  }
-
-  private fun updateStatusBarColor(color: Int) {
-    val window = this@WebViewFragment.activity?.window
-    window?.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-    window?.statusBarColor = color
   }
 
   private fun startedLoading(url: String = webView.url.toString()) {
