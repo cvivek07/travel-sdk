@@ -121,7 +121,7 @@ class WebViewFragment : Fragment() {
   private fun startedLoading(url: String = webView.url.toString()) {
     if (loadableView.status != Loading()) {
       loadableView.status = Loading()
-      IxigoSDK.instance.uriIdlingResource.beginLoad(webView.url.toString())
+      IxigoSDK.instance.uriIdlingResource.beginLoad(url)
     }
   }
 
