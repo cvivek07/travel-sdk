@@ -33,10 +33,9 @@ internal constructor(
     internal val partnerTokenProvider: PartnerTokenProvider,
     internal val paymentProvider: PaymentProvider,
     internal val analyticsProvider: AnalyticsProvider,
-    internal val config: Config = ProdConfig
+    internal val config: Config = ProdConfig,
+    internal val webViewConfig: WebViewConfig = WebViewConfig()
 ) : JsInterfaceProvider {
-
-  internal val webViewConfig = WebViewConfig()
 
   @VisibleForTesting
   val uriIdlingResource: UriIdlingResource by lazy {
@@ -142,6 +141,7 @@ internal constructor(
    */
   fun onLogout() {
     CookieManager.getInstance().removeAllCookies(null)
+    webViewConfig.webStorage.deleteAllData()
   }
 
   internal fun getUrl(properties: Map<String, String>): String {

@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.webkit.CookieManager
+import android.webkit.WebStorage
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.launchActivity
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -91,6 +92,14 @@ class IxigoSDKTests {
     assert(cookieManager.hasCookies())
     IxigoSDK.instance.onLogout()
     assertFalse(cookieManager.hasCookies())
+  }
+
+  @Test
+  fun `test onLogout removes web data storage`() {
+    val mockWebStorage = mock<WebStorage>()
+    initializeTestIxigoSDK(webViewConfig = WebViewConfig(webStorage = mockWebStorage))
+    IxigoSDK.instance.onLogout()
+    verify(mockWebStorage).deleteAllData()
   }
 
   @Test

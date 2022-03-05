@@ -10,6 +10,7 @@ import com.ixigo.sdk.auth.PartnerTokenProvider
 import com.ixigo.sdk.payment.DisabledPaymentProvider
 import com.ixigo.sdk.payment.PaymentProvider
 import com.ixigo.sdk.test.TestData.FakeAppInfo
+import com.ixigo.sdk.webview.WebViewConfig
 
 object TestData {
   val FakeAppInfo = AppInfo("clientId", "apiKey", 1, "appName", "deviceId", "uuid")
@@ -17,13 +18,20 @@ object TestData {
   val DisabledAnalyticsProvider = FakeAnalyticsProvider()
 }
 
-fun initializeTestIxigoSDK(
+internal fun initializeTestIxigoSDK(
     analyticsProvider: AnalyticsProvider = TestData.DisabledAnalyticsProvider,
     appInfo: AppInfo = FakeAppInfo,
     paymentProvider: PaymentProvider = DisabledPaymentProvider,
     partnerTokenProvider: PartnerTokenProvider = EmptyPartnerTokenProvider,
-    config: Config = Config.ProdConfig
+    config: Config = Config.ProdConfig,
+    webViewConfig: WebViewConfig = WebViewConfig()
 ) {
   IxigoSDK.replaceInstance(
-      IxigoSDK(appInfo, partnerTokenProvider, paymentProvider, analyticsProvider, config = config))
+      IxigoSDK(
+          appInfo,
+          partnerTokenProvider,
+          paymentProvider,
+          analyticsProvider,
+          config = config,
+          webViewConfig = webViewConfig))
 }
