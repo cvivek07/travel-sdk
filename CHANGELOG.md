@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.1.5](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.1.4...ixigo-sdk-3.1.5) (2022-03-06)
+
+
+### Bug Fixes
+
+* delete data storage on logout ([1a9671b](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/1a9671be4a5b64d3b1a104f5ec6293da1120617e))
+* use url for idlingResource ([79682b7](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/79682b713239fba8e4bed99a325b78a35baf3d22))
+
 ### [3.1.4](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.1.3...ixigo-sdk-3.1.4) (2022-02-24)
 
 
