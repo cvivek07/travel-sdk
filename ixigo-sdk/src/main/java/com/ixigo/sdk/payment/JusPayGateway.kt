@@ -7,9 +7,7 @@ import com.ixigo.sdk.common.Err
 import com.ixigo.sdk.common.NativePromiseError
 import com.ixigo.sdk.common.Ok
 import com.ixigo.sdk.common.Result
-import com.ixigo.sdk.payment.data.GetAvailableUPIAppsInput
-import com.ixigo.sdk.payment.data.GetAvailableUPIAppsResponse
-import com.ixigo.sdk.payment.data.UpiApp
+import com.ixigo.sdk.payment.data.*
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import `in`.juspay.hypersdk.core.PaymentConstants
@@ -19,6 +17,7 @@ import `in`.juspay.hypersdk.data.JuspayResponseHandler
 import `in`.juspay.hypersdk.ui.HyperPaymentsCallbackAdapter
 import `in`.juspay.services.HyperServices
 import java.util.*
+import org.json.JSONArray
 import org.json.JSONObject
 
 private typealias HyperServiceCallback = (payload: JSONObject) -> Unit
@@ -30,6 +29,10 @@ typealias AvailableUPIAppsCallback = (AvailableUPIAppsResult) -> Unit
 typealias InitializeResult = Result<Unit, NativePromiseError>
 
 typealias InitializeCallback = (InitializeResult) -> Unit
+
+typealias ProcessUpiIntentResult = Result<ProcessUpiIntentResponse, NativePromiseError>
+
+typealias ProcessUpiIntentCallback = (ProcessUpiIntentResult) -> Unit
 
 internal class JusPayGateway(
     private val hyperInstance: HyperServices,
@@ -139,24 +142,43 @@ internal class JusPayGateway(
     }
   }
 
-  //  private fun createUpiIntentRequestPayload(
-  //      upiIntent: UpiIntent,
-  //      amount: Float,
-  //      orderId: String,
-  //      clientAuthToken: String,
-  //      endUrls: JSONArray
-  //  ): JSONObject {
-  //    return JSONObject().apply {
-  //      put("action", "upiTxn")
-  //      put("orderId", orderId)
-  //      put("displayNote", upiIntent.displayNote)
-  //      put("clientAuthToken", clientAuthToken)
-  //      put("endUrls", endUrls)
-  //      put("upiSdkPresent", true)
-  //      put("amount", amount.toString())
-  //      put("payWithApp", upiIntent.app)
-  //    }
-  //  }
+  fun processUpiIntent(input: ProcessUpiIntentInput, callback: ProcessUpiIntentCallback) {
+    val requestId = createRequestId { data ->
+      val error = data.optBoolean("error")
+      if (error) {
+        callback(
+            Err(
+                NativePromiseError(
+                    errorCode = data.optString("errorCode"),
+                    errorMessage = data.optString("errorMessage"))))
+      } else {
+        callback(Ok(ProcessUpiIntentResponse(orderId = input.orderId)))
+      }
+    }
+    hyperInstance.process(
+        createJuspayRequestJsonPayload(createUpiIntentRequestPayload(input), requestId))
+  }
+
+  private fun createUpiIntentRequestPayload(input: ProcessUpiIntentInput): JSONObject {
+    return with(input) {
+      JSONObject().apply {
+        put("action", "upiTxn")
+        put("orderId", orderId)
+        put("displayNote", displayNote)
+        put("clientAuthToken", clientAuthToken)
+        put(
+            "endUrls",
+            JSONArray().apply {
+              for (endUrl in endUrls) {
+                put(endUrl)
+              }
+            })
+        put("upiSdkPresent", true)
+        put("amount", amount.toString())
+        put("payWithApp", appPackage)
+      }
+    }
+  }
 
   internal fun createJuspayInitiationJsonPayload(input: InitializeInput): JSONObject {
     return JSONObject().apply {
@@ -180,5 +202,3 @@ internal class JusPayGateway(
     }
   }
 }
-
-data class JuspayAvailableUPIAppsResponse(val availableApps: List<UpiApp>)

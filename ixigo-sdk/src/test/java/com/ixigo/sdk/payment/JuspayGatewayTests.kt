@@ -7,9 +7,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ixigo.sdk.common.Err
 import com.ixigo.sdk.common.NativePromiseError
 import com.ixigo.sdk.common.Ok
-import com.ixigo.sdk.payment.data.GetAvailableUPIAppsInput
-import com.ixigo.sdk.payment.data.GetAvailableUPIAppsResponse
-import com.ixigo.sdk.payment.data.UpiApp
+import com.ixigo.sdk.payment.data.*
 import com.ixigo.sdk.test.initializeTestIxigoSDK
 import com.ixigo.sdk.webview.InitialPageData
 import com.ixigo.sdk.webview.WebViewFragment
@@ -128,9 +126,8 @@ class JuspayGatewayTests {
     initializeHyperServices()
 
     var result: AvailableUPIAppsResult? = null
-    juspayGateway.listAvailableUPIApps(GetAvailableUPIAppsInput(orderId = "orderIdValue")) {
-      result = it
-    }
+    juspayGateway.listAvailableUPIApps(
+        GetAvailableUPIAppsInput(orderId = "orderIdValue", provider = "JUSPAY")) { result = it }
 
     verify(hyperServices).process(capture(jsonObjectCaptor))
 
@@ -151,7 +148,7 @@ class JuspayGatewayTests {
                       put(
                           JSONObject().apply {
                             put("appName", "appNameValue")
-                            put("appPackage", "appPackageValue")
+                            put("packageName", "packageNameValue")
                           })
                     })
               })
@@ -162,7 +159,7 @@ class JuspayGatewayTests {
     assertEquals(
         Ok(
             GetAvailableUPIAppsResponse(
-                listOf(UpiApp(appPackage = "appPackageValue", appName = "appNameValue")))),
+                listOf(UpiApp(packageName = "packageNameValue", appName = "appNameValue")))),
         result)
   }
 
@@ -171,15 +168,83 @@ class JuspayGatewayTests {
     initializeHyperServices()
 
     var result: AvailableUPIAppsResult? = null
-    juspayGateway.listAvailableUPIApps(GetAvailableUPIAppsInput(orderId = "orderIdValue")) {
-      result = it
-    }
+    juspayGateway.listAvailableUPIApps(
+        GetAvailableUPIAppsInput(orderId = "orderIdValue", provider = "JUSPAY")) { result = it }
 
     verify(hyperServices).process(capture(jsonObjectCaptor))
 
     val processJsonObject = jsonObjectCaptor.value
     assertEquals(
         """{"action":"upiTxn","orderId":"orderIdValue","getAvailableApps":true}""",
+        processJsonObject.getString("payload"))
+    assertEquals("in.juspay.hyperapi", processJsonObject.getString("service"))
+    hyperCallbackCaptor.value.onEvent(
+        JSONObject().apply {
+          put("event", "process_result")
+          put("error", true)
+          put("errorMessage", "errorMessageValue")
+          put("errorCode", "errorCodeValue")
+          put("requestId", processJsonObject.getString("requestId"))
+        },
+        juspayResponseHandler)
+
+    assertEquals(
+        Err(NativePromiseError(errorCode = "errorCodeValue", errorMessage = "errorMessageValue")),
+        result)
+  }
+
+  @Test
+  fun `test processUpiIntent works correctly`() {
+    initializeHyperServices()
+
+    var result: ProcessUpiIntentResult? = null
+    juspayGateway.processUpiIntent(
+        ProcessUpiIntentInput(
+            orderId = "orderIdValue",
+            provider = "JUSPAY",
+            appPackage = "appPackageValue",
+            displayNote = "displayNodeValue",
+            clientAuthToken = "clientAuthtokenValue",
+            endUrls = listOf("endUrl1", "endUrl2"),
+            amount = 100.23)) { result = it }
+
+    verify(hyperServices).process(capture(jsonObjectCaptor))
+
+    val processJsonObject = jsonObjectCaptor.value
+    assertEquals(
+        """{"action":"upiTxn","orderId":"orderIdValue","displayNote":"displayNodeValue","clientAuthToken":"clientAuthtokenValue","endUrls":["endUrl1","endUrl2"],"upiSdkPresent":true,"amount":"100.23","payWithApp":"appPackageValue"}""",
+        processJsonObject.getString("payload"))
+    assertEquals("in.juspay.hyperapi", processJsonObject.getString("service"))
+    hyperCallbackCaptor.value.onEvent(
+        JSONObject().apply {
+          put("event", "process_result")
+          put("requestId", processJsonObject.getString("requestId"))
+        },
+        juspayResponseHandler)
+
+    assertEquals(Ok(ProcessUpiIntentResponse(orderId = "orderIdValue")), result)
+  }
+
+  @Test
+  fun `test processUpiIntent throws error if hyperservices returns error`() {
+    initializeHyperServices()
+
+    var result: ProcessUpiIntentResult? = null
+    juspayGateway.processUpiIntent(
+        ProcessUpiIntentInput(
+            orderId = "orderIdValue",
+            provider = "JUSPAY",
+            appPackage = "appPackageValue",
+            displayNote = "displayNodeValue",
+            clientAuthToken = "clientAuthtokenValue",
+            endUrls = listOf("endUrl1", "endUrl2"),
+            amount = 100.23)) { result = it }
+
+    verify(hyperServices).process(capture(jsonObjectCaptor))
+
+    val processJsonObject = jsonObjectCaptor.value
+    assertEquals(
+        """{"action":"upiTxn","orderId":"orderIdValue","displayNote":"displayNodeValue","clientAuthToken":"clientAuthtokenValue","endUrls":["endUrl1","endUrl2"],"upiSdkPresent":true,"amount":"100.23","payWithApp":"appPackageValue"}""",
         processJsonObject.getString("payload"))
     assertEquals("in.juspay.hyperapi", processJsonObject.getString("service"))
     hyperCallbackCaptor.value.onEvent(

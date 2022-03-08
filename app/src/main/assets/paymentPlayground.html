@@ -11,35 +11,108 @@
 <body>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 
-
 <div class="container p-3">
-    <form>
-        <div class="form-group mb-3">
-            <label for="customerId">Customer Id</label>
-            <input type="text" class="form-control" id="customerId" placeholder="Customer Id" value="cst_jyeynkeyjqqa3zhm">
 
-            <label for="merchantId">Merchant Id</label>
-            <input type="text" class="form-control" id="merchantId" placeholder="Merchant Id" value="ixigo">
+    <h2>PaymentSDK Playground</h2>
 
-            <label for="clientId">Client Id</label>
-            <input type="text" class="form-control" id="clientId" placeholder="Client Id" value="ixigo_MWEB">
+    <div class="accordion mt-3" id="accordionExample">
+        <div class="accordion-item open">
+            <h2 class="accordion-header" id="headingOne">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                    Initialize
+                </button>
+            </h2>
+            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                    <form id="initialize-form">
+                        <div class="form-group mb-3">
 
-            <label for="clientId">Order Id</label>
-            <input type="text" class="form-control" id="orderId" placeholder="Order Id" value="2IQIQW5TSWQ5FSK5Y">
+                            <label for="initialize-customerId">Customer Id</label>
+                            <input type="text" class="form-control" id="initialize-customerId" placeholder="Customer Id" value="cst_jyeynkeyjqqa3zhm">
+
+                            <label for="initialize-merchantId">Merchant Id</label>
+                            <input type="text" class="form-control" id="initialize-merchantId" placeholder="Merchant Id" value="ixigo">
+
+                            <label for="initialize-clientId">Client Id</label>
+                            <input type="text" class="form-control" id="initialize-clientId" placeholder="Client Id" value="ixigo_MWEB">
+                        </div>
+
+                        <button type="button" id="initialize-btn" class="btn btn-primary">Initialize</button>
+                    </form>
+                </div>
+            </div>
         </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingTwo">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    Get Available UPI Apps
+                </button>
+            </h2>
+            <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                    <form>
+                        <div class="form-group mb-3">
 
-        <button type="button" id="initialize-btn" class="btn btn-primary">Initialize</button>
-        <button type="button" id="upi-apps-btn" class="btn btn-primary">Upi Apps</button>
-    </form>
+                            <label for="upi-apps-provider">Provider</label>
+                            <input type="text" class="form-control" id="upi-apps-provider" placeholder="Provider" value="JUSPAY">
+
+                            <label for="upi-apps-orderId">Order Id</label>
+                            <input type="text" class="form-control" id="upi-apps-orderId" placeholder="Order Id" value="2IQIQW5TSWQ5FSK5Y">
+                        </div>
+
+                        <button type="button" id="upi-apps-btn" class="btn btn-primary">Get Available UPI Apps</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingThree">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                    Process UPI Intent
+                </button>
+            </h2>
+            <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                    <form>
+                        <div class="form-group mb-3">
+
+                            <label for="upi-intent-provider">Provider</label>
+                            <input type="text" class="form-control" id="upi-intent-provider" placeholder="Provider" value="JUSPAY">
+
+                            <label for="upi-intent-orderId">Order Id</label>
+                            <input type="text" class="form-control" id="upi-intent-orderId" placeholder="Order Id" value="2IQIQW5TSWQ5FSK5Y">
+
+                            <label for="upi-intent-app-package">App Package</label>
+                            <input type="text" class="form-control" id="upi-intent-app-package" placeholder="App Package" value="com.phonepe.app">
+
+                            <label for="upi-intent-display-note">Display Note</label>
+                            <input type="text" class="form-control" id="upi-intent-display-note" placeholder="My Display Note" value="Lorem Ipsum">
+
+                            <label for="upi-intent-client-auth-token">Client Auth Token</label>
+                            <input type="text" class="form-control" id="upi-intent-client-auth-token" placeholder="Client Auth Token" value="tkn_bcac6fc8f2ee402d80fe7caf3607837f">
+
+                            <label for="upi-intent-end-url">End Url</label>
+                            <input type="text" class="form-control" id="upi-intent-end-url" placeholder="End Url" value="https://www.ixigo.com/payments/juspay/callback/MWEB.*">
+
+                            <label for="upi-intent-amount">Amount</label>
+                            <input type="number" class="form-control" id="upi-intent-amount" placeholder="Amount" value="100.12">
+                        </div>
+
+                        <button type="button" id="upi-intent-btn" class="btn btn-primary">Process UPI Intent</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
     document.getElementById('initialize-btn').onclick = async () => {
         try {
             await IxigoSDK.payment.initialize({
-                "customerId": document.getElementById('customerId').value,
-                "merchantId": document.getElementById('merchantId').value,
-                "clientId": document.getElementById('clientId').value
+                "customerId": document.getElementById('initialize-customerId').value,
+                "merchantId": document.getElementById('initialize-merchantId').value,
+                "clientId": document.getElementById('initialize-clientId').value
             })
             alert("Successfully initialized SDK")
         } catch(e) {
@@ -50,11 +123,29 @@
     document.getElementById('upi-apps-btn').onclick = async () => {
         try {
             const apps = await IxigoSDK.payment.getAvailableUPIApps({
-                "orderId": document.getElementById('orderId').value,
+                "provider": document.getElementById('upi-apps-provider').value,
+                "orderId": document.getElementById('upi-apps-orderId').value
             })
             alert(`Available UPI Apps=${JSON.stringify(apps)}`)
         } catch(e) {
             alert(`Error trying to fetch UPI apps=${JSON.stringify(e)}`)
+        }
+    }
+
+    document.getElementById('upi-intent-btn').onclick = async () => {
+        try {
+            const result = await IxigoSDK.payment.processUPIIntent({
+                "provider": document.getElementById('upi-intent-provider').value,
+                "orderId": document.getElementById('upi-intent-orderId').value,
+                "appPackage": document.getElementById('upi-intent-app-package').value,
+                "displayNote": document.getElementById('upi-intent-display-note').value,
+                "clientAuthToken": document.getElementById('upi-intent-client-auth-token').value,
+                "endUrls": [document.getElementById('upi-intent-end-url').value],
+                "amount": document.getElementById('upi-intent-amount').value
+            })
+            alert(`UPI Intent successful=${JSON.stringify(result)}`)
+        } catch(e) {
+            alert(`Error trying to process UPI intent=${JSON.stringify(e)}`)
         }
     }
 </script>
