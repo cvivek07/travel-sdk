@@ -43,6 +43,7 @@ class WebViewFragment : Fragment() {
     get() = arguments?.getParcelable(INITIAL_PAGE_DATA_ARGS)!!
 
   var delegate: WebViewDelegate? = null
+  private lateinit var jsInterfaces: List<JsInterface>
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -78,7 +79,7 @@ class WebViewFragment : Fragment() {
     webView.settings.javaScriptEnabled = true
     webView.settings.domStorageEnabled = true
 
-    val jsInterfaces =
+    jsInterfaces =
         IxigoSDK.instance.webViewConfig.getMatchingJsInterfaces(initialPageData.url, this)
     jsInterfaces.iterator().forEach(this::addJavascriptInterface)
 
@@ -90,7 +91,8 @@ class WebViewFragment : Fragment() {
 
   override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
     val handlers =
-        arrayOf(IxigoSDK.instance.paymentProvider, IxigoSDK.instance.partnerTokenProvider)
+        listOf(IxigoSDK.instance.paymentProvider, IxigoSDK.instance.partnerTokenProvider) +
+            jsInterfaces
     handlers.forEach {
       (it as? ActivityResultHandler)?.apply { handle(requestCode, resultCode, data) }
     }

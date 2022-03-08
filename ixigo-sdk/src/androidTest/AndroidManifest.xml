@@ -2,6 +2,15 @@
     package="com.mypackage.mylibrary">
 
     <application
-        android:usesCleartextTraffic="true" />
+        android:usesCleartextTraffic="true" >
+
+        <receiver
+            android:name="com.ixigo.sdk.payment.SmsBroadcastReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.android.gms.auth.api.phone.SMS_RETRIEVED" />
+            </intent-filter>
+        </receiver>
+    </application>
 
 </manifest>

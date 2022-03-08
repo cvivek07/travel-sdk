@@ -17,6 +17,18 @@
 
     <div class="accordion mt-3" id="accordionExample">
         <div class="accordion-item open">
+            <h2 class="accordion-header" id="headingSms">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSms" aria-expanded="true" aria-controls="collapseOne">
+                    Read SMS
+                </button>
+            </h2>
+            <div id="collapseSms" class="accordion-collapse collapse show" aria-labelledby="headingSms" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                    <button type="button" id="read-sms-btn" class="btn btn-primary">Read SMS</button>
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item open">
             <h2 class="accordion-header" id="headingOne">
                 <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                     Initialize
@@ -146,6 +158,15 @@
             alert(`UPI Intent successful=${JSON.stringify(result)}`)
         } catch(e) {
             alert(`Error trying to process UPI intent=${JSON.stringify(e)}`)
+        }
+    }
+
+    document.getElementById('read-sms-btn').onclick = async () => {
+        try {
+            const response = await IxigoSDK.readSms()
+            alert(`Sms received=${JSON.stringify(response)}`)
+        } catch(e) {
+            alert(`Error trying to read SMS=${JSON.stringify(e)}`)
         }
     }
 </script>

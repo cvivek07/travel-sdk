@@ -76,6 +76,10 @@ dependencies {
     // Analytics
     implementation 'com.google.android.gms:play-services-analytics:17.0.1'
 
+    // SMS Retrieval
+    implementation 'com.google.android.gms:play-services-auth:17.0.0'
+    implementation 'com.google.android.gms:play-services-auth-api-phone:17.4.0'
+
     // PaymentsSDK
     // JusPay
     implementation 'in.juspay:hypersdk:2.0.3-rc.78'
