@@ -23,6 +23,7 @@ import com.ixigo.sdk.flights.*
 import com.ixigo.sdk.payment.PaymentCallback
 import com.ixigo.sdk.payment.PaymentInput
 import com.ixigo.sdk.payment.PaymentProvider
+import com.ixigo.sdk.payment.processPayment
 import com.ixigo.sdk.trains.TrainsSDK
 import com.ixigo.sdk.webview.FunnelConfig
 import com.ixigo.sdk.webview.InitialPageData
@@ -187,6 +188,20 @@ class FirstFragment : Fragment() {
         val intent = Intent(requireContext(), WebActivity::class.java)
         intent.putExtra(WebViewFragment.INITIAL_PAGE_DATA_ARGS, InitialPageData("file:///android_asset/paymentPlayground.html"))
         startActivity(intent)
+      }
+    }
+
+    binding.paymentHome.setOnClickListener {
+      if (initSDK()) {
+        val transactionId = getFieldValue(binding.paymentTransactionId, "Transaction Id")
+        val gatewayId = getFieldValue(binding.paymentGatewayId, "Gateway Id")
+        if (transactionId != null) {
+          if (gatewayId != null) {
+            IxigoSDK.instance.processPayment(requireActivity(), transactionId = transactionId, gatewayId = gatewayId)
+          } else {
+            IxigoSDK.instance.processPayment(requireActivity(), transactionId = transactionId)
+          }
+        }
       }
     }
 
@@ -359,6 +374,7 @@ class FirstFragment : Fragment() {
     val value = editText.text.toString()
     return if (value.isNullOrEmpty()) {
       editText.error = "$fieldName can not be empty"
+      binding.expansionLayout.expand(true)
       null
     } else {
       value

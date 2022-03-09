@@ -12,15 +12,14 @@ import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
 import com.ixigo.sdk.auth.EmptyPartnerTokenProvider
 import com.ixigo.sdk.payment.DisabledPaymentProvider
+import com.ixigo.sdk.test.assertLaunchedIntent
 import com.ixigo.sdk.webview.FunnelConfig
 import com.ixigo.sdk.webview.InitialPageData
-import com.ixigo.sdk.webview.WebActivity
 import com.ixigo.sdk.webview.WebViewFragment
 import com.ixigo.sdk.webview.WebViewFragment.Companion.INITIAL_PAGE_DATA_ARGS
 import java.time.LocalDate
 import org.hamcrest.BaseMatcher
 import org.hamcrest.Description
-import org.hamcrest.MatcherAssert.assertThat
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -29,7 +28,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
-import org.robolectric.Shadows.shadowOf
 
 @RunWith(AndroidJUnit4::class)
 class FlightsFunnelTest {
@@ -170,7 +168,8 @@ class FlightsFunnelTest {
       IxigoSDK.instance.flightsStartTrips(activity)
       assertLaunchedIntent(
           activity,
-          "https://baseUrl.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=1&deviceId=deviceId&languageCode=en&page=FLIGHT_TRIPS")
+          "https://baseUrl.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=1&deviceId=deviceId&languageCode=en&page=FLIGHT_TRIPS",
+          expectedHeaders = expectedHeaders())
       verify(mockAnalyticsProvider).logEvent(Event.with(action = "flightsStartTrips"))
     }
   }
@@ -201,7 +200,8 @@ class FlightsFunnelTest {
       IxigoSDK.instance.flightsStartHome(activity)
       assertLaunchedIntent(
           activity,
-          "https://baseUrl.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=1&deviceId=deviceId&languageCode=en&page=FLIGHT_HOME")
+          "https://baseUrl.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=1&deviceId=deviceId&languageCode=en&page=FLIGHT_HOME",
+          expectedHeaders = expectedHeaders())
       verify(mockAnalyticsProvider).logEvent(Event.with(action = "flightsStartHome"))
     }
   }
@@ -216,17 +216,9 @@ class FlightsFunnelTest {
         config)
     scenario.onActivity { activity ->
       IxigoSDK.instance.flightsStartSearch(activity, searchData)
-      assertLaunchedIntent(activity, expectedUrl)
+      assertLaunchedIntent(activity, expectedUrl, expectedHeaders = expectedHeaders())
       verify(mockAnalyticsProvider).logEvent(Event.with(action = "flightsStartSearch"))
     }
-  }
-
-  private fun assertLaunchedIntent(activity: Activity, url: String) {
-    val intent = Intent(activity, WebActivity::class.java)
-    intent.putExtra(INITIAL_PAGE_DATA_ARGS, InitialPageData(url, expectedHeaders()))
-    val shadowActivity = shadowOf(activity)
-    val nextIntent = shadowActivity.nextStartedActivity
-    assertThat(nextIntent, IntentMatcher(intent))
   }
 
   private val appInfo =

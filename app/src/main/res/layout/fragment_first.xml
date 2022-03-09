@@ -228,6 +228,47 @@
                             android:maxLines="1" />
 
                     </com.google.android.material.textfield.TextInputLayout>
+
+                    <androidx.appcompat.widget.LinearLayoutCompat
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp">
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="5dp"
+                            android:layout_weight="1"
+                            android:hint="Payment Transaction Id">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/paymentTransactionId"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:imeOptions="actionDone"
+                                android:inputType="text"
+                                android:maxLines="1" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="5dp"
+                            android:layout_weight="1"
+                            android:hint="Payment Gateway Id">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/paymentGatewayId"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:imeOptions="actionDone"
+                                android:inputType="text"
+                                android:text="1"
+                                android:maxLines="1" />
+
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                    </androidx.appcompat.widget.LinearLayoutCompat>
                 </LinearLayout>
 
             </com.github.florent37.expansionpanel.ExpansionLayout>
@@ -239,6 +280,22 @@
                 android:columnCount="2"
                 android:alignmentMode="alignMargins"
                 android:useDefaultMargins="true">
+
+                <Button
+                    android:id="@+id/paymentPlayground"
+                    android:layout_width="0dp"
+                    android:layout_columnWeight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="fill"
+                    android:text="Payment Playground" />
+
+                <Button
+                    android:id="@+id/paymentHome"
+                    android:layout_width="0dp"
+                    android:layout_columnWeight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="fill"
+                    android:text="Payment Home" />
 
                 <Button
                     android:id="@+id/buttonFlightSearch"
@@ -336,14 +393,6 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="fill"
                     android:text="Covid Appointment" />
-
-                <Button
-                    android:id="@+id/paymentPlayground"
-                    android:layout_width="0dp"
-                    android:layout_columnWeight="1"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="fill"
-                    android:text="Payment Playground" />
 
                 <Button
                     android:id="@+id/buttonSSOTest"
