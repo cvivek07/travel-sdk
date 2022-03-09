@@ -3,7 +3,7 @@ import { uploadFile } from "./slack";
 const channel = "C02RJSVUMLN"; // #ixigo-mobile-sdk-builds
 
 (async () => {
-  await uploadFile("app/build/**/*.apk", getMessage(), channel);
+  await uploadFile("app/build/**/debug/*.apk", getMessage(), channel);
 })();
 
 function getMessage(): string {
