@@ -35,7 +35,7 @@ class FakePartnerTokenProvider(private val token: String): PartnerTokenProvider,
   override fun handle(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
     if (requestCode == LoginRequestCode) {
       val token = data?.getStringExtra("token")
-      if (token != null) {
+      if (!token.isNullOrEmpty()) {
         partnerToken = PartnerToken(token)
         callback?.invoke(Ok(partnerToken!!))
       } else {
