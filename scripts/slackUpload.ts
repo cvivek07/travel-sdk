@@ -1,9 +1,9 @@
-import { uploadFile } from "./slack";
+import { slack } from "@ixigo-packages/ixigo-danger-common";
 
 const channel = "C02RJSVUMLN"; // #ixigo-mobile-sdk-builds
 
 (async () => {
-  await uploadFile("app/build/**/debug/*.apk", getMessage(), channel);
+  await slack.uploadFile("app/build/**/apk/debug/*.apk", getMessage(), channel);
 })();
 
 function getMessage(): string {
