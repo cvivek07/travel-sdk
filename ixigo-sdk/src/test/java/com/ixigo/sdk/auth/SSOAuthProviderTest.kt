@@ -69,6 +69,37 @@ class SSOAuthProviderTest {
   }
 
   @Test
+  fun `test that accessToken is returned without exchange for ixigo trains app`() {
+    assertTokenForIxigoApp(clientId = "iximatr")
+  }
+
+  @Test
+  fun `test that accessToken is returned without exchange for ixigo flights app`() {
+    assertTokenForIxigoApp(clientId = "iximaad")
+  }
+
+  private fun assertTokenForIxigoApp(clientId: String) {
+    val partnerToken = PartnerToken("partnerToken")
+    val ssoAuthProvider =
+        SSOAuthProvider(
+            FakePartnerTokenProvider.forCustomer(partnerId, partnerToken),
+            FakeAppInfo.copy(clientId = clientId))
+    assertNull(ssoAuthProvider.authData)
+
+    var callbackCalled = false
+    launchActivity<FragmentActivity>().onActivity { activity ->
+      val handled =
+          ssoAuthProvider.login(activity, partnerId) {
+            assertTrue(it.isSuccess)
+            it.onSuccess { authData -> assertEquals(partnerToken.token, authData.token) }
+            callbackCalled = true
+          }
+      assertTrue(handled)
+    }
+    await.until { callbackCalled }
+  }
+
+  @Test
   fun `test that login returns Error if no partnerToken is provided`() {
     val ssoAuthProvider = SSOAuthProvider(FakePartnerTokenProvider.forCustomer(partnerId, null))
 

@@ -55,7 +55,9 @@ class BusSDK(internal val config: Config) : JsInterfaceProvider {
    */
   fun launchAdditionalTrips(context: Context, funnelConfig: FunnelConfig? = null) {
     analyticsProvider.logEvent(Event.with(action = "busStartAdditionalTrips"))
-    with(IxigoSDK.instance) { launchWebActivity(context, getUrl(mapOf("page" to "BUS_TRIPS"))) }
+    with(IxigoSDK.instance) {
+      launchWebActivity(context, getUrl(mapOf("page" to "BUS_TRIPS")), funnelConfig)
+    }
   }
 
   /**

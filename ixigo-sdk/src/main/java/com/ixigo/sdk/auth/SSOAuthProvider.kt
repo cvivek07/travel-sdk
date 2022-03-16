@@ -2,6 +2,7 @@ package com.ixigo.sdk.auth
 
 import androidx.annotation.Keep
 import androidx.fragment.app.FragmentActivity
+import com.ixigo.sdk.AppInfo
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.common.Err
 import com.ixigo.sdk.common.Ok
@@ -22,7 +23,10 @@ import timber.log.Timber
  *
  * @property partnerTokenProvider
  */
-class SSOAuthProvider(private val partnerTokenProvider: PartnerTokenProvider) : AuthProvider {
+class SSOAuthProvider(
+    private val partnerTokenProvider: PartnerTokenProvider,
+    private val appInfo: AppInfo = IxigoSDK.instance.appInfo
+) : AuthProvider {
   private val client: OkHttpClient by lazy { OkHttpClient() }
   private val moshi by lazy { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
   private val responseJsonAdapter by lazy { moshi.adapter(RequestResponse::class.java) }
@@ -40,11 +44,20 @@ class SSOAuthProvider(private val partnerTokenProvider: PartnerTokenProvider) : 
         fragmentActivity,
         PartnerTokenProvider.Requester(partnerId, PartnerTokenProvider.RequesterType.CUSTOMER)) {
       when (it) {
-        is Ok -> exchangeToken(it.value, callback)
+        is Ok ->
+            if (isIxigoApp()) {
+              callback(Ok(AuthData(it.value.token)))
+            } else {
+              exchangeToken(it.value, callback)
+            }
         is Err -> callback(Err(Error(it.value.message)))
       }
     }
     return true
+  }
+
+  private fun isIxigoApp(): Boolean {
+    return (appInfo.clientId == "iximaad" || appInfo.clientId == "iximatr")
   }
 
   private fun exchangeToken(partnerToken: PartnerToken, callback: AuthCallback) {
