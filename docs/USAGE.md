@@ -58,7 +58,7 @@ We use certain Java 8 features in the SDK. If you are targetting a minSDK < API 
 
 To enable desugaring, modify your `app/build.gradle` like this:
 
-```kotlin
+```groovy
 compileOptions {
   // Flag to enable support for the new language APIs
   coreLibraryDesugaringEnabled true
@@ -296,6 +296,15 @@ Use this method to open a view showing your Bus bookings
 
 ```kotlin
 BusSDK.instance.launchTrips(context)
+```
+
+#### Open Additional Bus Trips
+
+Use this method to open a view showing additional Bus Trips.
+This is used to display older bus trips a customer might have booked in other platforms
+
+```kotlin
+BusSDK.instance.launchAdditionalTrips(context)
 ```
 
 #### Bus Multimodel Search

@@ -1,18 +1,24 @@
 package com.ixigo.sdk.bus
 
+import android.app.Activity
 import android.app.Application
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
+import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ixigo.sdk.AppInfo
 import com.ixigo.sdk.BuildConfig
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
+import com.ixigo.sdk.test.TestData.FakeAppInfo
+import com.ixigo.sdk.test.assertLaunchedIntent
+import com.ixigo.sdk.test.defaultIntentHeaders
 import com.ixigo.sdk.test.initializeTestIxigoSDK
 import com.ixigo.sdk.webview.*
 import java.time.LocalDate
 import org.junit.Assert
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.kotlin.doReturn
@@ -21,6 +27,8 @@ import org.mockito.kotlin.verify
 
 @RunWith(AndroidJUnit4::class)
 class BusSDKTests {
+
+  @get:Rule val activityRule = ActivityScenarioRule(Activity::class.java)
 
   @Before
   fun setup() {
@@ -105,6 +113,14 @@ class BusSDKTests {
     testBusTrips(
         clientId = "iximatr",
         "https://www.abhibus.com/ixigopwa/trips?source=ixtrains",
+        funnelConfig = FunnelConfig(enableExitBar = false))
+  }
+
+  @Test
+  fun `test old bus trips for ixigo trains with Funnel Config`() {
+    testOldBusTrips(
+        clientId = "iximatr",
+        "https://www.ixigo.com/pwa/initialpage?clientId=iximatr&apiKey=apiKey&appVersion=1&deviceId=deviceId&languageCode=en&page=BUS_TRIPS",
         funnelConfig = FunnelConfig(enableExitBar = false))
   }
 
@@ -221,5 +237,27 @@ class BusSDKTests {
     busSDK.launchTrips(application, funnelConfig)
     verify(mockIxigoSDK).launchWebActivity(application, expectedUrl, funnelConfig)
     verify(mockAnalyticsProvider).logEvent(Event("busStartTrips"))
+  }
+
+  private fun testOldBusTrips(
+      clientId: String,
+      expectedUrl: String,
+      config: BusConfig? = null,
+      funnelConfig: FunnelConfig? = null
+  ) {
+    activityRule.scenario.onActivity { activity ->
+      val mockAnalyticsProvider: AnalyticsProvider = mock()
+      initializeTestIxigoSDK(
+          analyticsProvider = mockAnalyticsProvider,
+          appInfo = FakeAppInfo.copy(clientId = clientId))
+
+      val busSDK = if (config != null) BusSDK.init(config = config) else BusSDK.init()
+      busSDK.launchAdditionalTrips(activity, funnelConfig)
+      assertLaunchedIntent(
+          activity,
+          expectedUrl,
+          defaultIntentHeaders.toMutableMap().apply { put("clientId", clientId) })
+      verify(mockAnalyticsProvider).logEvent(Event("busStartAdditionalTrips"))
+    }
   }
 }

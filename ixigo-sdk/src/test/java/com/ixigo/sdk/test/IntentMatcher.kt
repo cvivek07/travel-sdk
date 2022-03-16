@@ -27,7 +27,7 @@ class IntentMatcher(val intent: Intent) : BaseMatcher<Intent>() {
 fun assertLaunchedIntent(
     activity: Activity,
     url: String,
-    expectedHeaders: Map<String, String> = defaultHeaders()
+    expectedHeaders: Map<String, String> = defaultIntentHeaders
 ) {
   val intent = Intent(activity, WebActivity::class.java)
   intent.putExtra(WebViewFragment.INITIAL_PAGE_DATA_ARGS, InitialPageData(url, expectedHeaders))
@@ -36,7 +36,7 @@ fun assertLaunchedIntent(
   MatcherAssert.assertThat(nextIntent, IntentMatcher(intent))
 }
 
-private fun defaultHeaders(): Map<String, String> =
+val defaultIntentHeaders: Map<String, String> =
     with(FakeAppInfo) {
       mutableMapOf(
           "appVersion" to appVersionString,

@@ -8,13 +8,14 @@ import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
+import com.ixigo.sdk.bus.BusSDK
 import com.ixigo.sdk.common.Err
 import com.ixigo.sdk.common.Ok
 import com.ixigo.sdk.sms.OtpSmsRetriever
 import com.ixigo.sdk.sms.OtpSmsRetrieverCallback
 import com.ixigo.sdk.sms.OtpSmsRetrieverError
 import com.ixigo.sdk.test.initializeTestIxigoSDK
-import org.junit.Assert.assertEquals
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -22,10 +23,7 @@ import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnit
 import org.mockito.junit.MockitoRule
-import org.mockito.kotlin.any
-import org.mockito.kotlin.verify
-import org.mockito.kotlin.verifyNoMoreInteractions
-import org.mockito.kotlin.whenever
+import org.mockito.kotlin.*
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.shadows.ShadowWebView
 
@@ -41,6 +39,7 @@ class IxigoSDKAndroidTests {
 
   @Mock private lateinit var mockAnalyticsProvider: AnalyticsProvider
   @Mock private lateinit var mockOtpSmsRetriever: OtpSmsRetriever
+  @Mock private lateinit var busSDK: BusSDK
 
   @Before
   fun setup() {
@@ -124,5 +123,21 @@ class IxigoSDKAndroidTests {
     val intent = Intent()
     ixigoSDKAndroid.handle(requestCode, resultCode, intent)
     verify(mockOtpSmsRetriever).handle(requestCode, resultCode, intent)
+  }
+
+  @Test
+  fun `launchAdditionalBusTrips works if BusSDK is initialized`() {
+    BusSDK.replaceInstance(busSDK)
+    val ret = ixigoSDKAndroid.openAdditionalBusTrips()
+    verify(busSDK).launchAdditionalTrips(fragment.requireContext())
+    assertTrue(ret)
+  }
+
+  @Test
+  fun `launchAdditionalBusTrips returns false if BusSDK is not initialized`() {
+    BusSDK.clearInstance()
+    val ret = ixigoSDKAndroid.openAdditionalBusTrips()
+    verify(busSDK, never()).launchAdditionalTrips(fragment.requireContext())
+    assertFalse(ret)
   }
 }

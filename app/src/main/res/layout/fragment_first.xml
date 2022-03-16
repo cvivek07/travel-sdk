@@ -355,6 +355,14 @@
                     android:text="Bus Trips" />
 
                 <Button
+                    android:id="@+id/buttonBusAdditionalTrips"
+                    android:layout_width="0dp"
+                    android:layout_columnWeight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="fill"
+                    android:text="Additional Bus Trips" />
+
+                <Button
                     android:id="@+id/buttonBusMultiModule"
                     android:layout_width="0dp"
                     android:layout_columnWeight="1"

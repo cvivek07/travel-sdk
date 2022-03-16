@@ -48,6 +48,17 @@ class BusSDK(internal val config: Config) : JsInterfaceProvider {
   }
 
   /**
+   * Opens ixigo PWA bus trips page
+   *
+   * @param context
+   * @param funnelConfig
+   */
+  fun launchAdditionalTrips(context: Context, funnelConfig: FunnelConfig? = null) {
+    analyticsProvider.logEvent(Event.with(action = "busStartAdditionalTrips"))
+    with(IxigoSDK.instance) { launchWebActivity(context, getUrl(mapOf("page" to "BUS_TRIPS"))) }
+  }
+
+  /**
    * Opens Abhibus PWA home to search for Bus trips
    *
    * @param context

@@ -136,6 +136,12 @@ class FirstFragment : Fragment() {
       }
     }
 
+    binding.buttonBusAdditionalTrips.setOnClickListener {
+      if (initSDK() && initBusSDK()) {
+        BusSDK.instance.launchAdditionalTrips(requireContext())
+      }
+    }
+
     binding.buttonBusMultiModule.setOnClickListener {
       if (initSDK() && initBusSDK()) {
         val intent = Intent(requireContext(), BusMultiModelActivity::class.java)
@@ -291,16 +297,6 @@ class FirstFragment : Fragment() {
     editor.putString(key, editText.text.toString())
   }
 
-  private fun restartApp() {
-    val context = requireContext()
-    val packageManager = context.packageManager
-    val intent = packageManager.getLaunchIntentForPackage(context.packageName)!!
-    val componentName = intent.component
-    val mainIntent = Intent.makeRestartActivityTask(componentName)
-    context.startActivity(mainIntent)
-    Runtime.getRuntime().exit(0)
-  }
-
   private fun clearSDK() {
     // Clear IxigoSDK
     clearSDK(IxigoSDK::class)
@@ -437,8 +433,13 @@ class FirstFragment : Fragment() {
               apiKey = "abhibus!2\$",
               ssoPartnerToken = "RQjsRqkORTji8R9+AQkLFyl9yeLQxX2II01n4rvVh1vpoH6pVx4eiw==",
               buttonsState = ButtonsState(trainsTrips = true, trainsTripsFragment = true, flightsSearch = false, flightsMultiModule = false, busHome = false, busMultiModel = false, busTrips = false)),
-          Preset(label = "ixigo trains", clientId = "iximatr", apiKey = "iximatr!2\$", buttonsState = ButtonsState(trainsHome = false), appVersion = "1801"),
-          Preset(label = "ixigo flights", clientId = "iximaad", apiKey = "iximaad!2\$", buttonsState = ButtonsState(trainsHome = false, flightsMultiModule = false, flightsHome = false, flightsSearch = false)),
+          Preset(label = "ixigo trains", clientId = "iximatr", apiKey = "iximatr!2\$",
+            uuid = "f18daf1c-c4d6-4566-a286-be8cdb2fae18",
+            deviceId = "8c4e31dff9e93ed4",
+            ssoPartnerToken = "3u8b19ka0neaoxa14r7qw2ytkaxujbm3ymdfcqmuaajyto8qiiqtg1gaytiplws8oe7mjoahq4i81iti5x99ti17q6hkyqdfr7oql35h20jn5qxtf3trvydrcbpr7rib610518hit29w5b28smyad2t74x5yxocqcpxmb1hpj5simkwbh4p1kbapwxms3qlhhng",
+            buttonsState = ButtonsState(trainsHome = false), appVersion = "1801"),
+          Preset(label = "ixigo flights", clientId = "iximaad", apiKey = "iximaad!2\$",
+            buttonsState = ButtonsState(trainsHome = false, flightsMultiModule = false, flightsHome = false, flightsSearch = false)),
           Preset(
               label = "Other",
               clientId = "",

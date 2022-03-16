@@ -5,6 +5,7 @@ import androidx.annotation.Keep
 import androidx.annotation.RequiresApi
 import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
+import com.ixigo.sdk.bus.BusSDK
 import com.ixigo.sdk.common.*
 import com.ixigo.sdk.sms.OtpSmsRetriever
 import com.ixigo.sdk.sms.OtpSmsRetrieverError
@@ -19,6 +20,9 @@ internal class IxigoSDKAndroid(
     private val fragment: WebViewFragment,
     private val otpSmsRetriever: OtpSmsRetriever = OtpSmsRetriever(fragment.requireActivity())
 ) : JsInterface, ActivityResultHandler {
+
+  override val name: String
+    get() = "IxigoSDKAndroid"
 
   private val moshi by lazy { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
   private val logEventInputAdapter by lazy { moshi.adapter(LogEventInput::class.java) }
@@ -61,8 +65,16 @@ internal class IxigoSDKAndroid(
     }
   }
 
-  override val name: String
-    get() = "IxigoSDKAndroid"
+  @JavascriptInterface
+  fun openAdditionalBusTrips(): Boolean {
+    return if (BusSDK.initialized) {
+      BusSDK.instance.launchAdditionalTrips(fragment.requireContext())
+      true
+    } else {
+      Timber.e("Unable to launch Bus Trips as BusSDK has not been initialized")
+      false
+    }
+  }
 
   @Keep data class LogEventInput(val name: String, val properties: Map<String, String> = mapOf())
 
