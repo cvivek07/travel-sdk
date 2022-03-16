@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.2.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.1.5...ixigo-sdk-3.2.0) (2022-03-16)
+
+
+### Features
+
+* **bus:** add bus old trips method ([f76e027](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/f76e02763de96d039582b98040a345e5ed91a3b1))
+* **payments:** add API to open payments page ([5dc4eb1](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/5dc4eb10149fc0f741eff12b245557e05e125c05))
+* **payments:** add process UPI Intent method ([a649a76](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/a649a76dfd0b1fc2f85924cd9d287f7f8e934782))
+* **payments:** initial PaymentsSDK implementation ([dd8b481](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/dd8b4817f2c55615c2fea061f4a5ed6fe91baf95))
+* **sms:** add sms retrieval API ([817d0ad](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/817d0ad1ad17b54bace45a6bb35b00f6d74f8466))
+
 ### [3.1.5](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.1.4...ixigo-sdk-3.1.5) (2022-03-06)
 
 
