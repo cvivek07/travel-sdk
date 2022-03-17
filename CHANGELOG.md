@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.2.1](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.2.0...ixigo-sdk-3.2.1) (2022-03-17)
+
+
+### Bug Fixes
+
+* **auth:** do not attempt to exchange token for ixigo apps ([d3ccd42](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/d3ccd42fa2d794bebfaf535f5b241ac1544b9633))
+
 ## [3.2.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.1.5...ixigo-sdk-3.2.0) (2022-03-16)
 
 
