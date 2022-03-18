@@ -343,6 +343,10 @@ class FirstFragment : Fragment() {
 
     val theme: Theme = currentPreset?.let { it.theme } ?: defaultTheme(requireContext())
 
+    val analyticsProvider = ToastAnalyticsProvider(requireActivity()).apply {
+      enabled = binding.toastEventsSwitch.isChecked
+    }
+
     IxigoSDK.init(
         requireContext(),
         AppInfo(
@@ -354,7 +358,7 @@ class FirstFragment : Fragment() {
             deviceId = deviceId),
         getPartnerTokenProvider(),
         DisabledPaymentProvider,
-        analyticsProvider = ToastAnalyticsProvider(requireActivity()),
+        analyticsProvider = analyticsProvider,
         config =  ixigoConfig.config.copy(enableExitBar = binding.exitBarSwitch.isChecked),
         theme = theme)
 
