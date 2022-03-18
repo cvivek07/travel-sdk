@@ -1,6 +1,7 @@
 package com.ixigo.sdk.ui
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.util.AttributeSet
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +10,7 @@ import android.widget.Button
 import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import androidx.annotation.VisibleForTesting
+import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.R
 
 class LoadableViewContainer(context: Context, attrs: AttributeSet) :
@@ -48,7 +50,10 @@ class LoadableViewContainer(context: Context, attrs: AttributeSet) :
 
   @VisibleForTesting
   internal val loadingView by lazy {
-    findViewById<ProgressBar>(R.id.progressView).apply { visibility = GONE }
+    findViewById<ProgressBar>(R.id.progressView).apply {
+      visibility = GONE
+      indeterminateTintList = ColorStateList.valueOf(IxigoSDK.instance.theme.primaryColor)
+    }
   }
 
   @VisibleForTesting

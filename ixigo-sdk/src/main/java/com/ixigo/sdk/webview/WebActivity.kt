@@ -34,7 +34,7 @@ class WebActivity : AppCompatActivity(), WebViewDelegate {
         .commit()
     setContentView(binding.root)
 
-    setStatusBarColor(ContextCompat.getColor(this, R.color.ixigosdk_primary_color))
+    setStatusBarColor(IxigoSDK.instance.theme.primaryColor)
     configureTopExitBar()
 
     supportFragmentManager.executePendingTransactions()

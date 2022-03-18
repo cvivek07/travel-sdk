@@ -17,6 +17,8 @@ import com.ixigo.sdk.common.SdkSingleton
 import com.ixigo.sdk.payment.DisabledPaymentProvider
 import com.ixigo.sdk.payment.PaymentJsInterface
 import com.ixigo.sdk.payment.PaymentProvider
+import com.ixigo.sdk.ui.Theme
+import com.ixigo.sdk.ui.defaultTheme
 import com.ixigo.sdk.webview.*
 import java.net.URL
 
@@ -35,7 +37,8 @@ internal constructor(
     internal val paymentProvider: PaymentProvider,
     internal val analyticsProvider: AnalyticsProvider,
     internal val config: Config = ProdConfig,
-    internal val webViewConfig: WebViewConfig = WebViewConfig()
+    internal val webViewConfig: WebViewConfig = WebViewConfig(),
+    internal val theme: Theme
 ) : JsInterfaceProvider {
 
   @VisibleForTesting
@@ -56,6 +59,8 @@ internal constructor(
      * @param paymentProvider Delegates Payment logic via this [PaymentProvider]
      * @param appInfo The [AppInfo]
      * @param analyticsProvider [AnalyticsProvider] used throughout the SDK
+     * @param config The [Config] used to instantiate the Ixigo SDK
+     * @param theme The [Theme] used to instantiate the Ixigo SDK
      */
     @JvmStatic
     @JvmOverloads
@@ -65,7 +70,8 @@ internal constructor(
         partnerTokenProvider: PartnerTokenProvider,
         paymentProvider: PaymentProvider = DisabledPaymentProvider,
         analyticsProvider: AnalyticsProvider? = null,
-        config: Config = ProdConfig
+        config: Config = ProdConfig,
+        theme: Theme = defaultTheme(context)
     ): IxigoSDK {
       return init(
           context,
@@ -73,7 +79,8 @@ internal constructor(
           partnerTokenProvider,
           paymentProvider,
           commonAnalyticsProvider(context, analyticsProvider),
-          config)
+          config,
+          theme)
     }
 
     internal fun init(
@@ -82,7 +89,8 @@ internal constructor(
         partnerTokenProvider: PartnerTokenProvider,
         paymentProvider: PaymentProvider,
         analyticsProvider: AnalyticsProvider,
-        config: Config = ProdConfig
+        config: Config = ProdConfig,
+        theme: Theme = defaultTheme(context)
     ): IxigoSDK {
       assertNotCreated()
       val ixigoSDK =
@@ -91,7 +99,8 @@ internal constructor(
               partnerTokenProvider,
               paymentProvider,
               analyticsProvider,
-              config)
+              config,
+              theme = theme)
       INSTANCE = ixigoSDK
 
       ixigoSDK.webViewConfig.addJsInterfaceProvider(ixigoSDK)

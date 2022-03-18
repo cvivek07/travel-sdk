@@ -2,6 +2,13 @@ package com.ixigo.sdk
 
 import android.net.Uri
 
+/**
+ * This class holds functionality configuration for the SDK eg: url endpoints
+ *
+ * @property apiBaseUrl main url to hit ixigo endpoints eg: `https://www.ixigo.com`
+ * @property enableExitBar whether or not to display a bar at the top of the screen to exit the
+ * current SDK flow
+ */
 data class Config(
     val apiBaseUrl: String = "https://www.ixigo.com/",
     val enableExitBar: Boolean = true

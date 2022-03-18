@@ -1,6 +1,7 @@
 package com.ixigo.sdk.auth
 
 import androidx.fragment.app.FragmentActivity
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.core.app.launchActivity
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ixigo.sdk.Config
@@ -11,6 +12,7 @@ import com.ixigo.sdk.common.Err
 import com.ixigo.sdk.common.Ok
 import com.ixigo.sdk.payment.DisabledPaymentProvider
 import com.ixigo.sdk.test.TestData.FakeAppInfo
+import com.ixigo.sdk.ui.defaultTheme
 import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import org.awaitility.kotlin.await
@@ -37,7 +39,8 @@ class SSOAuthProviderTest {
             EmptyPartnerTokenProvider,
             DisabledPaymentProvider,
             FakeAnalyticsProvider(),
-            Config(mockServer.url("").toString())))
+            Config(mockServer.url("").toString()),
+            theme = defaultTheme(ApplicationProvider.getApplicationContext())))
   }
 
   @After

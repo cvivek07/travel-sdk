@@ -16,10 +16,12 @@ import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.matcher.RootMatchers.isDialog
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.R
 import com.ixigo.sdk.auth.PartnerTokenProvider
 import com.ixigo.sdk.common.ActivityResultHandler
 import com.ixigo.sdk.test.initializeTestIxigoSDK
+import com.ixigo.sdk.ui.defaultTheme
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
@@ -36,7 +38,9 @@ class WebActivityTest {
 
   @Before
   fun setup() {
-    initializeTestIxigoSDK(config = com.ixigo.sdk.Config(enableExitBar = false))
+    initializeTestIxigoSDK(
+        config = com.ixigo.sdk.Config(enableExitBar = false),
+        theme = defaultTheme(getApplicationContext()))
   }
 
   @Test
@@ -157,9 +161,7 @@ class WebActivityTest {
           expectedLight,
           WindowInsetsControllerCompat(activity.window, rootView).isAppearanceLightStatusBars)
       @Suppress("DEPRECATION")
-      assertEquals(
-          activity.resources.getColor(R.color.ixigosdk_primary_color),
-          activity.window.statusBarColor)
+      assertEquals(IxigoSDK.instance.theme.primaryColor, activity.window.statusBarColor)
     }
   }
 

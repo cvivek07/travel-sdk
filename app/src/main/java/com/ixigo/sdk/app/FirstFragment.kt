@@ -3,6 +3,7 @@ package com.ixigo.sdk.app
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Color
 import android.os.Bundle
 import android.view.*
 import android.widget.*
@@ -25,6 +26,8 @@ import com.ixigo.sdk.payment.PaymentInput
 import com.ixigo.sdk.payment.PaymentProvider
 import com.ixigo.sdk.payment.processPayment
 import com.ixigo.sdk.trains.TrainsSDK
+import com.ixigo.sdk.ui.Theme
+import com.ixigo.sdk.ui.defaultTheme
 import com.ixigo.sdk.webview.FunnelConfig
 import com.ixigo.sdk.webview.InitialPageData
 import com.ixigo.sdk.webview.WebActivity
@@ -41,6 +44,7 @@ class FirstFragment : Fragment() {
   private var _binding: FragmentFirstBinding? = null
   private var sdkInitialized: Boolean = false
   private val progressDialog by lazy { ProgressDialog(requireActivity()) }
+  private var currentPreset: Preset? = null
 
   private val binding
     get() = _binding!!
@@ -241,6 +245,8 @@ class FirstFragment : Fragment() {
   }
 
   private fun loadPreset(preset: Preset) {
+    currentPreset = preset
+
     binding.clientId.setText(preset.clientId, TextView.BufferType.EDITABLE)
     binding.apiKey.setText(preset.apiKey, TextView.BufferType.EDITABLE)
     binding.appVersion.setText(preset.appVersion, TextView.BufferType.EDITABLE)
@@ -335,6 +341,8 @@ class FirstFragment : Fragment() {
       return false
     }
 
+    val theme: Theme = currentPreset?.let { it.theme } ?: defaultTheme(requireContext())
+
     IxigoSDK.init(
         requireContext(),
         AppInfo(
@@ -347,7 +355,8 @@ class FirstFragment : Fragment() {
         getPartnerTokenProvider(),
         DisabledPaymentProvider,
         analyticsProvider = ToastAnalyticsProvider(requireActivity()),
-        config =  ixigoConfig.config.copy(enableExitBar = binding.exitBarSwitch.isChecked))
+        config =  ixigoConfig.config.copy(enableExitBar = binding.exitBarSwitch.isChecked),
+        theme = theme)
 
     sdkInitialized = true
     return true
@@ -425,20 +434,24 @@ class FirstFragment : Fragment() {
               label = "ConfirmTkt",
               clientId = "confirmtckt",
               apiKey = "confirmtckt!2\$",
+            theme = Theme(primaryColor = Color.parseColor("#43a64e")),
               ssoPartnerToken = "D5DCFBD21CF7867B74D5273A57A0254D1785773799EEDD0E683B0EE5C6E56878",
               buttonsState = ButtonsState(flightsSearch = false, flightsMultiModule = false, trainsHome = false, busHome = false, busMultiModel = false, busTrips = false)),
           Preset(
               label = "Abhibus",
               clientId = "abhibus",
               apiKey = "abhibus!2\$",
+            theme = Theme(primaryColor = Color.parseColor("#dc635b")),
               ssoPartnerToken = "RQjsRqkORTji8R9+AQkLFyl9yeLQxX2II01n4rvVh1vpoH6pVx4eiw==",
               buttonsState = ButtonsState(trainsTrips = true, trainsTripsFragment = true, flightsSearch = false, flightsMultiModule = false, busHome = false, busMultiModel = false, busTrips = false)),
           Preset(label = "ixigo trains", clientId = "iximatr", apiKey = "iximatr!2\$",
             uuid = "f18daf1c-c4d6-4566-a286-be8cdb2fae18",
+            theme = Theme(primaryColor = Color.parseColor("#1556ba")),
             deviceId = "8c4e31dff9e93ed4",
             ssoPartnerToken = "3u8b19ka0neaoxa14r7qw2ytkaxujbm3ymdfcqmuaajyto8qiiqtg1gaytiplws8oe7mjoahq4i81iti5x99ti17q6hkyqdfr7oql35h20jn5qxtf3trvydrcbpr7rib610518hit29w5b28smyad2t74x5yxocqcpxmb1hpj5simkwbh4p1kbapwxms3qlhhng",
             buttonsState = ButtonsState(trainsHome = false), appVersion = "1801"),
           Preset(label = "ixigo flights", clientId = "iximaad", apiKey = "iximaad!2\$",
+            theme = Theme(primaryColor = Color.parseColor("#721053")),
             buttonsState = ButtonsState(trainsHome = false, flightsMultiModule = false, flightsHome = false, flightsSearch = false)),
           Preset(
               label = "Other",
@@ -447,7 +460,8 @@ class FirstFragment : Fragment() {
               ssoPartnerToken = "",
               uuid = "",
               deviceId = "",
-              appVersion = ""))
+              appVersion = "",
+              theme = Theme(primaryColor = Color.parseColor("#CCCCCC"))))
 }
 
 data class Preset(
@@ -458,7 +472,8 @@ data class Preset(
     val appVersion: String = "1",
     val uuid: String = "987654321ABC",
     val deviceId: String = "123456789abcdef",
-    val buttonsState: ButtonsState = ButtonsState()
+    val buttonsState: ButtonsState = ButtonsState(),
+    val theme: Theme
 ) {
   override fun toString(): String {
     return label

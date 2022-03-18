@@ -1,5 +1,6 @@
 package com.ixigo.sdk.test
 
+import android.graphics.Color
 import com.ixigo.sdk.AppInfo
 import com.ixigo.sdk.Config
 import com.ixigo.sdk.IxigoSDK
@@ -10,6 +11,7 @@ import com.ixigo.sdk.auth.PartnerTokenProvider
 import com.ixigo.sdk.payment.DisabledPaymentProvider
 import com.ixigo.sdk.payment.PaymentProvider
 import com.ixigo.sdk.test.TestData.FakeAppInfo
+import com.ixigo.sdk.ui.Theme
 import com.ixigo.sdk.webview.WebViewConfig
 
 object TestData {
@@ -24,7 +26,8 @@ internal fun initializeTestIxigoSDK(
     paymentProvider: PaymentProvider = DisabledPaymentProvider,
     partnerTokenProvider: PartnerTokenProvider = EmptyPartnerTokenProvider,
     config: Config = Config.ProdConfig,
-    webViewConfig: WebViewConfig = WebViewConfig()
+    webViewConfig: WebViewConfig = WebViewConfig(),
+    theme: Theme = Theme(primaryColor = Color.RED)
 ) {
   IxigoSDK.replaceInstance(
       IxigoSDK(
@@ -33,5 +36,6 @@ internal fun initializeTestIxigoSDK(
           paymentProvider,
           analyticsProvider,
           config = config,
-          webViewConfig = webViewConfig))
+          webViewConfig = webViewConfig,
+          theme = theme))
 }

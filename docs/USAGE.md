@@ -210,7 +210,11 @@ IxigoSDK.init(analyticsProvider = MyAppAnalyticsProvider(), /*...Other init para
 
 ### Theming
 
-You can configure the appearance of certain UI elements presented by the sdk by providing the following keys in your resources
+You can configure the appearance of certain UI elements in 2 ways
+
+#### Android Resources
+
+Overwrite the following keys in your resources files
 
 ```xml
 <resources>
@@ -219,6 +223,14 @@ You can configure the appearance of certain UI elements presented by the sdk by 
   <color name="ixigosdk_primary_color">#FF0000</color>
 </resources>
 
+```
+
+#### Provide a Theme object
+
+Pass a `Theme` object when initializing the SDK
+
+```kotlin
+IxigoSDK.init(theme = Theme(...), /*...Other init params */)
 ```
 
 ### Exit Top Bar

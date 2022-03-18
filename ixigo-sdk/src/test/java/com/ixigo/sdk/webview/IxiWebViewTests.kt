@@ -14,6 +14,7 @@ import com.ixigo.sdk.common.Err
 import com.ixigo.sdk.common.Ok
 import com.ixigo.sdk.payment.*
 import com.ixigo.sdk.test.TestData.FakeAppInfo
+import com.ixigo.sdk.test.initializeTestIxigoSDK
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import org.junit.After
@@ -49,8 +50,7 @@ class IxiWebViewTests {
     ssoAuthProvider = mock()
     paymentProvider = mock()
 
-    IxigoSDK.replaceInstance(
-        IxigoSDK(appInfo, EmptyPartnerTokenProvider, DisabledPaymentProvider, analyticsProvider))
+    initializeTestIxigoSDK(analyticsProvider = analyticsProvider)
 
     scenario =
         launchFragmentInContainer(
@@ -111,7 +111,8 @@ class IxiWebViewTests {
             EmptyPartnerTokenProvider,
             FakePaymentProvider(
                 fragmentActivity, mapOf(paymentInput to Ok(PaymentResponse(nextUrl)))),
-            analyticsProvider))
+            analyticsProvider,
+            theme = IxigoSDK.instance.theme))
     val startNativePaymentMethod =
         ixiWebView.javaClass.getDeclaredMethod("executeNativePayment", String::class.java)
     val paymentReturn = startNativePaymentMethod.invoke(ixiWebView, paymentInputStr) as Boolean
@@ -140,7 +141,8 @@ class IxiWebViewTests {
             appInfo,
             EmptyPartnerTokenProvider,
             FakePaymentProvider(fragmentActivity, mapOf(paymentInput to Err(Error()))),
-            analyticsProvider))
+            analyticsProvider,
+            theme = IxigoSDK.instance.theme))
     val startNativePaymentMethod =
         ixiWebView.javaClass.getDeclaredMethod("executeNativePayment", String::class.java)
     val paymentReturn = startNativePaymentMethod.invoke(ixiWebView, paymentInputStr) as Boolean

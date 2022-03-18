@@ -22,6 +22,7 @@ import com.ixigo.sdk.test.IntentMatcher
 import com.ixigo.sdk.test.TestData.DisabledAnalyticsProvider
 import com.ixigo.sdk.test.TestData.FakeAppInfo
 import com.ixigo.sdk.test.initializeTestIxigoSDK
+import com.ixigo.sdk.ui.defaultTheme
 import com.ixigo.sdk.webview.*
 import java.lang.IllegalStateException
 import org.hamcrest.MatcherAssert
@@ -50,7 +51,8 @@ class IxigoSDKTests {
             FakeAppInfo,
             EmptyPartnerTokenProvider,
             DisabledPaymentProvider,
-            DisabledAnalyticsProvider)
+            DisabledAnalyticsProvider,
+            theme = defaultTheme(getApplicationContext()))
     testLaunchActivity("https://www.ixigo.com/page", ixigoSDK)
   }
 

@@ -8,10 +8,10 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.ProgressBar
-import androidx.core.content.ContextCompat
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.core.app.launchActivity
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.test.R
 import com.ixigo.sdk.test.initializeTestIxigoSDK
 import com.ixigo.sdk.webview.InitialPageData
@@ -80,7 +80,7 @@ class LoadableViewTests {
   fun `test ProgressView has primaryColor as tint`() {
     val progressView: ProgressBar = loadableView.findViewById(R.id.progressView)
     assertEquals(
-        ColorStateList.valueOf(ContextCompat.getColor(activity, R.color.ixigosdk_primary_color)),
+        ColorStateList.valueOf(IxigoSDK.instance.theme.primaryColor),
         progressView.indeterminateTintList)
   }
 }
