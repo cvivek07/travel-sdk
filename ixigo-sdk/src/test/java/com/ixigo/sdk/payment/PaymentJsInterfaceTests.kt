@@ -22,6 +22,7 @@ import org.mockito.junit.MockitoJUnit
 import org.mockito.junit.MockitoRule
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
+import org.mockito.kotlin.whenever
 import org.robolectric.Shadows
 import org.robolectric.shadows.ShadowWebView
 
@@ -239,6 +240,27 @@ class PaymentJsInterfaceTests {
         """javascript:alert('error:{\"errorCode\":\"Test Error\"}')""",
         shadowWebView.lastEvaluatedJavascript)
   }
+
+  @Test
+  fun `test json is correctly escaped`() {
+    whenever(justpayGateway.initialize(eq(validInitializeInput), any())).then {
+      val callback: ProcessUpiIntentCallback = it.getArgument(1)
+      callback(Err(NativePromiseError("{\"jsonKey\": \"{\\\"innerKey\\\":\\\"innerValue\\\"}\"}")))
+    }
+    paymentJsInterface.initialize(
+        validInitializeInputString,
+        "javascript:alert('success:TO_REPLACE_PAYLOAD')",
+        "JSON.parse('TO_REPLACE_PAYLOAD')")
+    assertEquals(
+        """JSON.parse('{\"errorCode\":\"{\\\"jsonKey\\\": \\\"{\\\\\\\"innerKey\\\\\\\":\\\\\\\"innerValue\\\\\\\"}\\\"}\"}')""",
+        shadowWebView.lastEvaluatedJavascript)
+  }
+
+  private val validInitializeInput =
+      InitializeInput(
+          merchantId = "merchantIdValue",
+          customerId = "customerIdValue",
+          clientId = "clientIdValue")
 
   private val validInitializeInputString =
       """

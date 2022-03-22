@@ -253,12 +253,17 @@ class JuspayGatewayTests {
           put("error", true)
           put("errorMessage", "errorMessageValue")
           put("errorCode", "errorCodeValue")
+          put("payload", "payloadValue")
           put("requestId", processJsonObject.getString("requestId"))
         },
         juspayResponseHandler)
 
     assertEquals(
-        Err(NativePromiseError(errorCode = "errorCodeValue", errorMessage = "errorMessageValue")),
+        Err(
+            NativePromiseError(
+                errorCode = "errorCodeValue",
+                errorMessage = "errorMessageValue",
+                debugMessage = "payloadValue")),
         result)
   }
 

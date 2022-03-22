@@ -3,7 +3,11 @@ package com.ixigo.sdk.common
 import com.ixigo.sdk.webview.WebViewFragment
 import com.squareup.moshi.JsonAdapter
 
-data class NativePromiseError(val errorCode: String?, val errorMessage: String? = null) {
+data class NativePromiseError(
+    val errorCode: String?,
+    val errorMessage: String? = null,
+    val debugMessage: String? = null
+) {
   companion object {
     fun wrongInputError(wrongInput: String) =
         NativePromiseError(
@@ -17,7 +21,7 @@ fun <T> replaceNativePromisePayload(message: String, payload: T, adapter: JsonAd
 }
 
 fun replaceNativePromisePayload(message: String, payload: String): String {
-  return message.replace("TO_REPLACE_PAYLOAD", payload.replace("\"", "\\\""))
+  return message.replace("TO_REPLACE_PAYLOAD", payload.replace("\\", "\\\\").replace("\"", "\\\""))
 }
 
 fun executeNativePromiseResponse(message: String, webViewFragment: WebViewFragment) {

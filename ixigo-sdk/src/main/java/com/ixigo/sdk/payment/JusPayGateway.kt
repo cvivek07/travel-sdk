@@ -1,7 +1,6 @@
 package com.ixigo.sdk.payment
 
 import androidx.fragment.app.FragmentActivity
-import com.ixigo.sdk.Config
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.common.Err
 import com.ixigo.sdk.common.NativePromiseError
@@ -12,7 +11,6 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import `in`.juspay.hypersdk.core.PaymentConstants
 import `in`.juspay.hypersdk.core.PaymentConstants.ENVIRONMENT.PRODUCTION
-import `in`.juspay.hypersdk.core.PaymentConstants.ENVIRONMENT.SANDBOX
 import `in`.juspay.hypersdk.data.JuspayResponseHandler
 import `in`.juspay.hypersdk.ui.HyperPaymentsCallbackAdapter
 import `in`.juspay.services.HyperServices
@@ -39,7 +37,8 @@ internal class JusPayGateway(
     ixigoSDK: IxigoSDK = IxigoSDK.instance
 ) {
 
-  private val environment = if (ixigoSDK.config == Config.ProdConfig) PRODUCTION else SANDBOX
+  //  private val environment = if (ixigoSDK.config == Config.ProdConfig) PRODUCTION else SANDBOX
+  private val environment = PRODUCTION
   constructor(fragmentActivity: FragmentActivity) : this(HyperServices(fragmentActivity))
 
   private val moshi by lazy { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
@@ -71,11 +70,7 @@ internal class JusPayGateway(
     val requestId = createRequestId { data ->
       val error = data.optBoolean("error")
       if (error) {
-        callback(
-            Err(
-                NativePromiseError(
-                    errorCode = data.optString("errorCode"),
-                    errorMessage = data.optString("errorMessage"))))
+        callback(Err(createResponseError(data)))
       } else {
         callback(Ok(Unit))
       }
@@ -111,7 +106,8 @@ internal class JusPayGateway(
             Err(
                 NativePromiseError(
                     errorCode = data.optString("errorCode"),
-                    errorMessage = data.optString("errorMessage"))))
+                    errorMessage = data.optString("errorMessage")),
+            ))
       } else {
         val response =
             kotlin
@@ -120,11 +116,7 @@ internal class JusPayGateway(
                 }
                 .getOrNull()
         if (response == null) {
-          callback(
-              Err(
-                  NativePromiseError(
-                      errorCode = "SDKError",
-                      errorMessage = "Error parsing juspay response=${data}")))
+          callback(Err(createResponseError(data)))
         } else {
           callback(Ok(GetAvailableUPIAppsResponse(response.availableApps)))
         }
@@ -146,11 +138,7 @@ internal class JusPayGateway(
     val requestId = createRequestId { data ->
       val error = data.optBoolean("error")
       if (error) {
-        callback(
-            Err(
-                NativePromiseError(
-                    errorCode = data.optString("errorCode"),
-                    errorMessage = data.optString("errorMessage"))))
+        callback(Err(createResponseError(data)))
       } else {
         callback(Ok(ProcessUpiIntentResponse(orderId = input.orderId)))
       }
@@ -201,4 +189,10 @@ internal class JusPayGateway(
       put("service", "in.juspay.hyperapi")
     }
   }
+
+  fun createResponseError(data: JSONObject) =
+      NativePromiseError(
+          errorCode = data.optString("errorCode"),
+          errorMessage = data.optString("errorMessage"),
+          debugMessage = kotlin.runCatching { data.getString("payload") }.getOrNull())
 }
