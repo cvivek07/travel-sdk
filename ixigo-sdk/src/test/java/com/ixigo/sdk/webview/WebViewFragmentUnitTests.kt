@@ -2,6 +2,7 @@ package com.ixigo.sdk.webview
 
 import android.app.Activity
 import android.content.Intent
+import android.content.Intent.ACTION_VIEW
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
@@ -33,6 +34,7 @@ import org.mockito.kotlin.verify
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.Implements
+import org.robolectric.shadows.ShadowActivity
 import org.robolectric.shadows.ShadowWebView
 
 @RunWith(AndroidJUnit4::class)
@@ -43,6 +45,7 @@ class WebViewFragmentUnitTests {
   private val initialPageData =
       InitialPageData("https://www.ixigo.com", mapOf("header1" to "header1Value"))
   private lateinit var shadowWebView: CustomShadowWebview
+  private lateinit var shadowActivity: ShadowActivity
   private lateinit var fragmentActivity: Activity
   private lateinit var fragment: WebViewFragment
   private lateinit var delegate: WebViewDelegate
@@ -65,6 +68,7 @@ class WebViewFragmentUnitTests {
       shadowWebView.performSuccessfulPageLoadClientCallbacks()
       shadowWebView.pushEntryToHistory(initialPageData.url)
       fragmentActivity = it.requireActivity()
+      shadowActivity = shadowOf(fragmentActivity)
     }
   }
 
@@ -313,6 +317,25 @@ class WebViewFragmentUnitTests {
       verify(paymentProvider).handle(requestCode, responseCode, intent)
       verify(partnerTokenProvider).handle(requestCode, responseCode, intent)
     }
+  }
+
+  @Test
+  fun `test mailto links are open as an activity`() {
+    assertOpensNonNetworkUri("mailto:pepe@ixigo.com")
+  }
+
+  @Test
+  fun `test tel links are open as an activity`() {
+    assertOpensNonNetworkUri("tel:1234567890")
+  }
+
+  private fun assertOpensNonNetworkUri(uriString: String) {
+    val uri = Uri.parse(uriString)
+    shadowWebView.webViewClient.shouldOverrideUrlLoading(
+        fragment.webView, mock<WebResourceRequest> { on { url } doReturn uri })
+    val nextIntent = shadowActivity.nextStartedActivity
+    assertEquals(ACTION_VIEW, nextIntent.action)
+    assertEquals(uri, nextIntent.data)
   }
 
   @Test

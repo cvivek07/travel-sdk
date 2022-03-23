@@ -3,6 +3,7 @@ package com.ixigo.sdk.webview
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
@@ -163,13 +164,20 @@ class WebViewFragment : Fragment() {
     }
 
     override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
-      if (request != null) {
-        val url = request.url.toString()
+      if (request == null) {
+        return false
+      }
+      val url = request.url.toString()
+      return if (URLUtil.isNetworkUrl(url)) {
         startedLoading(url)
         analyticsProvider.logEvent(Event.with(action = "webviewStartLoad", referrer = url))
+        false
+      } else {
+        analyticsProvider.logEvent(
+            Event.with(action = "webviewStartAction", label = request.url.scheme, referrer = url))
+        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+        true
       }
-
-      return super.shouldOverrideUrlLoading(view, request)
     }
 
     override fun onReceivedHttpError(
