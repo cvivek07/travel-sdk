@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.3.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.2.1...ixigo-sdk-3.3.0) (2022-03-23)
+
+
+### Features
+
+* **ui:** introduce theme object ([4ffc5f8](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/4ffc5f8289f8609900dabf09e096cba44e7d49f2))
+
+
+### Bug Fixes
+
+* correctly support tel and mailto links ([f0c8130](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/f0c8130f0b3c38ac0fe21e1a502a14b4141a8f70))
+* **payment:** add debug message to payment errors ([d6d6607](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/d6d66075fc440b81d522316898ac2dc1e7ed537d))
+
 ### [3.2.1](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.2.0...ixigo-sdk-3.2.1) (2022-03-17)
 
 
