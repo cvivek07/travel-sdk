@@ -13,6 +13,9 @@ data class NativePromiseError(
         NativePromiseError(
             errorCode = "InvalidArgumentError",
             errorMessage = "unable to parse input=${wrongInput}")
+
+    fun sdkError(message: String) =
+        NativePromiseError(errorCode = "SDKError", errorMessage = message)
   }
 }
 

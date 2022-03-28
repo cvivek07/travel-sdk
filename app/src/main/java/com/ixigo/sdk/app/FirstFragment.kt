@@ -21,10 +21,7 @@ import com.ixigo.sdk.common.Err
 import com.ixigo.sdk.common.Ok
 import com.ixigo.sdk.covid.covidLaunchAppointments
 import com.ixigo.sdk.flights.*
-import com.ixigo.sdk.payment.PaymentCallback
-import com.ixigo.sdk.payment.PaymentInput
-import com.ixigo.sdk.payment.PaymentProvider
-import com.ixigo.sdk.payment.processPayment
+import com.ixigo.sdk.payment.*
 import com.ixigo.sdk.trains.TrainsSDK
 import com.ixigo.sdk.ui.Theme
 import com.ixigo.sdk.ui.defaultTheme
@@ -45,6 +42,7 @@ class FirstFragment : Fragment() {
   private var sdkInitialized: Boolean = false
   private val progressDialog by lazy { ProgressDialog(requireActivity()) }
   private var currentPreset: Preset? = null
+  private val paymentProvider = PaymentSDKPaymentProvider()
 
   private val binding
     get() = _binding!!
@@ -207,9 +205,17 @@ class FirstFragment : Fragment() {
         val gatewayId = getFieldValue(binding.paymentGatewayId, "Gateway Id")
         if (transactionId != null) {
           if (gatewayId != null) {
-            IxigoSDK.instance.processPayment(requireActivity(), transactionId = transactionId, gatewayId = gatewayId)
+            paymentProvider.startPayment(requireActivity(), PaymentInput("product", mapOf("paymentId" to transactionId))) {
+              val result = when (it) {
+                is Err -> "Error"
+                is Ok -> "Success"
+              }
+              Toast.makeText(requireContext(), "Payment completed with result=$result", Toast.LENGTH_SHORT).show()
+            }
           } else {
-            IxigoSDK.instance.processPayment(requireActivity(), transactionId = transactionId)
+            paymentProvider.startPayment(requireActivity(), PaymentInput("product", mapOf("paymentId" to transactionId))) {
+
+            }
           }
         }
       }
@@ -308,6 +314,7 @@ class FirstFragment : Fragment() {
     clearSDK(IxigoSDK::class)
     clearSDK(BusSDK::class)
     clearSDK(TrainsSDK::class)
+    clearSDK(PaymentSDK::class)
   }
 
   private fun <T:Any>clearSDK(sdkClass: KClass<T>) {
@@ -357,11 +364,12 @@ class FirstFragment : Fragment() {
             uuid = uuid,
             deviceId = deviceId),
         getPartnerTokenProvider(),
-        DisabledPaymentProvider,
+        PaymentSDKPaymentProvider(),
         analyticsProvider = analyticsProvider,
         config =  ixigoConfig.config.copy(enableExitBar = binding.exitBarSwitch.isChecked),
         theme = theme)
 
+    initPaymentSDK()
     sdkInitialized = true
     return true
   }
@@ -374,6 +382,11 @@ class FirstFragment : Fragment() {
 
   private fun initTrainsSDK(): Boolean {
     TrainsSDK.init()
+    return true
+  }
+
+  private fun initPaymentSDK(): Boolean {
+    PaymentSDK.init()
     return true
   }
 

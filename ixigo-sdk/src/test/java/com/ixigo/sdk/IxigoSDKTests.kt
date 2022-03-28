@@ -17,7 +17,6 @@ import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
 import com.ixigo.sdk.auth.EmptyPartnerTokenProvider
 import com.ixigo.sdk.payment.DisabledPaymentProvider
-import com.ixigo.sdk.payment.PaymentJsInterface
 import com.ixigo.sdk.test.IntentMatcher
 import com.ixigo.sdk.test.TestData.DisabledAnalyticsProvider
 import com.ixigo.sdk.test.TestData.FakeAppInfo
@@ -127,27 +126,6 @@ class IxigoSDKTests {
   fun `test that IxigoAndroidSDK is added to Js Interfaces for any URL`() {
     testJsInterface(Config.ProdConfig.createUrl("testUrl")) { interfaces ->
       assertTrue(interfaces.any { (it as? IxigoSDKAndroid) != null })
-    }
-  }
-
-  @Test
-  fun `test that PaymentJsInterface is added to Js Interfaces for ixigo url`() {
-    testJsInterface(Config.ProdConfig.createUrl("testUrl")) { interfaces ->
-      assertTrue(interfaces.any { (it as? PaymentJsInterface) != null })
-    }
-  }
-
-  @Test
-  fun `test that PaymentJsInterface is added to Js Interfaces for file url`() {
-    testJsInterface("file://anything") { interfaces ->
-      assertTrue(interfaces.any { (it as? PaymentJsInterface) != null })
-    }
-  }
-
-  @Test
-  fun `test that PaymentJsInterface is NOT added to Js Interfaces for Non ixigo url`() {
-    testJsInterface("https://www.confirmtkt.com/test") { interfaces ->
-      assertFalse(interfaces.any { (it as? PaymentJsInterface) != null })
     }
   }
 

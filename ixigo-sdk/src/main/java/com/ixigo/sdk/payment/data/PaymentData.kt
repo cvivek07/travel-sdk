@@ -25,3 +25,14 @@ data class ProcessUpiIntentInput(
 @Keep data class ProcessUpiIntentResponse(val orderId: String)
 
 @Keep data class JuspayAvailableUPIAppsResponse(val availableApps: List<UpiApp>)
+
+@Keep
+data class FinishPaymentInput(val transactionId: String, val success: Boolean, val nextUrl: String)
+
+@Keep data class FinishPaymentResponse(val handler: PaymentHandler)
+
+@Keep
+enum class PaymentHandler {
+  BROWSER,
+  NATIVE
+}

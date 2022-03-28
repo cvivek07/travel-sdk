@@ -2,6 +2,7 @@ package com.ixigo.sdk.payment
 
 import android.webkit.JavascriptInterface
 import com.ixigo.sdk.common.*
+import com.ixigo.sdk.common.NativePromiseError.Companion.sdkError
 import com.ixigo.sdk.common.NativePromiseError.Companion.wrongInputError
 import com.ixigo.sdk.payment.data.*
 import com.ixigo.sdk.webview.JsInterface
@@ -28,6 +29,10 @@ internal class PaymentJsInterface(
   }
   private val processUpiIntentResponseAdapter by lazy {
     moshi.adapter(ProcessUpiIntentResponse::class.java)
+  }
+  private val finishPaymentInputAdapter by lazy { moshi.adapter(FinishPaymentInput::class.java) }
+  private val finishPaymentResponseAdapter by lazy {
+    moshi.adapter(FinishPaymentResponse::class.java)
   }
   private val errorAdapter by lazy { moshi.adapter(NativePromiseError::class.java) }
 
@@ -116,6 +121,25 @@ internal class PaymentJsInterface(
               replaceNativePromisePayload(success, it.value, processUpiIntentResponseAdapter))
         }
       }
+    }
+  }
+
+  @JavascriptInterface
+  fun finishPayment(jsonInput: String, success: String, error: String) {
+    val input = kotlin.runCatching { finishPaymentInputAdapter.fromJson(jsonInput) }.getOrNull()
+    if (input == null) {
+      returnError(error, wrongInputError(jsonInput))
+      return
+    }
+    if (PaymentSDK.instance.finishPayment(input)) {
+      webViewFragment.delegate?.onQuit()
+      executeResponse(
+          replaceNativePromisePayload(
+              success,
+              FinishPaymentResponse(handler = PaymentHandler.NATIVE),
+              finishPaymentResponseAdapter))
+    } else {
+      returnError(error, sdkError("Unable to find transactionId=${input.transactionId}"))
     }
   }
 

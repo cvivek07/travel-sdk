@@ -54,7 +54,7 @@ abstract class SdkSingleton<T>(private val sdkName: String) {
 
   internal fun assertNotCreated() {
     if (INSTANCE != null) {
-      throw IllegalStateException("BusSDK has already been initialized")
+      throw IllegalStateException("$sdkName has already been initialized")
     }
   }
 

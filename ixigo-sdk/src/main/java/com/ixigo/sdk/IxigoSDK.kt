@@ -15,7 +15,6 @@ import com.ixigo.sdk.auth.AuthProvider
 import com.ixigo.sdk.auth.PartnerTokenProvider
 import com.ixigo.sdk.common.SdkSingleton
 import com.ixigo.sdk.payment.DisabledPaymentProvider
-import com.ixigo.sdk.payment.PaymentJsInterface
 import com.ixigo.sdk.payment.PaymentProvider
 import com.ixigo.sdk.ui.Theme
 import com.ixigo.sdk.ui.defaultTheme
@@ -183,7 +182,6 @@ internal constructor(
     var jsInterfaces = mutableListOf<JsInterface>()
     if (url.startsWith(config.apiBaseUrl) || url.startsWith("file://")) {
       jsInterfaces.add(IxiWebView(webViewFragment))
-      jsInterfaces.add(PaymentJsInterface(webViewFragment))
     }
     jsInterfaces.add(IxigoSDKAndroid(analyticsProvider, webViewFragment))
     return jsInterfaces

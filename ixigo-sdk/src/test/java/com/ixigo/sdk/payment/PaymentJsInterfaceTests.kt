@@ -8,10 +8,12 @@ import com.ixigo.sdk.common.Err
 import com.ixigo.sdk.common.NativePromiseError
 import com.ixigo.sdk.common.Ok
 import com.ixigo.sdk.payment.data.*
+import com.ixigo.sdk.test.initializePaymentSDK
 import com.ixigo.sdk.test.initializeTestIxigoSDK
 import com.ixigo.sdk.webview.InitialPageData
+import com.ixigo.sdk.webview.WebViewDelegate
 import com.ixigo.sdk.webview.WebViewFragment
-import org.junit.Assert.assertEquals
+import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -20,9 +22,7 @@ import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnit
 import org.mockito.junit.MockitoRule
-import org.mockito.kotlin.any
-import org.mockito.kotlin.eq
-import org.mockito.kotlin.whenever
+import org.mockito.kotlin.*
 import org.robolectric.Shadows
 import org.robolectric.shadows.ShadowWebView
 
@@ -38,11 +38,14 @@ class PaymentJsInterfaceTests {
   private lateinit var shadowWebView: ShadowWebView
   private lateinit var paymentJsInterface: PaymentJsInterface
 
+  @Mock lateinit var mockWebViewDelegate: WebViewDelegate
+
   @Mock internal lateinit var justpayGateway: JusPayGateway
 
   @Before
   fun setup() {
     initializeTestIxigoSDK()
+    initializePaymentSDK()
     scenario =
         launchFragmentInContainer(
             Bundle().also {
@@ -50,6 +53,7 @@ class PaymentJsInterfaceTests {
             })
     scenario.onFragment {
       fragment = it
+      fragment.delegate = mockWebViewDelegate
       shadowWebView = Shadows.shadowOf(it.webView)
       paymentJsInterface = PaymentJsInterface(fragment, justpayGateway)
     }
@@ -256,6 +260,65 @@ class PaymentJsInterfaceTests {
         shadowWebView.lastEvaluatedJavascript)
   }
 
+  @Test
+  fun `test finishPayment closes Funnel and calls processPayment for successful payment`() {
+    val transactionId = "transactionIdValue"
+    var processResult: ProcessPaymentResult? = null
+    PaymentSDK.instance.processPayment(fragment.requireContext(), transactionId) {
+      processResult = it
+    }
+
+    val nextUrl = "https://www.ixigo.com/payment/success"
+    paymentJsInterface.finishPayment(
+        validFinishPaymentInputString(),
+        "javascript:alert('success:TO_REPLACE_PAYLOAD')",
+        "javascript:alert('error:TO_REPLACE_PAYLOAD')")
+    verify(mockWebViewDelegate).onQuit()
+    assertEquals(Ok(ProcessPaymentResponse(nextUrl)), processResult)
+    assertEquals(
+        """javascript:alert('success:{\"handler\":\"NATIVE\"}')""",
+        shadowWebView.lastEvaluatedJavascript)
+  }
+
+  @Test
+  fun `test finishPayment closes Funnel and calls processPayment for failed payment`() {
+    val transactionId = "transactionIdValue"
+    var processResult: ProcessPaymentResult? = null
+    PaymentSDK.instance.processPayment(fragment.requireContext(), transactionId) {
+      processResult = it
+    }
+
+    val nextUrl = "https://www.ixigo.com/payment/success"
+    paymentJsInterface.finishPayment(
+        validFinishPaymentInputString(success = false),
+        "javascript:alert('success:TO_REPLACE_PAYLOAD')",
+        "javascript:alert('error:TO_REPLACE_PAYLOAD')")
+    verify(mockWebViewDelegate).onQuit()
+    assertEquals(Err(ProcessPaymentError(nextUrl)), processResult)
+    assertEquals(
+        """javascript:alert('success:{\"handler\":\"NATIVE\"}')""",
+        shadowWebView.lastEvaluatedJavascript)
+  }
+
+  @Test
+  fun `test finishPayment does nothing if transactionId is unknown`() {
+    val transactionId = "transactionIdValue"
+    var processResult: ProcessPaymentResult? = null
+    PaymentSDK.instance.processPayment(fragment.requireContext(), transactionId) {
+      processResult = it
+    }
+
+    paymentJsInterface.finishPayment(
+        validFinishPaymentInputString(transactionId = "otherTransactionId"),
+        "javascript:alert('success:TO_REPLACE_PAYLOAD')",
+        "javascript:alert('error:TO_REPLACE_PAYLOAD')")
+    verify(mockWebViewDelegate, never()).onQuit()
+    assertNull(processResult)
+    assertEquals(
+        """javascript:alert('error:{\"errorCode\":\"SDKError\",\"errorMessage\":\"Unable to find transactionId=otherTransactionId\"}')""",
+        shadowWebView.lastEvaluatedJavascript)
+  }
+
   private val validInitializeInput =
       InitializeInput(
           merchantId = "merchantIdValue",
@@ -302,4 +365,16 @@ class PaymentJsInterfaceTests {
           clientAuthToken = "clientAuthTokenValue",
           endUrls = listOf("endUrl1"),
           amount = 102.3)
+
+  private fun validFinishPaymentInputString(
+      transactionId: String = "transactionIdValue",
+      success: Boolean = true
+  ) =
+      """
+      {
+        "transactionId": "$transactionId",
+        "success": $success,
+        "nextUrl": "https://www.ixigo.com/payment/success"
+      }
+    """.trim()
 }

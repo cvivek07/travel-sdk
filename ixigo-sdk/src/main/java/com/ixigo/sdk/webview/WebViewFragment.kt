@@ -129,7 +129,11 @@ class WebViewFragment : Fragment() {
   }
 
   private fun stoppedLoading(url: String = webView.url.toString()) {
-    IxigoSDK.instance.uriIdlingResource.endLoad(url)
+    with(IxigoSDK.instance.uriIdlingResource) {
+      if (!isIdleNow) {
+        IxigoSDK.instance.uriIdlingResource.endLoad(url)
+      }
+    }
   }
 
   private inner class CustomWebViewClient : WebViewClient() {
