@@ -69,6 +69,7 @@ dependencies {
     // Firebase
     implementation platform('com.google.firebase:firebase-bom:28.4.2')
     implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.firebase:firebase-config-ktx'
 
     implementation project(path: ':ixigo-sdk')
     // Comment line above and uncomment line below to use a specific sdk version

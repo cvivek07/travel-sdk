@@ -9,9 +9,8 @@ import com.ixigo.sdk.Config
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
-import com.ixigo.sdk.auth.EmptyPartnerTokenProvider
-import com.ixigo.sdk.payment.DisabledPaymentProvider
 import com.ixigo.sdk.test.assertLaunchedIntent
+import com.ixigo.sdk.test.initializeTestIxigoSDK
 import com.ixigo.sdk.webview.FunnelConfig
 import com.ixigo.sdk.webview.InitialPageData
 import com.ixigo.sdk.webview.WebViewFragment
@@ -48,13 +47,8 @@ class FlightsFunnelTest {
 
   @Test
   fun `test flightsStartHome launches WebActivity`() {
-    IxigoSDK.init(
-        activity,
-        appInfo,
-        EmptyPartnerTokenProvider,
-        DisabledPaymentProvider,
-        mockAnalyticsProvider,
-        config)
+    initializeTestIxigoSDK(
+        appInfo = appInfo, analyticsProvider = mockAnalyticsProvider, config = config)
     assertFlightsHome()
   }
 
@@ -124,13 +118,8 @@ class FlightsFunnelTest {
 
   @Test
   fun `test flightMultiModelFragment returns WebViewFragment`() {
-    IxigoSDK.init(
-        activity,
-        appInfo,
-        EmptyPartnerTokenProvider,
-        DisabledPaymentProvider,
-        mockAnalyticsProvider,
-        config)
+    initializeTestIxigoSDK(
+        appInfo = appInfo, analyticsProvider = mockAnalyticsProvider, config = config)
     val searchData =
         FlightSearchData(
             origin = "DEL",
@@ -154,13 +143,8 @@ class FlightsFunnelTest {
 
   @Test
   fun `test flightsStartTrips launches WebActivity`() {
-    IxigoSDK.init(
-        activity,
-        appInfo,
-        EmptyPartnerTokenProvider,
-        DisabledPaymentProvider,
-        mockAnalyticsProvider,
-        config)
+    initializeTestIxigoSDK(
+        appInfo = appInfo, analyticsProvider = mockAnalyticsProvider, config = config)
     scenario.onActivity { activity ->
       IxigoSDK.instance.flightsStartTrips(activity)
       assertLaunchedIntent(
@@ -173,13 +157,8 @@ class FlightsFunnelTest {
 
   @Test
   fun `test flightTripsFragment returns WebViewFragment with correct URL`() {
-    IxigoSDK.init(
-        activity,
-        appInfo,
-        EmptyPartnerTokenProvider,
-        DisabledPaymentProvider,
-        mockAnalyticsProvider,
-        config)
+    initializeTestIxigoSDK(
+        appInfo = appInfo, analyticsProvider = mockAnalyticsProvider, config = config)
     val fragment = IxigoSDK.instance.flightsTripsFragment()
     assertNotNull(fragment as? WebViewFragment)
 
@@ -204,13 +183,8 @@ class FlightsFunnelTest {
   }
 
   private fun assertFlightSearch(searchData: FlightSearchData, expectedUrl: String) {
-    IxigoSDK.init(
-        activity,
-        appInfo,
-        EmptyPartnerTokenProvider,
-        DisabledPaymentProvider,
-        mockAnalyticsProvider,
-        config)
+    initializeTestIxigoSDK(
+        appInfo = appInfo, analyticsProvider = mockAnalyticsProvider, config = config)
     scenario.onActivity { activity ->
       IxigoSDK.instance.flightsStartSearch(activity, searchData)
       assertLaunchedIntent(activity, expectedUrl, expectedHeaders = expectedHeaders())

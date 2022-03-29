@@ -10,7 +10,13 @@ import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.google.android.material.snackbar.Snackbar
-import com.ixigo.sdk.*
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.ktx.app
+import com.google.firebase.remoteconfig.ktx.remoteConfig
+import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
+import com.ixigo.sdk.AppInfo
+import com.ixigo.sdk.Config
+import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.app.databinding.FragmentFirstBinding
 import com.ixigo.sdk.auth.*
 import com.ixigo.sdk.bus.BusConfig

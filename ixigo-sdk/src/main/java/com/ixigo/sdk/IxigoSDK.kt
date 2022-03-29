@@ -9,6 +9,14 @@ import android.webkit.CookieManager
 import androidx.annotation.VisibleForTesting
 import androidx.fragment.app.Fragment
 import androidx.test.espresso.idling.net.UriIdlingResource
+import com.google.firebase.FirebaseApp
+import com.google.firebase.FirebaseOptions
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.ktx.app
+import com.google.firebase.ktx.initialize
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig
+import com.google.firebase.remoteconfig.ktx.remoteConfig
+import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import com.ixigo.sdk.Config.Companion.ProdConfig
 import com.ixigo.sdk.IxigoSDK.Companion.init
 import com.ixigo.sdk.analytics.AnalyticsProvider
@@ -22,6 +30,7 @@ import com.ixigo.sdk.flights.FlightSearchData
 import com.ixigo.sdk.flights.getFlightsSearchParams
 import com.ixigo.sdk.payment.DisabledPaymentProvider
 import com.ixigo.sdk.payment.PaymentProvider
+import com.ixigo.sdk.remoteConfig.RemoteConfigProvider
 import com.ixigo.sdk.ui.Theme
 import com.ixigo.sdk.ui.defaultTheme
 import com.ixigo.sdk.webview.*
@@ -44,7 +53,8 @@ internal constructor(
     internal val config: Config = ProdConfig,
     internal val webViewConfig: WebViewConfig = WebViewConfig(),
     internal val deeplinkHandler: DeeplinkHandler? = null,
-    internal val theme: Theme
+    internal val theme: Theme,
+    internal val remoteConfigProvider: RemoteConfigProvider
 ) : JsInterfaceProvider {
 
   private val cachingPartnerTokenProvider: CachingPartnerTokenProvider =
@@ -108,8 +118,11 @@ internal constructor(
         analyticsProvider: AnalyticsProvider,
         config: Config = ProdConfig,
         deeplinkHandler: DeeplinkHandler?,
-        theme: Theme = defaultTheme(context)
+        theme: Theme = defaultTheme(context),
+        remoteConfigProvider: RemoteConfigProvider =
+            RemoteConfigProvider(getFirebaseRemoteConfig(context))
     ): IxigoSDK {
+
       assertNotCreated()
       val ixigoSDK =
           IxigoSDK(
@@ -119,7 +132,8 @@ internal constructor(
               analyticsProvider,
               config,
               deeplinkHandler = deeplinkHandler,
-              theme = theme)
+              theme = theme,
+              remoteConfigProvider = remoteConfigProvider)
       INSTANCE = ixigoSDK
 
       ixigoSDK.webViewConfig.addJsInterfaceProvider(ixigoSDK)
@@ -131,6 +145,29 @@ internal constructor(
                   mapOf("clientId" to appInfo.clientId, "sdkVersion" to BuildConfig.SDK_VERSION)))
 
       return ixigoSDK
+    }
+
+    private fun getFirebaseApp(context: Context): FirebaseApp {
+      val options =
+          FirebaseOptions.Builder()
+              .setProjectId("ixigo-sdk-demo-app")
+              .setApplicationId("1:132902544575:android:0fa188108ec15e4571120a")
+              .setApiKey("AIzaSyBEJrf3SjSFMUBahV5eL20pquCW6auVSfA")
+              .build()
+
+      if (kotlin.runCatching { Firebase.app("ixigo-sdk") }.getOrNull() == null) {
+        Firebase.initialize(context, options, "ixigo-sdk")
+      }
+      return Firebase.app("ixigo-sdk")
+    }
+
+    private fun getFirebaseRemoteConfig(context: Context): FirebaseRemoteConfig {
+      val remoteConfig = Firebase.remoteConfig(getFirebaseApp(context))
+      val configSettings = remoteConfigSettings { minimumFetchIntervalInSeconds = 0 }
+
+      remoteConfig.setConfigSettingsAsync(configSettings)
+      remoteConfig.fetchAndActivate()
+      return remoteConfig
     }
   }
 
