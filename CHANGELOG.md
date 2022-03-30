@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.4.1](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.4.0...ixigo-sdk-3.4.1) (2022-03-30)
+
+
+### Features
+
+* **ui:** introduce UIConfig ([7977082](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/79770825760ae6df29f4686de4dc0fe764795d48))
+
 ## [3.4.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.3.0...ixigo-sdk-3.4.0) (2022-03-30)
 
 
