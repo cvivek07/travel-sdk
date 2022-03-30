@@ -116,17 +116,23 @@ dependencies {
     implementation 'androidx.test.espresso.idling:idling-net:3.4.0'
 }
 
+task androidSourcesJar(type: Jar) {
+    archiveClassifier.set('sources')
+    from android.sourceSets.main.java.srcDirs
+}
+
 afterEvaluate {
     publishing {
         publications {
             snapshot(MavenPublication) {
                 from components.release
                 artifactId = "${project.name}"
+                artifact androidSourcesJar
                 version = "${version}-SNAPSHOT"
             }
             release(MavenPublication) {
                 from components.release
-
+                artifact androidSourcesJar
                 artifactId = "${project.name}"
             }
         }
