@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.4.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.3.0...ixigo-sdk-3.4.0) (2022-03-30)
+
+
+### Features
+
+* **payment:** add PaymentSDKPaymentProvider ([2674a57](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/2674a57a3704f4fd61fb4a613b3722338b6b4641))
+
 ## [3.3.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.2.1...ixigo-sdk-3.3.0) (2022-03-23)
 
 
