@@ -140,4 +140,33 @@ class IxigoSDKAndroidTests {
     verify(busSDK, never()).launchAdditionalTrips(fragment.requireContext())
     assertFalse(ret)
   }
+
+  @Test
+  fun `configureUI sets configUI in webFragment`() {
+    ixigoSDKAndroid.configureUI(
+        """{
+      |"backNavigationMode": {
+      |  "type": "handler"
+      |}
+      |}""".trimMargin(),
+        "success:TO_REPLACE_PAYLOAD",
+        "error:TO_REPLACE_PAYLOAD")
+    assertEquals("""success:{}""", shadowWebView.lastEvaluatedJavascript)
+    assertEquals(UIConfig(backNavigationMode = BackNavigationMode.Handler()), fragment.uiConfig)
+  }
+
+  @Test
+  fun `configureUI returns error for wrong input`() {
+    ixigoSDKAndroid.configureUI(
+        """{
+      |"backNavigationEnabled": {
+      |  "type": "unknownType" 
+      |}
+      |}"""".trimMargin(),
+        "success:TO_REPLACE_PAYLOAD",
+        "error:TO_REPLACE_PAYLOAD")
+    assertEquals(
+        """error:{\"errorCode\":\"InvalidArgumentError\",\"errorMessage\":\"unable to parse input={\\n\\\"backNavigationEnabled\\\": {\\n  \\\"type\\\": \\\"unknownType\\\" \\n}\\n}\\\"\"}""",
+        shadowWebView.lastEvaluatedJavascript)
+  }
 }

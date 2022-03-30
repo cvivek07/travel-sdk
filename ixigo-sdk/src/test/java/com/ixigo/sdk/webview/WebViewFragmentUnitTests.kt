@@ -148,7 +148,7 @@ class WebViewFragmentUnitTests {
   fun `test that back button finishes activity if WebView can not go back`() {
     fragmentActivity.onBackPressed()
     assertEquals(0, shadowWebView.goBackInvocations)
-    assert(fragmentActivity.isFinishing)
+    verify(delegate).onQuit()
   }
 
   @Test
@@ -278,7 +278,7 @@ class WebViewFragmentUnitTests {
   @Test
   fun `test that goBack navigates back when loadingView onGoBack is called and there is navigation stack`() {
     fragment.loadableView.onGoBack?.invoke()
-    assert(fragmentActivity.isFinishing)
+    verify(delegate).onQuit()
   }
 
   @Test
@@ -396,6 +396,25 @@ class WebViewFragmentUnitTests {
     val url = "https://www.ixigo.com/nextUrl"
     fragment.loadUrl(url)
     assertEquals(url, shadowWebView.lastLoadedUrl)
+  }
+
+  @Test
+  fun `test uiConfig is updated`() {
+    shadowWebView.webViewClient.onPageStarted(fragment.webView, initialPageData.url, null)
+    val defaultUIConfig = UIConfig(backNavigationMode = BackNavigationMode.Enabled())
+    assertEquals("uiConfig has default value", defaultUIConfig, fragment.uiConfig)
+
+    val updatedUIConfig = UIConfig(backNavigationMode = BackNavigationMode.Disabled())
+    fragment.configUI(updatedUIConfig)
+    assertEquals("uiConfig has been updated", updatedUIConfig, fragment.uiConfig)
+
+    val nextUrl = "https://www.ixigo.com/nextUrl"
+    fragment.webView.loadUrl(nextUrl)
+    shadowWebView.webViewClient.onPageStarted(fragment.webView, nextUrl, null)
+    assertEquals("uiConfig is back to default value", defaultUIConfig, fragment.uiConfig)
+
+    shadowWebView.webViewClient.onPageStarted(fragment.webView, initialPageData.url, null)
+    assertEquals("uiConfig resets previously set value", updatedUIConfig, fragment.uiConfig)
   }
 
   private fun assertLoadableViewStatus(status: Status) {

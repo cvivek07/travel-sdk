@@ -30,7 +30,7 @@ import com.ixigo.sdk.ui.Loading
 import kotlinx.parcelize.Parcelize
 import timber.log.Timber
 
-class WebViewFragment : Fragment(), UrlLoader {
+class WebViewFragment : Fragment(), UIConfigurable, UrlLoader {
   @VisibleForTesting internal lateinit var binding: WebviewLayoutBinding
   @VisibleForTesting
   internal val webView
@@ -39,6 +39,13 @@ class WebViewFragment : Fragment(), UrlLoader {
   internal val loadableView
     get() = binding.loadableView
   val viewModel: WebViewViewModel by viewModels()
+
+  private val urlState = UrlState()
+
+  private val defaultUIConfig = UIConfig(backNavigationMode = BackNavigationMode.Enabled())
+
+  internal var uiConfig: UIConfig = defaultUIConfig
+    private set
 
   val analyticsProvider: AnalyticsProvider
     get() = IxigoSDK.instance.analyticsProvider
@@ -69,7 +76,7 @@ class WebViewFragment : Fragment(), UrlLoader {
     super.onCreate(savedInstanceState)
 
     binding = WebviewLayoutBinding.inflate(layoutInflater)
-    loadableView.onGoBack = { activity?.onBackPressed() }
+    loadableView.onGoBack = { handleBackNavigation() }
     loadableView.onRetry =
         {
           webView.reload()
@@ -106,16 +113,41 @@ class WebViewFragment : Fragment(), UrlLoader {
     (jsInterface as? WebViewFragmentListener?)?.let { addListener(it) }
   }
 
+  override fun configUI(uiConfig: UIConfig) {
+    this.uiConfig = uiConfig
+    webView.url?.let { urlState.updateUIConfig(it, uiConfig) }
+  }
+
   companion object {
     const val INITIAL_PAGE_DATA_ARGS = "InitialPageData"
     const val CONFIG = "WebViewFragmentConfig"
   }
 
   private val webViewBackPressHandler by lazy {
-    object : OnBackPressedCallback(false) {
+    object : OnBackPressedCallback(true) {
       override fun handleOnBackPressed() {
-        webView.goBack()
+        when (uiConfig.backNavigationMode) {
+          is BackNavigationMode.Handler -> {
+            webView.evaluateJavascript("""javascript:IxigoSDK.ui.handleBackNavigation()""") {
+              if (it != null && it.toBoolean()) {
+                Timber.d("Back Navigation handled by PWA")
+              } else {
+                handleBackNavigation()
+              }
+            }
+          }
+          is BackNavigationMode.Enabled -> handleBackNavigation()
+          is BackNavigationMode.Disabled -> Timber.d("Back Navigation ignored as it is disabled")
+        }
       }
+    }
+  }
+
+  private fun handleBackNavigation() {
+    if (webView.canGoBack()) {
+      webView.goBack()
+    } else {
+      delegate?.onQuit()
     }
   }
 
@@ -136,11 +168,6 @@ class WebViewFragment : Fragment(), UrlLoader {
 
   private inner class CustomWebViewClient : WebViewClient() {
 
-    override fun doUpdateVisitedHistory(view: WebView?, url: String?, isReload: Boolean) {
-      super.doUpdateVisitedHistory(view, url, isReload)
-      webViewBackPressHandler.isEnabled = view?.canGoBack() ?: false
-    }
-
     override fun onPageFinished(view: WebView?, url: String?) {
       super.onPageFinished(view, url)
       if (loadableView.status is Loading) {
@@ -157,6 +184,11 @@ class WebViewFragment : Fragment(), UrlLoader {
 
       for (listener in listeners) {
         listener.onUrlLoadStart(this@WebViewFragment, url)
+      }
+
+      url?.let {
+        val uiConfig = urlState.uiConfigForUrl(url) ?: defaultUIConfig
+        configUI(uiConfig)
       }
     }
 
