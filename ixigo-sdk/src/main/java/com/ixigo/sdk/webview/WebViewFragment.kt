@@ -27,7 +27,7 @@ import com.ixigo.sdk.ui.Loading
 import kotlinx.parcelize.Parcelize
 import timber.log.Timber
 
-class WebViewFragment : Fragment() {
+class WebViewFragment : Fragment(), UIConfigurable {
   @VisibleForTesting internal lateinit var binding: WebviewLayoutBinding
   @VisibleForTesting
   internal val webView
@@ -36,6 +36,8 @@ class WebViewFragment : Fragment() {
   internal val loadableView
     get() = binding.loadableView
   val viewModel: WebViewViewModel by viewModels()
+
+  private var uiConfig: UIConfig = UIConfig(enableBackNavigation = false)
 
   val analyticsProvider: AnalyticsProvider
     get() = IxigoSDK.instance.analyticsProvider
@@ -108,6 +110,8 @@ class WebViewFragment : Fragment() {
     webView.loadUrl(url, headers)
   }
 
+  override fun configUI(uiConfig: UIConfig) {}
+
   companion object {
     const val INITIAL_PAGE_DATA_ARGS = "InitialPageData"
     const val CONFIG = "WebViewFragmentConfig"
@@ -116,7 +120,9 @@ class WebViewFragment : Fragment() {
   private val webViewBackPressHandler by lazy {
     object : OnBackPressedCallback(false) {
       override fun handleOnBackPressed() {
-        webView.goBack()
+        if (uiConfig.enableBackNavigation) {
+          webView.goBack()
+        }
       }
     }
   }
@@ -140,7 +146,8 @@ class WebViewFragment : Fragment() {
 
     override fun doUpdateVisitedHistory(view: WebView?, url: String?, isReload: Boolean) {
       super.doUpdateVisitedHistory(view, url, isReload)
-      webViewBackPressHandler.isEnabled = view?.canGoBack() ?: false
+      webViewBackPressHandler.isEnabled =
+          uiConfig.enableBackNavigation == false || view?.canGoBack() ?: false
     }
 
     override fun onPageFinished(view: WebView?, url: String?) {

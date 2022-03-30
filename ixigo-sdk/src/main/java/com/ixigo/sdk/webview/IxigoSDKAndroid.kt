@@ -10,6 +10,7 @@ import com.ixigo.sdk.common.*
 import com.ixigo.sdk.sms.OtpSmsRetriever
 import com.ixigo.sdk.sms.OtpSmsRetrieverError
 import com.ixigo.sdk.webview.JsInterface
+import com.ixigo.sdk.webview.UIConfig
 import com.ixigo.sdk.webview.WebViewFragment
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -75,6 +76,8 @@ internal class IxigoSDKAndroid(
       false
     }
   }
+
+  @JavascriptInterface fun configureUI(uiConfig: UIConfig) {}
 
   @Keep data class LogEventInput(val name: String, val properties: Map<String, String> = mapOf())
 
