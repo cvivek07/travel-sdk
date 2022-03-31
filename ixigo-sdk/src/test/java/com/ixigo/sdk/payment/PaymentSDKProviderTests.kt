@@ -53,7 +53,7 @@ class PaymentSDKProviderTests {
     var paymentResult: PaymentResult? = null
     val ret =
         provider.startPayment(
-            activity, PaymentInput("product", mapOf("paymentId" to transactionId))) {
+            activity, PaymentInput("product", mapOf("paymentTransactionId" to transactionId))) {
           paymentResult = it
         }
 
@@ -77,7 +77,7 @@ class PaymentSDKProviderTests {
     var paymentResult: PaymentResult? = null
     val ret =
         provider.startPayment(
-            activity, PaymentInput("product", mapOf("paymentId" to transactionId))) {
+            activity, PaymentInput("product", mapOf("paymentTransactionId" to transactionId))) {
           paymentResult = it
         }
 

@@ -12,7 +12,7 @@ class PaymentSDKPaymentProvider : PaymentProvider {
       input: PaymentInput,
       callback: PaymentCallback
   ): Boolean {
-    val transactionId = input.data["paymentId"] ?: return false
+    val transactionId = input.data["paymentTransactionId"] ?: return false
     PaymentSDK.instance.processPayment(activity, transactionId = transactionId) {
       val nextUrl =
           when (it) {
