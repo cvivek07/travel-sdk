@@ -14,10 +14,7 @@ import com.ixigo.sdk.analytics.Event
 import com.ixigo.sdk.test.assertLaunchedIntent
 import com.ixigo.sdk.test.initializePaymentSDK
 import com.ixigo.sdk.test.initializeTestIxigoSDK
-import com.ixigo.sdk.webview.FunnelConfig
-import com.ixigo.sdk.webview.InitialPageData
-import com.ixigo.sdk.webview.JsInterface
-import com.ixigo.sdk.webview.WebViewFragment
+import com.ixigo.sdk.webview.*
 import org.junit.*
 import org.junit.runner.RunWith
 import org.mockito.Mock
@@ -34,6 +31,7 @@ class PaymentSDKTests {
   private lateinit var activity: Activity
 
   @Mock lateinit var mockAnalyticsProvider: AnalyticsProvider
+  @Mock lateinit var urlLoader: UrlLoader
 
   @Before
   fun setup() {
@@ -64,6 +62,15 @@ class PaymentSDKTests {
         gatewayId = "gatewayIdValue",
         expectedUrl =
             "https://www.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=1&deviceId=deviceId&languageCode=en&page=PAYMENT&gatewayId=gatewayIdValue&txnId=transactionIdValue")
+  }
+
+  @Test
+  fun `test processPayment with urlLoader`() {
+    assertProcessPayment(
+        transactionId = "transactionIdValue",
+        expectedUrl =
+            "https://www.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=1&deviceId=deviceId&languageCode=en&page=PAYMENT&gatewayId=1&txnId=transactionIdValue",
+        urlLoader = urlLoader)
   }
 
   @Test
@@ -106,19 +113,29 @@ class PaymentSDKTests {
       transactionId: String,
       gatewayId: String? = null,
       expectedUrl: String,
-      funnelConfig: FunnelConfig? = null
+      funnelConfig: FunnelConfig? = null,
+      urlLoader: UrlLoader? = null
   ) {
     initializeTestIxigoSDK(analyticsProvider = mockAnalyticsProvider)
     initializePaymentSDK()
     scenario.onActivity { activity ->
       if (gatewayId != null) {
         PaymentSDK.instance.processPayment(
-            activity, transactionId = transactionId, gatewayId = gatewayId, config = funnelConfig)
+            activity,
+            transactionId = transactionId,
+            gatewayId = gatewayId,
+            config = funnelConfig,
+            urlLoader = urlLoader)
       } else {
         PaymentSDK.instance.processPayment(
-            activity, transactionId = transactionId, config = funnelConfig)
+            activity, transactionId = transactionId, config = funnelConfig, urlLoader = urlLoader)
       }
-      assertLaunchedIntent(activity, expectedUrl)
+      if (urlLoader != null) {
+        verify(urlLoader).loadUrl(expectedUrl)
+      } else {
+        assertLaunchedIntent(activity, expectedUrl)
+      }
+
       verify(mockAnalyticsProvider).logEvent(Event.with(action = "paymentsStartHome"))
     }
   }

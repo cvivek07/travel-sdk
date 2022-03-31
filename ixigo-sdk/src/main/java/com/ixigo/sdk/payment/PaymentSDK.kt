@@ -28,16 +28,24 @@ class PaymentSDK() : JsInterfaceProvider {
       transactionId: String,
       gatewayId: String = "1",
       config: FunnelConfig? = null,
-      callback: ProcessPaymentCallback? = null
+      urlLoader: UrlLoader? = null,
+      callback: ProcessPaymentCallback? = null,
   ) {
     callback?.let { currentTransactions[transactionId] = it }
     with(IxigoSDK.instance) {
-      val url =
-          getUrl(mapOf("page" to "PAYMENT", "gatewayId" to gatewayId, "txnId" to transactionId))
-      launchWebActivity(context, url, config)
+      val url = getPaymentOptionsUrl(transactionId = transactionId, gatewayId = gatewayId)
+      if (urlLoader != null) {
+        urlLoader.loadUrl(url)
+      } else {
+        launchWebActivity(context, url, config)
+      }
       analyticsProvider.logEvent(Event.with(action = "paymentsStartHome"))
     }
   }
+
+  internal fun getPaymentOptionsUrl(transactionId: String, gatewayId: String = "1"): String =
+      IxigoSDK.instance.getUrl(
+          mapOf("page" to "PAYMENT", "gatewayId" to gatewayId, "txnId" to transactionId))
 
   internal fun finishPayment(input: FinishPaymentInput): Boolean {
     with(input) {

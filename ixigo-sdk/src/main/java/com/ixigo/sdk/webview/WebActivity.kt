@@ -14,7 +14,7 @@ import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.R
 import com.ixigo.sdk.databinding.WebActivityBinding
 
-class WebActivity : AppCompatActivity(), WebViewDelegate {
+class WebActivity : AppCompatActivity(), WebViewDelegate, UrlLoader {
 
   @VisibleForTesting internal lateinit var binding: WebActivityBinding
   private lateinit var webViewFragment: WebViewFragment
@@ -82,5 +82,9 @@ class WebActivity : AppCompatActivity(), WebViewDelegate {
       return
     }
     setStatusBarColor(color)
+  }
+
+  override fun loadUrl(url: String) {
+    runOnUiThread { webViewFragment.loadUrl(url) }
   }
 }

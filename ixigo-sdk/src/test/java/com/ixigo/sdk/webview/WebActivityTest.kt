@@ -28,6 +28,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
+import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
@@ -151,6 +152,18 @@ class WebActivityTest {
       activity.updateStatusBarColor(Color.parseColor("#00FF00"))
       assertEquals(
           getColor(activity, R.color.exit_top_nav_bar_color), activity.window.statusBarColor)
+    }
+  }
+
+  @Test
+  fun `test loadUrl loads url in webView`() {
+    val url = "https://www.ixigo.com/nextUrl"
+    initializeTestIxigoSDK(config = com.ixigo.sdk.Config(enableExitBar = true))
+    withWebActivity { activity ->
+      val webViewFragment = activity.supportFragmentManager.fragments[0] as WebViewFragment
+      activity.loadUrl(url)
+
+      assertEquals(url, shadowOf(webViewFragment.webView).lastLoadedUrl)
     }
   }
 

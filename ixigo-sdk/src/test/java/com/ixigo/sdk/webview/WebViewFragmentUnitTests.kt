@@ -353,6 +353,13 @@ class WebViewFragmentUnitTests {
         shadowWebView.lastEvaluatedJavascript)
   }
 
+  @Test
+  fun `test loadUrl loads url in webView`() {
+    val url = "https://www.ixigo.com/nextUrl"
+    fragment.loadUrl(url)
+    assertEquals(url, shadowWebView.lastLoadedUrl)
+  }
+
   private fun assertLoadableViewStatus(status: Status) {
     assertEquals(status, fragment.loadableView.status)
   }

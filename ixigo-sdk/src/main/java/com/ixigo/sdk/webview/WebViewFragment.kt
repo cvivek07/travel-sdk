@@ -27,7 +27,7 @@ import com.ixigo.sdk.ui.Loading
 import kotlinx.parcelize.Parcelize
 import timber.log.Timber
 
-class WebViewFragment : Fragment() {
+class WebViewFragment : Fragment(), UrlLoader {
   @VisibleForTesting internal lateinit var binding: WebviewLayoutBinding
   @VisibleForTesting
   internal val webView
@@ -236,6 +236,10 @@ class WebViewFragment : Fragment() {
         }
       }
     }
+  }
+
+  override fun loadUrl(url: String) {
+    webView.loadUrl(url)
   }
 }
 

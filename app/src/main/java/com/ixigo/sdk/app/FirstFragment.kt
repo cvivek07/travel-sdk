@@ -205,7 +205,7 @@ class FirstFragment : Fragment() {
         val gatewayId = getFieldValue(binding.paymentGatewayId, "Gateway Id")
         if (transactionId != null) {
           if (gatewayId != null) {
-            paymentProvider.startPayment(requireActivity(), PaymentInput("product", mapOf("paymentId" to transactionId))) {
+            paymentProvider.startPayment(requireActivity(), PaymentInput("product", mapOf("paymentTransactionId" to transactionId))) {
               val result = when (it) {
                 is Err -> "Error"
                 is Ok -> "Success"
