@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.4.3](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.4.2...ixigo-sdk-3.4.3) (2022-03-31)
+
+
+### Bug Fixes
+
+* **payment:** do not open new Funnel for payment inside an existing WebView ([3c9340d](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/3c9340dcb57e84cddd8384894a64690338f6d454))
+
 ### [3.4.2](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.4.1...ixigo-sdk-3.4.2) (2022-03-31)
 
 
