@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.4.2](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.4.1...ixigo-sdk-3.4.2) (2022-03-31)
+
+
+### Bug Fixes
+
+* **payment:** use paymentTransactionId instead of paymentId ([98da64c](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/98da64cf0b75225500a555915cfcdf0a52728681))
+
 ### [3.4.1](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.4.0...ixigo-sdk-3.4.1) (2022-03-30)
 
 

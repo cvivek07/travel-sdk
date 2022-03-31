@@ -4,7 +4,7 @@ plugins {
     id 'com.google.gms.google-services'
 }
 
-version = '3.4.1'
+version = '3.4.2'
 
 android {
     compileSdk 29
@@ -72,7 +72,7 @@ dependencies {
 
     implementation project(path: ':ixigo-sdk')
     // Comment line above and uncomment line below to use a specific sdk version
-//    implementation("com.ixigo.sdk:ixigo-sdk:3.4.1")
+//    implementation("com.ixigo.sdk:ixigo-sdk:3.4.2")
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.8.1'
 
