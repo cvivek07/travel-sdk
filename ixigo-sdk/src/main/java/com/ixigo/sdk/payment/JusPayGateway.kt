@@ -17,6 +17,7 @@ import `in`.juspay.services.HyperServices
 import java.util.*
 import org.json.JSONArray
 import org.json.JSONObject
+import timber.log.Timber
 
 private typealias HyperServiceCallback = (payload: JSONObject) -> Unit
 
@@ -77,7 +78,7 @@ internal class JusPayGateway(
     }
     val payload =
         createJuspayRequestJsonPayload(createJuspayInitiationJsonPayload(input), requestId)
-
+    Timber.d("Juspay initiate call=$payload")
     hyperInstance.initiate(
         payload,
         object : HyperPaymentsCallbackAdapter() {
@@ -86,17 +87,17 @@ internal class JusPayGateway(
               "show_loader" -> {}
               "hide_loader" -> {}
               "initiate_result" -> {
+                Timber.d("Juspay initiate result=$data")
                 executeCallback(data)
               }
               "process_result" -> {
+                Timber.d("Juspay process result=$data")
                 executeCallback(data)
               }
             }
           }
         })
   }
-
-  data class UpiIntent(val app: String, val displayNote: String)
 
   fun listAvailableUPIApps(input: GetAvailableUPIAppsInput, callback: AvailableUPIAppsCallback) {
     val requestId = createRequestId { data ->
@@ -123,7 +124,7 @@ internal class JusPayGateway(
       }
     }
     val payload = createListAvailableUpiAppsJsonPayload(input.orderId)
-    hyperInstance.process(createJuspayRequestJsonPayload(payload, requestId))
+    process(createJuspayRequestJsonPayload(payload, requestId))
   }
 
   private fun createListAvailableUpiAppsJsonPayload(orderId: String): JSONObject {
@@ -132,6 +133,11 @@ internal class JusPayGateway(
       put("orderId", orderId)
       put("getAvailableApps", true)
     }
+  }
+
+  private fun process(json: JSONObject) {
+    Timber.d("JusPay process call=$json")
+    hyperInstance.process(json)
   }
 
   fun processUpiIntent(input: ProcessUpiIntentInput, callback: ProcessUpiIntentCallback) {
@@ -143,8 +149,7 @@ internal class JusPayGateway(
         callback(Ok(ProcessUpiIntentResponse(orderId = input.orderId)))
       }
     }
-    hyperInstance.process(
-        createJuspayRequestJsonPayload(createUpiIntentRequestPayload(input), requestId))
+    process(createJuspayRequestJsonPayload(createUpiIntentRequestPayload(input), requestId))
   }
 
   private fun createUpiIntentRequestPayload(input: ProcessUpiIntentInput): JSONObject {
@@ -168,7 +173,7 @@ internal class JusPayGateway(
     }
   }
 
-  internal fun createJuspayInitiationJsonPayload(input: InitializeInput): JSONObject {
+  private fun createJuspayInitiationJsonPayload(input: InitializeInput): JSONObject {
     return JSONObject().apply {
       put("action", "initiate")
       put("merchantId", input.merchantId)
