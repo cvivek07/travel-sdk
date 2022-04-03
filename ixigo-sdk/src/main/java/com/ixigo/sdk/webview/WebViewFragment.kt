@@ -158,10 +158,17 @@ class WebViewFragment : Fragment(), UrlLoader {
       webView.evaluateJavascript(
           """
         if (!window.IxigoSDK) {
-          var script = document.createElement("script");
-          script.type = "text/javascript";
-          script.src = "https://rocket.ixigo.com/ixigo-js-sdk/latest/index.umd.js";
-          document.body.appendChild(script);
+          var loadIxigoSDK = function() {
+              var script = document.createElement("script");
+              script.type = "text/javascript";
+              script.src = "https://rocket.ixigo.com/ixigo-js-sdk/latest/index.umd.js";
+              document.body.appendChild(script);
+          }
+          if (document.readyState === 'complete') {
+              loadIxigoSDK();
+          } else {
+              window.addEventListener('load', loadIxigoSDK);
+          }
         }
       """.trimIndent(),
           null)
