@@ -93,7 +93,12 @@ internal constructor(
         config: Config = ProdConfig,
         theme: Theme = defaultTheme(context)
     ): IxigoSDK {
-      Timber.plant(DebugTree())
+      Timber.plant(
+          object : DebugTree() {
+            override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
+              super.log(priority, "ixigo-sdk_$tag", message, t)
+            }
+          })
       assertNotCreated()
       val ixigoSDK =
           IxigoSDK(
