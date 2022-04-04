@@ -96,7 +96,7 @@ internal constructor(
       Timber.plant(
           object : DebugTree() {
             override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
-              super.log(priority, "ixigo-sdk_$tag", message, t)
+              super.log(priority, "ixigosdk_$tag", message, t)
             }
           })
       assertNotCreated()

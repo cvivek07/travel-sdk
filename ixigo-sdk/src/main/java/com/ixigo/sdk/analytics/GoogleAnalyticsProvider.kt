@@ -7,7 +7,7 @@ import timber.log.Timber
 internal class GoogleAnalyticsProvider(private val tracker: Tracker) : AnalyticsProvider {
 
   override fun logEvent(event: Event) {
-    Timber.d("ixigosdk logEvent=${event}")
+    Timber.d("logEvent=${event}")
     val action = event.name
     val category = "action"
     val builder = HitBuilders.EventBuilder().setAction(action).setCategory(category)
