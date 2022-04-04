@@ -224,7 +224,14 @@ class FirstFragment : Fragment() {
     val adapter = ArrayAdapter(requireContext(), R.layout.list_item, ixigoConfigs)
     (binding.configInput.editText as? AutoCompleteTextView)?.setAdapter(adapter)
 
+    setupPayment()
+
     setupPreset()
+  }
+
+  private fun setupPayment() {
+    val adapter = ArrayAdapter(requireContext(), R.layout.list_item, arrayOf(JusPayEnvironment.PRODUCTION, JusPayEnvironment.SANDBOX))
+    (binding.juspayEnvironment.editText as? AutoCompleteTextView)?.setAdapter(adapter)
   }
 
   private fun setupPreset() {
@@ -386,7 +393,8 @@ class FirstFragment : Fragment() {
   }
 
   private fun initPaymentSDK(): Boolean {
-    PaymentSDK.init()
+    val juspayEnvironment = JusPayEnvironment.valueOf(binding.juspayEnvironment.editText!!.text.toString())
+    PaymentSDK.init(PaymentConfig(juspayConfig = JuspayConfig(environment = juspayEnvironment)))
     return true
   }
 

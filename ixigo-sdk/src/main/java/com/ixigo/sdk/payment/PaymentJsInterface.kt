@@ -12,9 +12,12 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 
 internal class PaymentJsInterface(
     private val webViewFragment: WebViewFragment,
-    private val jusPayGateway: JusPayGateway = JusPayGateway(webViewFragment.requireActivity())
+    gatewayProvider: PaymentGatewayProvider
 ) : JsInterface {
   override val name: String = "PaymentSDKAndroid"
+
+  private val cachingGatewayProvider =
+      CachingPaymentGatewayProvider(webViewFragment.requireActivity(), gatewayProvider)
 
   private val moshi by lazy { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
   private val inputAdapter by lazy { moshi.adapter(InitializeInput::class.java) }
@@ -38,20 +41,29 @@ internal class PaymentJsInterface(
 
   @JavascriptInterface
   fun initialize(jsonInput: String, success: String, error: String) {
-    if (jusPayGateway.initialized) {
+    val input = kotlin.runCatching { inputAdapter.fromJson(jsonInput) }.getOrNull()
+    if (input == null) {
+      returnError(error, wrongInputError(jsonInput))
+      return
+    }
+    val gateway = cachingGatewayProvider.getPaymentGateway(input.provider)
+    if (gateway == null) {
+      val errorPayload =
+          NativePromiseError(
+              errorCode = "InvalidArgumentError",
+              errorMessage = "Could not find payment provider=${input.provider}")
+      returnError(error, errorPayload)
+      return
+    }
+    if (gateway.initialized) {
       val errorPayload =
           NativePromiseError(
               errorCode = "InvalidArgumentError", errorMessage = "Payment already initialized")
       returnError(error, errorPayload)
       return
     }
-    val input = kotlin.runCatching { inputAdapter.fromJson(jsonInput) }.getOrNull()
-    if (input == null) {
-      returnError(error, wrongInputError(jsonInput))
-      return
-    }
 
-    jusPayGateway.initialize(input) {
+    gateway.initialize(input) {
       when (it) {
         is Err -> {
           val errorPayload =
@@ -68,8 +80,21 @@ internal class PaymentJsInterface(
 
   @JavascriptInterface
   fun getAvailableUPIApps(jsonInput: String, success: String, error: String) {
-    val jusPayGateway = this.jusPayGateway
-    if (!jusPayGateway.initialized) {
+    val input = kotlin.runCatching { availableUpiAppsInputAdapter.fromJson(jsonInput) }.getOrNull()
+    if (input == null) {
+      returnError(error, wrongInputError(jsonInput))
+      return
+    }
+    val gateway = cachingGatewayProvider.getPaymentGateway(input.provider)
+    if (gateway == null) {
+      val errorPayload =
+          NativePromiseError(
+              errorCode = "InvalidArgumentError",
+              errorMessage = "Could not find payment provider=${input.provider}")
+      returnError(error, errorPayload)
+      return
+    }
+    if (!gateway.initialized) {
       val errorPayload =
           NativePromiseError(
               errorCode = "NotInitializedError",
@@ -77,12 +102,8 @@ internal class PaymentJsInterface(
       returnError(error, errorPayload)
       return
     }
-    val input = kotlin.runCatching { availableUpiAppsInputAdapter.fromJson(jsonInput) }.getOrNull()
-    if (input == null) {
-      returnError(error, wrongInputError(jsonInput))
-      return
-    }
-    jusPayGateway.listAvailableUPIApps(input) {
+
+    gateway.listAvailableUPIApps(input) {
       when (it) {
         is Err -> {
           returnError(error, it.value)
@@ -97,8 +118,21 @@ internal class PaymentJsInterface(
 
   @JavascriptInterface
   fun processUPIIntent(jsonInput: String, success: String, error: String) {
-    val jusPayGateway = this.jusPayGateway
-    if (!jusPayGateway.initialized) {
+    val input = kotlin.runCatching { processUpiIntentInputAdapter.fromJson(jsonInput) }.getOrNull()
+    if (input == null) {
+      returnError(error, wrongInputError(jsonInput))
+      return
+    }
+    val gateway = cachingGatewayProvider.getPaymentGateway(input.provider)
+    if (gateway == null) {
+      val errorPayload =
+          NativePromiseError(
+              errorCode = "InvalidArgumentError",
+              errorMessage = "Could not find payment provider=${input.provider}")
+      returnError(error, errorPayload)
+      return
+    }
+    if (!gateway.initialized) {
       val errorPayload =
           NativePromiseError(
               errorCode = "NotInitializedError",
@@ -106,12 +140,8 @@ internal class PaymentJsInterface(
       returnError(error, errorPayload)
       return
     }
-    val input = kotlin.runCatching { processUpiIntentInputAdapter.fromJson(jsonInput) }.getOrNull()
-    if (input == null) {
-      returnError(error, wrongInputError(jsonInput))
-      return
-    }
-    jusPayGateway.processUpiIntent(input) {
+
+    gateway.processUpiIntent(input) {
       when (it) {
         is Err -> {
           returnError(error, it.value)

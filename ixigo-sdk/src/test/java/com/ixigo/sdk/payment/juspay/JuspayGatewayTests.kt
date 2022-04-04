@@ -1,4 +1,4 @@
-package com.ixigo.sdk.payment
+package com.ixigo.sdk.payment.juspay
 
 import android.os.Bundle
 import androidx.fragment.app.testing.FragmentScenario
@@ -7,6 +7,10 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ixigo.sdk.common.Err
 import com.ixigo.sdk.common.NativePromiseError
 import com.ixigo.sdk.common.Ok
+import com.ixigo.sdk.payment.AvailableUPIAppsResult
+import com.ixigo.sdk.payment.InitializeResult
+import com.ixigo.sdk.payment.JusPayGateway
+import com.ixigo.sdk.payment.ProcessUpiIntentResult
 import com.ixigo.sdk.payment.data.*
 import com.ixigo.sdk.test.initializeTestIxigoSDK
 import com.ixigo.sdk.webview.InitialPageData
@@ -71,7 +75,8 @@ class JuspayGatewayTests {
         InitializeInput(
             merchantId = "merchantIdValue",
             clientId = "clientIdValue",
-            customerId = "customerIdValue")) { result = it }
+            customerId = "customerIdValue",
+            provider = "providerValue")) { result = it }
 
     verify(hyperServices).initiate(capture(jsonObjectCaptor), capture(hyperCallbackCaptor))
 
@@ -97,7 +102,8 @@ class JuspayGatewayTests {
         InitializeInput(
             merchantId = "merchantIdValue",
             clientId = "clientIdValue",
-            customerId = "customerIdValue")) { result = it }
+            customerId = "customerIdValue",
+            provider = "providerValue")) { result = it }
 
     verify(hyperServices).initiate(capture(jsonObjectCaptor), capture(hyperCallbackCaptor))
 
@@ -272,7 +278,8 @@ class JuspayGatewayTests {
         InitializeInput(
             merchantId = "merchantIdValue",
             clientId = "clientIdValue",
-            customerId = "customerIdValue")) {}
+            customerId = "customerIdValue",
+            provider = "providerValue")) {}
 
     verify(hyperServices).initiate(capture(jsonObjectCaptor), capture(hyperCallbackCaptor))
   }

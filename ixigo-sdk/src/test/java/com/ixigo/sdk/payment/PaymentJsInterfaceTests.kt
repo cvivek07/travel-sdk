@@ -40,7 +40,8 @@ class PaymentJsInterfaceTests {
 
   @Mock lateinit var mockWebViewDelegate: WebViewDelegate
 
-  @Mock internal lateinit var justpayGateway: JusPayGateway
+  @Mock internal lateinit var mockGatewayProvider: PaymentGatewayProvider
+  @Mock internal lateinit var mockGateway: PaymentGateway
 
   @Before
   fun setup() {
@@ -55,19 +56,24 @@ class PaymentJsInterfaceTests {
       fragment = it
       fragment.delegate = mockWebViewDelegate
       shadowWebView = Shadows.shadowOf(it.webView)
-      paymentJsInterface = PaymentJsInterface(fragment, justpayGateway)
+      paymentJsInterface = PaymentJsInterface(fragment, mockGatewayProvider)
+
+      whenever(
+              mockGatewayProvider.getPaymentGateway(eq("JUSPAY"), same(fragment.requireActivity())))
+          .thenReturn(mockGateway)
     }
   }
 
   @Test
   fun `test initialize works correctly`() {
     Mockito.`when`(
-            justpayGateway.initialize(
+            mockGateway.initialize(
                 eq(
                     InitializeInput(
                         merchantId = "merchantIdValue",
                         customerId = "customerIdValue",
-                        clientId = "clientIdValue")),
+                        clientId = "clientIdValue",
+                        provider = "JUSPAY")),
                 any()))
         .then {
           val callback: InitializeCallback = it.getArgument(1)
@@ -82,13 +88,25 @@ class PaymentJsInterfaceTests {
 
   @Test
   fun `test initialize throws error if already initialized`() {
-    Mockito.`when`(justpayGateway.initialized).thenReturn(true)
+    Mockito.`when`(mockGateway.initialized).thenReturn(true)
     paymentJsInterface.initialize(
         validInitializeInputString,
         "javascript:alert('success:TO_REPLACE_PAYLOAD')",
         "javascript:alert('error:TO_REPLACE_PAYLOAD')")
     assertEquals(
         "javascript:alert('error:{\\\"errorCode\\\":\\\"InvalidArgumentError\\\",\\\"errorMessage\\\":\\\"Payment already initialized\\\"}')",
+        shadowWebView.lastEvaluatedJavascript)
+  }
+
+  @Test
+  fun `test initialize throws error for missing Provider`() {
+    Mockito.`when`(mockGateway.initialized).thenReturn(true)
+    paymentJsInterface.initialize(
+        unknownProviderInitializeInputString,
+        "javascript:alert('success:TO_REPLACE_PAYLOAD')",
+        "javascript:alert('error:TO_REPLACE_PAYLOAD')")
+    assertEquals(
+        "javascript:alert('error:{\\\"errorCode\\\":\\\"InvalidArgumentError\\\",\\\"errorMessage\\\":\\\"Could not find payment provider=UNKNOWN\\\"}')",
         shadowWebView.lastEvaluatedJavascript)
   }
 
@@ -106,12 +124,13 @@ class PaymentJsInterfaceTests {
   @Test
   fun `test initialize throws error if juspay can not initialize`() {
     Mockito.`when`(
-            justpayGateway.initialize(
+            mockGateway.initialize(
                 eq(
                     InitializeInput(
                         merchantId = "merchantIdValue",
                         customerId = "customerIdValue",
-                        clientId = "clientIdValue")),
+                        clientId = "clientIdValue",
+                        provider = "JUSPAY")),
                 any()))
         .then {
           val callback: InitializeCallback = it.getArgument(1)
@@ -128,9 +147,9 @@ class PaymentJsInterfaceTests {
 
   @Test
   fun `test getAvailableUPIApps returns existing Apps`() {
-    Mockito.`when`(justpayGateway.initialized).thenReturn(true)
+    Mockito.`when`(mockGateway.initialized).thenReturn(true)
     Mockito.`when`(
-            justpayGateway.listAvailableUPIApps(
+            mockGateway.listAvailableUPIApps(
                 eq(GetAvailableUPIAppsInput("orderIdValue", provider = "JUSPAY")), any()))
         .then {
           val callback: AvailableUPIAppsCallback = it.getArgument(1)
@@ -149,6 +168,18 @@ class PaymentJsInterfaceTests {
   }
 
   @Test
+  fun `test getAvailableUPIApps throws error for unknown provider`() {
+    whenever(mockGateway.initialized).thenReturn(true)
+    paymentJsInterface.getAvailableUPIApps(
+        unknownProviderGetAvailableUPIAppsInputString,
+        "javascript:alert('success:TO_REPLACE_PAYLOAD')",
+        "javascript:alert('error:TO_REPLACE_PAYLOAD')")
+    assertEquals(
+        """javascript:alert('error:{\"errorCode\":\"InvalidArgumentError\",\"errorMessage\":\"Could not find payment provider=Unknown\"}')""",
+        shadowWebView.lastEvaluatedJavascript)
+  }
+
+  @Test
   fun `test getAvailableUPIApps throws error if juspay is not initialized`() {
     paymentJsInterface.getAvailableUPIApps(
         validGetAvailableUPIAppsInputString,
@@ -161,7 +192,7 @@ class PaymentJsInterfaceTests {
 
   @Test
   fun `test getAvailableUPIApps throws error for wrong Input`() {
-    Mockito.`when`(justpayGateway.initialized).thenReturn(true)
+    Mockito.`when`(mockGateway.initialized).thenReturn(true)
     paymentJsInterface.getAvailableUPIApps(
         "{}",
         "javascript:alert('success:TO_REPLACE_PAYLOAD')",
@@ -173,9 +204,9 @@ class PaymentJsInterfaceTests {
 
   @Test
   fun `test getAvailableUPIApps returns error if juspay returns error`() {
-    Mockito.`when`(justpayGateway.initialized).thenReturn(true)
+    Mockito.`when`(mockGateway.initialized).thenReturn(true)
     Mockito.`when`(
-            justpayGateway.listAvailableUPIApps(
+            mockGateway.listAvailableUPIApps(
                 eq(GetAvailableUPIAppsInput(orderId = "orderIdValue", provider = "JUSPAY")), any()))
         .then {
           val callback: AvailableUPIAppsCallback = it.getArgument(1)
@@ -192,8 +223,8 @@ class PaymentJsInterfaceTests {
 
   @Test
   fun `test processUPIIntent works correctly`() {
-    Mockito.`when`(justpayGateway.initialized).thenReturn(true)
-    Mockito.`when`(justpayGateway.processUpiIntent(eq(validProcessUPIIntentInput), any())).then {
+    Mockito.`when`(mockGateway.initialized).thenReturn(true)
+    Mockito.`when`(mockGateway.processUpiIntent(eq(validProcessUPIIntentInput), any())).then {
       val callback: ProcessUpiIntentCallback = it.getArgument(1)
       callback(Ok(ProcessUpiIntentResponse(orderId = "orderIdValue")))
     }
@@ -218,8 +249,20 @@ class PaymentJsInterfaceTests {
   }
 
   @Test
+  fun `test processUPIIntent throws error for unknown provider`() {
+    whenever(mockGateway.initialized).thenReturn(true)
+    paymentJsInterface.processUPIIntent(
+        unknownProviderProcessUPIIntentInputString,
+        "javascript:alert('success:TO_REPLACE_PAYLOAD')",
+        "javascript:alert('error:TO_REPLACE_PAYLOAD')")
+    assertEquals(
+        """javascript:alert('error:{\"errorCode\":\"InvalidArgumentError\",\"errorMessage\":\"Could not find payment provider=Unknown\"}')""",
+        shadowWebView.lastEvaluatedJavascript)
+  }
+
+  @Test
   fun `test processUPIIntent throws error for wrong Input`() {
-    Mockito.`when`(justpayGateway.initialized).thenReturn(true)
+    Mockito.`when`(mockGateway.initialized).thenReturn(true)
     paymentJsInterface.processUPIIntent(
         "{}",
         "javascript:alert('success:TO_REPLACE_PAYLOAD')",
@@ -231,8 +274,8 @@ class PaymentJsInterfaceTests {
 
   @Test
   fun `test processUPIIntent returns error if juspay returns error`() {
-    Mockito.`when`(justpayGateway.initialized).thenReturn(true)
-    Mockito.`when`(justpayGateway.processUpiIntent(eq(validProcessUPIIntentInput), any())).then {
+    Mockito.`when`(mockGateway.initialized).thenReturn(true)
+    Mockito.`when`(mockGateway.processUpiIntent(eq(validProcessUPIIntentInput), any())).then {
       val callback: ProcessUpiIntentCallback = it.getArgument(1)
       callback(Err(NativePromiseError("Test Error")))
     }
@@ -247,7 +290,7 @@ class PaymentJsInterfaceTests {
 
   @Test
   fun `test json is correctly escaped`() {
-    whenever(justpayGateway.initialize(eq(validInitializeInput), any())).then {
+    whenever(mockGateway.initialize(eq(validInitializeInput), any())).then {
       val callback: ProcessUpiIntentCallback = it.getArgument(1)
       callback(Err(NativePromiseError("{\"jsonKey\": \"{\\\"innerKey\\\":\\\"innerValue\\\"}\"}")))
     }
@@ -323,7 +366,8 @@ class PaymentJsInterfaceTests {
       InitializeInput(
           merchantId = "merchantIdValue",
           customerId = "customerIdValue",
-          clientId = "clientIdValue")
+          clientId = "clientIdValue",
+          provider = "JUSPAY")
 
   private val validInitializeInputString =
       """
@@ -335,6 +379,16 @@ class PaymentJsInterfaceTests {
       }
     """.trim()
 
+  private val unknownProviderInitializeInputString =
+      """
+      {
+        "clientId": "clientIdValue",
+        "customerId": "customerIdValue",
+        "merchantId": "merchantIdValue",
+        "provider": "UNKNOWN"
+      }
+    """.trim()
+
   private val validGetAvailableUPIAppsInputString =
       """
       {
@@ -343,10 +397,31 @@ class PaymentJsInterfaceTests {
       }
     """.trim()
 
+  private val unknownProviderGetAvailableUPIAppsInputString =
+      """
+      {
+        "orderId": "orderIdValue",
+        "provider": "Unknown"
+      }
+    """.trim()
+
   private val validProcessUPIIntentInputString =
       """
       {
         "provider": "JUSPAY",
+        "orderId": "orderIdValue",
+        "appPackage": "appPackageValue",
+        "displayNote": "displayNoteValue",
+        "clientAuthToken": "clientAuthTokenValue",
+        "endUrls": ["endUrl1"],
+        "amount": 102.3
+      }
+    """.trim()
+
+  private val unknownProviderProcessUPIIntentInputString =
+      """
+      {
+        "provider": "Unknown",
         "orderId": "orderIdValue",
         "appPackage": "appPackageValue",
         "displayNote": "displayNoteValue",

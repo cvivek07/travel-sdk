@@ -3,7 +3,12 @@ package com.ixigo.sdk.payment.data
 import androidx.annotation.Keep
 
 @Keep
-data class InitializeInput(val merchantId: String, val clientId: String, val customerId: String)
+data class InitializeInput(
+    val merchantId: String,
+    val clientId: String,
+    val customerId: String,
+    val provider: String
+)
 
 @Keep data class UpiApp(val appName: String, val packageName: String)
 

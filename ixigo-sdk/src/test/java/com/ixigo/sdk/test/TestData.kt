@@ -8,9 +8,7 @@ import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.test.FakeAnalyticsProvider
 import com.ixigo.sdk.auth.EmptyPartnerTokenProvider
 import com.ixigo.sdk.auth.PartnerTokenProvider
-import com.ixigo.sdk.payment.DisabledPaymentProvider
-import com.ixigo.sdk.payment.PaymentProvider
-import com.ixigo.sdk.payment.PaymentSDK
+import com.ixigo.sdk.payment.*
 import com.ixigo.sdk.test.TestData.FakeAppInfo
 import com.ixigo.sdk.ui.Theme
 import com.ixigo.sdk.webview.WebViewConfig
@@ -42,5 +40,7 @@ internal fun initializeTestIxigoSDK(
 }
 
 internal fun initializePaymentSDK() {
-  PaymentSDK.replaceInstance(PaymentSDK())
+  PaymentSDK.replaceInstance(
+      PaymentSDK(
+          PaymentConfig(juspayConfig = JuspayConfig(environment = JusPayEnvironment.PRODUCTION))))
 }

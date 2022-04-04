@@ -19,7 +19,7 @@ import com.ixigo.sdk.webview.*
  * Before using it, you need to call [PaymentSDK.init(...)][init] once when you start-up your
  * Application.
  */
-class PaymentSDK() : JsInterfaceProvider {
+class PaymentSDK(private val config: PaymentConfig) : JsInterfaceProvider {
 
   private val currentTransactions: MutableMap<String, ProcessPaymentCallback> = mutableMapOf()
 
@@ -73,11 +73,11 @@ class PaymentSDK() : JsInterfaceProvider {
      * Call this method when you initialize your Application. eg: `Application.onCreate`
      */
     @JvmStatic
-    fun init(): PaymentSDK {
+    fun init(config: PaymentConfig = DefaultPaymentConfig): PaymentSDK {
       PaymentSDK.assertIxigoSDKIsInitialized()
       PaymentSDK.assertNotCreated()
 
-      val instance = PaymentSDK()
+      val instance = PaymentSDK(config)
       PaymentSDK.INSTANCE = instance
 
       IxigoSDK.instance.webViewConfig.addJsInterfaceProvider(instance)
@@ -92,11 +92,18 @@ class PaymentSDK() : JsInterfaceProvider {
   override fun getJsInterfaces(url: String, webViewFragment: WebViewFragment): List<JsInterface> {
     var jsInterfaces = mutableListOf<JsInterface>()
     if (url.startsWith(IxigoSDK.instance.config.apiBaseUrl) || url.startsWith("file://")) {
-      jsInterfaces.add(PaymentJsInterface(webViewFragment))
+      jsInterfaces.add(PaymentJsInterface(webViewFragment, DefaultPaymentGatewayProvider(config)))
     }
     return jsInterfaces
   }
 }
+
+data class PaymentConfig(val juspayConfig: JuspayConfig)
+
+data class JuspayConfig(val environment: JusPayEnvironment)
+
+val DefaultPaymentConfig =
+    PaymentConfig(juspayConfig = JuspayConfig(environment = JusPayEnvironment.PRODUCTION))
 
 typealias ProcessPaymentCallback = (ProcessPaymentResult) -> Unit
 

@@ -1,7 +1,6 @@
 package com.ixigo.sdk.payment
 
 import androidx.fragment.app.FragmentActivity
-import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.common.Err
 import com.ixigo.sdk.common.NativePromiseError
 import com.ixigo.sdk.common.Ok
@@ -33,14 +32,19 @@ typealias ProcessUpiIntentResult = Result<ProcessUpiIntentResponse, NativePromis
 
 typealias ProcessUpiIntentCallback = (ProcessUpiIntentResult) -> Unit
 
+enum class JusPayEnvironment(val environmentString: String) {
+  PRODUCTION(PaymentConstants.ENVIRONMENT.PRODUCTION),
+  SANDBOX(PaymentConstants.ENVIRONMENT.SANDBOX)
+}
+
 internal class JusPayGateway(
     private val hyperInstance: HyperServices,
-    ixigoSDK: IxigoSDK = IxigoSDK.instance
-) {
-
-  //  private val environment = if (ixigoSDK.config == Config.ProdConfig) PRODUCTION else SANDBOX
-  private val environment = PRODUCTION
-  constructor(fragmentActivity: FragmentActivity) : this(HyperServices(fragmentActivity))
+    internal val environment: JusPayEnvironment = JusPayEnvironment.PRODUCTION
+) : PaymentGateway {
+  constructor(
+      fragmentActivity: FragmentActivity,
+      environment: JusPayEnvironment
+  ) : this(HyperServices(fragmentActivity), environment)
 
   private val moshi by lazy { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
   private val juspayAvailableUpiAppsResponseAdapter by lazy {
@@ -49,7 +53,7 @@ internal class JusPayGateway(
 
   private val requestMap: MutableMap<String, HyperServiceCallback> = mutableMapOf()
 
-  val initialized: Boolean
+  override val initialized: Boolean
     get() = hyperInstance.isInitialised
 
   private fun createRequestId(callback: HyperServiceCallback): String {
@@ -60,14 +64,14 @@ internal class JusPayGateway(
 
   private fun executeCallback(data: JSONObject) {
     val requestId = data.optString("requestId")
-    if (requestId != null && requestMap.containsKey(requestId)) {
+    if (requestMap.containsKey(requestId)) {
       val callback = requestMap[requestId]!!
       callback(data)
       requestMap.remove(requestId)
     }
   }
 
-  fun initialize(input: InitializeInput, callback: InitializeCallback) {
+  override fun initialize(input: InitializeInput, callback: InitializeCallback) {
     val requestId = createRequestId { data ->
       val error = data.optBoolean("error")
       if (error) {
@@ -99,7 +103,10 @@ internal class JusPayGateway(
         })
   }
 
-  fun listAvailableUPIApps(input: GetAvailableUPIAppsInput, callback: AvailableUPIAppsCallback) {
+  override fun listAvailableUPIApps(
+      input: GetAvailableUPIAppsInput,
+      callback: AvailableUPIAppsCallback
+  ) {
     val requestId = createRequestId { data ->
       val error = data.optBoolean("error")
       if (error) {
@@ -140,7 +147,7 @@ internal class JusPayGateway(
     hyperInstance.process(json)
   }
 
-  fun processUpiIntent(input: ProcessUpiIntentInput, callback: ProcessUpiIntentCallback) {
+  override fun processUpiIntent(input: ProcessUpiIntentInput, callback: ProcessUpiIntentCallback) {
     val requestId = createRequestId { data ->
       val error = data.optBoolean("error")
       if (error) {
@@ -180,7 +187,7 @@ internal class JusPayGateway(
       put("clientId", input.clientId)
       put("customerId", input.customerId)
       put("merchantLoader", true)
-      put(PaymentConstants.ENV, environment)
+      put(PaymentConstants.ENV, environment.environmentString)
     }
   }
 
@@ -195,7 +202,7 @@ internal class JusPayGateway(
     }
   }
 
-  fun createResponseError(data: JSONObject) =
+  private fun createResponseError(data: JSONObject) =
       NativePromiseError(
           errorCode = data.optString("errorCode"),
           errorMessage = data.optString("errorMessage"),

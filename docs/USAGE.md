@@ -158,18 +158,9 @@ class MyPartnerTokenProvider(): PartnerTokenProvider, ActivityResultHandler {
 
 When the customer logs out in your app, call `IxigoSDK.instance.onLogout`. This will remove all info stored/cached about the logged in user.
 
-## Payment
+## [Payment](payment/USAGE.md)
 
-If your App supports a custom Payment mechanism, you can implement `PaymentProvider` and use it when initializing `IxigoSDK`
-
-```kotlin
-class MyPaymentProvider(): PaymentProvider {
-  override fun startPayment(activity: FragmentActivity, input: PaymentInput, callback: PaymentCallback): Boolean {
-      TODO("Handle payment")
-   }
-}
-
-```
+See payment Usage documentation [here](payment/USAGE.md)
 
 ### Using Actvity for Result
 

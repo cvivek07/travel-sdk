@@ -47,6 +47,9 @@
 
                             <label for="initialize-clientId">Client Id</label>
                             <input type="text" class="form-control" id="initialize-clientId" placeholder="Client Id" value="ixigo_MWEB">
+
+                            <label for="initialize-provider">Provider</label>
+                            <input type="text" class="form-control" id="initialize-provider" placeholder="Provider" value="JUSPAY">
                         </div>
 
                         <button type="button" id="initialize-btn" class="btn btn-primary">Initialize</button>
@@ -124,7 +127,8 @@
             await IxigoSDK.payment.initialize({
                 "customerId": document.getElementById('initialize-customerId').value,
                 "merchantId": document.getElementById('initialize-merchantId').value,
-                "clientId": document.getElementById('initialize-clientId').value
+                "clientId": document.getElementById('initialize-clientId').value,
+                "provider": document.getElementById('initialize-provider').value
             })
             alert("Successfully initialized SDK")
         } catch(e) {
