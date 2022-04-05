@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.4.4](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.4.3...ixigo-sdk-3.4.4) (2022-04-05)
+
+
+### Bug Fixes
+
+* **logging:** make logging optional ([1a401df](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/1a401df0ed36d4d8c00e4cc4f7e9c7c6f9d25870))
+* **logs:** add juspay logs ([7b6cb2c](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/7b6cb2ce882e7e9edca4b9f2a20b45a2788c652f))
+* **logs:** add prefix to logs ([d540f0b](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/d540f0bb8f442c7854af9cb25d21945bdcdfdabf))
+* **logs:** use ixigosdk for logging prefix ([a41b9f8](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/a41b9f8f5cf3162689b5d83dc077357fb7b32aa9))
+* **payment:** add support for paymentProvider configuration ([3460bf1](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/3460bf18d16ba8d012feedd0c9a389462ccbde2d))
+* plant timber tree ([3a147f2](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/3a147f22cf7d1a91c8b29dc8d1e0ddd1d653fffd))
+* wait until document is laoded to load IxigoSDK automatically ([77db72f](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/77db72f416039b285de81f9cfb55515c4850cd74))
+
 ### [3.4.3](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.4.2...ixigo-sdk-3.4.3) (2022-03-31)
 
 
