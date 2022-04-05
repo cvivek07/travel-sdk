@@ -111,6 +111,16 @@ If you want to use a non standard enpoint, you can use `Config` constructor dire
 val config = Config(apiBaseUrl = "http://mycustomhost.com/api")
 ```
 
+## Logging
+
+If you want to enable logging in your Debug Builds, do something like this
+
+```kotlin
+if (BuildConfig.DEBUG) {
+  ixigoSDK.setLoggingConfig(LoggingConfig(enabled = true))
+}
+```
+
 ## Authentication
 
 When opening ixigo SDK it is possible to login the user automatically into their ixigo account by exchanging the host App token for an ixigo token. To do that, you need to implement `PartnerTokenProvider` and pass it when initializing `IxigoSDK`

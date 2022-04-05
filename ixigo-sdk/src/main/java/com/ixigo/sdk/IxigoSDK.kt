@@ -20,8 +20,6 @@ import com.ixigo.sdk.ui.Theme
 import com.ixigo.sdk.ui.defaultTheme
 import com.ixigo.sdk.webview.*
 import java.net.URL
-import timber.log.Timber
-import timber.log.Timber.DebugTree
 
 /**
  * This is the main entrypoint to interact with Ixigo SDK.
@@ -93,12 +91,6 @@ internal constructor(
         config: Config = ProdConfig,
         theme: Theme = defaultTheme(context)
     ): IxigoSDK {
-      Timber.plant(
-          object : DebugTree() {
-            override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
-              super.log(priority, "ixigosdk_$tag", message, t)
-            }
-          })
       assertNotCreated()
       val ixigoSDK =
           IxigoSDK(
