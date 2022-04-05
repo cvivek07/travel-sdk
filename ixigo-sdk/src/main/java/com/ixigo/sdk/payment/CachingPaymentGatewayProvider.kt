@@ -2,7 +2,7 @@ package com.ixigo.sdk.payment
 
 import androidx.fragment.app.FragmentActivity
 
-class CachingPaymentGatewayProvider(
+internal class CachingPaymentGatewayProvider(
     private val fragmentActivity: FragmentActivity,
     private val paymentGatewayProvider: PaymentGatewayProvider
 ) {
@@ -14,5 +14,9 @@ class CachingPaymentGatewayProvider(
       paymentGatewayProvider.getPaymentGateway(id, fragmentActivity)?.let { providerMap[id] = it }
     }
     return providerMap[id]
+  }
+
+  fun clear() {
+    providerMap.clear()
   }
 }

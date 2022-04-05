@@ -91,16 +91,21 @@ class WebViewFragmentUnitTests {
     assertEquals(initialPageData.headers, shadowWebView.lastAdditionalHttpHeaders)
   }
 
+  interface JsInterfaceAndListener : JsInterface, WebViewFragmentListener
+
   @Test
   fun `test that jsInterfaces are loaded`() {
     val mockJsInterface: JsInterface = mock { on { name } doReturn "mockJsInterface" }
+    val mockJsInterfaceListener: JsInterfaceAndListener = mock {
+      on { name } doReturn "mockJsInterfaceListener"
+    }
     IxigoSDK.instance.webViewConfig.addJsInterfaceProvider(
         object : JsInterfaceProvider {
           override fun getJsInterfaces(
               url: String,
               webViewFragment: WebViewFragment
           ): List<JsInterface> {
-            return listOf(mockJsInterface)
+            return listOf(mockJsInterface, mockJsInterfaceListener)
           }
         })
     scenario =
@@ -111,6 +116,10 @@ class WebViewFragmentUnitTests {
     scenario.onFragment {
       shadowWebView = shadowOf(it.webView) as CustomShadowWebview
       assertEquals(mockJsInterface, shadowWebView.getJavascriptInterface("mockJsInterface"))
+      assertEquals(
+          mockJsInterfaceListener, shadowWebView.getJavascriptInterface("mockJsInterfaceListener"))
+
+      verify(mockJsInterfaceListener).onUrlLoadStart(it, initialPageData.url)
     }
   }
 

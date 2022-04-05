@@ -99,6 +99,33 @@ class PaymentJsInterfaceTests {
   }
 
   @Test
+  fun `test gateways are reused across calls`() {
+    Mockito.`when`(mockGateway.initialized).thenReturn(true)
+    for (i in 1..2) {
+      paymentJsInterface.initialize(
+          validInitializeInputString,
+          "javascript:alert('success:TO_REPLACE_PAYLOAD')",
+          "javascript:alert('error:TO_REPLACE_PAYLOAD')")
+    }
+    verify(mockGatewayProvider, times(1)).getPaymentGateway("JUSPAY", fragment.requireActivity())
+  }
+
+  @Test
+  fun `test gateways are NOT reused across calls when loading new page`() {
+    Mockito.`when`(mockGateway.initialized).thenReturn(true)
+    paymentJsInterface.initialize(
+        validInitializeInputString,
+        "javascript:alert('success:TO_REPLACE_PAYLOAD')",
+        "javascript:alert('error:TO_REPLACE_PAYLOAD')")
+    paymentJsInterface.onUrlLoadStart(fragment, "https://www.ixigo.com/new-page")
+    paymentJsInterface.initialize(
+        validInitializeInputString,
+        "javascript:alert('success:TO_REPLACE_PAYLOAD')",
+        "javascript:alert('error:TO_REPLACE_PAYLOAD')")
+    verify(mockGatewayProvider, times(2)).getPaymentGateway("JUSPAY", fragment.requireActivity())
+  }
+
+  @Test
   fun `test initialize throws error for missing Provider`() {
     Mockito.`when`(mockGateway.initialized).thenReturn(true)
     paymentJsInterface.initialize(

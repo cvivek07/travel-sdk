@@ -102,10 +102,7 @@ class WebViewFragment : Fragment(), UrlLoader {
   @SuppressLint("JavascriptInterface")
   private fun addJavascriptInterface(jsInterface: JsInterface) {
     webView.addJavascriptInterface(jsInterface, jsInterface.name)
-  }
-
-  internal fun loadUrl(url: String, headers: Map<String, String> = mapOf()) {
-    webView.loadUrl(url, headers)
+    (jsInterface as? WebViewFragmentListener?)?.let { addListener(it) }
   }
 
   companion object {
@@ -125,6 +122,9 @@ class WebViewFragment : Fragment(), UrlLoader {
     if (loadableView.status != Loading()) {
       loadableView.status = Loading()
       IxigoSDK.instance.uriIdlingResource.beginLoad(url)
+      for (listener in listeners) {
+        listener.onUrlLoadStart(this, url)
+      }
     }
   }
 
@@ -210,7 +210,7 @@ class WebViewFragment : Fragment(), UrlLoader {
         when (error?.errorCode) {
           ERROR_UNKNOWN ->
               // Unknown Errors can be Cache misses, for which we don't want to show an error view
-              handleError(request, error?.toString(), showErrorViewIfNeeded = false)
+              handleError(request, error.toString(), showErrorViewIfNeeded = false)
           else -> handleError(request, error?.toString())
         }
       } else {
@@ -248,6 +248,11 @@ class WebViewFragment : Fragment(), UrlLoader {
   override fun loadUrl(url: String) {
     webView.loadUrl(url)
   }
+
+  private val listeners: MutableList<WebViewFragmentListener> = mutableListOf()
+  internal fun addListener(listener: WebViewFragmentListener) {
+    listeners.add(listener)
+  }
 }
 
 @Parcelize
@@ -265,4 +270,8 @@ interface JsInterface {
 interface WebViewDelegate {
   fun onQuit()
   fun updateStatusBarColor(color: Int)
+}
+
+interface WebViewFragmentListener {
+  fun onUrlLoadStart(webViewFragment: WebViewFragment, url: String)
 }

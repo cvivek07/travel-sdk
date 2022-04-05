@@ -7,13 +7,14 @@ import com.ixigo.sdk.common.NativePromiseError.Companion.wrongInputError
 import com.ixigo.sdk.payment.data.*
 import com.ixigo.sdk.webview.JsInterface
 import com.ixigo.sdk.webview.WebViewFragment
+import com.ixigo.sdk.webview.WebViewFragmentListener
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 
 internal class PaymentJsInterface(
     private val webViewFragment: WebViewFragment,
     gatewayProvider: PaymentGatewayProvider
-) : JsInterface {
+) : JsInterface, WebViewFragmentListener {
   override val name: String = "PaymentSDKAndroid"
 
   private val cachingGatewayProvider =
@@ -179,5 +180,9 @@ internal class PaymentJsInterface(
 
   private fun executeResponse(message: String) {
     executeNativePromiseResponse(message, webViewFragment)
+  }
+
+  override fun onUrlLoadStart(webViewFragment: WebViewFragment, url: String) {
+    cachingGatewayProvider.clear()
   }
 }
