@@ -119,7 +119,9 @@ class WebViewFragmentUnitTests {
       assertEquals(
           mockJsInterfaceListener, shadowWebView.getJavascriptInterface("mockJsInterfaceListener"))
 
-      verify(mockJsInterfaceListener).onUrlLoadStart(it, initialPageData.url)
+      val nextUrl = "https://www.ixigo.com/next-page"
+      shadowWebView.webViewClient.onPageStarted(fragment.webView, nextUrl, null)
+      verify(mockJsInterfaceListener).onUrlLoadStart(it, nextUrl)
     }
   }
 

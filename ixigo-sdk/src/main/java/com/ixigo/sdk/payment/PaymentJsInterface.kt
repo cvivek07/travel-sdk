@@ -182,7 +182,7 @@ internal class PaymentJsInterface(
     executeNativePromiseResponse(message, webViewFragment)
   }
 
-  override fun onUrlLoadStart(webViewFragment: WebViewFragment, url: String) {
+  override fun onUrlLoadStart(webViewFragment: WebViewFragment, url: String?) {
     cachingGatewayProvider.clear()
   }
 }

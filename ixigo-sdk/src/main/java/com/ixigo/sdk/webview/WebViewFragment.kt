@@ -2,6 +2,7 @@ package com.ixigo.sdk.webview
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.net.Uri
 import android.os.Build
@@ -122,9 +123,6 @@ class WebViewFragment : Fragment(), UrlLoader {
     if (loadableView.status != Loading()) {
       loadableView.status = Loading()
       IxigoSDK.instance.uriIdlingResource.beginLoad(url)
-      for (listener in listeners) {
-        listener.onUrlLoadStart(this, url)
-      }
     }
   }
 
@@ -152,6 +150,14 @@ class WebViewFragment : Fragment(), UrlLoader {
       setStatusBarColorFromThemeColor()
 
       loadIxigoJsSDKIfNeeded()
+    }
+
+    override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+      super.onPageStarted(view, url, favicon)
+
+      for (listener in listeners) {
+        listener.onUrlLoadStart(this@WebViewFragment, url)
+      }
     }
 
     private fun loadIxigoJsSDKIfNeeded() {
@@ -273,5 +279,5 @@ interface WebViewDelegate {
 }
 
 interface WebViewFragmentListener {
-  fun onUrlLoadStart(webViewFragment: WebViewFragment, url: String)
+  fun onUrlLoadStart(webViewFragment: WebViewFragment, url: String?)
 }
