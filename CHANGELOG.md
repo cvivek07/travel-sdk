@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.4.5](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.4.4...ixigo-sdk-3.4.5) (2022-04-06)
+
+
+### Bug Fixes
+
+* do not reuse JS interface across different pages ([58eee6d](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/58eee6daf394aaded72ed8656396a7f94d82d290))
+* use PageStarted to clean js interfaces ([ca2c72f](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/ca2c72fe9abc165614e983e033d706ec2a9a3e39))
+
 ### [3.4.4](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.4.3...ixigo-sdk-3.4.4) (2022-04-05)
 
 
