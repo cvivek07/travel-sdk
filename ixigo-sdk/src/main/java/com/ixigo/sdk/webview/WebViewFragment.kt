@@ -185,6 +185,10 @@ class WebViewFragment : Fragment(), UrlLoader {
         return false
       }
       val url = request.url.toString()
+      modifyUrlBeforeLoad(url)?.let {
+        webView.loadUrl(it)
+        return true
+      }
       return if (URLUtil.isNetworkUrl(url)) {
         startedLoading(url)
         analyticsProvider.logEvent(Event.with(action = "webviewStartLoad", referrer = url))
@@ -221,6 +225,19 @@ class WebViewFragment : Fragment(), UrlLoader {
         }
       } else {
         handleError(request, error?.toString())
+      }
+    }
+
+    private fun modifyUrlBeforeLoad(url: String): String? {
+      val uri = Uri.parse(url) ?: return null
+      // TODO: This should be either removed when PWA is fixed or externalize to not make
+      // WebViewFragment dependent on particular urls
+      // There is a bug preventing login from working in confirmation page unless it contains a
+      // fragment
+      return if (url.contains("flight/booking/confirmation") && uri.fragment.isNullOrEmpty()) {
+        uri.buildUpon().fragment("sdk").build().toString()
+      } else {
+        null
       }
     }
 
