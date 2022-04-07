@@ -180,7 +180,9 @@ internal constructor(
 
   override fun getJsInterfaces(url: String, webViewFragment: WebViewFragment): List<JsInterface> {
     var jsInterfaces = mutableListOf<JsInterface>()
-    if (url.startsWith(config.apiBaseUrl) || url.startsWith("file://")) {
+    if (url.startsWith(config.apiBaseUrl) ||
+        url.startsWith("file://") ||
+        Uri.parse(url)?.host?.endsWith("ixigo.com") == true) {
       jsInterfaces.add(IxiWebView(webViewFragment))
     }
     jsInterfaces.add(IxigoSDKAndroid(analyticsProvider, webViewFragment))

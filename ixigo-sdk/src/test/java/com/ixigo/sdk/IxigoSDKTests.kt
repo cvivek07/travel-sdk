@@ -116,6 +116,13 @@ class IxigoSDKTests {
   }
 
   @Test
+  fun `test that IxiWebView is added for ixigo url regardless of subdomain`() {
+    testJsInterface("https://newsubdomain.ixigo.com/test") { interfaces ->
+      assertTrue(interfaces.any { (it as? IxiWebView) != null })
+    }
+  }
+
+  @Test
   fun `test that IxiWebView is NOT added to Js Interfaces for Non ixigo url`() {
     testJsInterface("https://www.confirmtkt.com/test") { interfaces ->
       assertFalse(interfaces.any { (it as? IxiWebView) != null })
