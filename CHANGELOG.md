@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.4.6](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.4.5...ixigo-sdk-3.4.6) (2022-04-07)
+
+
+### Bug Fixes
+
+* add hash to confirmation page url ([44eb349](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/44eb349372338dd57769f1715c06436792d79d36))
+* add IxiWebView to any ixigo.com url ([802a129](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/802a129d80740d7b3a92ece05bcd9d63bc2d90aa))
+
 ### [3.4.5](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.4.4...ixigo-sdk-3.4.5) (2022-04-06)
 
 
