@@ -16,7 +16,9 @@ import androidx.activity.OnBackPressedCallback
 import androidx.annotation.VisibleForTesting
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.ixigo.sdk.Handled
 import com.ixigo.sdk.IxigoSDK
+import com.ixigo.sdk.NotHandled
 import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
 import com.ixigo.sdk.common.ActivityResultHandler
@@ -185,6 +187,17 @@ class WebViewFragment : Fragment(), UrlLoader {
         return false
       }
       val url = request.url.toString()
+      IxigoSDK.instance.deeplinkHandler?.let {
+        val uri = Uri.parse(url)
+        if (uri != null) {
+          when (it.handleUri(requireContext(), uri)) {
+            is Handled -> {
+              return true
+            }
+            NotHandled -> Unit
+          }
+        }
+      }
       modifyUrlBeforeLoad(url)?.let {
         webView.loadUrl(it)
         return true

@@ -37,6 +37,7 @@ internal constructor(
     internal val analyticsProvider: AnalyticsProvider,
     internal val config: Config = ProdConfig,
     internal val webViewConfig: WebViewConfig = WebViewConfig(),
+    internal val deeplinkHandler: DeeplinkHandler? = null,
     internal val theme: Theme
 ) : JsInterfaceProvider {
 
@@ -70,7 +71,8 @@ internal constructor(
         paymentProvider: PaymentProvider = DisabledPaymentProvider,
         analyticsProvider: AnalyticsProvider? = null,
         config: Config = ProdConfig,
-        theme: Theme = defaultTheme(context)
+        theme: Theme = defaultTheme(context),
+        deeplinkHandler: DeeplinkHandler? = null
     ): IxigoSDK {
       return init(
           context,
@@ -79,6 +81,7 @@ internal constructor(
           paymentProvider,
           commonAnalyticsProvider(context, analyticsProvider),
           config,
+          deeplinkHandler,
           theme)
     }
 
@@ -89,6 +92,7 @@ internal constructor(
         paymentProvider: PaymentProvider,
         analyticsProvider: AnalyticsProvider,
         config: Config = ProdConfig,
+        deeplinkHandler: DeeplinkHandler?,
         theme: Theme = defaultTheme(context)
     ): IxigoSDK {
       assertNotCreated()
@@ -99,6 +103,7 @@ internal constructor(
               paymentProvider,
               analyticsProvider,
               config,
+              deeplinkHandler = deeplinkHandler,
               theme = theme)
       INSTANCE = ixigoSDK
 

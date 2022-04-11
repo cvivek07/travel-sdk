@@ -3,6 +3,7 @@ package com.ixigo.sdk.test
 import android.graphics.Color
 import com.ixigo.sdk.AppInfo
 import com.ixigo.sdk.Config
+import com.ixigo.sdk.DeeplinkHandler
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.test.FakeAnalyticsProvider
@@ -26,6 +27,7 @@ internal fun initializeTestIxigoSDK(
     partnerTokenProvider: PartnerTokenProvider = EmptyPartnerTokenProvider,
     config: Config = Config.ProdConfig,
     webViewConfig: WebViewConfig = WebViewConfig(),
+    deeplinkHandler: DeeplinkHandler? = null,
     theme: Theme = Theme(primaryColor = Color.RED)
 ) {
   IxigoSDK.replaceInstance(
@@ -36,6 +38,7 @@ internal fun initializeTestIxigoSDK(
           analyticsProvider,
           config = config,
           webViewConfig = webViewConfig,
+          deeplinkHandler = deeplinkHandler,
           theme = theme))
 }
 

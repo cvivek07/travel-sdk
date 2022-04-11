@@ -251,6 +251,15 @@ Strings used in the SDK can be overriden by the Host App by redeclaring these st
 
 See the available string keys and values [here](ixigo-sdk/src/main/res/values/strings.xml)
 
+## Deeplinks
+
+You can hook into ixigo SDK internal navigation in case you want to handle a particular URL in the Host App directly.
+To do so, implement `DeeplinkHandler` and pass it to `IxigoSDK` when initializing:
+
+```kotlin
+IxigoSDK.init(deeplinkHandler: MyDeeplinkHandler(), /* other params */)
+```
+
 ## Entry Points / Functionality
 
 ### Flights

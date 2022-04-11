@@ -13,6 +13,8 @@ import android.webkit.WebViewClient
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.ixigo.sdk.DeeplinkHandler
+import com.ixigo.sdk.Handled
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
@@ -26,11 +28,13 @@ import com.ixigo.sdk.ui.Status
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.verify
+import org.mockito.Mock
+import org.mockito.junit.MockitoJUnit
+import org.mockito.junit.MockitoRule
+import org.mockito.kotlin.*
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.Implements
@@ -41,6 +45,8 @@ import org.robolectric.shadows.ShadowWebView
 @Config(shadows = [CustomShadowWebview::class])
 class WebViewFragmentUnitTests {
 
+  @Rule fun rule(): MockitoRule = MockitoJUnit.rule()
+
   private lateinit var scenario: FragmentScenario<WebViewFragment>
   private val initialPageData =
       InitialPageData("https://www.ixigo.com", mapOf("header1" to "header1Value"))
@@ -49,12 +55,15 @@ class WebViewFragmentUnitTests {
   private lateinit var fragmentActivity: Activity
   private lateinit var fragment: WebViewFragment
   private lateinit var delegate: WebViewDelegate
-  private lateinit var mockAnalyticsProvider: AnalyticsProvider
+
+  @Mock private lateinit var mockAnalyticsProvider: AnalyticsProvider
+
+  @Mock private lateinit var mockDeeplinkHandler: DeeplinkHandler
 
   @Before
   fun setup() {
-    mockAnalyticsProvider = mock()
-    initializeTestIxigoSDK(analyticsProvider = mockAnalyticsProvider)
+    initializeTestIxigoSDK(
+        analyticsProvider = mockAnalyticsProvider, deeplinkHandler = mockDeeplinkHandler)
     scenario =
         launchFragmentInContainer(
             Bundle().also {
@@ -356,6 +365,17 @@ class WebViewFragmentUnitTests {
     val nextIntent = shadowActivity.nextStartedActivity
     assertEquals(ACTION_VIEW, nextIntent.action)
     assertEquals(uri, nextIntent.data)
+  }
+
+  @Test
+  fun `test deeplinkHandler can intercept a uri`() {
+    val uri = Uri.parse("https://www.ixigo.com/deeplink")
+    whenever(mockDeeplinkHandler.handleUri(any(), eq(uri))).thenReturn(Handled)
+
+    shadowWebView.webViewClient.shouldOverrideUrlLoading(
+        fragment.webView, mock<WebResourceRequest> { on { url } doReturn uri })
+    assertEquals(initialPageData.url, shadowWebView.lastLoadedUrl)
+    verify(mockDeeplinkHandler).handleUri(any(), eq(uri))
   }
 
   @Test

@@ -4,15 +4,14 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.view.*
 import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.google.android.material.snackbar.Snackbar
-import com.ixigo.sdk.AppInfo
-import com.ixigo.sdk.Config
-import com.ixigo.sdk.IxigoSDK
+import com.ixigo.sdk.*
 import com.ixigo.sdk.app.databinding.FragmentFirstBinding
 import com.ixigo.sdk.auth.*
 import com.ixigo.sdk.bus.BusConfig
@@ -374,6 +373,7 @@ class FirstFragment : Fragment() {
         PaymentSDKPaymentProvider(),
         analyticsProvider = analyticsProvider,
         config =  ixigoConfig.config.copy(enableExitBar = binding.exitBarSwitch.isChecked),
+        deeplinkHandler = FakeDeeplinkHandler(),
         theme = theme)
 
     initPaymentSDK()
@@ -470,10 +470,10 @@ class FirstFragment : Fragment() {
               ssoPartnerToken = "RQjsRqkORTji8R9+AQkLFyl9yeLQxX2II01n4rvVh1vpoH6pVx4eiw==",
               buttonsState = ButtonsState(trainsTrips = true, trainsTripsFragment = true, flightsSearch = false, flightsMultiModule = false, busHome = false, busMultiModel = false, busTrips = false)),
           Preset(label = "ixigo trains", clientId = "iximatr", apiKey = "iximatr!2\$",
-            uuid = "f18daf1c-c4d6-4566-a286-be8cdb2fae18",
+            uuid = "6beb1918-bd96-4aeb-b8bc-caf8c71509f0",
             theme = Theme(primaryColor = Color.parseColor("#1556ba")),
             deviceId = "8c4e31dff9e93ed4",
-            ssoPartnerToken = "3u8b19ka0neaoxa14r7qw2ytkaxujbm3ymdfcqmuaajyto8qiiqtg1gaytiplws8oe7mjoahq4i81iti5x99ti17q6hkyqdfr7oql35h20jn5qxtf3trvydrcbpr7rib610518hit29w5b28smyad2t74x5yxocqcpxmb1hpj5simkwbh4p1kbapwxms3qlhhng",
+            ssoPartnerToken = "j3bilhl1j64em2wwu34c0ii0c5ar17mh8t3oyjvv6mfdffi6inlmp5xtca8ff4wonsbpg5gdmedqv5uaw5lbm2fatgyfwtxwgpe31exidy3m80anh5cb5iuigkenoyop21lqjdbe8jfkach0f7ckruba2omq698mqs2ecdu61ji7xy8oehod59o9ho259q2bkn9",
             buttonsState = ButtonsState(trainsHome = false), appVersion = "1801"),
           Preset(label = "ixigo flights", clientId = "iximaad", apiKey = "iximaad!2\$",
             theme = Theme(primaryColor = Color.parseColor("#721053")),
