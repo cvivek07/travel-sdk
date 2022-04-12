@@ -13,9 +13,20 @@ class PaymentSDKPaymentProvider : PaymentProvider {
       input: PaymentInput,
       callback: PaymentCallback
   ): Boolean {
-    val transactionId = input.data["paymentTransactionId"] ?: return false
+    val flowType = input.data["flowType"] ?: "PAYMENT_SDK"
+
+    val transactionId =
+        when (flowType) {
+          "PAYMENT_SDK" -> input.data["paymentTransactionId"]
+          else -> input.data["paymentId"]
+        }
+            ?: return false
+
     PaymentSDK.instance.processPayment(
-        activity, transactionId = transactionId, urlLoader = activity as? UrlLoader) {
+        activity,
+        transactionId = transactionId,
+        flowType = flowType,
+        urlLoader = activity as? UrlLoader) {
       val nextUrl =
           when (it) {
             is Err -> {

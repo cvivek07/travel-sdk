@@ -56,7 +56,7 @@ class PaymentSDKTests {
     assertProcessPayment(
         transactionId = "transactionIdValue",
         expectedUrl =
-            "https://www.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=1&deviceId=deviceId&languageCode=en&page=PAYMENT&gatewayId=1&txnId=transactionIdValue")
+            "https://www.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=1&deviceId=deviceId&languageCode=en&page=PAYMENT&gatewayId=1&txnId=transactionIdValue&flowType=PAYMENT_SDK")
   }
 
   @Test
@@ -65,7 +65,7 @@ class PaymentSDKTests {
         transactionId = "transactionIdValue",
         gatewayId = "gatewayIdValue",
         expectedUrl =
-            "https://www.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=1&deviceId=deviceId&languageCode=en&page=PAYMENT&gatewayId=gatewayIdValue&txnId=transactionIdValue")
+            "https://www.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=1&deviceId=deviceId&languageCode=en&page=PAYMENT&gatewayId=gatewayIdValue&txnId=transactionIdValue&flowType=PAYMENT_SDK")
   }
 
   @Test
@@ -73,7 +73,7 @@ class PaymentSDKTests {
     assertProcessPayment(
         transactionId = "transactionIdValue",
         expectedUrl =
-            "https://www.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=1&deviceId=deviceId&languageCode=en&page=PAYMENT&gatewayId=1&txnId=transactionIdValue",
+            "https://www.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=1&deviceId=deviceId&languageCode=en&page=PAYMENT&gatewayId=1&txnId=transactionIdValue&flowType=PAYMENT_SDK",
         expectedHeaders =
             mapOf(
                 "appVersion" to "1",
@@ -84,6 +84,15 @@ class PaymentSDKTests {
                 "Authorization" to "token"),
         partnerToken = "token",
         urlLoader = urlLoader)
+  }
+
+  @Test
+  fun `test processPayment with flowType`() {
+    assertProcessPayment(
+        transactionId = "transactionIdValue",
+        expectedUrl =
+            "https://www.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=1&deviceId=deviceId&languageCode=en&page=PAYMENT&gatewayId=1&txnId=transactionIdValue&flowType=OTHER",
+        flowType = "OTHER")
   }
 
   @Test
@@ -130,7 +139,8 @@ class PaymentSDKTests {
       expectedHeaders: Map<String, String>? = null,
       funnelConfig: FunnelConfig? = null,
       partnerToken: String? = null,
-      urlLoader: UrlLoader? = null
+      urlLoader: UrlLoader? = null,
+      flowType: String? = null
   ) {
     initializeTestIxigoSDK(
         analyticsProvider = mockAnalyticsProvider,
@@ -142,15 +152,34 @@ class PaymentSDKTests {
           activity,
           PartnerTokenProvider.Requester("iximatr", PartnerTokenProvider.RequesterType.CUSTOMER)) {}
       if (gatewayId != null) {
-        PaymentSDK.instance.processPayment(
-            activity,
-            transactionId = transactionId,
-            gatewayId = gatewayId,
-            config = funnelConfig,
-            urlLoader = urlLoader)
+        if (flowType != null) {
+          PaymentSDK.instance.processPayment(
+              activity,
+              transactionId = transactionId,
+              gatewayId = gatewayId,
+              config = funnelConfig,
+              flowType = flowType,
+              urlLoader = urlLoader)
+        } else {
+          PaymentSDK.instance.processPayment(
+              activity,
+              transactionId = transactionId,
+              gatewayId = gatewayId,
+              config = funnelConfig,
+              urlLoader = urlLoader)
+        }
       } else {
-        PaymentSDK.instance.processPayment(
-            activity, transactionId = transactionId, config = funnelConfig, urlLoader = urlLoader)
+        if (flowType != null) {
+          PaymentSDK.instance.processPayment(
+              activity,
+              transactionId = transactionId,
+              config = funnelConfig,
+              urlLoader = urlLoader,
+              flowType = flowType)
+        } else {
+          PaymentSDK.instance.processPayment(
+              activity, transactionId = transactionId, config = funnelConfig, urlLoader = urlLoader)
+        }
       }
       if (urlLoader != null) {
         verify(urlLoader).loadUrl(expectedUrl, expectedHeaders)

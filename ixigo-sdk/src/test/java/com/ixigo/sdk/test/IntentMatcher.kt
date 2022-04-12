@@ -12,7 +12,13 @@ import org.hamcrest.MatcherAssert
 import org.robolectric.Shadows
 
 class IntentMatcher(val intent: Intent) : BaseMatcher<Intent>() {
-  override fun describeTo(description: Description?) {}
+  override fun describeTo(description: Description?) {
+    description?.appendText(describeIntent(intent))
+  }
+
+  override fun describeMismatch(item: Any?, description: Description?) {
+    description?.appendText(describeIntent(item as Intent))
+  }
 
   override fun matches(item: Any?): Boolean {
     val itemIntent = item as Intent? ?: return false
@@ -22,6 +28,10 @@ class IntentMatcher(val intent: Intent) : BaseMatcher<Intent>() {
 
   private fun getInitialPageData(intent: Intent): InitialPageData =
       intent.getParcelableExtra(WebViewFragment.INITIAL_PAGE_DATA_ARGS)!!
+
+  private fun describeIntent(intent: Intent): String {
+    return intent.extras.toString()
+  }
 }
 
 fun assertLaunchedIntent(

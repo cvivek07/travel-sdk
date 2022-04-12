@@ -27,13 +27,16 @@ class PaymentSDK(private val config: PaymentConfig) : JsInterfaceProvider {
       context: Context,
       transactionId: String,
       gatewayId: String = "1",
+      flowType: String = "PAYMENT_SDK",
       config: FunnelConfig? = null,
       urlLoader: UrlLoader? = null,
       callback: ProcessPaymentCallback? = null,
   ) {
     callback?.let { currentTransactions[transactionId] = it }
     with(IxigoSDK.instance) {
-      val url = getPaymentOptionsUrl(transactionId = transactionId, gatewayId = gatewayId)
+      val url =
+          getPaymentOptionsUrl(
+              transactionId = transactionId, gatewayId = gatewayId, flowType = flowType)
       if (urlLoader != null) {
         urlLoader.loadUrl(url, getHeaders(url))
       } else {
@@ -43,9 +46,17 @@ class PaymentSDK(private val config: PaymentConfig) : JsInterfaceProvider {
     }
   }
 
-  internal fun getPaymentOptionsUrl(transactionId: String, gatewayId: String = "1"): String =
+  private fun getPaymentOptionsUrl(
+      transactionId: String,
+      gatewayId: String = "1",
+      flowType: String
+  ): String =
       IxigoSDK.instance.getUrl(
-          mapOf("page" to "PAYMENT", "gatewayId" to gatewayId, "txnId" to transactionId))
+          mapOf(
+              "page" to "PAYMENT",
+              "gatewayId" to gatewayId,
+              "txnId" to transactionId,
+              "flowType" to flowType))
 
   internal fun finishPayment(input: FinishPaymentInput): Boolean {
     with(input) {
