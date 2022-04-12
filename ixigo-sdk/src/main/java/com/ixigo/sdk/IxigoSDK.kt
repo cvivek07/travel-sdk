@@ -12,6 +12,8 @@ import com.ixigo.sdk.IxigoSDK.Companion.init
 import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
 import com.ixigo.sdk.auth.AuthProvider
+import com.ixigo.sdk.auth.CachingPartnerTokenProvider
+import com.ixigo.sdk.auth.PartnerToken
 import com.ixigo.sdk.auth.PartnerTokenProvider
 import com.ixigo.sdk.common.SdkSingleton
 import com.ixigo.sdk.payment.DisabledPaymentProvider
@@ -32,7 +34,7 @@ import java.net.URL
 class IxigoSDK
 internal constructor(
     internal val appInfo: AppInfo,
-    internal val partnerTokenProvider: PartnerTokenProvider,
+    partnerTokenProvider: PartnerTokenProvider,
     internal val paymentProvider: PaymentProvider,
     internal val analyticsProvider: AnalyticsProvider,
     internal val config: Config = ProdConfig,
@@ -41,10 +43,19 @@ internal constructor(
     internal val theme: Theme
 ) : JsInterfaceProvider {
 
+  private val cachingPartnerTokenProvider: CachingPartnerTokenProvider =
+      CachingPartnerTokenProvider(partnerTokenProvider)
+
+  internal val partnerTokenProvider: PartnerTokenProvider
+    get() = cachingPartnerTokenProvider
+
   @VisibleForTesting
   val uriIdlingResource: UriIdlingResource by lazy {
     UriIdlingResource("IxigoSDKUriIdlingResource", 1000)
   }
+
+  internal val partnerToken: PartnerToken?
+    get() = cachingPartnerTokenProvider.partnerToken
 
   companion object : SdkSingleton<IxigoSDK>("IxigoSDK") {
 
@@ -144,8 +155,7 @@ internal constructor(
             "apiKey" to appInfo.apiKey,
             "deviceId" to appInfo.deviceId,
             "uuid" to appInfo.uuid)
-    // TODO: Figure out a way of getting an Ixigo token at this point if available
-    //    authProvider.authData?.let { headers["Authorization"] = it.token }
+    partnerToken?.let { headers.put("Authorization", it.token) }
     return headers
   }
 
@@ -154,6 +164,7 @@ internal constructor(
    * cached/stored user info in the SDK
    */
   fun onLogout() {
+    cachingPartnerTokenProvider.clear()
     CookieManager.getInstance().removeAllCookies(null)
     webViewConfig.webStorage.deleteAllData()
   }

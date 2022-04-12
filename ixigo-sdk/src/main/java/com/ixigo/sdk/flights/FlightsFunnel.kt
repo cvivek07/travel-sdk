@@ -15,6 +15,12 @@ import java.time.format.DateTimeFormatter
 
 fun IxigoSDK.flightsStartHome(context: Context) {
   val url = getUrl(mapOf("page" to "FLIGHT_HOME"))
+  //  val url =
+  //
+  // "https://build3.ixigo.com/api/flights/payment?apiKey=ixiweb!2\$&provider=1044&itineraryId=STGIF2204114055609&ixiSrc=iximatr&PAYMENT_STATUS=S&PAYMENT_REF_NO=20KOJXPPPZMLDUKL9&PAYMENT_TYPE=DC&tripId=STGIF2204114055609&AMOUNT=4389"
+  //  val url =
+  //
+  // "https://build3.ixigo.com/pwa/initialpage?page=FLIGHT_BOOKING&providerId=1044&searchToken=1q4h30lhddpktthhdhphphqhh96ohddpktptttpdudwwpz&fareKey=DEL-BOM-6E2519&clientId=iximatr&apiKey=iximatr!2\$"
   launchWebActivity(context, url)
   analyticsProvider.logEvent(Event.with(action = "flightsStartHome"))
 }

@@ -349,15 +349,6 @@ class WebViewFragmentUnitTests {
     assertOpensNonNetworkUri("tel:1234567890")
   }
 
-  @Test
-  fun `test a hash is added to confirmation pages`() {
-    val confirmationUrl = "https://www.ixigo.com/flight/booking/confirmation/something"
-    shadowWebView.webViewClient.shouldOverrideUrlLoading(
-        fragment.webView,
-        mock<WebResourceRequest> { on { url } doReturn Uri.parse(confirmationUrl) })
-    assertEquals("${confirmationUrl}#sdk", shadowWebView.lastLoadedUrl)
-  }
-
   private fun assertOpensNonNetworkUri(uriString: String) {
     val uri = Uri.parse(uriString)
     shadowWebView.webViewClient.shouldOverrideUrlLoading(

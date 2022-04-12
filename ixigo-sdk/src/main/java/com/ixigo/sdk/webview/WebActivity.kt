@@ -84,7 +84,7 @@ class WebActivity : AppCompatActivity(), WebViewDelegate, UrlLoader {
     setStatusBarColor(color)
   }
 
-  override fun loadUrl(url: String) {
-    runOnUiThread { webViewFragment.loadUrl(url) }
+  override fun loadUrl(url: String, headers: Map<String, String>?) {
+    runOnUiThread { webViewFragment.loadUrl(url, headers) }
   }
 }

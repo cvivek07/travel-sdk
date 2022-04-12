@@ -69,7 +69,6 @@ class IxigoSDKTests {
             analyticsProvider)
     assertEquals(FakeAppInfo, ixigoSDK.appInfo)
     assertEquals(DisabledPaymentProvider, ixigoSDK.paymentProvider)
-    assertEquals(EmptyPartnerTokenProvider, ixigoSDK.partnerTokenProvider)
     verify(analyticsProvider)
         .logEvent(
             Event(

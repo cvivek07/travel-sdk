@@ -2,6 +2,7 @@ package com.ixigo.sdk.payment
 
 import android.app.Activity
 import android.os.Bundle
+import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.core.app.ActivityScenario
@@ -11,6 +12,9 @@ import com.ixigo.sdk.Config
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
+import com.ixigo.sdk.auth.PartnerToken
+import com.ixigo.sdk.auth.PartnerTokenProvider
+import com.ixigo.sdk.auth.test.FakePartnerTokenProvider
 import com.ixigo.sdk.test.assertLaunchedIntent
 import com.ixigo.sdk.test.initializePaymentSDK
 import com.ixigo.sdk.test.initializeTestIxigoSDK
@@ -27,7 +31,7 @@ class PaymentSDKTests {
 
   @Rule fun rule(): MockitoRule = MockitoJUnit.rule()
 
-  private lateinit var scenario: ActivityScenario<Activity>
+  private lateinit var scenario: ActivityScenario<FragmentActivity>
   private lateinit var activity: Activity
 
   @Mock lateinit var mockAnalyticsProvider: AnalyticsProvider
@@ -70,6 +74,15 @@ class PaymentSDKTests {
         transactionId = "transactionIdValue",
         expectedUrl =
             "https://www.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=1&deviceId=deviceId&languageCode=en&page=PAYMENT&gatewayId=1&txnId=transactionIdValue",
+        expectedHeaders =
+            mapOf(
+                "appVersion" to "1",
+                "clientId" to "clientId",
+                "apiKey" to "apiKey",
+                "deviceId" to "deviceId",
+                "uuid" to "uuid",
+                "Authorization" to "token"),
+        partnerToken = "token",
         urlLoader = urlLoader)
   }
 
@@ -96,6 +109,7 @@ class PaymentSDKTests {
 
   private fun testJsInterface(url: String, check: (List<JsInterface>) -> Unit) {
     initializeTestIxigoSDK()
+
     PaymentSDK.init()
     val scenario: FragmentScenario<WebViewFragment> =
         launchFragmentInContainer(
@@ -113,12 +127,20 @@ class PaymentSDKTests {
       transactionId: String,
       gatewayId: String? = null,
       expectedUrl: String,
+      expectedHeaders: Map<String, String>? = null,
       funnelConfig: FunnelConfig? = null,
+      partnerToken: String? = null,
       urlLoader: UrlLoader? = null
   ) {
-    initializeTestIxigoSDK(analyticsProvider = mockAnalyticsProvider)
+    initializeTestIxigoSDK(
+        analyticsProvider = mockAnalyticsProvider,
+        partnerTokenProvider =
+            FakePartnerTokenProvider("iximatr", partnerToken?.let { PartnerToken(it) }))
     initializePaymentSDK()
     scenario.onActivity { activity ->
+      IxigoSDK.instance.partnerTokenProvider.fetchPartnerToken(
+          activity,
+          PartnerTokenProvider.Requester("iximatr", PartnerTokenProvider.RequesterType.CUSTOMER)) {}
       if (gatewayId != null) {
         PaymentSDK.instance.processPayment(
             activity,
@@ -131,7 +153,7 @@ class PaymentSDKTests {
             activity, transactionId = transactionId, config = funnelConfig, urlLoader = urlLoader)
       }
       if (urlLoader != null) {
-        verify(urlLoader).loadUrl(expectedUrl)
+        verify(urlLoader).loadUrl(expectedUrl, expectedHeaders)
       } else {
         assertLaunchedIntent(activity, expectedUrl)
       }

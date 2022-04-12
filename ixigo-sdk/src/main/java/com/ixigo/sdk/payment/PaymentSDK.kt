@@ -35,7 +35,7 @@ class PaymentSDK(private val config: PaymentConfig) : JsInterfaceProvider {
     with(IxigoSDK.instance) {
       val url = getPaymentOptionsUrl(transactionId = transactionId, gatewayId = gatewayId)
       if (urlLoader != null) {
-        urlLoader.loadUrl(url)
+        urlLoader.loadUrl(url, getHeaders(url))
       } else {
         launchWebActivity(context, url, config)
       }

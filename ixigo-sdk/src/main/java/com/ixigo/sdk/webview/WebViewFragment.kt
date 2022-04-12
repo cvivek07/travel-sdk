@@ -52,12 +52,10 @@ class WebViewFragment : Fragment(), UrlLoader {
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
-    viewModel.paymentResult.observe(
-        this,
-        { paymentResult ->
-          // No action if Payment failed
-          paymentResult.result.onSuccess { loadUrl(it.nextUrl) }
-        })
+    viewModel.paymentResult.observe(this) { paymentResult ->
+      // No action if Payment failed
+      paymentResult.result.onSuccess { loadUrl(it.nextUrl) }
+    }
 
     requireActivity().onBackPressedDispatcher.addCallback(webViewBackPressHandler)
   }
@@ -87,7 +85,7 @@ class WebViewFragment : Fragment(), UrlLoader {
         IxigoSDK.instance.webViewConfig.getMatchingJsInterfaces(initialPageData.url, this)
     jsInterfaces.iterator().forEach(this::addJavascriptInterface)
 
-    webView.loadUrl(initialPageData.url, initialPageData.headers)
+    loadUrl(initialPageData.url, initialPageData.headers)
     startedLoading()
 
     return binding.root
@@ -190,17 +188,15 @@ class WebViewFragment : Fragment(), UrlLoader {
       IxigoSDK.instance.deeplinkHandler?.let {
         val uri = Uri.parse(url)
         if (uri != null) {
-          when (it.handleUri(requireContext(), uri)) {
-            is Handled -> {
-              return true
+          context?.let { context ->
+            when (it.handleUri(context, uri)) {
+              is Handled -> {
+                return true
+              }
+              NotHandled -> Unit
             }
-            NotHandled -> Unit
           }
         }
-      }
-      modifyUrlBeforeLoad(url)?.let {
-        webView.loadUrl(it)
-        return true
       }
       return if (URLUtil.isNetworkUrl(url)) {
         startedLoading(url)
@@ -241,19 +237,6 @@ class WebViewFragment : Fragment(), UrlLoader {
       }
     }
 
-    private fun modifyUrlBeforeLoad(url: String): String? {
-      val uri = Uri.parse(url) ?: return null
-      // TODO: This should be either removed when PWA is fixed or externalize to not make
-      // WebViewFragment dependent on particular urls
-      // There is a bug preventing login from working in confirmation page unless it contains a
-      // fragment
-      return if (url.contains("flight/booking/confirmation") && uri.fragment.isNullOrEmpty()) {
-        uri.buildUpon().fragment("sdk").build().toString()
-      } else {
-        null
-      }
-    }
-
     private fun handleError(
         request: WebResourceRequest?,
         error: String?,
@@ -281,8 +264,8 @@ class WebViewFragment : Fragment(), UrlLoader {
     }
   }
 
-  override fun loadUrl(url: String) {
-    webView.loadUrl(url)
+  override fun loadUrl(url: String, headers: Map<String, String>?) {
+    webView.loadUrl(url, headers ?: mapOf())
   }
 
   private val listeners: MutableList<WebViewFragmentListener> = mutableListOf()
