@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.5.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.4.6...ixigo-sdk-3.5.0) (2022-04-12)
+
+
+### Features
+
+* **deeplink:** add support to handle links in host app ([48a9b5b](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/48a9b5b5d4cd5200cd979156cb73e0d47a8bce39))
+
+
+### Bug Fixes
+
+* add cachintTokenProvider ([57eb8a8](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/57eb8a8a456adca112b32cb03a384a9f49b74ce0))
+* **payment:** read flowtype when starting payment flow ([8611e2e](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/8611e2ea857d2b1f72aff2ea2ac357557aa28f5c))
+
 ### [3.4.6](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.4.5...ixigo-sdk-3.4.6) (2022-04-07)
 
 
