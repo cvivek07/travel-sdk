@@ -168,9 +168,9 @@ class MyPartnerTokenProvider(): PartnerTokenProvider, ActivityResultHandler {
 
 When the customer logs out in your app, call `IxigoSDK.instance.onLogout`. This will remove all info stored/cached about the logged in user.
 
-## [Payment](payment/USAGE.md)
+## [Payment](payments/USAGE.md)
 
-See payment Usage documentation [here](payment/USAGE.md)
+See payment Usage documentation [here](payments/USAGE.md)
 
 ### Using Actvity for Result
 
