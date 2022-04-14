@@ -83,7 +83,7 @@ class HtmlOutJsInterfaceTests {
   private fun testLogin(token: String?) {
     token?.let {
       fakePartnerTokenProvider.partnerTokenMap =
-          mapOf(
+          mutableMapOf(
               PartnerTokenProvider.Requester(
                   partnerId, PartnerTokenProvider.RequesterType.CUSTOMER) to PartnerToken(it))
     }

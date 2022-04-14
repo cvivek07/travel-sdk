@@ -24,6 +24,7 @@ import com.ixigo.sdk.payment.*
 import com.ixigo.sdk.trains.TrainsSDK
 import com.ixigo.sdk.ui.Theme
 import com.ixigo.sdk.ui.defaultTheme
+import com.ixigo.sdk.visa.visaLaunchHome
 import com.ixigo.sdk.webview.FunnelConfig
 import com.ixigo.sdk.webview.InitialPageData
 import com.ixigo.sdk.webview.WebActivity
@@ -121,6 +122,12 @@ class FirstFragment : Fragment() {
     binding.buttonFlightTrips.setOnClickListener {
       if (initSDK()) {
         IxigoSDK.instance.flightsStartTrips(requireContext())
+      }
+    }
+
+    binding.buttonVisa2Fly.setOnClickListener {
+      if (initSDK()) {
+        IxigoSDK.instance.visaLaunchHome(requireContext())
       }
     }
 

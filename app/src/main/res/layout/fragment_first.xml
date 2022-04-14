@@ -344,6 +344,15 @@
                     />
 
                 <Button
+                    android:id="@+id/buttonVisa2Fly"
+                    android:layout_width="0dp"
+                    android:layout_columnWeight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="fill"
+                    android:text="Visa2Fly"
+                    />
+
+                <Button
                     android:id="@+id/buttonFlightHome"
                     android:layout_width="0dp"
                     android:layout_columnWeight="1"

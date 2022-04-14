@@ -13,7 +13,7 @@ import com.ixigo.sdk.common.Ok
 interface ActivityResultPartnerTokenProvider : PartnerTokenProvider, ActivityResultHandler
 
 class FakePartnerTokenProvider(
-    var partnerTokenMap: Map<PartnerTokenProvider.Requester, PartnerToken?> = mapOf(),
+    var partnerTokenMap: MutableMap<PartnerTokenProvider.Requester, PartnerToken?> = mutableMapOf(),
 ) : PartnerTokenProvider {
 
   var passedActivity: Activity? = null
@@ -26,7 +26,8 @@ class FakePartnerTokenProvider(
   ) : this(
       PartnerTokenProvider.RequesterType.values()
           .map { Pair(PartnerTokenProvider.Requester(partnerId, it), partnerToken) }
-          .toMap())
+          .toMap()
+          .toMutableMap())
   constructor(
       partnerId: String,
       token: String?
@@ -49,7 +50,7 @@ class FakePartnerTokenProvider(
   companion object {
     fun forCustomer(partnerId: String, partnerToken: PartnerToken?) =
         FakePartnerTokenProvider(
-            mapOf(
+            mutableMapOf(
                 PartnerTokenProvider.Requester(
                     partnerId, PartnerTokenProvider.RequesterType.CUSTOMER) to partnerToken))
   }

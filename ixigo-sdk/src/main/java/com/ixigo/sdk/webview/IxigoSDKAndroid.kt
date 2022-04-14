@@ -3,8 +3,10 @@ import android.os.Build
 import android.webkit.JavascriptInterface
 import androidx.annotation.Keep
 import androidx.annotation.RequiresApi
+import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
+import com.ixigo.sdk.auth.PartnerTokenProvider
 import com.ixigo.sdk.bus.BusSDK
 import com.ixigo.sdk.common.*
 import com.ixigo.sdk.common.NativePromiseError.Companion.wrongInputError
@@ -22,7 +24,8 @@ import timber.log.Timber
 internal class IxigoSDKAndroid(
     private val analyticsProvider: AnalyticsProvider,
     private val fragment: WebViewFragment,
-    private val otpSmsRetriever: OtpSmsRetriever = OtpSmsRetriever(fragment.requireActivity())
+    private val otpSmsRetriever: OtpSmsRetriever = OtpSmsRetriever(fragment.requireActivity()),
+    private val partnerTokenProvider: PartnerTokenProvider = IxigoSDK.instance.partnerTokenProvider
 ) : JsInterface, ActivityResultHandler {
 
   override val name: String
@@ -38,6 +41,12 @@ internal class IxigoSDKAndroid(
   private val logEventInputAdapter by lazy { moshi.adapter(LogEventInput::class.java) }
   private val readSmsOutputAdapter by lazy { moshi.adapter(ReadSmsOutput::class.java) }
   private val errorAdapter by lazy { moshi.adapter(NativePromiseError::class.java) }
+  private val fetchPartnerTokenInputAdapter by lazy {
+    moshi.adapter(FetchPartnerTokenInput::class.java)
+  }
+  private val fetchPartnerTokenResponseAdapter by lazy {
+    moshi.adapter(FetchPartnerTokenResponse::class.java)
+  }
 
   @JavascriptInterface
   fun logEvent(jsonInput: String): Boolean {
@@ -101,9 +110,43 @@ internal class IxigoSDKAndroid(
     }
   }
 
+  @JavascriptInterface
+  fun fetchPartnerToken(jsonInput: String, success: String, error: String) {
+    val input = kotlin.runCatching { fetchPartnerTokenInputAdapter.fromJson(jsonInput) }.getOrNull()
+    if (input == null) {
+      executeNativePromiseResponse(
+          replaceNativePromisePayload(error, wrongInputError(jsonInput), errorAdapter), fragment)
+      return
+    }
+    partnerTokenProvider.fetchPartnerToken(
+        fragment.requireActivity(),
+        PartnerTokenProvider.Requester(
+            input.partnerId, PartnerTokenProvider.RequesterType.CUSTOMER)) {
+      when (it) {
+        is Err -> {
+          val nativeError =
+              NativePromiseError(
+                  errorCode = it.value.code.toString(), errorMessage = it.value.message)
+          executeNativePromiseResponse(
+              replaceNativePromisePayload(error, nativeError, errorAdapter), fragment)
+        }
+        is Ok -> {
+          val response = FetchPartnerTokenResponse(authToken = it.value.token)
+          executeNativePromiseResponse(
+              replaceNativePromisePayload(
+                  success, fetchPartnerTokenResponseAdapter.toJson(response)),
+              fragment)
+        }
+      }
+    }
+  }
+
   @Keep data class LogEventInput(val name: String, val properties: Map<String, String> = mapOf())
 
   @Keep data class ReadSmsOutput(val smsContent: String)
+
+  @Keep data class FetchPartnerTokenInput(val partnerId: String)
+  @Keep data class FetchPartnerTokenResponse(val authToken: String)
 
   override fun handle(requestCode: Int, resultCode: Int, data: Intent?): Boolean =
       otpSmsRetriever.handle(requestCode, resultCode, data)

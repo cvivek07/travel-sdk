@@ -8,6 +8,9 @@ import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
+import com.ixigo.sdk.auth.PartnerToken
+import com.ixigo.sdk.auth.PartnerTokenProvider
+import com.ixigo.sdk.auth.test.FakePartnerTokenProvider
 import com.ixigo.sdk.bus.BusSDK
 import com.ixigo.sdk.common.Err
 import com.ixigo.sdk.common.Ok
@@ -40,6 +43,7 @@ class IxigoSDKAndroidTests {
   @Mock private lateinit var mockAnalyticsProvider: AnalyticsProvider
   @Mock private lateinit var mockOtpSmsRetriever: OtpSmsRetriever
   @Mock private lateinit var busSDK: BusSDK
+  private lateinit var fakePartnerTokenProvider: FakePartnerTokenProvider
 
   @Before
   fun setup() {
@@ -53,7 +57,9 @@ class IxigoSDKAndroidTests {
     scenario.onFragment {
       fragment = it
       shadowWebView = shadowOf(fragment.webView)
-      ixigoSDKAndroid = IxigoSDKAndroid(mockAnalyticsProvider, it, mockOtpSmsRetriever)
+      fakePartnerTokenProvider = FakePartnerTokenProvider()
+      ixigoSDKAndroid =
+          IxigoSDKAndroid(mockAnalyticsProvider, it, mockOtpSmsRetriever, fakePartnerTokenProvider)
     }
   }
 
@@ -162,11 +168,50 @@ class IxigoSDKAndroidTests {
       |"backNavigationEnabled": {
       |  "type": "unknownType" 
       |}
-      |}"""".trimMargin(),
+      |}""".trimMargin(),
         "success:TO_REPLACE_PAYLOAD",
         "error:TO_REPLACE_PAYLOAD")
     assertEquals(
-        """error:{\"errorCode\":\"InvalidArgumentError\",\"errorMessage\":\"unable to parse input={\\n\\\"backNavigationEnabled\\\": {\\n  \\\"type\\\": \\\"unknownType\\\" \\n}\\n}\\\"\"}""",
+        """error:{\"errorCode\":\"InvalidArgumentError\",\"errorMessage\":\"unable to parse input={\\n\\\"backNavigationEnabled\\\": {\\n  \\\"type\\\": \\\"unknownType\\\" \\n}\\n}\"}""",
+        shadowWebView.lastEvaluatedJavascript)
+  }
+
+  @Test
+  fun `fetchPartnerToken returns authToken correctly`() {
+    fakePartnerTokenProvider.partnerTokenMap[
+        PartnerTokenProvider.Requester(
+            "partnerIdValue", PartnerTokenProvider.RequesterType.CUSTOMER)] =
+        PartnerToken("authTokenValue")
+    ixigoSDKAndroid.fetchPartnerToken(
+        """{
+      |"partnerId": "partnerIdValue"
+      |}""".trimMargin(),
+        "success:TO_REPLACE_PAYLOAD",
+        "error:TO_REPLACE_PAYLOAD")
+    assertEquals(
+        """success:{\"authToken\":\"authTokenValue\"}""", shadowWebView.lastEvaluatedJavascript)
+  }
+
+  @Test
+  fun `fetchPartnerToken returns partner token error correctly`() {
+    ixigoSDKAndroid.fetchPartnerToken(
+        """{
+      |"partnerId": "partnerIdValue"
+      |}""".trimMargin(),
+        "success:TO_REPLACE_PAYLOAD",
+        "error:TO_REPLACE_PAYLOAD")
+    assertEquals(
+        """error:{\"errorCode\":\"104\",\"errorMessage\":\"SDK Error\"}""",
+        shadowWebView.lastEvaluatedJavascript)
+  }
+
+  @Test
+  fun `fetchPartnerToken returns error for wrong input`() {
+    ixigoSDKAndroid.fetchPartnerToken(
+        """{
+      |}""".trimMargin(), "success:TO_REPLACE_PAYLOAD", "error:TO_REPLACE_PAYLOAD")
+    assertEquals(
+        """error:{\"errorCode\":\"InvalidArgumentError\",\"errorMessage\":\"unable to parse input={\\n}\"}""",
         shadowWebView.lastEvaluatedJavascript)
   }
 }
