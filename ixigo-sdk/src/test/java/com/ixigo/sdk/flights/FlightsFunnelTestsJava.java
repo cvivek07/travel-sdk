@@ -28,6 +28,6 @@ public class FlightsFunnelTestsJava {
     @Test
     public void testInitializationWithJava() {
         IxigoSDK.init(activity, TestData.INSTANCE.getFakeAppInfo(), EmptyPartnerTokenProvider.INSTANCE);
-        FlightsFunnel.flightsStartHome(IxigoSDK.Companion.getInstance(), activity);
+        IxigoSDK.Companion.getInstance().flightsStartHome(activity);
     }
 }

@@ -2,65 +2,11 @@
 
 package com.ixigo.sdk.flights
 
-import android.content.Context
-import android.os.Bundle
-import androidx.fragment.app.Fragment
 import com.ixigo.sdk.IxigoSDK
-import com.ixigo.sdk.analytics.Event
-import com.ixigo.sdk.webview.FunnelConfig
-import com.ixigo.sdk.webview.InitialPageData
-import com.ixigo.sdk.webview.WebViewFragment
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-fun IxigoSDK.flightsStartHome(context: Context) {
-  val url = getUrl(mapOf("page" to "FLIGHT_HOME"))
-  //  val url =
-  //
-  // "https://build3.ixigo.com/api/flights/payment?apiKey=ixiweb!2\$&provider=1044&itineraryId=STGIF2204114055609&ixiSrc=iximatr&PAYMENT_STATUS=S&PAYMENT_REF_NO=20KOJXPPPZMLDUKL9&PAYMENT_TYPE=DC&tripId=STGIF2204114055609&AMOUNT=4389"
-  //  val url =
-  //
-  // "https://build3.ixigo.com/pwa/initialpage?page=FLIGHT_BOOKING&providerId=1044&searchToken=1q4h30lhddpktthhdhphphqhh96ohddpktptttpdudwwpz&fareKey=DEL-BOM-6E2519&clientId=iximatr&apiKey=iximatr!2\$"
-  launchWebActivity(context, url)
-  analyticsProvider.logEvent(Event.with(action = "flightsStartHome"))
-}
-
-fun IxigoSDK.flightsStartTrips(context: Context) {
-  val url = getUrl(mapOf("page" to "FLIGHT_TRIPS"))
-  launchWebActivity(context, url)
-  analyticsProvider.logEvent(Event.with(action = "flightsStartTrips"))
-}
-
-fun IxigoSDK.flightsTripsFragment(): Fragment {
-  val arguments =
-      Bundle().apply {
-        val url = getUrl(mapOf("page" to "FLIGHT_TRIPS", "displayMode" to "embedded"))
-        putParcelable(WebViewFragment.INITIAL_PAGE_DATA_ARGS, InitialPageData(url, getHeaders(url)))
-        putParcelable(WebViewFragment.CONFIG, FunnelConfig(enableExitBar = false))
-      }
-
-  return WebViewFragment().apply { this.arguments = arguments }
-}
-
-fun IxigoSDK.flightsStartSearch(context: Context, searchData: FlightSearchData) {
-  val url = getUrl(getFlightsSearchParams("FLIGHT_LISTING", searchData))
-  launchWebActivity(context, url)
-
-  analyticsProvider.logEvent(Event.with(action = "flightsStartSearch"))
-}
-
-fun IxigoSDK.flightsMultiModelFragment(searchData: FlightSearchData): Fragment {
-  val arguments =
-      Bundle().apply {
-        val url = getUrl(getFlightsSearchParams("FLIGHT_LISTING_MULTI_MODEL", searchData))
-        putParcelable(WebViewFragment.INITIAL_PAGE_DATA_ARGS, InitialPageData(url, getHeaders(url)))
-        putParcelable(WebViewFragment.CONFIG, FunnelConfig(enableExitBar = false))
-      }
-
-  return WebViewFragment().apply { this.arguments = arguments }
-}
-
-private fun IxigoSDK.getFlightsSearchParams(page: String, searchData: FlightSearchData) =
+internal fun IxigoSDK.getFlightsSearchParams(page: String, searchData: FlightSearchData) =
     mapOf(
         "page" to page,
         "orgn" to searchData.origin,

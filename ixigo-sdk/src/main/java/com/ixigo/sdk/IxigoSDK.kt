@@ -4,8 +4,10 @@ import IxigoSDKAndroid
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Bundle
 import android.webkit.CookieManager
 import androidx.annotation.VisibleForTesting
+import androidx.fragment.app.Fragment
 import androidx.test.espresso.idling.net.UriIdlingResource
 import com.ixigo.sdk.Config.Companion.ProdConfig
 import com.ixigo.sdk.IxigoSDK.Companion.init
@@ -16,6 +18,8 @@ import com.ixigo.sdk.auth.CachingPartnerTokenProvider
 import com.ixigo.sdk.auth.PartnerToken
 import com.ixigo.sdk.auth.PartnerTokenProvider
 import com.ixigo.sdk.common.SdkSingleton
+import com.ixigo.sdk.flights.FlightSearchData
+import com.ixigo.sdk.flights.getFlightsSearchParams
 import com.ixigo.sdk.payment.DisabledPaymentProvider
 import com.ixigo.sdk.payment.PaymentProvider
 import com.ixigo.sdk.ui.Theme
@@ -195,7 +199,7 @@ internal constructor(
   }
 
   override fun getJsInterfaces(url: String, webViewFragment: WebViewFragment): List<JsInterface> {
-    var jsInterfaces = mutableListOf<JsInterface>()
+    val jsInterfaces = mutableListOf<JsInterface>()
     if (url.startsWith(config.apiBaseUrl) ||
         url.startsWith("file://") ||
         Uri.parse(url)?.host?.endsWith("ixigo.com") == true) {
@@ -203,5 +207,77 @@ internal constructor(
     }
     jsInterfaces.add(IxigoSDKAndroid(analyticsProvider, webViewFragment))
     return jsInterfaces
+  }
+
+  // Flights
+
+  /**
+   * Open Flights Home
+   *
+   * @param context
+   */
+  fun flightsStartHome(context: Context) {
+    val url = getUrl(mapOf("page" to "FLIGHT_HOME"))
+    launchWebActivity(context, url)
+    analyticsProvider.logEvent(Event.with(action = "flightsStartHome"))
+  }
+
+  /**
+   * Open Flights Trips
+   *
+   * @param context
+   */
+  fun flightsStartTrips(context: Context) {
+    val url = getUrl(mapOf("page" to "FLIGHT_TRIPS"))
+    launchWebActivity(context, url)
+    analyticsProvider.logEvent(Event.with(action = "flightsStartTrips"))
+  }
+
+  /**
+   * Use this to get a view displaying customer's flight trips and add it to your view hierarchy
+   *
+   * @return Fragment containing customer's flight trips
+   */
+  fun flightsTripsFragment(): Fragment {
+    val arguments =
+        Bundle().apply {
+          val url = getUrl(mapOf("page" to "FLIGHT_TRIPS", "displayMode" to "embedded"))
+          putParcelable(
+              WebViewFragment.INITIAL_PAGE_DATA_ARGS, InitialPageData(url, getHeaders(url)))
+          putParcelable(WebViewFragment.CONFIG, FunnelConfig(enableExitBar = false))
+        }
+
+    return WebViewFragment().apply { this.arguments = arguments }
+  }
+
+  /**
+   * Starts a view containing flight search results
+   *
+   * @param context
+   * @param searchData
+   */
+  fun flightsStartSearch(context: Context, searchData: FlightSearchData) {
+    val url = getUrl(getFlightsSearchParams("FLIGHT_LISTING", searchData))
+    launchWebActivity(context, url)
+
+    analyticsProvider.logEvent(Event.with(action = "flightsStartSearch"))
+  }
+
+  /**
+   * Use this to get a view displaying flight search results and add it to your view hierarchy
+   *
+   * @param searchData
+   * @return Fragment containing customer's flight trips
+   */
+  fun flightsMultiModelFragment(searchData: FlightSearchData): Fragment {
+    val arguments =
+        Bundle().apply {
+          val url = getUrl(getFlightsSearchParams("FLIGHT_LISTING_MULTI_MODEL", searchData))
+          putParcelable(
+              WebViewFragment.INITIAL_PAGE_DATA_ARGS, InitialPageData(url, getHeaders(url)))
+          putParcelable(WebViewFragment.CONFIG, FunnelConfig(enableExitBar = false))
+        }
+
+    return WebViewFragment().apply { this.arguments = arguments }
   }
 }
