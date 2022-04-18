@@ -30,7 +30,7 @@ class PaymentSDKPaymentProvider : PaymentProvider {
       val nextUrl =
           when (it) {
             is Err -> {
-              callback(Err(Error("Error processing payment")))
+              callback(Err(PaymentInternalError("Error processing payment")))
               it.value.nextUrl
             }
             is Ok -> {

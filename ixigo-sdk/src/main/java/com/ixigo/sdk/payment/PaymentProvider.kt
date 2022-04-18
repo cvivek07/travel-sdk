@@ -4,6 +4,7 @@ import androidx.annotation.Keep
 import androidx.fragment.app.FragmentActivity
 import com.ixigo.sdk.common.Generated
 import com.ixigo.sdk.common.Result
+import java.lang.Exception
 
 interface PaymentProvider {
   fun startPayment(
@@ -19,4 +20,18 @@ interface PaymentProvider {
 
 typealias PaymentCallback = (PaymentResult) -> Unit
 
-typealias PaymentResult = Result<PaymentResponse, Error>
+typealias PaymentResult = Result<PaymentResponse, PaymentError>
+
+sealed class PaymentError
+
+@Generated
+@Keep
+data class PaymentCancelled(val message: String = "Payment was canceled by the customer") :
+    PaymentError()
+
+@Generated
+@Keep
+data class PaymentInternalError(
+    val message: String = "Error processing payment",
+    val exception: Exception? = null
+) : PaymentError()

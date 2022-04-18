@@ -140,13 +140,14 @@ class IxiWebViewTests {
         IxigoSDK(
             appInfo,
             EmptyPartnerTokenProvider,
-            FakePaymentProvider(fragmentActivity, mapOf(paymentInput to Err(Error()))),
+            FakePaymentProvider(
+                fragmentActivity, mapOf(paymentInput to Err(PaymentInternalError()))),
             analyticsProvider,
             theme = IxigoSDK.instance.theme))
     val startNativePaymentMethod =
         ixiWebView.javaClass.getDeclaredMethod("executeNativePayment", String::class.java)
     val paymentReturn = startNativePaymentMethod.invoke(ixiWebView, paymentInputStr) as Boolean
-    Shadows.shadowOf(Looper.getMainLooper()).idle()
+    shadowOf(Looper.getMainLooper()).idle()
 
     assertTrue(paymentReturn)
     assertEquals(initialPageData.url, shadowWebView.lastLoadedUrl)
