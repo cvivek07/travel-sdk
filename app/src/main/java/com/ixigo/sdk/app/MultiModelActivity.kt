@@ -6,7 +6,6 @@ import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.app.databinding.ActivityMultiModelBinding
 import com.ixigo.sdk.flights.FlightPassengerData
 import com.ixigo.sdk.flights.FlightSearchData
-import com.ixigo.sdk.flights.flightsMultiModelFragment
 import java.time.LocalDate
 
 class MultiModelActivity: FragmentActivity() {

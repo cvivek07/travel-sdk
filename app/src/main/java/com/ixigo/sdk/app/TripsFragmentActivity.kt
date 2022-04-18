@@ -6,13 +6,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.app.databinding.ActivityMultiModelBinding
-import com.ixigo.sdk.bus.BusSDK
-import com.ixigo.sdk.bus.BusSearchData
-import com.ixigo.sdk.flights.FlightPassengerData
-import com.ixigo.sdk.flights.FlightSearchData
-import com.ixigo.sdk.flights.flightsMultiModelFragment
-import com.ixigo.sdk.flights.flightsTripsFragment
-import java.time.LocalDate
 
 class TripsFragmentActivity: FragmentActivity() {
 
