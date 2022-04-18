@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.6.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.5.0...ixigo-sdk-3.6.0) (2022-04-18)
+
+
+### Features
+
+* **ui:** introduce UIConfig to control backNavigation Mode ([1ca252c](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/1ca252cb83a6a7a5a910de232cc68cc655ce62c0))
+
+
+### Bug Fixes
+
+* **payment:** use sealed class for payment error ([e96fa9a](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/e96fa9a131a259873362048cbf459ea82a6b2226))
+
 ## [3.5.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.4.6...ixigo-sdk-3.5.0) (2022-04-12)
 
 
