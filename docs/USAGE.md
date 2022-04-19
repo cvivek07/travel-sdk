@@ -52,6 +52,17 @@ dependencies {
 
 ```
 
+Note that changing versions are cached for 24h by default. If you want to get a very recent update, you need to configure this threshold to be smaller. See https://docs.gradle.org/current/userguide/dynamic_versions.html#sec:controlling-dynamic-version-caching
+
+For instance, inside `build.gradle` of the module where you added the dependency, you could add
+
+```groovy
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor 0, 'seconds'
+}
+
+```
+
 ## Enable Desugaring if needed
 
 We use certain Java 8 features in the SDK. If you are targetting a minSDK < API 26, please [enable desugaring](https://developer.android.com/studio/write/java8-support#library-desugaring) on your App to make sure the App works correctly for older devices.
