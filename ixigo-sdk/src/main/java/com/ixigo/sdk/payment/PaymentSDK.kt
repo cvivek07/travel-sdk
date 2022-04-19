@@ -46,8 +46,6 @@ class PaymentSDK(private val config: PaymentConfig) : JsInterfaceProvider {
     }
   }
 
-  val paymentProvider: PaymentProvider by lazy { PaymentSDKPaymentProvider() }
-
   private fun getPaymentOptionsUrl(
       transactionId: String,
       gatewayId: String = "1",

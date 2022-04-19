@@ -7,7 +7,7 @@ import com.ixigo.sdk.common.Ok
 import com.ixigo.sdk.webview.UrlLoader
 
 /** PaymentProvider that will fulfill payments using PaymentSDK */
-internal class PaymentSDKPaymentProvider : PaymentProvider {
+class PaymentSDKPaymentProvider : PaymentProvider {
   override fun startPayment(
       activity: FragmentActivity,
       input: PaymentInput,

@@ -32,7 +32,7 @@ class PaymentSDKProviderTests {
 
   @Mock lateinit var mockIxigoSDK: IxigoSDK
 
-  private lateinit var provider: PaymentSDKPaymentProvider
+  lateinit var provider: PaymentSDKPaymentProvider
 
   @Before
   fun setup() {
