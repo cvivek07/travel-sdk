@@ -20,6 +20,7 @@ import com.ixigo.sdk.test.initializePaymentSDK
 import com.ixigo.sdk.test.initializeTestIxigoSDK
 import com.ixigo.sdk.webview.*
 import org.junit.*
+import org.junit.Assert.assertTrue
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnit
@@ -114,6 +115,13 @@ class PaymentSDKTests {
     testJsInterface("https://www.confirmtkt.com/test") { interfaces ->
       Assert.assertFalse(interfaces.any { (it as? PaymentJsInterface) != null })
     }
+  }
+
+  @Test
+  fun `test that paymentProvider property returns PaymentSDKPaymentProvider`() {
+    initializeTestIxigoSDK()
+    PaymentSDK.init()
+    assertTrue(PaymentSDK.instance.paymentProvider is PaymentSDKPaymentProvider)
   }
 
   private fun testJsInterface(url: String, check: (List<JsInterface>) -> Unit) {
