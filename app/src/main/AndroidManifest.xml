@@ -28,7 +28,7 @@
         <activity android:name=".BusMultiModelActivity"></activity>
         <activity android:name=".TripsFragmentActivity"></activity>
         <activity android:name=".TrainsTripsFragmentActivity"></activity>
-        <activity android:name=".FakeLoginActivity"></activity>
+        <activity android:name=".FakeLoginActivity" android:theme="@style/Theme.AppCompat.Dialog"></activity>
         <activity android:name=".FakeDeeplinkActivity"></activity>
     </application>
 
