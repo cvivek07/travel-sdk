@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.6.2](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.6.1...ixigo-sdk-3.6.2) (2022-04-20)
+
+
+### Bug Fixes
+
+* make title parameter optional ([ef97e98](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/ef97e98ac25c70a22ac98d33bcd63b627c8a527a))
+* **payment:** make PaymentSDKProvider private ([b9d5536](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/b9d5536f07338f07e0d559b1d9a8d8c33f04f07c))
+
 ### [3.6.1](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.6.0...ixigo-sdk-3.6.1) (2022-04-18)
 
 ## [3.6.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.5.0...ixigo-sdk-3.6.0) (2022-04-18)
