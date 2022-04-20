@@ -52,7 +52,7 @@ class IxiWebView(
   }
 
   @JavascriptInterface
-  fun openWindow(url: String, @Suppress("UNUSED_PARAMETER") title: String) {
+  fun openWindow(url: String, @Suppress("UNUSED_PARAMETER") title: String?) {
     runOnUiThread { IxigoSDK.instance.launchWebActivity(fragment.requireActivity(), url) }
   }
 
