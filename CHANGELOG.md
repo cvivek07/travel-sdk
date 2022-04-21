@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.6.3](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.6.2...ixigo-sdk-3.6.3) (2022-04-21)
+
+
+### Bug Fixes
+
+* **analytics:** add missing ixiWebView event tracking methods ([1831254](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/1831254b691d18442830024b2144a3625878aa7a))
+
 ### [3.6.2](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.6.1...ixigo-sdk-3.6.2) (2022-04-20)
 
 
