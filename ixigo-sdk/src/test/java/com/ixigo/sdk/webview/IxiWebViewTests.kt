@@ -9,6 +9,7 @@ import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.analytics.AnalyticsProvider
+import com.ixigo.sdk.analytics.Event
 import com.ixigo.sdk.auth.*
 import com.ixigo.sdk.common.Err
 import com.ixigo.sdk.common.Ok
@@ -62,7 +63,7 @@ class IxiWebViewTests {
       shadowWebView = Shadows.shadowOf(it.webView)
       shadowWebView.pushEntryToHistory(initialPageData.url)
       fragmentActivity = it.requireActivity()
-      ixiWebView = IxiWebView(it, ssoAuthProvider)
+      ixiWebView = IxiWebView(it, ssoAuthProvider, analyticsProvider)
     }
   }
 
@@ -185,6 +186,59 @@ class IxiWebViewTests {
       openWindowMethod.invoke(ixiWebView, url, "title")
 
       verify(mockIxigoSDK, times(1)).launchWebActivity(fragment.requireActivity(), url)
+    }
+  }
+
+  @Test
+  fun `test trackEvent logs event with analyticsProvider`() {
+    scenario.onFragment {
+      val trackEventMethod =
+          ixiWebView.javaClass.getDeclaredMethod(
+              "trackEvent", String::class.java, String::class.java)
+      assertNotNull(trackEventMethod.getAnnotation(JavascriptInterface::class.java))
+      ixiWebView.trackEvent(
+          "eventNameValue", """{"prop1": "prop1Value", "prop2": 2, "prop3": false}""")
+
+      verify(analyticsProvider)
+          .logEvent(
+              Event(
+                  "eventNameValue",
+                  properties = mapOf("prop1" to "prop1Value", "prop2" to "2.0", "prop3" to "false"),
+                  referrer = initialPageData.url))
+    }
+  }
+
+  @Test
+  fun `test trackEvent logs event with analyticsProvider with null properties`() {
+    scenario.onFragment {
+      ixiWebView.trackEvent("eventNameValue", null)
+
+      verify(analyticsProvider)
+          .logEvent(Event("eventNameValue", properties = mapOf(), referrer = initialPageData.url))
+    }
+  }
+
+  @Test
+  fun `test trackEvent logs event with analyticsServiceName`() {
+    scenario.onFragment {
+      val trackEventMethod =
+          ixiWebView.javaClass.getDeclaredMethod(
+              "trackEvent", String::class.java, String::class.java, String::class.java)
+      assertNotNull(trackEventMethod.getAnnotation(JavascriptInterface::class.java))
+      ixiWebView.trackEvent(
+          analyticsServiceName = "analyticsServiceNameValue",
+          eventName = "eventNameValue",
+          """{"prop1": "prop1Value"}""")
+
+      verify(analyticsProvider)
+          .logEvent(
+              Event(
+                  "eventNameValue",
+                  properties =
+                      mapOf(
+                          "prop1" to "prop1Value",
+                          "analyticsServiceName" to "analyticsServiceNameValue"),
+                  referrer = initialPageData.url))
     }
   }
 
