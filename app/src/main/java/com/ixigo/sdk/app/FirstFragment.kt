@@ -501,11 +501,7 @@ class FirstFragment : Fragment() {
               label = "ixigo trains",
               clientId = "iximatr",
               apiKey = "iximatr!2\$",
-              uuid = "2eb3def1-b53c-41de-b5e6-fb89cc20dad8",
               theme = Theme(primaryColor = Color.parseColor("#1556ba")),
-              deviceId = "8c4e31dff9e93ed4",
-              ssoPartnerToken =
-                  "qoutx3gxcsjmjtql5qm4swe1wei0dsthgs7obml5ecrdts0s1umfisy0yl2a0yp3lp3j0u41lxxnahnu3uq8uxe6odvl2an7w8mmtuyj9srmhfry34cxgxfhgc9e0srhajjq6rf9v1de82l3927o0qqa8qwbhpeutlg3328mk9tid3kreeg29bn3jp6tpy7wjb2",
               buttonsState = ButtonsState(trainsHome = false),
               appVersion = "1801"),
           Preset(
