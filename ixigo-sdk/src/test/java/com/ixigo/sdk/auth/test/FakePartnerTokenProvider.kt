@@ -18,6 +18,8 @@ class FakePartnerTokenProvider(
 
   var passedActivity: Activity? = null
 
+  override var enabled: Boolean = true
+
   constructor(
       partnerId: String,
       partnerToken: PartnerToken?

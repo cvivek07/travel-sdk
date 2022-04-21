@@ -24,6 +24,13 @@ interface PartnerTokenProvider {
       callback: PartnerTokenCallback
   )
 
+  /**
+   * Whether this provider is enabled or not. If not enabled, it will not be considered for auth
+   * purposes
+   */
+  val enabled: Boolean
+    get() = true
+
   data class Requester(val partnerId: String, val type: RequesterType)
 
   /** Identifies who is requesting a partnerToken */

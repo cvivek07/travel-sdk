@@ -11,6 +11,9 @@ internal class CachingPartnerTokenProvider(private val partnerTokenProvider: Par
   var partnerToken: PartnerToken? = null
     private set
 
+  override val enabled: Boolean
+    get() = partnerTokenProvider.enabled
+
   override fun fetchPartnerToken(
       activity: FragmentActivity,
       requester: PartnerTokenProvider.Requester,

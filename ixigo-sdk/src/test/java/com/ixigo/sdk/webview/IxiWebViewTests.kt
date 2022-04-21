@@ -83,6 +83,13 @@ class IxiWebViewTests {
   }
 
   @Test
+  fun `test login returns false if SSOAuthProvider returns false`() {
+    whenever(ssoAuthProvider.login(any(), any(), any())).thenReturn(false)
+    val ret = ixiWebView.loginUser("", "")
+    assertFalse(ret)
+  }
+
+  @Test
   fun `test quit`() {
     val delegate: WebViewDelegate = mock()
     fragment.delegate = delegate

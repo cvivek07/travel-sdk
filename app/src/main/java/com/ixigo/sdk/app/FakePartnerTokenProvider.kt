@@ -16,6 +16,8 @@ class FakePartnerTokenProvider(private val token: String): PartnerTokenProvider,
   private var partnerToken: PartnerToken? = null
   private var callback: PartnerTokenCallback? = null
 
+  override val enabled: Boolean = token.isNotEmpty()
+
   override fun fetchPartnerToken(
     activity: FragmentActivity,
     requester: PartnerTokenProvider.Requester,

@@ -40,6 +40,9 @@ class SSOAuthProvider(
       partnerId: String,
       callback: AuthCallback
   ): Boolean {
+    if (!partnerTokenProvider.enabled) {
+      return false
+    }
     partnerTokenProvider.fetchPartnerToken(
         fragmentActivity,
         PartnerTokenProvider.Requester(partnerId, PartnerTokenProvider.RequesterType.CUSTOMER)) {

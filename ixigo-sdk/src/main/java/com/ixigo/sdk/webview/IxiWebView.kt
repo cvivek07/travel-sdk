@@ -43,7 +43,7 @@ class IxiWebView(
     val activity = fragment.requireActivity()
     // TODO: get partnerId programmatically
     val partnerId = "iximaad"
-    ssoAuthProvider.login(activity, partnerId) { authResult ->
+    return ssoAuthProvider.login(activity, partnerId) { authResult ->
       activity.runOnUiThread {
         val url =
             authResult.mapBoth(
@@ -52,7 +52,6 @@ class IxiWebView(
         fragment.loadUrl(url)
       }
     }
-    return true
   }
 
   @JavascriptInterface

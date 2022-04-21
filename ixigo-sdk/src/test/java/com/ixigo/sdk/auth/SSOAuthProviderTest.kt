@@ -72,6 +72,20 @@ class SSOAuthProviderTest {
   }
 
   @Test
+  fun `test that login returns false if partnerTokenProvider is not enabled`() {
+    val expectedAccessToken = "expectedAccessToken"
+    mockServer.enqueue(MockResponse().setBody(validJsonResponse(expectedAccessToken)))
+    val partnerToken = PartnerToken("partnerToken")
+    val partnerTokenProvider = FakePartnerTokenProvider.forCustomer(partnerId, partnerToken)
+    partnerTokenProvider.enabled = false
+    val ssoAuthProvider = SSOAuthProvider(partnerTokenProvider)
+    launchActivity<FragmentActivity>().onActivity { activity ->
+      val handled = ssoAuthProvider.login(activity, partnerId) { fail("should not call callback") }
+      assertFalse(handled)
+    }
+  }
+
+  @Test
   fun `test that accessToken is returned without exchange for ixigo trains app`() {
     assertTokenForIxigoApp(clientId = "iximatr")
   }
