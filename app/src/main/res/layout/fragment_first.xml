@@ -327,6 +327,14 @@
                     android:text="Payment Home" />
 
                 <Button
+                    android:id="@+id/hotelsHome"
+                    android:layout_width="0dp"
+                    android:layout_columnWeight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="fill"
+                    android:text="Hotels Home" />
+
+                <Button
                     android:id="@+id/buttonFlightSearch"
                     android:layout_width="0dp"
                     android:layout_columnWeight="1"

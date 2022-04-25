@@ -11,4 +11,11 @@
         <activity android:name="com.ixigo.sdk.webview.WebActivity"
             android:theme="@style/Theme.IxigoSDK.NoActionBar"/>
     </application>
+
+    <queries>
+        <intent>
+            <action android:name=
+                "android.support.customtabs.action.CustomTabsService" />
+        </intent>
+    </queries>
 </manifest>

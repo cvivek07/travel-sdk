@@ -19,6 +19,7 @@ import com.ixigo.sdk.common.Err
 import com.ixigo.sdk.common.Ok
 import com.ixigo.sdk.covid.covidLaunchAppointments
 import com.ixigo.sdk.flights.*
+import com.ixigo.sdk.hotels.HotelsSDK
 import com.ixigo.sdk.payment.*
 import com.ixigo.sdk.trains.TrainsSDK
 import com.ixigo.sdk.ui.Theme
@@ -188,6 +189,12 @@ class FirstFragment : Fragment() {
       }
     }
 
+    binding.hotelsHome.setOnClickListener {
+      if (initSDK() && initHotelsSDK()) {
+        HotelsSDK.instance.launchHome(requireContext())
+      }
+    }
+
     binding.paymentPlayground.setOnClickListener {
       if (initSDK()) {
         val intent = Intent(requireContext(), WebActivity::class.java)
@@ -329,6 +336,7 @@ class FirstFragment : Fragment() {
     clearSDK(BusSDK::class)
     clearSDK(TrainsSDK::class)
     clearSDK(PaymentSDK::class)
+    clearSDK(HotelsSDK::class)
   }
 
   private fun <T : Any> clearSDK(sdkClass: KClass<T>) {
@@ -394,6 +402,11 @@ class FirstFragment : Fragment() {
     val busConfig =
         if (ixigoConfig()?.config == Config.ProdConfig) BusConfig.PROD else BusConfig.STAGING
     BusSDK.init(config = busConfig)
+    return true
+  }
+
+  private fun initHotelsSDK(): Boolean {
+    HotelsSDK.init()
     return true
   }
 
