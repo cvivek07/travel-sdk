@@ -1,6 +1,7 @@
 package com.ixigo.sdk.webview
 
 import android.app.Activity
+import android.app.Application
 import android.content.Intent
 import android.content.Intent.ACTION_VIEW
 import android.graphics.Color
@@ -12,6 +13,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
+import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ixigo.sdk.DeeplinkHandler
 import com.ixigo.sdk.Handled
@@ -347,6 +349,15 @@ class WebViewFragmentUnitTests {
   @Test
   fun `test tel links are open as an activity`() {
     assertOpensNonNetworkUri("tel:1234567890")
+  }
+
+  @Test
+  fun `test app does not crash if there is no app to handle a custom url`() {
+    val uri = Uri.parse("unknown://test")
+    shadowOf(getApplicationContext<Application>()).checkActivities(true)
+    shadowWebView.webViewClient.shouldOverrideUrlLoading(
+        fragment.webView, mock<WebResourceRequest> { on { url } doReturn uri })
+    assertNull(shadowActivity.nextStartedActivity)
   }
 
   private fun assertOpensNonNetworkUri(uriString: String) {

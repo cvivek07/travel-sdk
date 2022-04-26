@@ -237,8 +237,13 @@ class WebViewFragment : Fragment(), UIConfigurable, UrlLoader {
       } else {
         analyticsProvider.logEvent(
             Event.with(action = "webviewStartAction", label = request.url.scheme, referrer = url))
-        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
-        true
+        try {
+          startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+          true
+        } catch (e: Exception) {
+          Timber.e(e, "Unable to open activity for url=$url")
+          false
+        }
       }
     }
 
