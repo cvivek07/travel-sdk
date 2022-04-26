@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.7.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.6.3...ixigo-sdk-3.7.0) (2022-04-26)
+
+
+### Features
+
+* **hotels:** initial hotels sdk implementation ([596e794](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/596e79491385254b852d03e92593837f7f1ed2cd))
+* visa2fly ([cc3484a](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/cc3484a816c9e13024f2559ef519047452cf5c1a))
+
+
+### Bug Fixes
+
+* **auth:** allow enabled property for PartnerTokenProvider ([c812dd3](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/c812dd3eb9ed68a7e90773e16208f5e717365cb6))
+* fix crash when there is no app to open a custom link ([529c60c](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/529c60c73a5c7316547be23f8a26e808e65c347b))
+
 ### [3.6.3](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.6.2...ixigo-sdk-3.6.3) (2022-04-21)
 
 
