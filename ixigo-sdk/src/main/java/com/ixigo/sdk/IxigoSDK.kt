@@ -153,7 +153,7 @@ internal constructor(
       val applicationId =
           when (appInfo.clientId) {
             "abhibus" -> "1:132902544575:android:9270763a13b544f571120a"
-            "confirmtkt" -> "1:132902544575:android:956347285b51bc9771120a"
+            "confirmtckt" -> "1:132902544575:android:956347285b51bc9771120a"
             "iximatr" -> "1:132902544575:android:6a2d77a68dc54bb371120a"
             "iximaad" -> "1:132902544575:android:4d24ef043c99312071120a\n"
             else -> {
@@ -180,6 +180,7 @@ internal constructor(
 
       remoteConfig.setConfigSettingsAsync(configSettings)
       remoteConfig.fetchAndActivate().addOnSuccessListener {
+        Timber.d("XXX test_key=${remoteConfig.getString("test_key")} clientId=${appInfo.clientId}")
         Timber.d("Successfully updated remote config")
       }
       remoteConfig.fetchAndActivate().addOnFailureListener {
