@@ -1,9 +1,7 @@
 package com.ixigo.sdk.payment
 
 import androidx.fragment.app.FragmentActivity
-import com.ixigo.sdk.payment.data.GetAvailableUPIAppsInput
-import com.ixigo.sdk.payment.data.InitializeInput
-import com.ixigo.sdk.payment.data.ProcessUpiIntentInput
+import com.ixigo.sdk.payment.data.*
 
 interface PaymentGateway {
   val initialized: Boolean
@@ -12,7 +10,11 @@ interface PaymentGateway {
 
   fun listAvailableUPIApps(input: GetAvailableUPIAppsInput, callback: AvailableUPIAppsCallback)
 
-  fun processUpiIntent(input: ProcessUpiIntentInput, callback: ProcessUpiIntentCallback)
+  fun processUpiIntent(input: ProcessUpiIntentInput, callback: ProcessGatewayPaymentCallback)
+
+  fun checkCredEligibility(input: CredEligibilityInput, callback: CredEligibilityCallback)
+
+  fun processCredPayment(input: ProcessCredPaymentInput, callback: ProcessGatewayPaymentCallback)
 }
 
 interface PaymentGatewayProvider {

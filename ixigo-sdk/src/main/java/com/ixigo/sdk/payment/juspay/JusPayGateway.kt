@@ -9,7 +9,6 @@ import com.ixigo.sdk.payment.data.*
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import `in`.juspay.hypersdk.core.PaymentConstants
-import `in`.juspay.hypersdk.core.PaymentConstants.ENVIRONMENT.PRODUCTION
 import `in`.juspay.hypersdk.data.JuspayResponseHandler
 import `in`.juspay.hypersdk.ui.HyperPaymentsCallbackAdapter
 import `in`.juspay.services.HyperServices
@@ -28,9 +27,13 @@ typealias InitializeResult = Result<Unit, NativePromiseError>
 
 typealias InitializeCallback = (InitializeResult) -> Unit
 
-typealias ProcessUpiIntentResult = Result<ProcessUpiIntentResponse, NativePromiseError>
+typealias ProcessGatewayPaymentResult = Result<ProcessGatewayPaymentResponse, NativePromiseError>
 
-typealias ProcessUpiIntentCallback = (ProcessUpiIntentResult) -> Unit
+typealias ProcessGatewayPaymentCallback = (ProcessGatewayPaymentResult) -> Unit
+
+typealias CredEligibilityResult = Result<CredEligibilityResponse, NativePromiseError>
+
+typealias CredEligibilityCallback = (CredEligibilityResult) -> Unit
 
 enum class JusPayEnvironment(val environmentString: String) {
   PRODUCTION(PaymentConstants.ENVIRONMENT.PRODUCTION),
@@ -147,16 +150,68 @@ internal class JusPayGateway(
     hyperInstance.process(json)
   }
 
-  override fun processUpiIntent(input: ProcessUpiIntentInput, callback: ProcessUpiIntentCallback) {
+  override fun processUpiIntent(
+      input: ProcessUpiIntentInput,
+      callback: ProcessGatewayPaymentCallback
+  ) {
     val requestId = createRequestId { data ->
       val error = data.optBoolean("error")
       if (error) {
         callback(Err(createResponseError(data)))
       } else {
-        callback(Ok(ProcessUpiIntentResponse(orderId = input.orderId)))
+        callback(Ok(ProcessGatewayPaymentResponse(orderId = input.orderId)))
       }
     }
     process(createJuspayRequestJsonPayload(createUpiIntentRequestPayload(input), requestId))
+  }
+
+  override fun checkCredEligibility(
+      input: CredEligibilityInput,
+      callback: CredEligibilityCallback
+  ) {
+    val requestId = createRequestId { data ->
+      val error = data.optBoolean("error")
+      if (error) {
+        callback(
+            Err(
+                NativePromiseError(
+                    errorCode = data.optString("errorCode"),
+                    errorMessage = data.optString("errorMessage")),
+            ))
+      } else {
+        val response =
+            kotlin
+                .runCatching {
+                  moshi
+                      .adapter(JuspayCredEligibilityResponse::class.java)
+                      .fromJson(data.getString("payload"))
+                }
+                .getOrNull()
+        val eligibility = response?.apps?.firstOrNull()?.paymentMethodsEligibility?.firstOrNull()
+        if (eligibility == null) {
+          callback(Err(createResponseError(data)))
+        } else {
+          callback(Ok(CredEligibilityResponse(eligible = eligibility.isEligible)))
+        }
+      }
+    }
+    val payload = createCredPayEligibilityRequestPayload(input)
+    process(createJuspayRequestJsonPayload(payload, requestId))
+  }
+
+  override fun processCredPayment(
+      input: ProcessCredPaymentInput,
+      callback: ProcessGatewayPaymentCallback
+  ) {
+    val requestId = createRequestId { data ->
+      val error = data.optBoolean("error")
+      if (error) {
+        callback(Err(createResponseError(data)))
+      } else {
+        callback(Ok(ProcessGatewayPaymentResponse(orderId = input.orderId)))
+      }
+    }
+    process(createJuspayRequestJsonPayload(createCredPayRequestPayload(input), requestId))
   }
 
   private fun createUpiIntentRequestPayload(input: ProcessUpiIntentInput): JSONObject {
@@ -180,6 +235,33 @@ internal class JusPayGateway(
     }
   }
 
+  private fun createCredPayEligibilityRequestPayload(input: CredEligibilityInput): JSONObject {
+    fun createEligibilityRequestData(): JSONObject {
+      return JSONObject().apply {
+        put(
+            "apps",
+            JSONArray().apply {
+              put(
+                  JSONObject().apply {
+                    put("mobile", input.customerMobile)
+                    put("checkType", JSONArray().apply { put("cred") })
+                    put(
+                        "gatewayReferenceId",
+                        JSONObject().apply { put("cred", input.gatewayReferenceId) })
+                  })
+            })
+      }
+    }
+
+    return JSONObject().apply {
+      put("action", "eligibility")
+      put("data", createEligibilityRequestData())
+      put("service", "in.juspay.hyperapi")
+      put("orderId", input.orderId)
+      put("amount", input.amount.toString())
+    }
+  }
+
   private fun createJuspayInitiationJsonPayload(input: InitializeInput): JSONObject {
     return JSONObject().apply {
       put("action", "initiate")
@@ -188,6 +270,20 @@ internal class JusPayGateway(
       put("customerId", input.customerId)
       put("merchantLoader", true)
       put(PaymentConstants.ENV, environment.environmentString)
+    }
+  }
+
+  private fun createCredPayRequestPayload(input: ProcessCredPaymentInput): JSONObject {
+    return JSONObject().apply {
+      with(input) {
+        put("action", "appPayTxn")
+        put("orderId", orderId)
+        put("paymentMethod", "CRED")
+        put("amount", amount.toString())
+        put("application", "CRED")
+        put("clientAuthToken", clientAuthToken)
+        put("walletMobileNumber", customerMobile)
+      }
     }
   }
 

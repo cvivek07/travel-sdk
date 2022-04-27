@@ -252,8 +252,8 @@ class PaymentJsInterfaceTests {
   fun `test processUPIIntent works correctly`() {
     Mockito.`when`(mockGateway.initialized).thenReturn(true)
     Mockito.`when`(mockGateway.processUpiIntent(eq(validProcessUPIIntentInput), any())).then {
-      val callback: ProcessUpiIntentCallback = it.getArgument(1)
-      callback(Ok(ProcessUpiIntentResponse(orderId = "orderIdValue")))
+      val callback: ProcessGatewayPaymentCallback = it.getArgument(1)
+      callback(Ok(ProcessGatewayPaymentResponse(orderId = "orderIdValue")))
     }
     paymentJsInterface.processUPIIntent(
         validProcessUPIIntentInputString,
@@ -303,7 +303,7 @@ class PaymentJsInterfaceTests {
   fun `test processUPIIntent returns error if juspay returns error`() {
     Mockito.`when`(mockGateway.initialized).thenReturn(true)
     Mockito.`when`(mockGateway.processUpiIntent(eq(validProcessUPIIntentInput), any())).then {
-      val callback: ProcessUpiIntentCallback = it.getArgument(1)
+      val callback: ProcessGatewayPaymentCallback = it.getArgument(1)
       callback(Err(NativePromiseError("Test Error")))
     }
     paymentJsInterface.processUPIIntent(
@@ -318,7 +318,7 @@ class PaymentJsInterfaceTests {
   @Test
   fun `test json is correctly escaped`() {
     whenever(mockGateway.initialize(eq(validInitializeInput), any())).then {
-      val callback: ProcessUpiIntentCallback = it.getArgument(1)
+      val callback: ProcessGatewayPaymentCallback = it.getArgument(1)
       callback(Err(NativePromiseError("{\"jsonKey\": \"{\\\"innerKey\\\":\\\"innerValue\\\"}\"}")))
     }
     paymentJsInterface.initialize(
@@ -389,6 +389,160 @@ class PaymentJsInterfaceTests {
         shadowWebView.lastEvaluatedJavascript)
   }
 
+  @Test
+  fun `test checkCredElibility returns eligibility from gateway`() {
+    Mockito.`when`(mockGateway.initialized).thenReturn(true)
+    Mockito.`when`(
+            mockGateway.checkCredEligibility(
+                eq(
+                    CredEligibilityInput(
+                        provider = "JUSPAY",
+                        amount = 100.0,
+                        orderId = "orderIdValue",
+                        gatewayReferenceId = "gatewayReferenceIdValue",
+                        customerMobile = "1234567890")),
+                any()))
+        .then {
+          val callback: CredEligibilityCallback = it.getArgument(1)
+          callback(Ok(CredEligibilityResponse(eligible = true)))
+        }
+    paymentJsInterface.checkCredEligibility(
+        validCredEligibilityInput,
+        "javascript:alert('success:TO_REPLACE_PAYLOAD')",
+        "javascript:alert('error:TO_REPLACE_PAYLOAD')")
+    assertEquals(
+        """javascript:alert('success:{\"eligible\":true}')""",
+        shadowWebView.lastEvaluatedJavascript)
+  }
+
+  @Test
+  fun `test checkCredEligibility throws error for unknown provider`() {
+    whenever(mockGateway.initialized).thenReturn(true)
+    paymentJsInterface.checkCredEligibility(
+        unknownProviderCredEligibilityInput,
+        "javascript:alert('success:TO_REPLACE_PAYLOAD')",
+        "javascript:alert('error:TO_REPLACE_PAYLOAD')")
+    assertEquals(
+        """javascript:alert('error:{\"errorCode\":\"InvalidArgumentError\",\"errorMessage\":\"Could not find payment provider=Unknown\"}')""",
+        shadowWebView.lastEvaluatedJavascript)
+  }
+
+  @Test
+  fun `test checkCredElibility throws error if juspay is not initialized`() {
+    paymentJsInterface.checkCredEligibility(
+        validCredEligibilityInput,
+        "javascript:alert('success:TO_REPLACE_PAYLOAD')",
+        "javascript:alert('error:TO_REPLACE_PAYLOAD')")
+    assertEquals(
+        """javascript:alert('error:{\"errorCode\":\"NotInitializedError\",\"errorMessage\":\"Call `PaymentSDKAndroid.initialize` before calling this method\"}')""",
+        shadowWebView.lastEvaluatedJavascript)
+  }
+
+  @Test
+  fun `test checkCredElibility throws error for wrong Input`() {
+    Mockito.`when`(mockGateway.initialized).thenReturn(true)
+    paymentJsInterface.checkCredEligibility(
+        "{}",
+        "javascript:alert('success:TO_REPLACE_PAYLOAD')",
+        "javascript:alert('error:TO_REPLACE_PAYLOAD')")
+    assertEquals(
+        """javascript:alert('error:{\"errorCode\":\"InvalidArgumentError\",\"errorMessage\":\"unable to parse input={}\"}')""",
+        shadowWebView.lastEvaluatedJavascript)
+  }
+
+  @Test
+  fun `test checkCredEligibility returns error if gateway returns error`() {
+    Mockito.`when`(mockGateway.initialized).thenReturn(true)
+    Mockito.`when`(
+            mockGateway.checkCredEligibility(
+                eq(
+                    CredEligibilityInput(
+                        orderId = "orderIdValue",
+                        provider = "JUSPAY",
+                        amount = 100.0,
+                        gatewayReferenceId = "gatewayReferenceIdValue",
+                        customerMobile = "1234567890")),
+                any()))
+        .then {
+          val callback: CredEligibilityCallback = it.getArgument(1)
+          callback(Err(NativePromiseError("Test Error")))
+        }
+    paymentJsInterface.checkCredEligibility(
+        validCredEligibilityInput,
+        "javascript:alert('success:TO_REPLACE_PAYLOAD')",
+        "javascript:alert('error:TO_REPLACE_PAYLOAD')")
+    assertEquals(
+        """javascript:alert('error:{\"errorCode\":\"Test Error\"}')""",
+        shadowWebView.lastEvaluatedJavascript)
+  }
+
+  @Test
+  fun `test processCredPayment works correctly`() {
+    Mockito.`when`(mockGateway.initialized).thenReturn(true)
+    Mockito.`when`(mockGateway.processCredPayment(eq(validProcessCredPaymentInput), any())).then {
+      val callback: ProcessGatewayPaymentCallback = it.getArgument(1)
+      callback(Ok(ProcessGatewayPaymentResponse(orderId = "orderIdValue")))
+    }
+    paymentJsInterface.processCredPayment(
+        validProcessCredPaymentInputString,
+        "javascript:alert('success:TO_REPLACE_PAYLOAD')",
+        "javascript:alert('error:TO_REPLACE_PAYLOAD')")
+    assertEquals(
+        """javascript:alert('success:{\"orderId\":\"orderIdValue\"}')""",
+        shadowWebView.lastEvaluatedJavascript)
+  }
+
+  @Test
+  fun `test processCredPayment throws error if juspay is not initialized`() {
+    paymentJsInterface.processCredPayment(
+        validProcessCredPaymentInputString,
+        "javascript:alert('success:TO_REPLACE_PAYLOAD')",
+        "javascript:alert('error:TO_REPLACE_PAYLOAD')")
+    assertEquals(
+        """javascript:alert('error:{\"errorCode\":\"NotInitializedError\",\"errorMessage\":\"Call `PaymentSDKAndroid.initialize` before calling this method\"}')""",
+        shadowWebView.lastEvaluatedJavascript)
+  }
+
+  @Test
+  fun `test processCredPayment throws error for unknown provider`() {
+    whenever(mockGateway.initialized).thenReturn(true)
+    paymentJsInterface.processCredPayment(
+        unknownProviderProcessCredPaymentInputString,
+        "javascript:alert('success:TO_REPLACE_PAYLOAD')",
+        "javascript:alert('error:TO_REPLACE_PAYLOAD')")
+    assertEquals(
+        """javascript:alert('error:{\"errorCode\":\"InvalidArgumentError\",\"errorMessage\":\"Could not find payment provider=Unknown\"}')""",
+        shadowWebView.lastEvaluatedJavascript)
+  }
+
+  @Test
+  fun `test processCredPayment throws error for wrong Input`() {
+    Mockito.`when`(mockGateway.initialized).thenReturn(true)
+    paymentJsInterface.processCredPayment(
+        "{}",
+        "javascript:alert('success:TO_REPLACE_PAYLOAD')",
+        "javascript:alert('error:TO_REPLACE_PAYLOAD')")
+    assertEquals(
+        """javascript:alert('error:{\"errorCode\":\"InvalidArgumentError\",\"errorMessage\":\"unable to parse input={}\"}')""",
+        shadowWebView.lastEvaluatedJavascript)
+  }
+
+  @Test
+  fun `test processCredPayment returns error if juspay returns error`() {
+    Mockito.`when`(mockGateway.initialized).thenReturn(true)
+    Mockito.`when`(mockGateway.processCredPayment(eq(validProcessCredPaymentInput), any())).then {
+      val callback: ProcessGatewayPaymentCallback = it.getArgument(1)
+      callback(Err(NativePromiseError("Test Error")))
+    }
+    paymentJsInterface.processCredPayment(
+        validProcessCredPaymentInputString,
+        "javascript:alert('success:TO_REPLACE_PAYLOAD')",
+        "javascript:alert('error:TO_REPLACE_PAYLOAD')")
+    assertEquals(
+        """javascript:alert('error:{\"errorCode\":\"Test Error\"}')""",
+        shadowWebView.lastEvaluatedJavascript)
+  }
+
   private val validInitializeInput =
       InitializeInput(
           merchantId = "merchantIdValue",
@@ -421,6 +575,28 @@ class PaymentJsInterfaceTests {
       {
         "orderId": "orderIdValue",
         "provider": "JUSPAY"
+      }
+    """.trim()
+
+  private val validCredEligibilityInput =
+      """
+      {
+        "orderId": "orderIdValue",
+        "provider": "JUSPAY",
+        "amount": 100.0,
+        "gatewayReferenceId": "gatewayReferenceIdValue",
+        "customerMobile": "1234567890"
+      }
+    """.trim()
+
+  private val unknownProviderCredEligibilityInput =
+      """
+      {
+        "orderId": "orderIdValue",
+        "provider": "Unknown",
+        "amount": 100.0,
+        "gatewayReferenceId": "gatewayReferenceIdValue",
+        "customerMobile": "1234567890"
       }
     """.trim()
 
@@ -458,6 +634,30 @@ class PaymentJsInterfaceTests {
       }
     """.trim()
 
+  private val validProcessCredPaymentInputString =
+      """
+      {
+        "provider": "JUSPAY",
+        "orderId": "orderIdValue",
+        "clientAuthToken": "clientAuthTokenValue",
+        "gatewayReferenceId": "gatewayReferenceIdValue",
+        "customerMobile": "1234567890",
+        "amount": 102.3
+      }
+    """.trim()
+
+  private val unknownProviderProcessCredPaymentInputString =
+      """
+      {
+        "provider": "Unknown",
+        "orderId": "orderIdValue",
+        "clientAuthToken": "clientAuthTokenValue",
+        "gatewayReferenceId": "gatewayReferenceIdValue",
+        "customerMobile": "1234567890",
+        "amount": 102.3
+      }
+    """.trim()
+
   private val validProcessUPIIntentInput =
       ProcessUpiIntentInput(
           provider = "JUSPAY",
@@ -467,6 +667,15 @@ class PaymentJsInterfaceTests {
           clientAuthToken = "clientAuthTokenValue",
           endUrls = listOf("endUrl1"),
           amount = 102.3)
+
+  private val validProcessCredPaymentInput =
+      ProcessCredPaymentInput(
+          orderId = "orderIdValue",
+          clientAuthToken = "clientAuthTokenValue",
+          gatewayReferenceId = "gatewayReferenceIdValue",
+          amount = 102.3,
+          customerMobile = "1234567890",
+          provider = "JUSPAY")
 
   private fun validFinishPaymentInputString(
       transactionId: String = "transactionIdValue",

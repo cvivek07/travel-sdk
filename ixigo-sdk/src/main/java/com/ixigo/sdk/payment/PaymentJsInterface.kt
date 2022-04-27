@@ -31,8 +31,8 @@ internal class PaymentJsInterface(
   private val processUpiIntentInputAdapter by lazy {
     moshi.adapter(ProcessUpiIntentInput::class.java)
   }
-  private val processUpiIntentResponseAdapter by lazy {
-    moshi.adapter(ProcessUpiIntentResponse::class.java)
+  private val processGatewayPaymentResponseAdapter by lazy {
+    moshi.adapter(ProcessGatewayPaymentResponse::class.java)
   }
   private val finishPaymentInputAdapter by lazy { moshi.adapter(FinishPaymentInput::class.java) }
   private val finishPaymentResponseAdapter by lazy {
@@ -149,7 +149,7 @@ internal class PaymentJsInterface(
         }
         is Ok -> {
           executeResponse(
-              replaceNativePromisePayload(success, it.value, processUpiIntentResponseAdapter))
+              replaceNativePromisePayload(success, it.value, processGatewayPaymentResponseAdapter))
         }
       }
     }
@@ -171,6 +171,89 @@ internal class PaymentJsInterface(
               finishPaymentResponseAdapter))
     } else {
       returnError(error, sdkError("Unable to find transactionId=${input.transactionId}"))
+    }
+  }
+
+  @JavascriptInterface
+  fun checkCredEligibility(jsonInput: String, success: String, error: String) {
+    val input =
+        kotlin
+            .runCatching { moshi.adapter(CredEligibilityInput::class.java).fromJson(jsonInput) }
+            .getOrNull()
+    if (input == null) {
+      returnError(error, wrongInputError(jsonInput))
+      return
+    }
+    val gateway = cachingGatewayProvider.getPaymentGateway(input.provider)
+    if (gateway == null) {
+      val errorPayload =
+          NativePromiseError(
+              errorCode = "InvalidArgumentError",
+              errorMessage = "Could not find payment provider=${input.provider}")
+      returnError(error, errorPayload)
+      return
+    }
+    if (!gateway.initialized) {
+      val errorPayload =
+          NativePromiseError(
+              errorCode = "NotInitializedError",
+              errorMessage = "Call `PaymentSDKAndroid.initialize` before calling this method")
+      returnError(error, errorPayload)
+      return
+    }
+
+    gateway.checkCredEligibility(input) {
+      when (it) {
+        is Err -> {
+          returnError(error, it.value)
+        }
+        is Ok -> {
+          executeResponse(
+              replaceNativePromisePayload(
+                  success, it.value, moshi.adapter(CredEligibilityResponse::class.java)))
+        }
+      }
+    }
+  }
+
+  @JavascriptInterface
+  fun processCredPayment(jsonInput: String, success: String, error: String) {
+    val input =
+        kotlin
+            .runCatching { moshi.adapter(ProcessCredPaymentInput::class.java).fromJson(jsonInput) }
+            .getOrNull()
+    if (input == null) {
+      returnError(error, wrongInputError(jsonInput))
+      return
+    }
+    val gateway = cachingGatewayProvider.getPaymentGateway(input.provider)
+    if (gateway == null) {
+      val errorPayload =
+          NativePromiseError(
+              errorCode = "InvalidArgumentError",
+              errorMessage = "Could not find payment provider=${input.provider}")
+      returnError(error, errorPayload)
+      return
+    }
+    if (!gateway.initialized) {
+      val errorPayload =
+          NativePromiseError(
+              errorCode = "NotInitializedError",
+              errorMessage = "Call `PaymentSDKAndroid.initialize` before calling this method")
+      returnError(error, errorPayload)
+      return
+    }
+
+    gateway.processCredPayment(input) {
+      when (it) {
+        is Err -> {
+          returnError(error, it.value)
+        }
+        is Ok -> {
+          executeResponse(
+              replaceNativePromisePayload(success, it.value, processGatewayPaymentResponseAdapter))
+        }
+      }
     }
   }
 

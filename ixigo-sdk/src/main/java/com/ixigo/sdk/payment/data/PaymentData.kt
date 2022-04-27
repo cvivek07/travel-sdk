@@ -27,7 +27,7 @@ data class ProcessUpiIntentInput(
     val amount: Double
 )
 
-@Keep data class ProcessUpiIntentResponse(val orderId: String)
+@Keep data class ProcessGatewayPaymentResponse(val orderId: String)
 
 @Keep data class JuspayAvailableUPIAppsResponse(val availableApps: List<UpiApp>)
 
@@ -35,6 +35,36 @@ data class ProcessUpiIntentInput(
 data class FinishPaymentInput(val transactionId: String, val success: Boolean, val nextUrl: String)
 
 @Keep data class FinishPaymentResponse(val handler: PaymentHandler)
+
+@Keep
+data class CredEligibilityInput(
+    val provider: String,
+    val orderId: String,
+    val amount: Double,
+    val customerMobile: String,
+    val gatewayReferenceId: String
+)
+
+@Keep data class CredEligibilityResponse(val eligible: Boolean)
+
+@Keep data class JuspayCredEligibilityResponse(val apps: List<JuspayCredEligibilityResponseApps>)
+
+@Keep
+data class ProcessCredPaymentInput(
+    val provider: String,
+    val orderId: String,
+    val amount: Double,
+    val clientAuthToken: String,
+    val customerMobile: String,
+    val gatewayReferenceId: String
+)
+
+@Keep
+data class JuspayCredEligibilityResponseApps(
+    val paymentMethodsEligibility: List<JuspayPaymentMethodsEligibility>
+)
+
+@Keep data class JuspayPaymentMethodsEligibility(val isEligible: Boolean)
 
 @Keep
 enum class PaymentHandler {
