@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.8.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.7.0...ixigo-sdk-3.8.0) (2022-04-27)
+
+
+### Features
+
+* **remoteConfig:** draft: introduce remote config ([acfaec0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/acfaec0ea67198f99fdd3c939c787e737a07f0d2))
+
+
+### Bug Fixes
+
+* lazy initialize WebStorage to avoid crash with multiple processes ([b4d4296](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/b4d4296b4e796158ecb80341a03e20ff6f6e07a3))
+
 ## [3.7.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.6.3...ixigo-sdk-3.7.0) (2022-04-26)
 
 
