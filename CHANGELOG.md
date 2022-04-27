@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.9.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.8.0...ixigo-sdk-3.9.0) (2022-04-27)
+
+
+### Features
+
+* **payment:** add cred payments support ([5326478](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/5326478b21ae126b9725ca9b1ba0ae98d690f446))
+
+
+### Bug Fixes
+
+* **payment:** introduce DefaultPAymentProvider ([df75635](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/df75635d1ffa8e821c08d2a1685814b66e7435c4))
+
 ## [3.8.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.7.0...ixigo-sdk-3.8.0) (2022-04-27)
 
 
