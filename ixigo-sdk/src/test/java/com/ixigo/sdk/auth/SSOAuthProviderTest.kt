@@ -11,7 +11,7 @@ import com.ixigo.sdk.auth.test.FakePartnerTokenProvider
 import com.ixigo.sdk.common.Err
 import com.ixigo.sdk.common.Ok
 import com.ixigo.sdk.payment.DisabledPaymentProvider
-import com.ixigo.sdk.remoteConfig.RemoteConfigProvider
+import com.ixigo.sdk.remoteConfig.FakeRemoteConfigProvider
 import com.ixigo.sdk.test.TestData.FakeAppInfo
 import com.ixigo.sdk.ui.defaultTheme
 import okhttp3.mockwebserver.MockResponse
@@ -22,7 +22,6 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.kotlin.mock
 
 @RunWith(AndroidJUnit4::class)
 class SSOAuthProviderTest {
@@ -43,7 +42,7 @@ class SSOAuthProviderTest {
             FakeAnalyticsProvider(),
             Config(mockServer.url("").toString()),
             theme = defaultTheme(ApplicationProvider.getApplicationContext()),
-            remoteConfigProvider = RemoteConfigProvider(mock())))
+            remoteConfigProvider = FakeRemoteConfigProvider()))
   }
 
   @After

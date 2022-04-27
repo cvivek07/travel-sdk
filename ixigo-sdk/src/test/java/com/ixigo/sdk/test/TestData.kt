@@ -10,11 +10,11 @@ import com.ixigo.sdk.analytics.test.FakeAnalyticsProvider
 import com.ixigo.sdk.auth.EmptyPartnerTokenProvider
 import com.ixigo.sdk.auth.PartnerTokenProvider
 import com.ixigo.sdk.payment.*
+import com.ixigo.sdk.remoteConfig.FakeRemoteConfigProvider
 import com.ixigo.sdk.remoteConfig.RemoteConfigProvider
 import com.ixigo.sdk.test.TestData.FakeAppInfo
 import com.ixigo.sdk.ui.Theme
 import com.ixigo.sdk.webview.WebViewConfig
-import org.mockito.kotlin.mock
 
 object TestData {
   val FakeAppInfo = AppInfo("clientId", "apiKey", 1, "appName", "deviceId", "uuid")
@@ -31,7 +31,7 @@ internal fun initializeTestIxigoSDK(
     webViewConfig: WebViewConfig = WebViewConfig(),
     deeplinkHandler: DeeplinkHandler? = null,
     theme: Theme = Theme(primaryColor = Color.RED),
-    remoteConfig: RemoteConfigProvider = RemoteConfigProvider(mock())
+    remoteConfig: RemoteConfigProvider = FakeRemoteConfigProvider()
 ) {
   IxigoSDK.replaceInstance(
       IxigoSDK(
@@ -43,7 +43,7 @@ internal fun initializeTestIxigoSDK(
           webViewConfig = webViewConfig,
           deeplinkHandler = deeplinkHandler,
           theme = theme,
-          remoteConfigProvider = RemoteConfigProvider(mock())))
+          remoteConfigProvider = FakeRemoteConfigProvider()))
 }
 
 internal fun initializePaymentSDK() {

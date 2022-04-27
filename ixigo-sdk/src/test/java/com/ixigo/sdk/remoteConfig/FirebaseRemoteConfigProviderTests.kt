@@ -20,12 +20,12 @@ class FirebaseRemoteConfigProviderTests {
         .thenReturn("""{"name": "johnnie", "age": 25}""")
     whenever(firebaseRemoteConfig.getString("unknown")).thenReturn(DEFAULT_VALUE_FOR_STRING)
 
-    val defaultPerson = Person("johnnie", 25)
-    val provider = RemoteConfigProvider(firebaseRemoteConfig)
-    val person = provider.get("known", defaultPerson)
+    val defaultPerson = Person("default", 30)
+    val provider = FirebaseRemoteConfigProvider(firebaseRemoteConfig)
+    val person = provider["known", defaultPerson]
     assertEquals(Person("johnnie", 25), person)
 
-    assertEquals(defaultPerson, provider.get("unknown", defaultPerson))
+    assertEquals(defaultPerson, provider["unknown", defaultPerson])
   }
 
   @Test
@@ -34,8 +34,8 @@ class FirebaseRemoteConfigProviderTests {
     whenever(firebaseRemoteConfig.getString("unknown")).thenReturn(DEFAULT_VALUE_FOR_STRING)
 
     val defaultValue = "defaultValue"
-    val provider = RemoteConfigProvider(firebaseRemoteConfig)
-    val value = provider.get("known", defaultValue)
+    val provider = FirebaseRemoteConfigProvider(firebaseRemoteConfig)
+    val value = provider["known", defaultValue]
     assertEquals("value", value)
     assertEquals(defaultValue, provider.get("unknown", defaultValue))
   }
@@ -46,8 +46,8 @@ class FirebaseRemoteConfigProviderTests {
     whenever(firebaseRemoteConfig.getLong("unknown")).thenReturn(DEFAULT_VALUE_FOR_LONG)
 
     val defaultValue: Long = 15
-    val provider = RemoteConfigProvider(firebaseRemoteConfig)
-    val value = provider.get("known", defaultValue)
+    val provider = FirebaseRemoteConfigProvider(firebaseRemoteConfig)
+    val value = provider["known", defaultValue]
     assertEquals(10, value)
     assertEquals(defaultValue, provider.get("unknown", defaultValue))
   }
@@ -58,8 +58,8 @@ class FirebaseRemoteConfigProviderTests {
     whenever(firebaseRemoteConfig.getDouble("unknown")).thenReturn(DEFAULT_VALUE_FOR_DOUBLE)
 
     val defaultValue: Double = 15.0
-    val provider = RemoteConfigProvider(firebaseRemoteConfig)
-    val value = provider.get("known", defaultValue)
+    val provider = FirebaseRemoteConfigProvider(firebaseRemoteConfig)
+    val value = provider["known", defaultValue]
     assertEquals(10.0, value, 0.01)
     assertEquals(defaultValue, provider.get("unknown", defaultValue), 0.01)
   }
@@ -70,8 +70,8 @@ class FirebaseRemoteConfigProviderTests {
     whenever(firebaseRemoteConfig.getBoolean("unknown")).thenReturn(DEFAULT_VALUE_FOR_BOOLEAN)
 
     val defaultValue = false
-    val provider = RemoteConfigProvider(firebaseRemoteConfig)
-    val value = provider.get("known", defaultValue)
+    val provider = FirebaseRemoteConfigProvider(firebaseRemoteConfig)
+    val value = provider["known", defaultValue]
     assertEquals(true, value)
     assertEquals(defaultValue, provider.get("unknown", defaultValue))
   }

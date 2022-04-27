@@ -14,7 +14,7 @@ import com.ixigo.sdk.auth.*
 import com.ixigo.sdk.common.Err
 import com.ixigo.sdk.common.Ok
 import com.ixigo.sdk.payment.*
-import com.ixigo.sdk.remoteConfig.RemoteConfigProvider
+import com.ixigo.sdk.remoteConfig.FakeRemoteConfigProvider
 import com.ixigo.sdk.test.TestData.FakeAppInfo
 import com.ixigo.sdk.test.initializeTestIxigoSDK
 import com.squareup.moshi.Moshi
@@ -122,7 +122,7 @@ class IxiWebViewTests {
                 fragmentActivity, mapOf(paymentInput to Ok(PaymentResponse(nextUrl)))),
             analyticsProvider,
             theme = IxigoSDK.instance.theme,
-            remoteConfigProvider = RemoteConfigProvider(mock())))
+            remoteConfigProvider = FakeRemoteConfigProvider()))
     val startNativePaymentMethod =
         ixiWebView.javaClass.getDeclaredMethod("executeNativePayment", String::class.java)
     val paymentReturn = startNativePaymentMethod.invoke(ixiWebView, paymentInputStr) as Boolean
@@ -154,7 +154,7 @@ class IxiWebViewTests {
                 fragmentActivity, mapOf(paymentInput to Err(PaymentInternalError()))),
             analyticsProvider,
             theme = IxigoSDK.instance.theme,
-            remoteConfigProvider = RemoteConfigProvider(mock())))
+            remoteConfigProvider = FakeRemoteConfigProvider()))
     val startNativePaymentMethod =
         ixiWebView.javaClass.getDeclaredMethod("executeNativePayment", String::class.java)
     val paymentReturn = startNativePaymentMethod.invoke(ixiWebView, paymentInputStr) as Boolean

@@ -28,8 +28,9 @@ import com.ixigo.sdk.auth.PartnerTokenProvider
 import com.ixigo.sdk.common.SdkSingleton
 import com.ixigo.sdk.flights.FlightSearchData
 import com.ixigo.sdk.flights.getFlightsSearchParams
-import com.ixigo.sdk.payment.DisabledPaymentProvider
+import com.ixigo.sdk.payment.DefaultPaymentProvider
 import com.ixigo.sdk.payment.PaymentProvider
+import com.ixigo.sdk.remoteConfig.FirebaseRemoteConfigProvider
 import com.ixigo.sdk.remoteConfig.RemoteConfigProvider
 import com.ixigo.sdk.ui.Theme
 import com.ixigo.sdk.ui.defaultTheme
@@ -93,13 +94,13 @@ internal constructor(
         context: Context,
         appInfo: AppInfo,
         partnerTokenProvider: PartnerTokenProvider,
-        paymentProvider: PaymentProvider = DisabledPaymentProvider,
+        paymentProvider: PaymentProvider? = null,
         analyticsProvider: AnalyticsProvider? = null,
         config: Config = ProdConfig,
         theme: Theme = defaultTheme(context),
         deeplinkHandler: DeeplinkHandler? = null
     ): IxigoSDK {
-      return init(
+      return internalInit(
           context,
           appInfo,
           partnerTokenProvider,
@@ -110,17 +111,17 @@ internal constructor(
           theme)
     }
 
-    internal fun init(
+    internal fun internalInit(
         context: Context,
         appInfo: AppInfo,
         partnerTokenProvider: PartnerTokenProvider,
-        paymentProvider: PaymentProvider,
+        paymentProvider: PaymentProvider?,
         analyticsProvider: AnalyticsProvider,
         config: Config = ProdConfig,
-        deeplinkHandler: DeeplinkHandler?,
+        deeplinkHandler: DeeplinkHandler? = null,
         theme: Theme = defaultTheme(context),
         remoteConfigProvider: RemoteConfigProvider =
-            RemoteConfigProvider(getFirebaseRemoteConfig(context))
+            FirebaseRemoteConfigProvider(getFirebaseRemoteConfig(context))
     ): IxigoSDK {
 
       assertNotCreated()
@@ -128,7 +129,7 @@ internal constructor(
           IxigoSDK(
               appInfo.replaceDefaults(UUIDFactory(context), DeviceIdFactory(context)),
               partnerTokenProvider,
-              paymentProvider,
+              DefaultPaymentProvider(remoteConfigProvider, paymentProvider),
               analyticsProvider,
               config,
               deeplinkHandler = deeplinkHandler,
