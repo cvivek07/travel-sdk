@@ -36,6 +36,7 @@ import com.ixigo.sdk.ui.Theme
 import com.ixigo.sdk.ui.defaultTheme
 import com.ixigo.sdk.webview.*
 import java.net.URL
+import timber.log.Timber
 
 /**
  * This is the main entrypoint to interact with Ixigo SDK.
@@ -121,7 +122,7 @@ internal constructor(
         deeplinkHandler: DeeplinkHandler? = null,
         theme: Theme = defaultTheme(context),
         remoteConfigProvider: RemoteConfigProvider =
-            FirebaseRemoteConfigProvider(getFirebaseRemoteConfig(context))
+            FirebaseRemoteConfigProvider(getFirebaseRemoteConfig(context, appInfo))
     ): IxigoSDK {
 
       assertNotCreated()
@@ -148,11 +149,22 @@ internal constructor(
       return ixigoSDK
     }
 
-    private fun getFirebaseApp(context: Context): FirebaseApp {
+    private fun getFirebaseApp(context: Context, appInfo: AppInfo): FirebaseApp {
+      val applicationId =
+          when (appInfo.clientId) {
+            "abhibus" -> "1:132902544575:android:9270763a13b544f571120a"
+            "confirmtkt" -> "1:132902544575:android:956347285b51bc9771120a"
+            "iximatr" -> "1:132902544575:android:6a2d77a68dc54bb371120a"
+            "iximaad" -> "1:132902544575:android:4d24ef043c99312071120a\n"
+            else -> {
+              Timber.w("No Firebase App Id configured for clientId=${appInfo.clientId}")
+              "1:132902544575:ios:f0d90487b4debd2971120a"
+            }
+          }
       val options =
           FirebaseOptions.Builder()
               .setProjectId("ixigo-sdk-demo-app")
-              .setApplicationId("1:132902544575:android:0fa188108ec15e4571120a")
+              .setApplicationId(applicationId)
               .setApiKey("AIzaSyBEJrf3SjSFMUBahV5eL20pquCW6auVSfA")
               .build()
 
@@ -162,12 +174,17 @@ internal constructor(
       return Firebase.app("ixigo-sdk")
     }
 
-    private fun getFirebaseRemoteConfig(context: Context): FirebaseRemoteConfig {
-      val remoteConfig = Firebase.remoteConfig(getFirebaseApp(context))
+    private fun getFirebaseRemoteConfig(context: Context, appInfo: AppInfo): FirebaseRemoteConfig {
+      val remoteConfig = Firebase.remoteConfig(getFirebaseApp(context, appInfo))
       val configSettings = remoteConfigSettings { minimumFetchIntervalInSeconds = 0 }
 
       remoteConfig.setConfigSettingsAsync(configSettings)
-      remoteConfig.fetchAndActivate()
+      remoteConfig.fetchAndActivate().addOnSuccessListener {
+        Timber.d("Successfully updated remote config")
+      }
+      remoteConfig.fetchAndActivate().addOnFailureListener {
+        Timber.e(it, "Error updating remote config")
+      }
       return remoteConfig
     }
   }
@@ -248,6 +265,7 @@ internal constructor(
   }
 
   // Flights
+  // TODO: Move into its own SDK
 
   /**
    * Open Flights Home

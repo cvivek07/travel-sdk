@@ -14,9 +14,7 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.ktx.app
 import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
-import com.ixigo.sdk.AppInfo
-import com.ixigo.sdk.Config
-import com.ixigo.sdk.IxigoSDK
+import com.ixigo.sdk.*
 import com.ixigo.sdk.app.databinding.FragmentFirstBinding
 import com.ixigo.sdk.auth.*
 import com.ixigo.sdk.bus.BusConfig
@@ -390,7 +388,7 @@ class FirstFragment : Fragment() {
           enabled = binding.toastEventsSwitch.isChecked
         }
 
-    IxigoSDK.init(
+    val ixigoSDK = IxigoSDK.init(
         requireContext(),
         AppInfo(
             clientId = clientId,
@@ -405,6 +403,8 @@ class FirstFragment : Fragment() {
         config = ixigoConfig.config.copy(enableExitBar = binding.exitBarSwitch.isChecked),
         deeplinkHandler = FakeDeeplinkHandler(),
         theme = theme)
+
+    ixigoSDK.setLoggingConfig(LoggingConfig(enabled = true))
 
     initPaymentSDK()
     sdkInitialized = true
