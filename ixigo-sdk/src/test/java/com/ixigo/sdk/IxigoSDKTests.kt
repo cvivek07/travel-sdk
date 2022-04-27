@@ -104,7 +104,7 @@ class IxigoSDKTests {
   @Test
   fun `test onLogout removes web data storage`() {
     val mockWebStorage = mock<WebStorage>()
-    initializeTestIxigoSDK(webViewConfig = WebViewConfig(webStorage = mockWebStorage))
+    initializeTestIxigoSDK(webViewConfig = WebViewConfig(webStorageProvider = { mockWebStorage }))
     IxigoSDK.instance.onLogout()
     verify(mockWebStorage).deleteAllData()
   }

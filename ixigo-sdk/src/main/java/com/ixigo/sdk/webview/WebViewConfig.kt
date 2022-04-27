@@ -2,7 +2,9 @@ package com.ixigo.sdk.webview
 
 import android.webkit.WebStorage
 
-internal class WebViewConfig(val webStorage: WebStorage = WebStorage.getInstance()) {
+internal class WebViewConfig(webStorageProvider: () -> WebStorage = { WebStorage.getInstance() }) {
+
+  val webStorage: WebStorage by lazy(webStorageProvider)
 
   private var providers = mutableListOf<JsInterfaceProvider>()
 
