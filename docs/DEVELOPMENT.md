@@ -56,6 +56,12 @@ Metrics of the SDK are collected using [Google Analytics](https://developers.goo
 
 Analytics Account Id: [211766096](https://analytics.google.com/analytics/web/#/report-home/a211766096w295339199p256394053). Contact miguel@travenues (or rajnish@travenues) for access if needed.
 
+## RemoteConfig
+
+It is possible to configure certain aspects of the SDK using Firebase Remote Config.
+
+The Firebase App is [Ixigo SDK](https://console.firebase.google.com/project/ixigo-sdk-demo-app). Contact miguel@travenues or rajnish@travenues for access if needed.
+
 ## Release a new version
 
 To release a new version:
