@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.analytics.Event
-import com.ixigo.sdk.common.Generated
+import com.ixigo.sdk.common.NoCoverage
 import com.ixigo.sdk.payment.PaymentInput
 import com.ixigo.sdk.payment.PaymentResult
 
@@ -27,4 +27,4 @@ class WebViewViewModel : ViewModel() {
   }
 }
 
-@Generated data class NativePaymentResult(val input: PaymentInput, val result: PaymentResult)
+@NoCoverage data class NativePaymentResult(val input: PaymentInput, val result: PaymentResult)

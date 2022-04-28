@@ -7,8 +7,7 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlin.reflect.KClass
 import timber.log.Timber
 
-class FirebaseRemoteConfigProvider(private val remoteConfig: FirebaseRemoteConfig) :
-    RemoteConfigProvider {
+class RemoteConfigFirebase(private val remoteConfig: FirebaseRemoteConfig) : RemoteConfig {
 
   private val moshi by lazy { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
 

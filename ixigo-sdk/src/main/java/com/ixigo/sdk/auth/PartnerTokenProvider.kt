@@ -1,7 +1,7 @@
 package com.ixigo.sdk.auth
 
 import androidx.fragment.app.FragmentActivity
-import com.ixigo.sdk.common.Generated
+import com.ixigo.sdk.common.NoCoverage
 import com.ixigo.sdk.common.Result
 
 typealias PartnerTokenResult = Result<PartnerToken, PartnerTokenError>
@@ -46,7 +46,7 @@ interface PartnerTokenProvider {
   }
 }
 
-@Generated data class PartnerToken(val token: String)
+@NoCoverage data class PartnerToken(val token: String)
 
 sealed class PartnerTokenError(val code: Int, val message: String)
 

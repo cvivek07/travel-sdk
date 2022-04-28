@@ -22,7 +22,7 @@ import com.ixigo.sdk.NotHandled
 import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
 import com.ixigo.sdk.common.ActivityResultHandler
-import com.ixigo.sdk.common.Generated
+import com.ixigo.sdk.common.NoCoverage
 import com.ixigo.sdk.databinding.WebviewLayoutBinding
 import com.ixigo.sdk.ui.Failed
 import com.ixigo.sdk.ui.Loaded
@@ -313,7 +313,7 @@ class WebViewFragment : Fragment(), UIConfigurable, UrlLoader {
 
 @Parcelize
 @SuppressLint("ParcelCreator")
-@Generated
+@NoCoverage
 data class InitialPageData(
     val url: String,
     val headers: Map<String, String> = mapOf(),

@@ -15,7 +15,7 @@ class DefaultPaymentProvider(
 
   private val paymentProvider: PaymentProvider by lazy {
     val paymentConfig =
-        remoteConfigProvider[
+        remoteConfigProvider.remoteConfig[
             "payment", PaymentRemoteConfig(mode = PaymentMode.SDK, allowHostAppPayment = true)]
     if (paymentConfig.allowHostAppPayment && customPaymentProvider != null) {
       customPaymentProvider

@@ -9,14 +9,6 @@ import android.webkit.CookieManager
 import androidx.annotation.VisibleForTesting
 import androidx.fragment.app.Fragment
 import androidx.test.espresso.idling.net.UriIdlingResource
-import com.google.firebase.FirebaseApp
-import com.google.firebase.FirebaseOptions
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.ktx.app
-import com.google.firebase.ktx.initialize
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import com.google.firebase.remoteconfig.ktx.remoteConfig
-import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import com.ixigo.sdk.Config.Companion.ProdConfig
 import com.ixigo.sdk.IxigoSDK.Companion.init
 import com.ixigo.sdk.analytics.AnalyticsProvider
@@ -26,17 +18,17 @@ import com.ixigo.sdk.auth.CachingPartnerTokenProvider
 import com.ixigo.sdk.auth.PartnerToken
 import com.ixigo.sdk.auth.PartnerTokenProvider
 import com.ixigo.sdk.common.SdkSingleton
+import com.ixigo.sdk.firebase.FirebaseHelper
 import com.ixigo.sdk.flights.FlightSearchData
 import com.ixigo.sdk.flights.getFlightsSearchParams
 import com.ixigo.sdk.payment.DefaultPaymentProvider
 import com.ixigo.sdk.payment.PaymentProvider
-import com.ixigo.sdk.remoteConfig.FirebaseRemoteConfigProvider
 import com.ixigo.sdk.remoteConfig.RemoteConfigProvider
+import com.ixigo.sdk.remoteConfig.get
 import com.ixigo.sdk.ui.Theme
 import com.ixigo.sdk.ui.defaultTheme
 import com.ixigo.sdk.webview.*
 import java.net.URL
-import timber.log.Timber
 
 /**
  * This is the main entrypoint to interact with Ixigo SDK.
@@ -121,8 +113,7 @@ internal constructor(
         config: Config = ProdConfig,
         deeplinkHandler: DeeplinkHandler? = null,
         theme: Theme = defaultTheme(context),
-        remoteConfigProvider: RemoteConfigProvider =
-            FirebaseRemoteConfigProvider(getFirebaseRemoteConfig(context, appInfo))
+        remoteConfigProvider: RemoteConfigProvider = FirebaseHelper(context, appInfo)
     ): IxigoSDK {
 
       assertNotCreated()
@@ -147,46 +138,6 @@ internal constructor(
                   mapOf("clientId" to appInfo.clientId, "sdkVersion" to BuildConfig.SDK_VERSION)))
 
       return ixigoSDK
-    }
-
-    private fun getFirebaseApp(context: Context, appInfo: AppInfo): FirebaseApp {
-      val applicationId =
-          when (appInfo.clientId) {
-            "abhibus" -> "1:132902544575:android:9270763a13b544f571120a"
-            "confirmtckt" -> "1:132902544575:android:956347285b51bc9771120a"
-            "iximatr" -> "1:132902544575:android:6a2d77a68dc54bb371120a"
-            "iximaad" -> "1:132902544575:android:4d24ef043c99312071120a\n"
-            else -> {
-              Timber.w("No Firebase App Id configured for clientId=${appInfo.clientId}")
-              "1:132902544575:ios:f0d90487b4debd2971120a"
-            }
-          }
-      val options =
-          FirebaseOptions.Builder()
-              .setProjectId("ixigo-sdk-demo-app")
-              .setApplicationId(applicationId)
-              .setApiKey("AIzaSyBEJrf3SjSFMUBahV5eL20pquCW6auVSfA")
-              .build()
-
-      if (kotlin.runCatching { Firebase.app("ixigo-sdk") }.getOrNull() == null) {
-        Firebase.initialize(context, options, "ixigo-sdk")
-      }
-      return Firebase.app("ixigo-sdk")
-    }
-
-    private fun getFirebaseRemoteConfig(context: Context, appInfo: AppInfo): FirebaseRemoteConfig {
-      val remoteConfig = Firebase.remoteConfig(getFirebaseApp(context, appInfo))
-      val configSettings = remoteConfigSettings { minimumFetchIntervalInSeconds = 0 }
-
-      remoteConfig.setConfigSettingsAsync(configSettings)
-      remoteConfig.fetchAndActivate().addOnSuccessListener {
-        Timber.d("XXX test_key=${remoteConfig.getString("test_key")} clientId=${appInfo.clientId}")
-        Timber.d("Successfully updated remote config")
-      }
-      remoteConfig.fetchAndActivate().addOnFailureListener {
-        Timber.e(it, "Error updating remote config")
-      }
-      return remoteConfig
     }
   }
 

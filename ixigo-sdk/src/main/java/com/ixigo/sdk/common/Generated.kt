@@ -1,8 +1,5 @@
 package com.ixigo.sdk.common
 
-import java.lang.annotation.Documented
+@Retention(AnnotationRetention.BINARY) annotation class NoCoverageGenerated
 
-@Documented
-@Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.CLASS, AnnotationTarget.FIELD)
-internal annotation class Generated
+typealias NoCoverage = NoCoverageGenerated
