@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.9.1](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.9.0...ixigo-sdk-3.9.1) (2022-04-28)
+
+
+### Bug Fixes
+
+* add different applicationId for every app to allow remoteConfig overrides ([0d9d3d6](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/0d9d3d6bcb554d0804e730ee776ebec834590155))
+* use correct clientId for confirmTkt ([1a9b7dc](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/1a9b7dc15b3d86e70c380b159810159806305ecd))
+* use remoteConfig to configure clientId firebase App Ids ([7ee6f76](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/7ee6f76d6d9a84aaeb8ad4781c917bcad88fe8c8))
+
 ## [3.9.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.8.0...ixigo-sdk-3.9.0) (2022-04-27)
 
 
