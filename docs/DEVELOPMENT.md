@@ -66,8 +66,8 @@ The Firebase App is [Ixigo SDK](https://console.firebase.google.com/project/ixig
 
 You can create remote config overrides for specific client Apps in your Remote Config. To do so:
 
-1. We need to create a Firebase App to identify each client.
-   1. PackageName is not important. We just want the FirebaseAppId
+1. We need to [create a Firebase App](https://console.firebase.google.com/project/ixigo-sdk-demo-app/settings/general) to identify each client.
+    - PackageName is not important. We just want the FirebaseAppId
 2. Once you have created the firebase App, copy the Firebase App Id (`eg: 1:132902544575:android:9270763a13b544f571120a`) and add it alongside ixigo's app `clientId` to the Remote Config with key **clientId_to_firebaseAppId**
 
 ![](images/remote_config_app_override.png)
