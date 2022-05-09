@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.9.2](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.9.1...ixigo-sdk-3.9.2) (2022-05-09)
+
+
+### Bug Fixes
+
+* set orientation to portrait for WebActivity ([30494b3](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/30494b39eb8e61186313788837c1d5af1c4c37de))
+
 ### [3.9.1](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.9.0...ixigo-sdk-3.9.1) (2022-04-28)
 
 
