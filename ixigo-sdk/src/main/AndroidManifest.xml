@@ -9,6 +9,7 @@
 
     <application>
         <activity android:name="com.ixigo.sdk.webview.WebActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.IxigoSDK.NoActionBar"/>
     </application>
 
