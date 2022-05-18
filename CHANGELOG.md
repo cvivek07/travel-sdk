@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.9.3](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.9.2...ixigo-sdk-3.9.3) (2022-05-18)
+
+
+### Bug Fixes
+
+* add @Keep annotation to remoteConfig ([3a4e79b](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/3a4e79b151e01b45854821ca2af0a8cb089a0aff))
+
 ### [3.9.2](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.9.1...ixigo-sdk-3.9.2) (2022-05-09)
 
 
