@@ -52,4 +52,5 @@ enum class PaymentMode {
   WEB
 }
 
+@Keep
 internal data class PaymentRemoteConfig(val mode: PaymentMode, val allowHostAppPayment: Boolean)
