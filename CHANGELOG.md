@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.9.4](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.9.3...ixigo-sdk-3.9.4) (2022-05-19)
+
+
+### Bug Fixes
+
+* add pwaReady functionality ([b3aef32](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/b3aef329dfa154b4724243863d958adc8869809c))
+* **payment:** add scan card functionality ([45490eb](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/45490eb4d9de6368056db4aec453c8201a3463d2))
+
 ### [3.9.3](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.9.2...ixigo-sdk-3.9.3) (2022-05-18)
 
 
