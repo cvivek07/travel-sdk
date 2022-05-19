@@ -543,6 +543,16 @@ class PaymentJsInterfaceTests {
         shadowWebView.lastEvaluatedJavascript)
   }
 
+  @Test
+  fun `test scanCard returns NotImplementedError`() {
+    paymentJsInterface.scanCreditCard(
+        "javascript:alert('success:TO_REPLACE_PAYLOAD')",
+        "javascript:alert('error:TO_REPLACE_PAYLOAD')")
+    assertEquals(
+        """javascript:alert('error:{\"errorCode\":\"NotAvailableError\",\"errorMessage\":\"This functionality is not available on Android\"}')""",
+        shadowWebView.lastEvaluatedJavascript)
+  }
+
   private val validInitializeInput =
       InitializeInput(
           merchantId = "merchantIdValue",

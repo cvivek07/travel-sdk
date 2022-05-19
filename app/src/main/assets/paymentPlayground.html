@@ -22,9 +22,21 @@
                     Read SMS
                 </button>
             </h2>
-            <div id="collapseSms" class="accordion-collapse collapse show" aria-labelledby="headingSms" data-bs-parent="#accordionExample">
+            <div id="collapseSms" class="accordion-collapse collapse" aria-labelledby="headingSms" data-bs-parent="#accordionExample">
                 <div class="accordion-body">
                     <button type="button" id="read-sms-btn" class="btn btn-primary">Read SMS</button>
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item open">
+            <h2 class="accordion-header" id="headingScanCreditCard">
+                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseScanCreditCard" aria-expanded="true" aria-controls="collapseOne">
+                    Scan Credit Card
+                </button>
+            </h2>
+            <div id="collapseScanCreditCard" class="accordion-collapse collapse" aria-labelledby="headingScanCreditCard" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                    <button type="button" id="scan-credit-card-btn" class="btn btn-primary">Scan credit card</button>
                 </div>
             </div>
         </div>
@@ -34,7 +46,7 @@
                     Initialize
                 </button>
             </h2>
-            <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+            <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                 <div class="accordion-body">
                     <form id="initialize-form">
                         <div class="form-group mb-3">
@@ -171,6 +183,15 @@
             alert(`Sms received=${JSON.stringify(response)}`)
         } catch(e) {
             alert(`Error trying to read SMS=${JSON.stringify(e)}`)
+        }
+    }
+
+    document.getElementById('scan-credit-card-btn').onclick = async () => {
+        try {
+            const response = await IxigoSDK.payment.scanCreditCard()
+            alert(`Credit Card info received=${JSON.stringify(response)}`)
+        } catch(e) {
+            alert(`Error trying to scan credit card=${JSON.stringify(e)}`)
         }
     }
 </script>

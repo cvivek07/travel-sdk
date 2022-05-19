@@ -16,6 +16,10 @@ data class NativePromiseError(
 
     fun sdkError(message: String) =
         NativePromiseError(errorCode = "SDKError", errorMessage = message)
+
+    fun notAvailableError(
+        errorMessage: String? = "This functionality is not available on Android"
+    ) = NativePromiseError(errorCode = "NotAvailableError", errorMessage = errorMessage)
   }
 }
 

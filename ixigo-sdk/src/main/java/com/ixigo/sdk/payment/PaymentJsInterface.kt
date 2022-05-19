@@ -2,6 +2,7 @@ package com.ixigo.sdk.payment
 
 import android.webkit.JavascriptInterface
 import com.ixigo.sdk.common.*
+import com.ixigo.sdk.common.NativePromiseError.Companion.notAvailableError
 import com.ixigo.sdk.common.NativePromiseError.Companion.sdkError
 import com.ixigo.sdk.common.NativePromiseError.Companion.wrongInputError
 import com.ixigo.sdk.payment.data.*
@@ -255,6 +256,11 @@ internal class PaymentJsInterface(
         }
       }
     }
+  }
+
+  @JavascriptInterface
+  fun scanCreditCard(success: String, error: String) {
+    returnError(error, notAvailableError())
   }
 
   private fun returnError(error: String, errorPayload: NativePromiseError) {
