@@ -9,7 +9,6 @@ variables:
   GRADLE_SCAN:
     value: ""
     description: "Set to `true` if you want to run a Gradle Scan on this build"
-  GRADLE_OPTS: -Xmx2048m -Dorg.gradle.daemon=false -Dorg.gradle.jvmargs=-XX:+UseContainerSupport
 #  CI_DEBUG_TRACE: "true"
 
 workflow:
