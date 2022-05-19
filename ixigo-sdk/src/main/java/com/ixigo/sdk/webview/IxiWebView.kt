@@ -96,6 +96,11 @@ class IxiWebView(
     }
   }
 
+  @JavascriptInterface
+  fun pwaReady() {
+    runOnUiThread { fragment.pwaReady() }
+  }
+
   private fun eventProperties(
       eventJson: String?,
       analyticsServiceName: String?

@@ -107,6 +107,13 @@ class WebViewFragment : Fragment(), UIConfigurable, UrlLoader {
     }
   }
 
+  internal fun pwaReady() {
+    if (loadableView.status is Loading) {
+      loadableView.status = Loaded
+      stoppedLoading()
+    }
+  }
+
   @SuppressLint("JavascriptInterface")
   private fun addJavascriptInterface(jsInterface: JsInterface) {
     webView.addJavascriptInterface(jsInterface, jsInterface.name)
@@ -170,10 +177,7 @@ class WebViewFragment : Fragment(), UIConfigurable, UrlLoader {
 
     override fun onPageFinished(view: WebView?, url: String?) {
       super.onPageFinished(view, url)
-      if (loadableView.status is Loading) {
-        loadableView.status = Loaded
-        stoppedLoading()
-      }
+      pwaReady()
       setStatusBarColorFromThemeColor()
 
       loadIxigoJsSDKIfNeeded()

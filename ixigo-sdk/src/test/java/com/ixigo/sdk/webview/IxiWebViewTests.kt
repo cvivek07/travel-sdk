@@ -17,6 +17,8 @@ import com.ixigo.sdk.payment.*
 import com.ixigo.sdk.remoteConfig.FakeRemoteConfigProvider
 import com.ixigo.sdk.test.TestData.FakeAppInfo
 import com.ixigo.sdk.test.initializeTestIxigoSDK
+import com.ixigo.sdk.ui.Loaded
+import com.ixigo.sdk.ui.Loading
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import org.junit.After
@@ -249,6 +251,15 @@ class IxiWebViewTests {
                           "prop1" to "prop1Value",
                           "analyticsServiceName" to "analyticsServiceNameValue"),
                   referrer = initialPageData.url))
+    }
+  }
+
+  @Test
+  fun `test pwaReady`() {
+    scenario.onFragment {
+      assertEquals(Loading(), fragment.loadableView.status)
+      ixiWebView.pwaReady()
+      assertEquals(Loaded, fragment.loadableView.status)
     }
   }
 
