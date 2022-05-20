@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.9.5](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.9.4...ixigo-sdk-3.9.5) (2022-05-20)
+
+
+### Bug Fixes
+
+* add spinnerTime event ([79b072e](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/79b072ef6c3ffe842561e0b81f2b48875a51fd90))
+
 ### [3.9.4](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.9.3...ixigo-sdk-3.9.4) (2022-05-19)
 
 
