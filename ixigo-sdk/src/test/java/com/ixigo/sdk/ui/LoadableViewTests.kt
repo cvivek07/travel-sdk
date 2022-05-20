@@ -12,6 +12,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.core.app.launchActivity
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ixigo.sdk.IxigoSDK
+import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.test.R
 import com.ixigo.sdk.test.initializeTestIxigoSDK
 import com.ixigo.sdk.webview.InitialPageData
@@ -19,8 +20,14 @@ import com.ixigo.sdk.webview.WebActivity
 import com.ixigo.sdk.webview.WebViewFragment
 import org.junit.Assert.assertEquals
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mock
+import org.mockito.junit.MockitoJUnit
+import org.mockito.junit.MockitoRule
+import org.mockito.kotlin.argThat
+import org.mockito.kotlin.verify
 
 @RunWith(AndroidJUnit4::class)
 class LoadableViewTests {
@@ -35,9 +42,13 @@ class LoadableViewTests {
   private val errorView: View
     get() = loadableView.findViewById(R.id.errorView)
 
+  @Mock lateinit var mockAnalyticsProvider: AnalyticsProvider
+
+  @Rule fun rule(): MockitoRule = MockitoJUnit.rule()
+
   @Before
   fun setup() {
-    initializeTestIxigoSDK()
+    initializeTestIxigoSDK(analyticsProvider = mockAnalyticsProvider)
     val app = ApplicationProvider.getApplicationContext<Application>()
     val intent =
         Intent(app, WebActivity::class.java).also {
@@ -54,7 +65,7 @@ class LoadableViewTests {
 
   @Test
   fun testInitialStateIsLoading() {
-    assertEquals(Loading(), loadableView.status)
+    assertEquals(Loading(referrer = "https://www.ixigo.com/pwa"), loadableView.status)
     assertEquals(GONE, contentView.visibility)
     assertEquals(GONE, errorView.visibility)
     assertEquals(VISIBLE, loadingView.visibility)
@@ -82,5 +93,19 @@ class LoadableViewTests {
     assertEquals(
         ColorStateList.valueOf(IxigoSDK.instance.theme.primaryColor),
         progressView.indeterminateTintList)
+  }
+
+  @Test
+  fun `test spinner time event is logged`() {
+    Thread.sleep(500)
+    loadableView.status = Loaded
+    verify(mockAnalyticsProvider)
+        .logEvent(
+            event =
+                argThat { event ->
+                  event.name == "SpinnerTime" &&
+                      event.referrer == "https://www.ixigo.com/pwa" &&
+                      event.properties["value"]!!.toLong() > 500
+                })
   }
 }

@@ -155,20 +155,20 @@ class WebViewFragmentUnitTests {
 
   @Test
   fun `test that initial loadingView status is Loading`() {
-    assertEquals(Loading(), fragment.loadableView.status)
+    assertEquals(Loading(referrer = initialPageData.url), fragment.loadableView.status)
   }
 
   @Test
   fun `test that status is Loading after loading new url`() {
-    assertEquals(Loading(), fragment.loadableView.status)
+    assertEquals(Loading(referrer = initialPageData.url), fragment.loadableView.status)
     shadowWebView.webViewClient.onPageFinished(fragment.webView, initialPageData.url)
     assertLoadableViewStatus(Loaded)
+    val newPage = "https://www.ixigo.com/page2"
     shadowWebView.webViewClient.shouldOverrideUrlLoading(
-        fragment.webView,
-        mock<WebResourceRequest> { on { url } doReturn Uri.parse("https://www.ixigo.com/page2") })
-    assertLoadableViewStatus(Loading())
+        fragment.webView, mock<WebResourceRequest> { on { url } doReturn Uri.parse(newPage) })
+    assertLoadableViewStatus(Loading(referrer = newPage))
     verify(mockAnalyticsProvider)
-        .logEvent(Event.with(action = "webviewStartLoad", referrer = "https://www.ixigo.com/page2"))
+        .logEvent(Event.with(action = "webviewStartLoad", referrer = newPage))
   }
 
   @Test
@@ -176,7 +176,7 @@ class WebViewFragmentUnitTests {
     shadowWebView.webViewClient.shouldOverrideUrlLoading(
         fragment.webView,
         mock<WebResourceRequest> { on { url } doReturn Uri.parse(initialPageData.url) })
-    assertLoadableViewStatus(Loading())
+    assertLoadableViewStatus(Loading(referrer = initialPageData.url))
     shadowWebView.webViewClient.onPageFinished(fragment.webView, initialPageData.url)
     assertLoadableViewStatus(Loaded)
   }
@@ -186,7 +186,7 @@ class WebViewFragmentUnitTests {
     shadowWebView.webViewClient.shouldOverrideUrlLoading(
         fragment.webView,
         mock<WebResourceRequest> { on { url } doReturn Uri.parse(initialPageData.url) })
-    assertLoadableViewStatus(Loading())
+    assertLoadableViewStatus(Loading(referrer = initialPageData.url))
     shadowWebView.webViewClient.onReceivedError(
         fragment.webView, mock { on { url } doReturn Uri.parse(initialPageData.url) }, mock())
     assertLoadableViewStatus(Failed())
@@ -199,7 +199,7 @@ class WebViewFragmentUnitTests {
     shadowWebView.webViewClient.shouldOverrideUrlLoading(
         fragment.webView,
         mock<WebResourceRequest> { on { url } doReturn Uri.parse(initialPageData.url) })
-    assertLoadableViewStatus(Loading())
+    assertLoadableViewStatus(Loading(referrer = initialPageData.url))
     shadowWebView.webViewClient.onReceivedHttpError(
         fragment.webView, mock { on { url } doReturn Uri.parse(initialPageData.url) }, mock())
     assertLoadableViewStatus(Failed())
@@ -212,10 +212,10 @@ class WebViewFragmentUnitTests {
     shadowWebView.webViewClient.shouldOverrideUrlLoading(
         fragment.webView,
         mock<WebResourceRequest> { on { url } doReturn Uri.parse(initialPageData.url) })
-    assertLoadableViewStatus(Loading())
+    assertLoadableViewStatus(Loading(referrer = initialPageData.url))
     shadowWebView.webViewClient.onReceivedHttpError(
         fragment.webView, mock { on { url } doReturn Uri.parse("https://random.com") }, mock())
-    assertLoadableViewStatus(Loading())
+    assertLoadableViewStatus(Loading(referrer = initialPageData.url))
     shadowWebView.webViewClient.onPageFinished(fragment.webView, initialPageData.url)
     assertLoadableViewStatus(Loaded)
   }
@@ -289,7 +289,7 @@ class WebViewFragmentUnitTests {
     shadowWebView.webViewClient.shouldOverrideUrlLoading(
         fragment.webView,
         mock<WebResourceRequest> { on { url } doReturn Uri.parse(initialPageData.url) })
-    assertLoadableViewStatus(Loading())
+    assertLoadableViewStatus(Loading(referrer = initialPageData.url))
     shadowWebView.webViewClient.onReceivedError(
         fragment.webView, mock { on { url } doReturn Uri.parse(initialPageData.url) }, mock())
     assertLoadableViewStatus(Failed())
@@ -300,7 +300,7 @@ class WebViewFragmentUnitTests {
     assertEquals(0, shadowWebView.reloadInvocations)
     fragment.loadableView.onRetry?.invoke()
     assertEquals(1, shadowWebView.reloadInvocations)
-    assertEquals(Loading(), fragment.loadableView.status)
+    assertEquals(Loading(referrer = initialPageData.url), fragment.loadableView.status)
   }
 
   @Test

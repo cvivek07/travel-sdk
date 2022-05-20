@@ -257,7 +257,7 @@ class IxiWebViewTests {
   @Test
   fun `test pwaReady`() {
     scenario.onFragment {
-      assertEquals(Loading(), fragment.loadableView.status)
+      assertEquals(Loading(referrer = initialPageData.url), fragment.loadableView.status)
       ixiWebView.pwaReady()
       assertEquals(Loaded, fragment.loadableView.status)
     }

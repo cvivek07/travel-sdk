@@ -12,6 +12,7 @@ import android.widget.RelativeLayout
 import androidx.annotation.VisibleForTesting
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.R
+import com.ixigo.sdk.analytics.Event
 
 class LoadableViewContainer(context: Context, attrs: AttributeSet) :
     RelativeLayout(context, attrs) {
@@ -23,10 +24,27 @@ class LoadableViewContainer(context: Context, attrs: AttributeSet) :
   var onGoBack: (() -> Unit)? = null
   var onRetry: (() -> Unit)? = null
 
+  private var loadingStartTime: LoadingStartTime? = null
+
   var status: Status = Loaded
     set(value) {
       getView(field).visibility = GONE
       getView(value).visibility = VISIBLE
+
+      when (value) {
+        is Loading ->
+            if (loadingStartTime == null) {
+              loadingStartTime = LoadingStartTime(referrer = value.referrer)
+            }
+        else ->
+            loadingStartTime?.let {
+              IxigoSDK.instance.analyticsProvider.logEvent(
+                  Event.with(
+                      action = "SpinnerTime", value = it.elapsedTime, referrer = it.referrer))
+              loadingStartTime = null
+            }
+      }
+
       field = value
     }
 
@@ -68,8 +86,15 @@ class LoadableViewContainer(context: Context, attrs: AttributeSet) :
 
 sealed class Status
 
-data class Loading(val progress: Float? = null) : Status()
+data class Loading(val progress: Float? = null, val referrer: String? = null) : Status()
 
 object Loaded : Status()
 
 data class Failed(val errorMessage: String? = null) : Status()
+
+private data class LoadingStartTime(val referrer: String? = null) {
+  private val startTime = System.currentTimeMillis()
+
+  val elapsedTime: Long
+    get() = System.currentTimeMillis() - startTime
+}

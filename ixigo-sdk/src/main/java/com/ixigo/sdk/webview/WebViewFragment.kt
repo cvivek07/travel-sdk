@@ -160,7 +160,7 @@ class WebViewFragment : Fragment(), UIConfigurable, UrlLoader {
 
   private fun startedLoading(url: String = webView.url.toString()) {
     if (loadableView.status != Loading()) {
-      loadableView.status = Loading()
+      loadableView.status = Loading(referrer = url)
       IxigoSDK.instance.uriIdlingResource.beginLoad(url)
     }
   }

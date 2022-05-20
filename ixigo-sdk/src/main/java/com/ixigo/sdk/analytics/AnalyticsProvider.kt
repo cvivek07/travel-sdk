@@ -10,10 +10,16 @@ data class Event(
     val referrer: String? = null
 ) {
   companion object {
-    fun with(action: String, label: String? = null, referrer: String? = null): Event =
-        Event(
-            name = action,
-            properties = label?.let { mapOf("label" to it) } ?: mapOf(),
-            referrer = referrer)
+    fun with(
+        action: String,
+        label: String? = null,
+        referrer: String? = null,
+        value: Long? = null
+    ): Event {
+      val properties = mutableMapOf<String, String>()
+      label?.let { properties["label"] = it }
+      value?.let { properties["value"] = it.toString() }
+      return Event(name = action, properties = properties.toMap(), referrer = referrer)
+    }
   }
 }
