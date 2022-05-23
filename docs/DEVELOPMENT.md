@@ -56,6 +56,10 @@ Metrics of the SDK are collected using [Google Analytics](https://developers.goo
 
 Analytics Account Id: [211766096](https://analytics.google.com/analytics/web/#/report-home/a211766096w295339199p256394053). Contact miguel@travenues (or rajnish@travenues) for access if needed.
 
+### Dashboard
+
+You can access dashboard here: https://datastudio.google.com/reporting/d875166c-bda3-4108-8aa4-868843c4b1e8/page/UqEiC
+
 ## RemoteConfig
 
 It is possible to configure certain aspects of the SDK using Firebase Remote Config.
