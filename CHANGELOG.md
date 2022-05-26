@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.9.6](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.9.5...ixigo-sdk-3.9.6) (2022-05-26)
+
+
+### Bug Fixes
+
+* change name of ga tracker xml to avoid conflict ([603641c](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/603641c1f21ddd1d23ec2205761ae76a8f8ae621))
+
 ### [3.9.5](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.9.4...ixigo-sdk-3.9.5) (2022-05-20)
 
 
