@@ -47,7 +47,7 @@ abstract class SdkSingleton<T>(private val sdkName: String) {
       context: Context,
       clientAnalyticsProvider: AnalyticsProvider?
   ): AnalyticsProvider {
-    val tracker = GoogleAnalytics.getInstance(context).newTracker(R.xml.global_tracker)
+    val tracker = GoogleAnalytics.getInstance(context).newTracker(R.xml.ixigosdk_tracker)
     val googleAnalyticsProvider = GoogleAnalyticsProvider(tracker)
     return ChainAnalyticsProvider(googleAnalyticsProvider, clientAnalyticsProvider)
   }
