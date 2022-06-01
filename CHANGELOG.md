@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.9.7](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.9.6...ixigo-sdk-3.9.7) (2022-06-01)
+
+
+### Bug Fixes
+
+* add Keep annotation to configUI classes ([fe626c5](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/fe626c519db52a1c0fa48794e6e2d6d094f100d6))
+
 ### [3.9.6](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.9.5...ixigo-sdk-3.9.6) (2022-05-26)
 
 
