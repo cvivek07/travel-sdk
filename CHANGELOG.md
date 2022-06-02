@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.9.8](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.9.7...ixigo-sdk-3.9.8) (2022-06-02)
+
+
+### Bug Fixes
+
+* do not finish activity if we are embedding a fragment when back is pressed ([3d1ab7f](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/3d1ab7f3b89d5e95d4b0448d615e58e491546f7b))
+* make sure we save uiConfig state for url fragment changes ([bf0b2e7](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/bf0b2e7e3ec4ea7c5177c8f72e8d3de20793f21e))
+
 ### [3.9.7](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.9.6...ixigo-sdk-3.9.7) (2022-06-01)
 
 
