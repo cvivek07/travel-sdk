@@ -191,6 +191,11 @@ class WebViewFragment : Fragment(), UIConfigurable, UrlLoader {
     override fun doUpdateVisitedHistory(view: WebView?, url: String?, isReload: Boolean) {
       super.doUpdateVisitedHistory(view, url, isReload)
       updateCustombackPressHandler()
+
+      url?.let {
+        val uiConfig = urlState.uiConfigForUrl(url) ?: defaultUIConfig
+        configUI(uiConfig)
+      }
     }
 
     override fun onPageFinished(view: WebView?, url: String?) {
@@ -206,11 +211,6 @@ class WebViewFragment : Fragment(), UIConfigurable, UrlLoader {
 
       for (listener in listeners) {
         listener.onUrlLoadStart(this@WebViewFragment, url)
-      }
-
-      url?.let {
-        val uiConfig = urlState.uiConfigForUrl(url) ?: defaultUIConfig
-        configUI(uiConfig)
       }
     }
 

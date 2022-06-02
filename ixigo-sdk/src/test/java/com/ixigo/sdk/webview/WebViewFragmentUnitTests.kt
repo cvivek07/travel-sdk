@@ -394,7 +394,7 @@ class WebViewFragmentUnitTests {
 
   @Test
   fun `test uiConfig is updated`() {
-    shadowWebView.webViewClient.onPageStarted(fragment.webView, initialPageData.url, null)
+    shadowWebView.webViewClient.doUpdateVisitedHistory(fragment.webView, initialPageData.url, false)
     val defaultUIConfig = UIConfig(backNavigationMode = BackNavigationMode.Enabled())
     assertEquals("uiConfig has default value", defaultUIConfig, fragment.uiConfig)
 
@@ -404,10 +404,10 @@ class WebViewFragmentUnitTests {
 
     val nextUrl = "https://www.ixigo.com/nextUrl"
     fragment.webView.loadUrl(nextUrl)
-    shadowWebView.webViewClient.onPageStarted(fragment.webView, nextUrl, null)
+    shadowWebView.webViewClient.doUpdateVisitedHistory(fragment.webView, nextUrl, false)
     assertEquals("uiConfig is back to default value", defaultUIConfig, fragment.uiConfig)
 
-    shadowWebView.webViewClient.onPageStarted(fragment.webView, initialPageData.url, null)
+    shadowWebView.webViewClient.doUpdateVisitedHistory(fragment.webView, initialPageData.url, false)
     assertEquals("uiConfig resets previously set value", updatedUIConfig, fragment.uiConfig)
   }
 
