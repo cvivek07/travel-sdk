@@ -137,23 +137,6 @@ class WebViewFragmentUnitTests {
   }
 
   @Test
-  fun `test that back button navigates back in WebView when possible`() {
-    val url = "https://www.ixigo.com/page2"
-    shadowWebView.pushEntryToHistory(url)
-    shadowWebView.webViewClient.doUpdateVisitedHistory(fragment.webView, url, false)
-    assertEquals(0, shadowWebView.goBackInvocations)
-    fragmentActivity.onBackPressed()
-    assertEquals(1, shadowWebView.goBackInvocations)
-  }
-
-  @Test
-  fun `test that back button finishes activity if WebView can not go back`() {
-    fragmentActivity.onBackPressed()
-    assertEquals(0, shadowWebView.goBackInvocations)
-    verify(delegate).onQuit()
-  }
-
-  @Test
   fun `test that initial loadingView status is Loading`() {
     assertEquals(Loading(referrer = initialPageData.url), fragment.loadableView.status)
   }
@@ -426,28 +409,6 @@ class WebViewFragmentUnitTests {
 
     shadowWebView.webViewClient.onPageStarted(fragment.webView, initialPageData.url, null)
     assertEquals("uiConfig resets previously set value", updatedUIConfig, fragment.uiConfig)
-  }
-
-  @Test
-  fun `test that backNavigationModeHandler calls IxigoSDK to handle back navigation and does not exit if the handler returns true`() {
-    val uiConfig = UIConfig(backNavigationMode = BackNavigationMode.Handler())
-    fragment.configUI(uiConfig)
-    val expectedJsScript = "javascript:IxigoSDK.ui.handleBackNavigation()"
-    shadowWebView.jsCallbacks[expectedJsScript] = true.toString()
-    fragmentActivity.onBackPressed()
-    assertEquals(expectedJsScript, shadowWebView.lastEvaluatedJavascript)
-    verify(delegate, times(0)).onQuit()
-  }
-
-  @Test
-  fun `test that backNavigationModeHandler calls IxigoSDK to handle back navigation and exits if the handler returns false`() {
-    val uiConfig = UIConfig(backNavigationMode = BackNavigationMode.Handler())
-    fragment.configUI(uiConfig)
-    val expectedJsScript = "javascript:IxigoSDK.ui.handleBackNavigation()"
-    shadowWebView.jsCallbacks[expectedJsScript] = false.toString()
-    fragmentActivity.onBackPressed()
-    assertEquals(expectedJsScript, shadowWebView.lastEvaluatedJavascript)
-    verify(delegate).onQuit()
   }
 
   private fun assertLoadableViewStatus(status: Status) {

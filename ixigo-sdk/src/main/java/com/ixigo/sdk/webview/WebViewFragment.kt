@@ -63,8 +63,6 @@ class WebViewFragment : Fragment(), UIConfigurable, UrlLoader {
       // No action if Payment failed
       paymentResult.result.onSuccess { loadUrl(it.nextUrl) }
     }
-
-    requireActivity().onBackPressedDispatcher.addCallback(webViewBackPressHandler)
   }
 
   @SuppressLint("SetJavaScriptEnabled")
@@ -123,6 +121,7 @@ class WebViewFragment : Fragment(), UIConfigurable, UrlLoader {
   override fun configUI(uiConfig: UIConfig) {
     this.uiConfig = uiConfig
     webView.url?.let { urlState.updateUIConfig(it, uiConfig) }
+    updateCustombackPressHandler()
   }
 
   companion object {
@@ -130,7 +129,7 @@ class WebViewFragment : Fragment(), UIConfigurable, UrlLoader {
     const val CONFIG = "WebViewFragmentConfig"
   }
 
-  private val webViewBackPressHandler by lazy {
+  internal val webViewBackPressHandler by lazy {
     object : OnBackPressedCallback(true) {
       override fun handleOnBackPressed() {
         when (uiConfig.backNavigationMode) {
@@ -148,6 +147,20 @@ class WebViewFragment : Fragment(), UIConfigurable, UrlLoader {
         }
       }
     }
+  }
+
+  /**
+   * Only enable custom back navigation if:
+   * - Mode is Disabled or Handler
+   * - Mode is Enabled and we can goBack.
+   */
+  private fun updateCustombackPressHandler() {
+    val customBackPressEnabled =
+        when (uiConfig.backNavigationMode) {
+          is BackNavigationMode.Enabled -> webView.canGoBack()
+          else -> true
+        }
+    webViewBackPressHandler.isEnabled = customBackPressEnabled
   }
 
   private fun handleBackNavigation() {
@@ -174,6 +187,11 @@ class WebViewFragment : Fragment(), UIConfigurable, UrlLoader {
   }
 
   private inner class CustomWebViewClient : WebViewClient() {
+
+    override fun doUpdateVisitedHistory(view: WebView?, url: String?, isReload: Boolean) {
+      super.doUpdateVisitedHistory(view, url, isReload)
+      updateCustombackPressHandler()
+    }
 
     override fun onPageFinished(view: WebView?, url: String?) {
       super.onPageFinished(view, url)

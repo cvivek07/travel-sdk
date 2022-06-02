@@ -27,11 +27,13 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.kotlin.mock
+import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 
 @RunWith(AndroidJUnit4::class)
+@Config(shadows = [CustomShadowWebview::class])
 class WebActivityTest {
 
   private val initialPageData =
@@ -164,6 +166,60 @@ class WebActivityTest {
       activity.loadUrl(url)
 
       assertEquals(url, shadowOf(webViewFragment.webView).lastLoadedUrl)
+    }
+  }
+
+  @Test
+  fun `test that backNavigationModeHandler calls IxigoSDK to handle back navigation and does not exit if the handler returns true`() {
+    withWebActivity { webActivity ->
+      val webViewFragment = webActivity.supportFragmentManager.fragments[0] as WebViewFragment
+      val uiConfig = UIConfig(backNavigationMode = BackNavigationMode.Handler())
+      webViewFragment.configUI(uiConfig)
+      val shadowWebView = shadowOf(webViewFragment.webView) as CustomShadowWebview
+      val expectedJsScript = "javascript:IxigoSDK.ui.handleBackNavigation()"
+      shadowWebView.jsCallbacks[expectedJsScript] = true.toString()
+      webActivity.onBackPressed()
+      assertEquals(expectedJsScript, shadowWebView.lastEvaluatedJavascript)
+      assertFalse(webActivity.isFinishing)
+    }
+  }
+
+  @Test
+  fun `test that backNavigationModeHandler calls IxigoSDK to handle back navigation and exits if the handler returns false`() {
+    withWebActivity { webActivity ->
+      val webViewFragment = webActivity.supportFragmentManager.fragments[0] as WebViewFragment
+      val uiConfig = UIConfig(backNavigationMode = BackNavigationMode.Handler())
+      webViewFragment.configUI(uiConfig)
+      val shadowWebView = shadowOf(webViewFragment.webView) as CustomShadowWebview
+      val expectedJsScript = "javascript:IxigoSDK.ui.handleBackNavigation()"
+      shadowWebView.jsCallbacks[expectedJsScript] = false.toString()
+      webActivity.onBackPressed()
+      assertEquals(expectedJsScript, shadowWebView.lastEvaluatedJavascript)
+      assertTrue(webActivity.isFinishing)
+    }
+  }
+
+  @Test
+  fun `test that back button navigates back in WebView when possible`() {
+    withWebActivity { webActivity ->
+      val webViewFragment = webActivity.supportFragmentManager.fragments[0] as WebViewFragment
+      val shadowWebView = shadowOf(webViewFragment.webView) as CustomShadowWebview
+      shadowWebView.pushEntryToHistory("https://www.ixigo.com/page1")
+      val newUrl = "https://www.ixigo.com/page2"
+      shadowWebView.pushEntryToHistory(newUrl)
+      webViewFragment.webView.webViewClient.doUpdateVisitedHistory(
+          webViewFragment.webView, newUrl, false)
+      assertEquals(0, shadowWebView.goBackInvocations)
+      webActivity.onBackPressed()
+      assertEquals(1, shadowWebView.goBackInvocations)
+    }
+  }
+
+  @Test
+  fun `test that back button finishes activity if WebView can not go back`() {
+    withWebActivity { webActivity ->
+      webActivity.onBackPressed()
+      assertTrue(webActivity.isFinishing)
     }
   }
 

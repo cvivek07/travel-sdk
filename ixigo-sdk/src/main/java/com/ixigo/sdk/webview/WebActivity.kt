@@ -38,6 +38,8 @@ class WebActivity : AppCompatActivity(), WebViewDelegate, UrlLoader {
     configureTopExitBar()
 
     supportFragmentManager.executePendingTransactions()
+
+    onBackPressedDispatcher.addCallback(webViewFragment.webViewBackPressHandler)
   }
 
   private val usingTopExitBar: Boolean by lazy {
