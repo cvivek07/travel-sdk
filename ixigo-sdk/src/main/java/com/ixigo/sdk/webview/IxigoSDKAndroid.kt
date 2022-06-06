@@ -16,6 +16,7 @@ import com.ixigo.sdk.webview.BackNavigationMode
 import com.ixigo.sdk.webview.JsInterface
 import com.ixigo.sdk.webview.UIConfig
 import com.ixigo.sdk.webview.WebViewFragment
+import com.squareup.moshi.Json
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -25,7 +26,8 @@ internal class IxigoSDKAndroid(
     private val analyticsProvider: AnalyticsProvider,
     private val fragment: WebViewFragment,
     private val otpSmsRetriever: OtpSmsRetriever = OtpSmsRetriever(fragment.requireActivity()),
-    private val partnerTokenProvider: PartnerTokenProvider = IxigoSDK.instance.partnerTokenProvider
+    private val partnerTokenProvider: PartnerTokenProvider = IxigoSDK.instance.partnerTokenProvider,
+    private val customChromeTabsHelper: CustomChromeTabsHelper = CustomChromeTabsHelper()
 ) : JsInterface, ActivityResultHandler {
 
   override val name: String
@@ -47,6 +49,8 @@ internal class IxigoSDKAndroid(
   private val fetchPartnerTokenResponseAdapter by lazy {
     moshi.adapter(FetchPartnerTokenResponse::class.java)
   }
+
+  private val openWindowOptionsAdapter by lazy { moshi.adapter(OpenWindowOptions::class.java) }
 
   @JavascriptInterface
   fun logEvent(jsonInput: String): Boolean {
@@ -80,6 +84,25 @@ internal class IxigoSDKAndroid(
               replaceNativePromisePayload(success, ReadSmsOutput(it.value), readSmsOutputAdapter),
               fragment)
         }
+      }
+    }
+  }
+
+  @JavascriptInterface
+  fun openWindow(url: String, optionsString: String) {
+    val openWindowOptions =
+        try {
+          openWindowOptionsAdapter.fromJson(optionsString)
+              ?: throw Exception("Error parsing optionsString=$optionsString")
+        } catch (e: Exception) {
+          Timber.e("Error parsing optionsString=$optionsString. Using default options.")
+          OpenWindowOptions()
+        }
+    val activity = fragment.requireActivity()
+    activity.runOnUiThread {
+      when (openWindowOptions.browser) {
+        BrowserType.WEBVIEW -> IxigoSDK.instance.launchWebActivity(activity, url)
+        BrowserType.NATIVE -> customChromeTabsHelper.openUrl(activity, url)
       }
     }
   }
@@ -147,6 +170,14 @@ internal class IxigoSDKAndroid(
 
   @Keep data class FetchPartnerTokenInput(val partnerId: String)
   @Keep data class FetchPartnerTokenResponse(val authToken: String)
+
+  @Keep data class OpenWindowOptions(val browser: BrowserType = BrowserType.WEBVIEW)
+
+  @Keep
+  enum class BrowserType {
+    @Json(name = "native") NATIVE,
+    @Json(name = "browser") WEBVIEW
+  }
 
   override fun handle(requestCode: Int, resultCode: Int, data: Intent?): Boolean =
       otpSmsRetriever.handle(requestCode, resultCode, data)

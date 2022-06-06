@@ -6,17 +6,21 @@ import android.os.Bundle
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
+import com.ixigo.sdk.auth.EmptyPartnerTokenProvider
 import com.ixigo.sdk.auth.PartnerToken
 import com.ixigo.sdk.auth.PartnerTokenProvider
 import com.ixigo.sdk.auth.test.FakePartnerTokenProvider
 import com.ixigo.sdk.bus.BusSDK
+import com.ixigo.sdk.common.CustomChromeTabsHelper
 import com.ixigo.sdk.common.Err
 import com.ixigo.sdk.common.Ok
 import com.ixigo.sdk.sms.OtpSmsRetriever
 import com.ixigo.sdk.sms.OtpSmsRetrieverCallback
 import com.ixigo.sdk.sms.OtpSmsRetrieverError
+import com.ixigo.sdk.test.TestData.FakeAppInfo
 import com.ixigo.sdk.test.initializeTestIxigoSDK
 import org.junit.Assert.*
 import org.junit.Before
@@ -43,6 +47,7 @@ class IxigoSDKAndroidTests {
   @Mock private lateinit var mockAnalyticsProvider: AnalyticsProvider
   @Mock private lateinit var mockOtpSmsRetriever: OtpSmsRetriever
   @Mock private lateinit var busSDK: BusSDK
+  @Mock private lateinit var mockCustomChromeTabsHelper: CustomChromeTabsHelper
   private lateinit var fakePartnerTokenProvider: FakePartnerTokenProvider
 
   @Before
@@ -59,7 +64,12 @@ class IxigoSDKAndroidTests {
       shadowWebView = shadowOf(fragment.webView)
       fakePartnerTokenProvider = FakePartnerTokenProvider()
       ixigoSDKAndroid =
-          IxigoSDKAndroid(mockAnalyticsProvider, it, mockOtpSmsRetriever, fakePartnerTokenProvider)
+          IxigoSDKAndroid(
+              mockAnalyticsProvider,
+              it,
+              mockOtpSmsRetriever,
+              fakePartnerTokenProvider,
+              mockCustomChromeTabsHelper)
     }
   }
 
@@ -213,5 +223,42 @@ class IxigoSDKAndroidTests {
     assertEquals(
         """error:{\"errorCode\":\"InvalidArgumentError\",\"errorMessage\":\"unable to parse input={\\n}\"}""",
         shadowWebView.lastEvaluatedJavascript)
+  }
+
+  @Test
+  fun `openWindow works when specifying webview browser`() {
+    val mockIxigoSDK: IxigoSDK = mock {
+      on { appInfo } doReturn FakeAppInfo
+      on { partnerTokenProvider } doReturn EmptyPartnerTokenProvider
+    }
+    IxigoSDK.replaceInstance(mockIxigoSDK)
+    scenario.onFragment { fragment ->
+      val url = "https://www.ixigo.com/page1"
+      ixigoSDKAndroid.openWindow(url, """{"browser": "webview"}""")
+      verify(mockIxigoSDK, times(1)).launchWebActivity(fragment.requireActivity(), url)
+    }
+  }
+
+  @Test
+  fun `openWindow works uses webview when specifying bogus data`() {
+    val mockIxigoSDK: IxigoSDK = mock {
+      on { appInfo } doReturn FakeAppInfo
+      on { partnerTokenProvider } doReturn EmptyPartnerTokenProvider
+    }
+    IxigoSDK.replaceInstance(mockIxigoSDK)
+    scenario.onFragment { fragment ->
+      val url = "https://www.ixigo.com/page1"
+      ixigoSDKAndroid.openWindow(url, """{"browser": "bogus"}""")
+      verify(mockIxigoSDK, times(1)).launchWebActivity(fragment.requireActivity(), url)
+    }
+  }
+
+  @Test
+  fun `openWindow uses customChromeTabs when specifying native brower`() {
+    scenario.onFragment { fragment ->
+      val url = "https://www.ixigo.com/page1"
+      ixigoSDKAndroid.openWindow(url, """{"browser": "native"}""")
+      verify(mockCustomChromeTabsHelper).openUrl(fragment.requireActivity(), url)
+    }
   }
 }
