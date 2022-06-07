@@ -254,11 +254,25 @@ class IxigoSDKAndroidTests {
   }
 
   @Test
-  fun `openWindow uses customChromeTabs when specifying native brower`() {
+  fun `openWindow uses customChromeTabs when specifying native browser`() {
     scenario.onFragment { fragment ->
       val url = "https://www.ixigo.com/page1"
       ixigoSDKAndroid.openWindow(url, """{"browser": "native"}""")
       verify(mockCustomChromeTabsHelper).openUrl(fragment.requireActivity(), url)
+    }
+  }
+
+  @Test
+  fun `openWindow uses webView when options is null`() {
+    val mockIxigoSDK: IxigoSDK = mock {
+      on { appInfo } doReturn FakeAppInfo
+      on { partnerTokenProvider } doReturn EmptyPartnerTokenProvider
+    }
+    IxigoSDK.replaceInstance(mockIxigoSDK)
+    scenario.onFragment { fragment ->
+      val url = "https://www.ixigo.com/page1"
+      ixigoSDKAndroid.openWindow(url, null)
+      verify(mockIxigoSDK, times(1)).launchWebActivity(fragment.requireActivity(), url)
     }
   }
 }

@@ -89,7 +89,7 @@ internal class IxigoSDKAndroid(
   }
 
   @JavascriptInterface
-  fun openWindow(url: String, optionsString: String) {
+  fun openWindow(url: String, optionsString: String?) {
     val openWindowOptions =
         try {
           openWindowOptionsAdapter.fromJson(optionsString)
