@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.10.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.9.8...ixigo-sdk-3.10.0) (2022-06-08)
+
+
+### Features
+
+* add support for opening a url in customchrometabs ([2ddc621](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/2ddc621e9f9d1d6ce9a086a269616f36c17ddbdf))
+
+
+### Bug Fixes
+
+* allow openWindow with null options ([b19ce88](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/b19ce88157730e523f4275fc1b942ff3245ee2ea))
+
 ### [3.9.8](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.9.7...ixigo-sdk-3.9.8) (2022-06-02)
 
 
