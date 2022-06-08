@@ -1,8 +1,8 @@
-# Development
+[[toc]]
 
-## Setup development environment
+## [SDK Architecture](https://ixigodev.atlassian.net/wiki/spaces/~922755443/pages/2793930759/ixigo+SDK+architecture)
 
-# Development
+You can read about design and architecture of the sdk [here](https://ixigodev.atlassian.net/wiki/spaces/~922755443/pages/2793930759/ixigo+SDK+architecture)
 
 ## Setup development environment
 
