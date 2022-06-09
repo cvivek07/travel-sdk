@@ -129,6 +129,7 @@ class IxiWebView(
   }
 }
 
+@Suppress("unused")
 private class PropertiesAdapter {
   @ToJson
   @Keep

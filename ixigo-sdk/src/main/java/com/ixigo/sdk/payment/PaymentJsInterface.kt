@@ -259,6 +259,7 @@ internal class PaymentJsInterface(
   }
 
   @JavascriptInterface
+  @Suppress("UNUSED_PARAMETER")
   fun scanCreditCard(success: String, error: String) {
     returnError(error, notAvailableError())
   }

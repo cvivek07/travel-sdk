@@ -59,7 +59,7 @@ internal class IxigoSDKAndroid(
       Timber.e("Error parsing logEvent json=$jsonInput")
       return false
     }
-    fragment?.activity?.runOnUiThread {
+    fragment.activity?.runOnUiThread {
       analyticsProvider.logEvent(
           Event(
               name = logEventInput.name,

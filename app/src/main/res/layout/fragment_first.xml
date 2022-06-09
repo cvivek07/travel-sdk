@@ -92,7 +92,7 @@
                             android:id="@+id/exitBarSwitch"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
-                            android:checked="true"
+                            android:checked="false"
                             android:text="Enable Exit Bar"/>
 
                         <com.google.android.material.switchmaterial.SwitchMaterial

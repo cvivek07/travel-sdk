@@ -11,7 +11,7 @@ import android.net.Uri
  */
 data class Config(
     val apiBaseUrl: String = "https://www.ixigo.com/",
-    val enableExitBar: Boolean = true
+    val enableExitBar: Boolean = false
 ) {
 
   fun createUrl(path: String?, parameters: Map<String, String> = mapOf()): String {

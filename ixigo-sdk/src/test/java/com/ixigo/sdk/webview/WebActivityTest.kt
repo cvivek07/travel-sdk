@@ -41,9 +41,7 @@ class WebActivityTest {
 
   @Before
   fun setup() {
-    initializeTestIxigoSDK(
-        config = com.ixigo.sdk.Config(enableExitBar = false),
-        theme = defaultTheme(getApplicationContext()))
+    initializeTestIxigoSDK(theme = defaultTheme(getApplicationContext()))
   }
 
   @Test

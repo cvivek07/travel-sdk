@@ -11,6 +11,7 @@ class RemoteConfigFirebase(private val remoteConfig: FirebaseRemoteConfig) : Rem
 
   private val moshi by lazy { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
 
+  @Suppress("UNCHECKED_CAST")
   override fun <T : Any> get(key: String, defaultValue: T, clazz: KClass<T>): T {
     return when (defaultValue) {
       is String -> remoteConfig.getString(key).takeIf { it != DEFAULT_VALUE_FOR_STRING } as? T
@@ -20,7 +21,7 @@ class RemoteConfigFirebase(private val remoteConfig: FirebaseRemoteConfig) : Rem
       else -> {
         val stringValue = remoteConfig.getString(key)
         try {
-          moshi.adapter(clazz.java).fromJson(stringValue) as? T
+          moshi.adapter(clazz.java).fromJson(stringValue)
         } catch (e: Exception) {
           Timber.e(e, "Error deserializing json=$stringValue")
           null
