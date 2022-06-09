@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.10.1](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.10.0...ixigo-sdk-3.10.1) (2022-06-09)
+
+
+### Bug Fixes
+
+* disable exitBar by default ([cf10440](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/cf10440ef92dcf756629615748924d20ba506f88))
+
 ## [3.10.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.9.8...ixigo-sdk-3.10.0) (2022-06-08)
 
 
