@@ -143,14 +143,18 @@ class BusSDK(internal val config: Config) : JsInterfaceProvider {
     }
 
     private fun getPwaBaseUrl(config: BusConfig): String {
+      val path = getPwaBasePath()
+      return when (config) {
+        BusConfig.PROD -> "https://www.abhibus.com/$path"
+        BusConfig.STAGING -> "https://demo.abhibus.com/$path"
+      }
+    }
+
+    private fun getPwaBasePath(): String {
       val clientId = IxigoSDK.instance.appInfo.clientId
       return when (clientId) {
-        "iximatr", "iximaad" -> {
-          when (config) {
-            BusConfig.PROD -> "https://www.abhibus.com/ixigopwa"
-            BusConfig.STAGING -> "https://demo.abhibus.com/ixigopwa"
-          }
-        }
+        "iximatr", "iximaad" -> "ixigopwa"
+        "confirmtckt" -> "confirmtkt"
         else -> throw IllegalArgumentException("Unsupported clientId=$clientId")
       }
     }

@@ -70,6 +70,11 @@ class BusSDKTests {
   }
 
   @Test
+  fun `test bus home for confirmTkt`() {
+    testBusHome(clientId = "confirmtckt", "https://www.abhibus.com/confirmtkt")
+  }
+
+  @Test
   fun `test bus home for ixigo trains with Funnel Config`() {
     testBusHome(
         clientId = "iximatr",
