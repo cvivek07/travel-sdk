@@ -26,6 +26,33 @@ Most of the development should be done agains Unit Tets and against our Sample A
 
 ![](images/sample_app.png)
 
+### Development inside other Apps
+
+If you want to modify ixigo-sdk and test it quickly inside other Apps, we recommend publishing ixigo-sdk to your maven local repository and configure your app to read from maven local repository.
+
+To push to your local maven repository:
+
+**Release**
+```shell
+./gradlew ixigo-sdk:publishReleasePublicationToMavenLocal
+```
+
+**Snapshot**
+```shell
+./gradlew ixigo-sdk:publishSnapshotPublicationToMavenLocal
+```
+
+Once it is pushed in your local maven repository, configure your App to use `mavenLocal()` giving it a higher priority than `ixigo-sdk` repository
+
+```groovy
+repositories {
+  mavenLocal()
+  ...
+  // ixigo-sdk repository
+}
+```
+
+
 ## Code Format
 
 We use [ktfmt](https://github.com/facebookincubator/ktfmt) to format our code.
