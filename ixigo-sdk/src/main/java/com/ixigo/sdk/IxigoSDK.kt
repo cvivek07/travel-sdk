@@ -148,7 +148,7 @@ internal constructor(
    * @param context
    * @param url url to open the activity
    */
-  internal fun launchWebActivity(context: Context, url: String, config: FunnelConfig? = null) {
+  fun launchWebActivity(context: Context, url: String, config: FunnelConfig? = null) {
     val intent = Intent(context, WebActivity::class.java)
     intent.putExtra(WebViewFragment.INITIAL_PAGE_DATA_ARGS, InitialPageData(url, getHeaders(url)))
     config?.let { intent.putExtra(WebViewFragment.CONFIG, it) }
