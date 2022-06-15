@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.11.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.10.1...ixigo-sdk-3.11.0) (2022-06-15)
+
+
+### Features
+
+* **bus:** allow support for confirmTkt BusSDK ([b403d3e](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/b403d3ec05a2410785e3087cdd77a7fb2db56ddc))
+
 ### [3.10.1](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.10.0...ixigo-sdk-3.10.1) (2022-06-09)
 
 
