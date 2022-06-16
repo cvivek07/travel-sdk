@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.12.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.11.0...ixigo-sdk-3.12.0) (2022-06-16)
+
+
+### Features
+
+* allow passing headers to launchWebActivity ([c47432f](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/c47432f031a3468bab26f32a5eae30671c2e37b0))
+
 ## [3.11.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.10.1...ixigo-sdk-3.11.0) (2022-06-15)
 
 
