@@ -58,6 +58,17 @@ class IxigoSDKTests {
   }
 
   @Test
+  fun `test launchWebActivity with headers`() {
+    initializeTestIxigoSDK()
+    val headers = mapOf("Authorization" to "TOKEN", "clientId" to "CustomClientId")
+    testLaunchActivity(
+        "https://www.ixigo.com/page",
+        IxigoSDK.instance,
+        headers = headers,
+        expectedHeaders = headers + expectedHeaders(IxigoSDK.instance))
+  }
+
+  @Test
   fun `test init sends correct analytics event`() {
     val analyticsProvider: AnalyticsProvider = mock()
     val context: Context = mock()
@@ -177,11 +188,16 @@ class IxigoSDKTests {
   private fun testLaunchActivity(
       url: String,
       ixigoSDK: IxigoSDK,
+      headers: Map<String, String>? = null,
       expectedHeaders: Map<String, String> = expectedHeaders(ixigoSDK)
   ) {
     scenario = launchActivity()
     scenario.onActivity { activity ->
-      ixigoSDK.launchWebActivity(activity, url)
+      if (headers != null) {
+        ixigoSDK.launchWebActivity(activity, url, headers = headers)
+      } else {
+        ixigoSDK.launchWebActivity(activity, url)
+      }
       assertLaunchedIntent(activity, url, expectedHeaders)
     }
   }
