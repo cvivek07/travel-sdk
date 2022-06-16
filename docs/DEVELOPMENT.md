@@ -9,7 +9,8 @@ You can read about design and architecture of the sdk [here](https://ixigodev.at
 1. Add a personal Gitlab Token as an environment variable called `NPM_TOKEN`
    1. This is needed to use [Gitlab NPM Registry](https://docs.gitlab.com/ee/user/packages/npm_registry/) for some custom npm dependencies needed for build process.
    1. [Create the personal token](https://docs.gitlab.com/ee/user/profile/personal_access_tokens.html#create-a-personal-access-token)
-   1. Edit your `bash_profile` file (or `.zprofile` or which ever shell you use) and add `export NPM_TOKEN=<GITLAB_PERSONAL_TOKEN>`
+   1. Add it as an environment variable: `export NPM_TOKEN=<GITLAB_PERSONAL_TOKEN>`
+   1. Edit your `bash_profile` file (or `.zprofile` or which ever shell you use) and add `export NPM_TOKEN=<GITLAB_PERSONAL_TOKEN>` to make sure the environment variable is added in every new shell session.
 1. Install [yarn](https://classic.yarnpkg.com/lang/en/)
    1. I used homebrew: `brew install yarn`
 1. Clone the repository and initialize
