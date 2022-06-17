@@ -9,6 +9,7 @@ import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.test.FakeAnalyticsProvider
 import com.ixigo.sdk.auth.EmptyPartnerTokenProvider
 import com.ixigo.sdk.auth.PartnerTokenProvider
+import com.ixigo.sdk.auth.SSOAuthProvider
 import com.ixigo.sdk.payment.*
 import com.ixigo.sdk.remoteConfig.FakeRemoteConfigProvider
 import com.ixigo.sdk.remoteConfig.RemoteConfigProvider
@@ -46,8 +47,14 @@ internal fun initializeTestIxigoSDK(
           remoteConfigProvider = FakeRemoteConfigProvider()))
 }
 
-internal fun initializePaymentSDK() {
-  PaymentSDK.replaceInstance(
-      PaymentSDK(
-          PaymentConfig(juspayConfig = JuspayConfig(environment = JusPayEnvironment.PRODUCTION))))
+internal fun initializePaymentSDK(ssoAuthProvider: SSOAuthProvider? = null) {
+  val config =
+      PaymentConfig(juspayConfig = JuspayConfig(environment = JusPayEnvironment.PRODUCTION))
+  val paymentSDK =
+      if (ssoAuthProvider == null) {
+        PaymentSDK(config)
+      } else {
+        PaymentSDK(config, ssoAuthProvider = ssoAuthProvider)
+      }
+  PaymentSDK.replaceInstance(paymentSDK)
 }

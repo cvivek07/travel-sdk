@@ -27,18 +27,23 @@ class PaymentSDKPaymentProvider : PaymentProvider {
         transactionId = transactionId,
         flowType = flowType,
         urlLoader = activity as? UrlLoader) {
-      val nextUrl =
+      val nextUrl: String? =
           when (it) {
             is Err -> {
               callback(Err(PaymentInternalError("Error processing payment")))
-              it.value.nextUrl
+              when (it.value) {
+                is ProcessPaymentNotLoginError -> null
+                is ProcessPaymentProcessingError -> {
+                  it.value.nextUrl
+                }
+              }
             }
             is Ok -> {
               callback(Ok(PaymentResponse(it.value.nextUrl)))
               it.value.nextUrl
             }
           }
-      IxigoSDK.instance.launchWebActivity(activity, nextUrl)
+      nextUrl?.let { IxigoSDK.instance.launchWebActivity(activity, it) }
     }
     return true
   }

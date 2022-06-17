@@ -12,14 +12,17 @@ import com.ixigo.sdk.Config
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
-import com.ixigo.sdk.auth.PartnerToken
-import com.ixigo.sdk.auth.PartnerTokenProvider
+import com.ixigo.sdk.auth.*
 import com.ixigo.sdk.auth.test.FakePartnerTokenProvider
+import com.ixigo.sdk.common.Err
+import com.ixigo.sdk.common.Ok
 import com.ixigo.sdk.test.assertLaunchedIntent
+import com.ixigo.sdk.test.defaultIntentHeaders
 import com.ixigo.sdk.test.initializePaymentSDK
 import com.ixigo.sdk.test.initializeTestIxigoSDK
 import com.ixigo.sdk.webview.*
 import org.junit.*
+import org.junit.Assert.*
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnit
@@ -36,6 +39,7 @@ class PaymentSDKTests {
 
   @Mock lateinit var mockAnalyticsProvider: AnalyticsProvider
   @Mock lateinit var urlLoader: UrlLoader
+  @Mock lateinit var ssoAuthProvider: SSOAuthProvider
 
   @Before
   fun setup() {
@@ -96,6 +100,27 @@ class PaymentSDKTests {
   }
 
   @Test
+  fun `test processPayment returns error if unable to get ixigo token`() {
+    initializeTestIxigoSDK(analyticsProvider = mockAnalyticsProvider)
+    initializePaymentSDK(ssoAuthProvider = ssoAuthProvider)
+
+    scenario.onActivity { activity ->
+      whenever(ssoAuthProvider.login(same(activity), eq(IxigoSDK.instance.appInfo.clientId), any()))
+          .then { invocation ->
+            val callback: AuthCallback = invocation.getArgument(2)
+            callback.invoke(Err(Error("errorMessage")))
+            true
+          }
+      var result: ProcessPaymentResult? = null
+      PaymentSDK.instance.processPayment(activity, transactionId = "transactionIdValue") {
+        result = it
+      }
+      assertEquals("errorMessage", (result as Err<ProcessPaymentNotLoginError>).value.error.message)
+      verifyNoInteractions(mockAnalyticsProvider)
+    }
+  }
+
+  @Test
   fun `test that PaymentJsInterface is added to Js Interfaces for ixigo url`() {
     testJsInterface(Config.ProdConfig.createUrl("testUrl")) { interfaces ->
       Assert.assertTrue(interfaces.any { (it as? PaymentJsInterface) != null })
@@ -146,11 +171,14 @@ class PaymentSDKTests {
         analyticsProvider = mockAnalyticsProvider,
         partnerTokenProvider =
             FakePartnerTokenProvider("iximatr", partnerToken?.let { PartnerToken(it) }))
-    initializePaymentSDK()
+    initializePaymentSDK(ssoAuthProvider = ssoAuthProvider)
     scenario.onActivity { activity ->
-      IxigoSDK.instance.partnerTokenProvider.fetchPartnerToken(
-          activity,
-          PartnerTokenProvider.Requester("iximatr", PartnerTokenProvider.RequesterType.CUSTOMER)) {}
+      whenever(ssoAuthProvider.login(same(activity), eq(IxigoSDK.instance.appInfo.clientId), any()))
+          .then {
+            val callback: AuthCallback = it.getArgument(2)
+            callback.invoke(Ok(AuthData(token = "token")))
+            true
+          }
       if (gatewayId != null) {
         if (flowType != null) {
           PaymentSDK.instance.processPayment(
@@ -181,10 +209,12 @@ class PaymentSDKTests {
               activity, transactionId = transactionId, config = funnelConfig, urlLoader = urlLoader)
         }
       }
+      val authHeaders = mapOf("Authorization" to "token")
       if (urlLoader != null) {
         verify(urlLoader).loadUrl(expectedUrl, expectedHeaders)
       } else {
-        assertLaunchedIntent(activity, expectedUrl)
+        assertLaunchedIntent(
+            activity, expectedUrl, expectedHeaders = defaultIntentHeaders + authHeaders)
       }
 
       verify(mockAnalyticsProvider).logEvent(Event.with(action = "paymentsStartHome"))

@@ -4,6 +4,9 @@ import android.os.Bundle
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.ixigo.sdk.auth.AuthCallback
+import com.ixigo.sdk.auth.AuthData
+import com.ixigo.sdk.auth.SSOAuthProvider
 import com.ixigo.sdk.common.Err
 import com.ixigo.sdk.common.NativePromiseError
 import com.ixigo.sdk.common.Ok
@@ -42,11 +45,12 @@ class PaymentJsInterfaceTests {
 
   @Mock internal lateinit var mockGatewayProvider: PaymentGatewayProvider
   @Mock internal lateinit var mockGateway: PaymentGateway
+  @Mock internal lateinit var ssoAuthProvider: SSOAuthProvider
 
   @Before
   fun setup() {
     initializeTestIxigoSDK()
-    initializePaymentSDK()
+    initializePaymentSDK(ssoAuthProvider = ssoAuthProvider)
     scenario =
         launchFragmentInContainer(
             Bundle().also {
@@ -61,6 +65,11 @@ class PaymentJsInterfaceTests {
       whenever(
               mockGatewayProvider.getPaymentGateway(eq("JUSPAY"), same(fragment.requireActivity())))
           .thenReturn(mockGateway)
+      whenever(ssoAuthProvider.login(any(), any(), any())).then {
+        val callback: AuthCallback = it.getArgument(2)
+        callback.invoke(Ok(AuthData("token")))
+        true
+      }
     }
   }
 
@@ -334,7 +343,7 @@ class PaymentJsInterfaceTests {
   fun `test finishPayment closes Funnel and calls processPayment for successful payment`() {
     val transactionId = "transactionIdValue"
     var processResult: ProcessPaymentResult? = null
-    PaymentSDK.instance.processPayment(fragment.requireContext(), transactionId) {
+    PaymentSDK.instance.processPayment(fragment.requireActivity(), transactionId) {
       processResult = it
     }
 
@@ -354,7 +363,7 @@ class PaymentJsInterfaceTests {
   fun `test finishPayment closes Funnel and calls processPayment for failed payment`() {
     val transactionId = "transactionIdValue"
     var processResult: ProcessPaymentResult? = null
-    PaymentSDK.instance.processPayment(fragment.requireContext(), transactionId) {
+    PaymentSDK.instance.processPayment(fragment.requireActivity(), transactionId) {
       processResult = it
     }
 
@@ -364,7 +373,7 @@ class PaymentJsInterfaceTests {
         "javascript:alert('success:TO_REPLACE_PAYLOAD')",
         "javascript:alert('error:TO_REPLACE_PAYLOAD')")
     verify(mockWebViewDelegate).onQuit()
-    assertEquals(Err(ProcessPaymentError(nextUrl)), processResult)
+    assertEquals(Err(ProcessPaymentProcessingError(nextUrl)), processResult)
     assertEquals(
         """javascript:alert('success:{\"handler\":\"NATIVE\"}')""",
         shadowWebView.lastEvaluatedJavascript)
@@ -374,7 +383,7 @@ class PaymentJsInterfaceTests {
   fun `test finishPayment does nothing if transactionId is unknown`() {
     val transactionId = "transactionIdValue"
     var processResult: ProcessPaymentResult? = null
-    PaymentSDK.instance.processPayment(fragment.requireContext(), transactionId) {
+    PaymentSDK.instance.processPayment(fragment.requireActivity(), transactionId) {
       processResult = it
     }
 

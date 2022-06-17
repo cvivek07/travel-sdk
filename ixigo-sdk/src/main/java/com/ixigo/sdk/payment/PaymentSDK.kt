@@ -1,15 +1,17 @@
 package com.ixigo.sdk.payment
 
-import android.content.Context
+import androidx.fragment.app.FragmentActivity
 import com.ixigo.sdk.BuildConfig
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.analytics.Event
+import com.ixigo.sdk.auth.SSOAuthProvider
 import com.ixigo.sdk.common.Err
 import com.ixigo.sdk.common.Ok
 import com.ixigo.sdk.common.Result
 import com.ixigo.sdk.common.SdkSingleton
 import com.ixigo.sdk.payment.data.FinishPaymentInput
 import com.ixigo.sdk.webview.*
+import timber.log.Timber
 
 /**
  * This is the main entrypoint to interact with Payments SDK.
@@ -19,12 +21,16 @@ import com.ixigo.sdk.webview.*
  * Before using it, you need to call [PaymentSDK.init(...)][init] once when you start-up your
  * Application.
  */
-class PaymentSDK(private val config: PaymentConfig) : JsInterfaceProvider {
+class PaymentSDK(
+    private val config: PaymentConfig,
+    private val ssoAuthProvider: SSOAuthProvider =
+        SSOAuthProvider(IxigoSDK.instance.partnerTokenProvider)
+) : JsInterfaceProvider {
 
   private val currentTransactions: MutableMap<String, ProcessPaymentCallback> = mutableMapOf()
 
   fun processPayment(
-      context: Context,
+      activity: FragmentActivity,
       transactionId: String,
       gatewayId: String = "1",
       flowType: String = "PAYMENT_SDK",
@@ -32,17 +38,28 @@ class PaymentSDK(private val config: PaymentConfig) : JsInterfaceProvider {
       urlLoader: UrlLoader? = null,
       callback: ProcessPaymentCallback? = null,
   ) {
-    callback?.let { currentTransactions[transactionId] = it }
-    with(IxigoSDK.instance) {
-      val url =
-          getPaymentOptionsUrl(
-              transactionId = transactionId, gatewayId = gatewayId, flowType = flowType)
-      if (urlLoader != null) {
-        urlLoader.loadUrl(url, getHeaders(url))
-      } else {
-        launchWebActivity(context, url, config)
+    ssoAuthProvider.login(activity, IxigoSDK.instance.appInfo.clientId) { authResult ->
+      when (authResult) {
+        is Err -> {
+          Timber.e("Unable to perform login before payment. Error=${authResult.value}")
+          callback?.let { it.invoke(Err(ProcessPaymentNotLoginError(authResult.value))) }
+        }
+        is Ok -> {
+          callback?.let { currentTransactions[transactionId] = it }
+          with(IxigoSDK.instance) {
+            val url =
+                getPaymentOptionsUrl(
+                    transactionId = transactionId, gatewayId = gatewayId, flowType = flowType)
+            val authHeaders = mapOf("Authorization" to authResult.value.token)
+            if (urlLoader != null) {
+              urlLoader.loadUrl(url, authHeaders + getHeaders(url))
+            } else {
+              launchWebActivity(activity, url, config, headers = authHeaders)
+            }
+            analyticsProvider.logEvent(Event.with(action = "paymentsStartHome"))
+          }
+        }
       }
-      analyticsProvider.logEvent(Event.with(action = "paymentsStartHome"))
     }
   }
 
@@ -65,7 +82,7 @@ class PaymentSDK(private val config: PaymentConfig) : JsInterfaceProvider {
         if (success) {
           callback(Ok(ProcessPaymentResponse(nextUrl)))
         } else {
-          callback(Err(ProcessPaymentError(nextUrl)))
+          callback(Err(ProcessPaymentProcessingError(nextUrl)))
         }
         currentTransactions.remove(transactionId)
         true
@@ -122,4 +139,8 @@ typealias ProcessPaymentResult = Result<ProcessPaymentResponse, ProcessPaymentEr
 
 data class ProcessPaymentResponse(val nextUrl: String)
 
-data class ProcessPaymentError(val nextUrl: String)
+sealed class ProcessPaymentError
+
+data class ProcessPaymentProcessingError(val nextUrl: String) : ProcessPaymentError()
+
+data class ProcessPaymentNotLoginError(val error: Error) : ProcessPaymentError()

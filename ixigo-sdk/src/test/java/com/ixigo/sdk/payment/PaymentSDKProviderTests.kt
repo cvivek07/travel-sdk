@@ -88,7 +88,7 @@ class PaymentSDKProviderTests {
             any()))
         .then {
           val callback = it.getArgument(6) as ProcessPaymentCallback
-          callback(Err(ProcessPaymentError(nextUrl)))
+          callback(Err(ProcessPaymentProcessingError(nextUrl)))
           Unit
         }
     var paymentResult: PaymentResult? = null
