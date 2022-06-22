@@ -181,7 +181,11 @@ class WebViewFragment : Fragment(), UIConfigurable, UrlLoader {
   private fun stoppedLoading(url: String = webView.url.toString()) {
     with(IxigoSDK.instance.uriIdlingResource) {
       if (!isIdleNow) {
-        IxigoSDK.instance.uriIdlingResource.endLoad(url)
+        try {
+          endLoad(url)
+        } catch (e: Exception) {
+          Timber.e(e)
+        }
       }
     }
   }
