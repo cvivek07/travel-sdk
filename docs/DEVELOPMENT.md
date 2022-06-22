@@ -21,6 +21,20 @@ You can read about design and architecture of the sdk [here](https://ixigodev.at
 1. Import `ixigo-android-sdk` project in Android Studio
 1. Run the sample App
 
+## Troubleshooting
+
+### 404 accessing npm package 
+
+```shell
+An unexpected error occurred: "https://git.ixigo.com/api/v4/projects/536/packages/npm/@ixigo-packages/ixigo-danger-common/-/@ixigo-packages/ixigo-danger-common-2.2.0.tgz: Request failed \"404 Not Found\"".
+```
+
+We use [Gitlab NPM Registry](https://docs.gitlab.com/ee/user/packages/npm_registry/) to host certain npm packages (`ixigo-danger-common` in the example error above). If you get a 404 when running `yarn setup` it is most likely that you don't have permission for a specific package. 
+
+Reach out to @miguel or use [HRMS](https://hrms.ixigo.com/) to request access to that repository. 
+
+Once you have access, run `yarn setup` again.
+
 ## Development
 
 Most of the development should be done agains Unit Tets and against our Sample App.
