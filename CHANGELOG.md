@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.12.2](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.12.1...ixigo-sdk-3.12.2) (2022-06-22)
+
+
+### Bug Fixes
+
+* do not crash if idlUrlResource is out of sync ([0fab35f](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/0fab35f9765abe7440dcd7f829b7b17da91e9606))
+
 ### [3.12.1](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.12.0...ixigo-sdk-3.12.1) (2022-06-17)
 
 
