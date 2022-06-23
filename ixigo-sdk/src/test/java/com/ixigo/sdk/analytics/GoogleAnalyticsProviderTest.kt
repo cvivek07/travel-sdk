@@ -3,6 +3,7 @@ package com.ixigo.sdk.analytics
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.android.gms.analytics.HitBuilders
 import com.google.android.gms.analytics.Tracker
+import com.ixigo.sdk.test.TestData.FakeAppInfo
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -14,10 +15,12 @@ class GoogleAnalyticsProviderTest {
   private lateinit var provider: GoogleAnalyticsProvider
   private lateinit var mockTracker: Tracker
 
+  private val sdkVersion = "sdkVersionValue"
+
   @Before
   fun setup() {
     mockTracker = mock()
-    provider = GoogleAnalyticsProvider(mockTracker)
+    provider = GoogleAnalyticsProvider(mockTracker, appInfo = FakeAppInfo, sdkVersion = sdkVersion)
   }
 
   @Test
@@ -27,8 +30,6 @@ class GoogleAnalyticsProviderTest {
             name = "actionValue",
             properties =
                 mapOf(
-                    "clientId" to "clientIdValue",
-                    "sdkVersion" to "sdkVersionValue",
                     "referrer" to "https://www.ixigo.com/mypage",
                     "label" to "labelValue",
                     "value" to "123"))
@@ -40,8 +41,8 @@ class GoogleAnalyticsProviderTest {
                 .setAction("actionValue")
                 .setValue(123)
                 .setLabel("labelValue")
-                .setCustomDimension(1, "clientIdValue")
-                .setCustomDimension(2, "sdkVersionValue")
+                .setCustomDimension(1, FakeAppInfo.clientId)
+                .setCustomDimension(2, sdkVersion)
                 .setCustomDimension(4, "https://www.ixigo.com/mypage")
                 .build())
   }

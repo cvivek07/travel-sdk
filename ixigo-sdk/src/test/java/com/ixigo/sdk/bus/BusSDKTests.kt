@@ -6,7 +6,6 @@ import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ixigo.sdk.AppInfo
-import com.ixigo.sdk.BuildConfig
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
@@ -34,20 +33,6 @@ class BusSDKTests {
   fun setup() {
     IxigoSDK.clearInstance()
     BusSDK.clearInstance()
-  }
-
-  @Test
-  fun `test init sends correct analytics event`() {
-    val mockAnalyticsProvider: AnalyticsProvider = mock()
-    initializeTestIxigoSDK(
-        analyticsProvider = mockAnalyticsProvider,
-        AppInfo(clientId = "iximatr", apiKey = "any", appVersion = 1, appName = "Ixigo Trains"))
-    BusSDK.init()
-    verify(mockAnalyticsProvider)
-        .logEvent(
-            Event(
-                name = "sdkInit",
-                properties = mapOf("sdk" to "bus", "sdkVersion" to BuildConfig.SDK_VERSION)))
   }
 
   @Test(expected = IllegalStateException::class)

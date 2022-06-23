@@ -14,7 +14,6 @@ import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.core.app.launchActivity
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ixigo.sdk.analytics.AnalyticsProvider
-import com.ixigo.sdk.analytics.Event
 import com.ixigo.sdk.auth.EmptyPartnerTokenProvider
 import com.ixigo.sdk.payment.DisabledPaymentProvider
 import com.ixigo.sdk.remoteConfig.FakeRemoteConfigProvider
@@ -66,30 +65,6 @@ class IxigoSDKTests {
         IxigoSDK.instance,
         headers = headers,
         expectedHeaders = headers + expectedHeaders(IxigoSDK.instance))
-  }
-
-  @Test
-  fun `test init sends correct analytics event`() {
-    val analyticsProvider: AnalyticsProvider = mock()
-    val context: Context = mock()
-    IxigoSDK.clearInstance()
-    val ixigoSDK =
-        IxigoSDK.internalInit(
-            context,
-            FakeAppInfo,
-            EmptyPartnerTokenProvider,
-            null,
-            analyticsProvider,
-            remoteConfigProvider = FakeRemoteConfigProvider())
-    assertEquals(FakeAppInfo, ixigoSDK.appInfo)
-    verify(analyticsProvider)
-        .logEvent(
-            Event(
-                name = "sdkInit",
-                properties =
-                    mapOf(
-                        "clientId" to FakeAppInfo.clientId,
-                        "sdkVersion" to BuildConfig.SDK_VERSION)))
   }
 
   @Test(expected = IllegalStateException::class)

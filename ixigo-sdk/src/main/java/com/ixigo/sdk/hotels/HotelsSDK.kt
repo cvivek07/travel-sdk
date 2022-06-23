@@ -1,9 +1,6 @@
 package com.ixigo.sdk.hotels
 
 import android.content.Context
-import com.ixigo.sdk.BuildConfig
-import com.ixigo.sdk.IxigoSDK
-import com.ixigo.sdk.analytics.Event
 import com.ixigo.sdk.common.*
 import com.ixigo.sdk.webview.*
 
@@ -39,10 +36,6 @@ class HotelsSDK(
       val instance = HotelsSDK()
       HotelsSDK.INSTANCE = instance
 
-      IxigoSDK.instance.analyticsProvider.logEvent(
-          Event(
-              name = "sdkInit",
-              properties = mapOf("sdk" to "hotels", "sdkVersion" to BuildConfig.SDK_VERSION)))
       return instance
     }
   }

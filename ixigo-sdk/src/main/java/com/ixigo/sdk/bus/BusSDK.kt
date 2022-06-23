@@ -134,11 +134,6 @@ class BusSDK(internal val config: Config) : JsInterfaceProvider {
       INSTANCE = instance
 
       IxigoSDK.instance.webViewConfig.addJsInterfaceProvider(instance)
-
-      IxigoSDK.instance.analyticsProvider.logEvent(
-          Event(
-              name = "sdkInit",
-              properties = mapOf("sdk" to "bus", "sdkVersion" to BuildConfig.SDK_VERSION)))
       return instance
     }
 

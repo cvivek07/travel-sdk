@@ -2,6 +2,7 @@ package com.ixigo.sdk.common
 
 import android.content.Context
 import com.google.android.gms.analytics.GoogleAnalytics
+import com.ixigo.sdk.AppInfo
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.IxigoSDK.Companion.init
 import com.ixigo.sdk.R
@@ -45,10 +46,11 @@ abstract class SdkSingleton<T>(private val sdkName: String) {
 
   internal fun commonAnalyticsProvider(
       context: Context,
+      appInfo: AppInfo,
       clientAnalyticsProvider: AnalyticsProvider?
   ): AnalyticsProvider {
     val tracker = GoogleAnalytics.getInstance(context).newTracker(R.xml.ixigosdk_tracker)
-    val googleAnalyticsProvider = GoogleAnalyticsProvider(tracker)
+    val googleAnalyticsProvider = GoogleAnalyticsProvider(tracker, appInfo = appInfo)
     return ChainAnalyticsProvider(googleAnalyticsProvider, clientAnalyticsProvider)
   }
 

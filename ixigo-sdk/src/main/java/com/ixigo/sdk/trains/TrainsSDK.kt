@@ -3,7 +3,6 @@ package com.ixigo.sdk.trains
 import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import com.ixigo.sdk.BuildConfig
 import com.ixigo.sdk.Config
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.analytics.AnalyticsProvider
@@ -72,11 +71,6 @@ class TrainsSDK(private val config: Config) : JsInterfaceProvider {
       INSTANCE = instance
 
       IxigoSDK.instance.webViewConfig.addJsInterfaceProvider(instance)
-
-      IxigoSDK.instance.analyticsProvider.logEvent(
-          Event(
-              name = "sdkInit",
-              properties = mapOf("sdk" to "trains", "sdkVersion" to BuildConfig.SDK_VERSION)))
       return instance
     }
   }

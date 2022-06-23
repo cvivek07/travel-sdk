@@ -1,7 +1,6 @@
 package com.ixigo.sdk.payment
 
 import androidx.fragment.app.FragmentActivity
-import com.ixigo.sdk.BuildConfig
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.analytics.Event
 import com.ixigo.sdk.auth.SSOAuthProvider
@@ -120,10 +119,6 @@ class PaymentSDK(
       PaymentSDK.INSTANCE = instance
 
       IxigoSDK.instance.webViewConfig.addJsInterfaceProvider(instance)
-      IxigoSDK.instance.analyticsProvider.logEvent(
-          Event(
-              name = "sdkInit",
-              properties = mapOf("sdk" to "payment", "sdkVersion" to BuildConfig.SDK_VERSION)))
       return instance
     }
   }

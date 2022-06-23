@@ -5,10 +5,8 @@ import androidx.fragment.app.FragmentActivity
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.launchActivity
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.ixigo.sdk.BuildConfig
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.analytics.AnalyticsProvider
-import com.ixigo.sdk.analytics.Event
 import com.ixigo.sdk.common.CustomChromeTabsHelper
 import com.ixigo.sdk.test.initializeTestIxigoSDK
 import com.ixigo.sdk.webview.*
@@ -50,17 +48,5 @@ class HotelsSDKTests {
   fun `test launch Home`() {
     hotelsSDK.launchHome(activity)
     verify(mockCustomChromeTokenProvider).openUrl(activity, "https://www.booking.com")
-  }
-
-  @Test
-  fun `test init sends correct analytics event`() {
-    val mockAnalyticsProvider: AnalyticsProvider = mock()
-    initializeTestIxigoSDK(analyticsProvider = mockAnalyticsProvider)
-    HotelsSDK.init()
-    verify(mockAnalyticsProvider)
-        .logEvent(
-            Event(
-                name = "sdkInit",
-                properties = mapOf("sdk" to "hotels", "sdkVersion" to BuildConfig.SDK_VERSION)))
   }
 }

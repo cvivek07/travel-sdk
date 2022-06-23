@@ -98,7 +98,7 @@ internal constructor(
           appInfo,
           partnerTokenProvider,
           paymentProvider,
-          commonAnalyticsProvider(context, analyticsProvider),
+          commonAnalyticsProvider(context, appInfo, analyticsProvider),
           config,
           deeplinkHandler,
           theme)
@@ -130,13 +130,6 @@ internal constructor(
       INSTANCE = ixigoSDK
 
       ixigoSDK.webViewConfig.addJsInterfaceProvider(ixigoSDK)
-
-      analyticsProvider.logEvent(
-          Event(
-              name = "sdkInit",
-              properties =
-                  mapOf("clientId" to appInfo.clientId, "sdkVersion" to BuildConfig.SDK_VERSION)))
-
       return ixigoSDK
     }
   }

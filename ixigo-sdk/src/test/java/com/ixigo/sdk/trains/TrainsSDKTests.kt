@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ixigo.sdk.AppInfo
-import com.ixigo.sdk.BuildConfig
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
@@ -26,18 +25,6 @@ class TrainsSDKTests {
   fun setup() {
     IxigoSDK.clearInstance()
     TrainsSDK.clearInstance()
-  }
-
-  @Test
-  fun `test init sends correct analytics event`() {
-    val mockAnalyticsProvider: AnalyticsProvider = mock()
-    initializeTestIxigoSDK(analyticsProvider = mockAnalyticsProvider)
-    TrainsSDK.init()
-    verify(mockAnalyticsProvider)
-        .logEvent(
-            Event(
-                name = "sdkInit",
-                properties = mapOf("sdk" to "trains", "sdkVersion" to BuildConfig.SDK_VERSION)))
   }
 
   @Test(expected = IllegalStateException::class)
