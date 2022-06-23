@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.13.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.12.2...ixigo-sdk-3.13.0) (2022-06-23)
+
+
+### Features
+
+* added gradient theme support ([1e58dbf](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/1e58dbf6f57376f5d5253ebf3bee191cfefc6bc3))
+
+
+### Bug Fixes
+
+* add missing tripId/providerId parameters to payment URL ([34dffce](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/34dffceab29f8da553efc6f70820385f48af5e4b))
+* remove sdkInit event ([d9e1cfb](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/d9e1cfba73c3486346146c1de88770eeef22efd0))
+
 ### [3.12.2](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.12.1...ixigo-sdk-3.12.2) (2022-06-22)
 
 
