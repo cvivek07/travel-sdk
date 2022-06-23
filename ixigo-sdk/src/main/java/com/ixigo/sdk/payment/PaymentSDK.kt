@@ -32,6 +32,8 @@ class PaymentSDK(
   fun processPayment(
       activity: FragmentActivity,
       transactionId: String,
+      tripId: String? = null,
+      providerId: String? = null,
       gatewayId: String = "1",
       flowType: String = "PAYMENT_SDK",
       config: FunnelConfig? = null,
@@ -49,7 +51,11 @@ class PaymentSDK(
           with(IxigoSDK.instance) {
             val url =
                 getPaymentOptionsUrl(
-                    transactionId = transactionId, gatewayId = gatewayId, flowType = flowType)
+                    transactionId = transactionId,
+                    gatewayId = gatewayId,
+                    flowType = flowType,
+                    tripId = tripId,
+                    providerId = providerId)
             val authHeaders = mapOf("Authorization" to authResult.value.token)
             if (urlLoader != null) {
               urlLoader.loadUrl(url, authHeaders + getHeaders(url))
@@ -66,14 +72,19 @@ class PaymentSDK(
   private fun getPaymentOptionsUrl(
       transactionId: String,
       gatewayId: String = "1",
-      flowType: String
+      flowType: String,
+      tripId: String? = null,
+      providerId: String? = null
   ): String =
       IxigoSDK.instance.getUrl(
-          mapOf(
-              "page" to "PAYMENT",
-              "gatewayId" to gatewayId,
-              "txnId" to transactionId,
-              "flowType" to flowType))
+          listOfNotNull(
+                  "page" to "PAYMENT",
+                  "gatewayId" to gatewayId,
+                  "txnId" to transactionId,
+                  "flowType" to flowType,
+                  tripId?.let { "tripId" to it },
+                  providerId?.let { "providerId" to it })
+              .toMap())
 
   internal fun finishPayment(input: FinishPaymentInput): Boolean {
     with(input) {

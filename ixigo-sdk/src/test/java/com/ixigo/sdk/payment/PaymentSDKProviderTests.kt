@@ -44,28 +44,36 @@ class PaymentSDKProviderTests {
   @Test
   fun `test startPayment call processPayment and opens nextUrl on success`() {
     val transactionId = "transactionIdValue"
+    val tripId = "tripIdValue"
+    val providerId = "providerIdValue"
     val nextUrl = "https://www.ixigo.com/payment/success"
     PaymentSDK.replaceInstance(mockPaymentSDK)
     whenever(
         mockPaymentSDK.processPayment(
             same(activity),
             eq(transactionId),
+            eq(tripId),
+            eq(providerId),
             eq("1"),
             eq("PAYMENT_SDK"),
             eq(null),
             eq(null),
             any()))
         .then {
-          val callback = it.getArgument(6) as ProcessPaymentCallback
+          val callback = it.getArgument(8) as ProcessPaymentCallback
           callback(Ok(ProcessPaymentResponse(nextUrl)))
           Unit
         }
     var paymentResult: PaymentResult? = null
     val ret =
         provider.startPayment(
-            activity, PaymentInput("product", mapOf("paymentTransactionId" to transactionId))) {
-          paymentResult = it
-        }
+            activity,
+            PaymentInput(
+                "product",
+                mapOf(
+                    "paymentTransactionId" to transactionId,
+                    "tripId" to tripId,
+                    "providerId" to providerId))) { paymentResult = it }
 
     assertTrue(ret)
     assertEquals(Ok(PaymentResponse(nextUrl)), paymentResult)
@@ -81,13 +89,15 @@ class PaymentSDKProviderTests {
         mockPaymentSDK.processPayment(
             same(activity),
             eq(transactionId),
+            eq(null),
+            eq(null),
             eq("1"),
             eq("PAYMENT_SDK"),
             eq(null),
             eq(null),
             any()))
         .then {
-          val callback = it.getArgument(6) as ProcessPaymentCallback
+          val callback = it.getArgument(8) as ProcessPaymentCallback
           callback(Err(ProcessPaymentProcessingError(nextUrl)))
           Unit
         }
@@ -112,13 +122,15 @@ class PaymentSDKProviderTests {
         mockPaymentSDK.processPayment(
             same(webActivity),
             eq(transactionId),
+            eq(null),
+            eq(null),
             eq("1"),
             eq("PAYMENT_SDK"),
             eq(null),
             urlLoader = same(webActivity),
             any()))
         .then {
-          val callback = it.getArgument(6) as ProcessPaymentCallback
+          val callback = it.getArgument(8) as ProcessPaymentCallback
           callback(Ok(ProcessPaymentResponse(nextUrl)))
           Unit
         }
@@ -142,9 +154,17 @@ class PaymentSDKProviderTests {
     PaymentSDK.replaceInstance(mockPaymentSDK)
     whenever(
         mockPaymentSDK.processPayment(
-            same(activity), eq(transactionId), eq("1"), eq(flowType), eq(null), eq(null), any()))
+            same(activity),
+            eq(transactionId),
+            eq(null),
+            eq(null),
+            eq("1"),
+            eq(flowType),
+            eq(null),
+            eq(null),
+            any()))
         .then {
-          val callback = it.getArgument(6) as ProcessPaymentCallback
+          val callback = it.getArgument(8) as ProcessPaymentCallback
           callback(Ok(ProcessPaymentResponse(nextUrl)))
           Unit
         }

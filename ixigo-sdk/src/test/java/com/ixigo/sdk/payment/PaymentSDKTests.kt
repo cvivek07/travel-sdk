@@ -100,6 +100,16 @@ class PaymentSDKTests {
   }
 
   @Test
+  fun `test processPayment with tripId and providerId`() {
+    assertProcessPayment(
+        transactionId = "transactionIdValue",
+        providerId = "providerIdValue",
+        tripId = "tripIdValue",
+        expectedUrl =
+            "https://www.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=1&deviceId=deviceId&languageCode=en&page=PAYMENT&gatewayId=1&txnId=transactionIdValue&flowType=PAYMENT_SDK&tripId=tripIdValue&providerId=providerIdValue")
+  }
+
+  @Test
   fun `test processPayment returns error if unable to get ixigo token`() {
     initializeTestIxigoSDK(analyticsProvider = mockAnalyticsProvider)
     initializePaymentSDK(ssoAuthProvider = ssoAuthProvider)
@@ -165,7 +175,9 @@ class PaymentSDKTests {
       funnelConfig: FunnelConfig? = null,
       partnerToken: String? = null,
       urlLoader: UrlLoader? = null,
-      flowType: String? = null
+      flowType: String? = null,
+      tripId: String? = null,
+      providerId: String? = null
   ) {
     initializeTestIxigoSDK(
         analyticsProvider = mockAnalyticsProvider,
@@ -206,7 +218,12 @@ class PaymentSDKTests {
               flowType = flowType)
         } else {
           PaymentSDK.instance.processPayment(
-              activity, transactionId = transactionId, config = funnelConfig, urlLoader = urlLoader)
+              activity,
+              transactionId = transactionId,
+              config = funnelConfig,
+              urlLoader = urlLoader,
+              tripId = tripId,
+              providerId = providerId)
         }
       }
       val authHeaders = mapOf("Authorization" to "token")
