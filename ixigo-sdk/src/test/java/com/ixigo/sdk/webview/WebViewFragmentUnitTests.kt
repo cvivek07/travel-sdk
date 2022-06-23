@@ -23,10 +23,7 @@ import com.ixigo.sdk.analytics.Event
 import com.ixigo.sdk.auth.test.ActivityResultPartnerTokenProvider
 import com.ixigo.sdk.payment.ActivityResultPaymentProvider
 import com.ixigo.sdk.test.initializeTestIxigoSDK
-import com.ixigo.sdk.ui.Failed
-import com.ixigo.sdk.ui.Loaded
-import com.ixigo.sdk.ui.Loading
-import com.ixigo.sdk.ui.Status
+import com.ixigo.sdk.ui.*
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
@@ -61,6 +58,12 @@ class WebViewFragmentUnitTests {
   @Mock private lateinit var mockAnalyticsProvider: AnalyticsProvider
 
   @Mock private lateinit var mockDeeplinkHandler: DeeplinkHandler
+
+  private val javascriptThemeScript =
+      """
+        eval({solidThemeColor: document.querySelector('meta[name=\"theme-color\"]')?.content,
+              gradientThemeColor: document.querySelector('meta[name=\"sdk-theme\"]')?.content})
+      """.trimIndent()
 
   @Before
   fun setup() {
@@ -287,7 +290,7 @@ class WebViewFragmentUnitTests {
   }
 
   @Test
-  fun `test statusBar color is updated from theme-color`() {
+  fun `test statusBar color is updated from gradient-theme-color when both meta headers are correct`() {
     initializeTestIxigoSDK()
     scenario =
         launchFragmentInContainer(
@@ -299,10 +302,91 @@ class WebViewFragmentUnitTests {
       fragment.delegate = delegate
       fragmentActivity = it.requireActivity()
       shadowWebView = shadowOf(it.webView) as CustomShadowWebview
-      shadowWebView.jsCallbacks["document.querySelector('meta[name=\"theme-color\"]').content"] =
-          "#00FF00"
+      shadowWebView.jsCallbacks[javascriptThemeScript] =
+          "{\"gradientThemeColor\":\"(start-color: #721053, end-color: #AD2E41)\",\"solidThemeColor\":\"#8d204a\"}"
       shadowWebView.webViewClient.onPageFinished(fragment.webView, initialPageData.url)
-      verify(delegate).updateStatusBarColor(Color.parseColor("#00FF00"))
+      verify(delegate)
+          .updateStatusBarColor(
+              GradientThemeColor(Color.parseColor("#721053"), Color.parseColor("#AD2E41")))
+    }
+  }
+
+  @Test
+  fun `test statusBar color is updated from solid-theme-color when gradient-theme-color is null or malformed`() {
+    initializeTestIxigoSDK()
+    scenario =
+        launchFragmentInContainer(
+            Bundle().also {
+              it.putParcelable(WebViewFragment.INITIAL_PAGE_DATA_ARGS, initialPageData)
+            })
+    scenario.onFragment {
+      fragment = it
+      fragment.delegate = delegate
+      fragmentActivity = it.requireActivity()
+      shadowWebView = shadowOf(it.webView) as CustomShadowWebview
+      shadowWebView.jsCallbacks[javascriptThemeScript] = "{\"solidThemeColor\":\"#8d204a\"}"
+      shadowWebView.webViewClient.onPageFinished(fragment.webView, initialPageData.url)
+      verify(delegate).updateStatusBarColor(SolidThemeColor(Color.parseColor("#8d204a")))
+    }
+  }
+
+  @Test
+  fun `test statusBar color is updated from ixigo-theme-color when both meta headers are incorrect`() {
+    initializeTestIxigoSDK()
+    scenario =
+        launchFragmentInContainer(
+            Bundle().also {
+              it.putParcelable(WebViewFragment.INITIAL_PAGE_DATA_ARGS, initialPageData)
+            })
+    scenario.onFragment {
+      fragment = it
+      fragment.delegate = delegate
+      fragmentActivity = it.requireActivity()
+      shadowWebView = shadowOf(it.webView) as CustomShadowWebview
+      shadowWebView.jsCallbacks[javascriptThemeScript] = "{}"
+      shadowWebView.webViewClient.onPageFinished(fragment.webView, initialPageData.url)
+      verify(delegate, never()).updateStatusBarColor(SolidThemeColor(Color.parseColor("#FF0000")))
+    }
+  }
+
+  @Test
+  fun `test statusBar color is updated from gradient-theme-color`() {
+    initializeTestIxigoSDK()
+    scenario =
+        launchFragmentInContainer(
+            Bundle().also {
+              it.putParcelable(WebViewFragment.INITIAL_PAGE_DATA_ARGS, initialPageData)
+            })
+    scenario.onFragment {
+      fragment = it
+      fragment.delegate = delegate
+      fragmentActivity = it.requireActivity()
+      shadowWebView = shadowOf(it.webView) as CustomShadowWebview
+      shadowWebView.jsCallbacks[javascriptThemeScript] =
+          "{\"gradientThemeColor\":\"(start-color: #721053, end-color: #AD2E41)\",\"solidThemeColor\":\"#8d204a\"}"
+      shadowWebView.webViewClient.onPageFinished(fragment.webView, initialPageData.url)
+      verify(delegate)
+          .updateStatusBarColor(
+              GradientThemeColor(Color.parseColor("#721053"), Color.parseColor("#AD2E41")))
+    }
+  }
+
+  @Test
+  fun `test statusBar color is updated from solid-theme-color`() {
+    initializeTestIxigoSDK()
+    scenario =
+        launchFragmentInContainer(
+            Bundle().also {
+              it.putParcelable(WebViewFragment.INITIAL_PAGE_DATA_ARGS, initialPageData)
+            })
+    scenario.onFragment {
+      fragment = it
+      fragment.delegate = delegate
+      fragmentActivity = it.requireActivity()
+      shadowWebView = shadowOf(it.webView) as CustomShadowWebview
+      shadowWebView.jsCallbacks[javascriptThemeScript] = "{\"solidThemeColor\":\"#8d204a\"}"
+      shadowWebView.webViewClient.onPageFinished(fragment.webView, initialPageData.url)
+      verify(delegate).updateStatusBarColor(SolidThemeColor(Color.parseColor("#8d204a")))
     }
   }
 

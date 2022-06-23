@@ -3,7 +3,6 @@ package com.ixigo.sdk.webview
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -21,12 +20,10 @@ import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.NotHandled
 import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
-import com.ixigo.sdk.common.ActivityResultHandler
-import com.ixigo.sdk.common.NoCoverage
+import com.ixigo.sdk.common.*
 import com.ixigo.sdk.databinding.WebviewLayoutBinding
-import com.ixigo.sdk.ui.Failed
-import com.ixigo.sdk.ui.Loaded
-import com.ixigo.sdk.ui.Loading
+import com.ixigo.sdk.ui.*
+import com.ixigo.sdk.util.ThemeUtils.getThemeColor
 import kotlinx.parcelize.Parcelize
 import timber.log.Timber
 
@@ -316,10 +313,13 @@ class WebViewFragment : Fragment(), UIConfigurable, UrlLoader {
     }
 
     private fun setStatusBarColorFromThemeColor() {
-      webView.evaluateJavascript("document.querySelector('meta[name=\"theme-color\"]').content") {
+      webView.evaluateJavascript(
+          """
+        eval({solidThemeColor: document.querySelector('meta[name=\"theme-color\"]')?.content,
+              gradientThemeColor: document.querySelector('meta[name=\"sdk-theme\"]')?.content})
+      """.trimIndent()) {
         try {
-          val color = Color.parseColor(it.replace("\"", ""))
-          delegate?.updateStatusBarColor(color)
+          delegate?.updateStatusBarColor(getThemeColor(it))
         } catch (e: Exception) {
           Timber.e(e, "Error trying to parse theme-color from value=$it")
         }
@@ -351,7 +351,7 @@ interface JsInterface {
 
 interface WebViewDelegate {
   fun onQuit()
-  fun updateStatusBarColor(color: Int)
+  fun updateStatusBarColor(color: ThemeColor)
 }
 
 interface WebViewFragmentListener {

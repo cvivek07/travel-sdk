@@ -21,6 +21,8 @@ import com.ixigo.sdk.R
 import com.ixigo.sdk.auth.PartnerTokenProvider
 import com.ixigo.sdk.common.ActivityResultHandler
 import com.ixigo.sdk.test.initializeTestIxigoSDK
+import com.ixigo.sdk.ui.GradientThemeColor
+import com.ixigo.sdk.ui.SolidThemeColor
 import com.ixigo.sdk.ui.defaultTheme
 import org.junit.Assert.*
 import org.junit.Before
@@ -140,8 +142,19 @@ class WebActivityTest {
     initializeTestIxigoSDK(config = com.ixigo.sdk.Config(enableExitBar = false))
     withWebActivity { activity ->
       val color = Color.parseColor("#00FF00")
-      activity.updateStatusBarColor(color)
+      activity.updateStatusBarColor(SolidThemeColor(color))
       assertEquals(color, activity.window.statusBarColor)
+    }
+  }
+
+  @Test
+  fun `test statusBar color is set to transparent from delegate when gradient theme is applied`() {
+    initializeTestIxigoSDK(config = com.ixigo.sdk.Config(enableExitBar = false))
+    withWebActivity { activity ->
+      val transparentColor = Color.parseColor("#00000000")
+      activity.updateStatusBarColor(
+          GradientThemeColor(Color.parseColor("#721053"), Color.parseColor("#AD2E41")))
+      assertEquals(transparentColor, activity.window.statusBarColor)
     }
   }
 
@@ -149,7 +162,7 @@ class WebActivityTest {
   fun `test statusBar color is NOT updated from delegate if status bar is enabled`() {
     initializeTestIxigoSDK(config = com.ixigo.sdk.Config(enableExitBar = true))
     withWebActivity { activity ->
-      activity.updateStatusBarColor(Color.parseColor("#00FF00"))
+      activity.updateStatusBarColor(SolidThemeColor(Color.parseColor("#00FF00")))
       assertEquals(
           getColor(activity, R.color.exit_top_nav_bar_color), activity.window.statusBarColor)
     }
