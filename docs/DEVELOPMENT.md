@@ -1,4 +1,4 @@
-[[toc]]
+[[_TOC_]]
 
 ## [SDK Architecture](https://ixigodev.atlassian.net/wiki/spaces/~922755443/pages/2793930759/ixigo+SDK+architecture)
 
