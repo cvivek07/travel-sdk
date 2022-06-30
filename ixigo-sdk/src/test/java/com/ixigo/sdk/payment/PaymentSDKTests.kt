@@ -177,7 +177,8 @@ class PaymentSDKTests {
       urlLoader: UrlLoader? = null,
       flowType: String? = null,
       tripId: String? = null,
-      providerId: String? = null
+      providerId: String? = null,
+      productType: String? = null
   ) {
     initializeTestIxigoSDK(
         analyticsProvider = mockAnalyticsProvider,
@@ -223,7 +224,8 @@ class PaymentSDKTests {
               config = funnelConfig,
               urlLoader = urlLoader,
               tripId = tripId,
-              providerId = providerId)
+              providerId = providerId,
+              productType = productType)
         }
       }
       val authHeaders = mapOf("Authorization" to "token")

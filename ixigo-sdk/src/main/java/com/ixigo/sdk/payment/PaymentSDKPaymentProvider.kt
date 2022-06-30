@@ -28,7 +28,8 @@ class PaymentSDKPaymentProvider : PaymentProvider {
         flowType = flowType,
         urlLoader = activity as? UrlLoader,
         tripId = input.data["tripId"],
-        providerId = input.data["providerId"]) {
+        providerId = input.data["providerId"],
+        productType = input.data["productType"]) {
       val nextUrl: String? =
           when (it) {
             is Err -> {

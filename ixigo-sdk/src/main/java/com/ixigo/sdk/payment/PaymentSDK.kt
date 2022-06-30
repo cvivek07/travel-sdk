@@ -4,10 +4,7 @@ import androidx.fragment.app.FragmentActivity
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.analytics.Event
 import com.ixigo.sdk.auth.SSOAuthProvider
-import com.ixigo.sdk.common.Err
-import com.ixigo.sdk.common.Ok
-import com.ixigo.sdk.common.Result
-import com.ixigo.sdk.common.SdkSingleton
+import com.ixigo.sdk.common.*
 import com.ixigo.sdk.payment.data.FinishPaymentInput
 import com.ixigo.sdk.webview.*
 import timber.log.Timber
@@ -33,6 +30,7 @@ class PaymentSDK(
       transactionId: String,
       tripId: String? = null,
       providerId: String? = null,
+      productType: String? = null,
       gatewayId: String = "1",
       flowType: String = "PAYMENT_SDK",
       config: FunnelConfig? = null,
@@ -54,7 +52,8 @@ class PaymentSDK(
                     gatewayId = gatewayId,
                     flowType = flowType,
                     tripId = tripId,
-                    providerId = providerId)
+                    providerId = providerId,
+                    productType = productType)
             val authHeaders = mapOf("Authorization" to authResult.value.token)
             if (urlLoader != null) {
               urlLoader.loadUrl(url, authHeaders + getHeaders(url))
@@ -73,7 +72,8 @@ class PaymentSDK(
       gatewayId: String = "1",
       flowType: String,
       tripId: String? = null,
-      providerId: String? = null
+      providerId: String? = null,
+      productType: String? = null
   ): String =
       IxigoSDK.instance.getUrl(
           listOfNotNull(
@@ -82,7 +82,8 @@ class PaymentSDK(
                   "txnId" to transactionId,
                   "flowType" to flowType,
                   tripId?.let { "tripId" to it },
-                  providerId?.let { "providerId" to it })
+                  providerId?.let { "providerId" to it },
+                  productType?.let { "productType" to it })
               .toMap())
 
   internal fun finishPayment(input: FinishPaymentInput): Boolean {
