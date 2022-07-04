@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.13.1](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.13.0...ixigo-sdk-3.13.1) (2022-07-04)
+
+
+### Bug Fixes
+
+* added missing product type in payment url ([9bb0974](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/9bb0974231223a3579c708d76901cc52af695138))
+
 ## [3.13.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.12.2...ixigo-sdk-3.13.0) (2022-06-23)
 
 
