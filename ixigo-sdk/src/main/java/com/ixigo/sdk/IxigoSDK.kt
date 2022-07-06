@@ -165,7 +165,6 @@ internal constructor(
             "apiKey" to appInfo.apiKey,
             "deviceId" to appInfo.deviceId,
             "uuid" to appInfo.uuid)
-    //    partnerToken?.let { headers.put("Authorization", it.token) }
     return headers
   }
 
