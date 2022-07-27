@@ -37,6 +37,32 @@ class BusSDK(internal val config: Config) : JsInterfaceProvider {
   }
 
   /**
+   * Returns view containing Bus search results for provided search
+   *
+   * @param searchData
+   * @return Launch with search data content
+   */
+  fun launchBusSearch(context: Context, searchData: BusSearchData) {
+
+    analyticsProvider.logEvent(Event.with(action = "busStartMultiModel"))
+
+    val url =
+        config.createUrl(
+            "search",
+            addSkinParam(
+                mapOf(
+                    "action" to "search",
+                    "jdate" to searchData.dateString,
+                    "srcid" to searchData.sourceId.toString(),
+                    "srcname" to searchData.sourceName,
+                    "destid" to searchData.destinationId.toString(),
+                    "destname" to searchData.destinationName,
+                    "hideHeader" to "0")))
+
+    IxigoSDK.instance.launchWebActivity(context, url)
+  }
+
+  /**
    * Opens Abhibus PWA trips page
    *
    * @param context
