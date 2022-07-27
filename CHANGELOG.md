@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.14.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.13.2...ixigo-sdk-3.14.0) (2022-07-27)
+
+
+### Features
+
+* added launch bus search ([d59642a](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/d59642a39cf123c0a452e6890d61bfac0926fad6))
+
 ### [3.13.2](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.13.1...ixigo-sdk-3.13.2) (2022-07-06)
 
 
