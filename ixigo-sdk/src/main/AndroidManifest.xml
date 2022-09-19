@@ -7,6 +7,12 @@
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
+    <queries>
+        <package android:name="com.phonepe.app" />
+        <package android:name="com.phonepe.app.preprod" />
+        <package android:name="com.dreamplug.androidapp" />
+    </queries>
+
     <application>
         <activity android:name="com.ixigo.sdk.webview.WebActivity"
             android:screenOrientation="portrait"

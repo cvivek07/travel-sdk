@@ -66,6 +66,14 @@ data class JuspayCredEligibilityResponseApps(
 
 @Keep data class JuspayPaymentMethodsEligibility(val isEligible: Boolean)
 
+@Keep data class PhonePeAvailabilityResponse(val available: Boolean)
+
+@Keep data class PhonePeVersionCode(val versionCode: Long)
+
+@Keep data class PhonePeRedirectData(val redirectType: String, val redirectUrl: String)
+
+@Keep data class PhonePePaymentFinished(val paymentFinished: Boolean)
+
 @Keep
 enum class PaymentHandler {
   BROWSER,

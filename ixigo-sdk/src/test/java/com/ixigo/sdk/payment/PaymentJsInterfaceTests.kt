@@ -1,5 +1,7 @@
 package com.ixigo.sdk.payment
 
+import android.app.Application
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
@@ -10,6 +12,7 @@ import com.ixigo.sdk.auth.SSOAuthProvider
 import com.ixigo.sdk.common.Err
 import com.ixigo.sdk.common.NativePromiseError
 import com.ixigo.sdk.common.Ok
+import com.ixigo.sdk.payment.PackageManager.Companion.PHONEPE_PACKAGE_NAME
 import com.ixigo.sdk.payment.data.*
 import com.ixigo.sdk.test.initializePaymentSDK
 import com.ixigo.sdk.test.initializeTestIxigoSDK
@@ -26,7 +29,10 @@ import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnit
 import org.mockito.junit.MockitoRule
 import org.mockito.kotlin.*
+import org.robolectric.RuntimeEnvironment
 import org.robolectric.Shadows
+import org.robolectric.Shadows.shadowOf
+import org.robolectric.shadows.ShadowPackageManager
 import org.robolectric.shadows.ShadowWebView
 
 @RunWith(AndroidJUnit4::class)
@@ -46,9 +52,13 @@ class PaymentJsInterfaceTests {
   @Mock internal lateinit var mockGatewayProvider: PaymentGatewayProvider
   @Mock internal lateinit var mockGateway: PaymentGateway
   @Mock internal lateinit var ssoAuthProvider: SSOAuthProvider
+  private var context: Context? = null
+  private var shadowPackageManager: ShadowPackageManager? = null
 
   @Before
   fun setup() {
+    context = RuntimeEnvironment.application
+    shadowPackageManager = shadowOf((context as Application?)!!.packageManager)
     initializeTestIxigoSDK()
     initializePaymentSDK(ssoAuthProvider = ssoAuthProvider)
     scenario =
@@ -399,22 +409,8 @@ class PaymentJsInterfaceTests {
   }
 
   @Test
-  fun `test checkCredElibility returns eligibility from gateway`() {
-    Mockito.`when`(mockGateway.initialized).thenReturn(true)
-    Mockito.`when`(
-            mockGateway.checkCredEligibility(
-                eq(
-                    CredEligibilityInput(
-                        provider = "JUSPAY",
-                        amount = 100.0,
-                        orderId = "orderIdValue",
-                        gatewayReferenceId = "gatewayReferenceIdValue",
-                        customerMobile = "1234567890")),
-                any()))
-        .then {
-          val callback: CredEligibilityCallback = it.getArgument(1)
-          callback(Ok(CredEligibilityResponse(eligible = true)))
-        }
+  fun `test checkCredEligibility returns eligibility as true if app is installed`() {
+    shadowPackageManager!!.addPackage("com.dreamplug.androidapp")
     paymentJsInterface.checkCredEligibility(
         validCredEligibilityInput,
         "javascript:alert('success:TO_REPLACE_PAYLOAD')",
@@ -425,63 +421,13 @@ class PaymentJsInterfaceTests {
   }
 
   @Test
-  fun `test checkCredEligibility throws error for unknown provider`() {
-    whenever(mockGateway.initialized).thenReturn(true)
-    paymentJsInterface.checkCredEligibility(
-        unknownProviderCredEligibilityInput,
-        "javascript:alert('success:TO_REPLACE_PAYLOAD')",
-        "javascript:alert('error:TO_REPLACE_PAYLOAD')")
-    assertEquals(
-        """javascript:alert('error:{\"errorCode\":\"InvalidArgumentError\",\"errorMessage\":\"Could not find payment provider=Unknown\"}')""",
-        shadowWebView.lastEvaluatedJavascript)
-  }
-
-  @Test
-  fun `test checkCredElibility throws error if juspay is not initialized`() {
+  fun `test checkCredEligibility returns eligibility as false if app is not installed`() {
     paymentJsInterface.checkCredEligibility(
         validCredEligibilityInput,
         "javascript:alert('success:TO_REPLACE_PAYLOAD')",
         "javascript:alert('error:TO_REPLACE_PAYLOAD')")
     assertEquals(
-        """javascript:alert('error:{\"errorCode\":\"NotInitializedError\",\"errorMessage\":\"Call `PaymentSDKAndroid.initialize` before calling this method\"}')""",
-        shadowWebView.lastEvaluatedJavascript)
-  }
-
-  @Test
-  fun `test checkCredElibility throws error for wrong Input`() {
-    Mockito.`when`(mockGateway.initialized).thenReturn(true)
-    paymentJsInterface.checkCredEligibility(
-        "{}",
-        "javascript:alert('success:TO_REPLACE_PAYLOAD')",
-        "javascript:alert('error:TO_REPLACE_PAYLOAD')")
-    assertEquals(
-        """javascript:alert('error:{\"errorCode\":\"InvalidArgumentError\",\"errorMessage\":\"unable to parse input={}\"}')""",
-        shadowWebView.lastEvaluatedJavascript)
-  }
-
-  @Test
-  fun `test checkCredEligibility returns error if gateway returns error`() {
-    Mockito.`when`(mockGateway.initialized).thenReturn(true)
-    Mockito.`when`(
-            mockGateway.checkCredEligibility(
-                eq(
-                    CredEligibilityInput(
-                        orderId = "orderIdValue",
-                        provider = "JUSPAY",
-                        amount = 100.0,
-                        gatewayReferenceId = "gatewayReferenceIdValue",
-                        customerMobile = "1234567890")),
-                any()))
-        .then {
-          val callback: CredEligibilityCallback = it.getArgument(1)
-          callback(Err(NativePromiseError("Test Error")))
-        }
-    paymentJsInterface.checkCredEligibility(
-        validCredEligibilityInput,
-        "javascript:alert('success:TO_REPLACE_PAYLOAD')",
-        "javascript:alert('error:TO_REPLACE_PAYLOAD')")
-    assertEquals(
-        """javascript:alert('error:{\"errorCode\":\"Test Error\"}')""",
+        """javascript:alert('success:{\"eligible\":false}')""",
         shadowWebView.lastEvaluatedJavascript)
   }
 
@@ -562,6 +508,48 @@ class PaymentJsInterfaceTests {
         shadowWebView.lastEvaluatedJavascript)
   }
 
+  @Test
+  fun `test isPhonePeUpiAvailable returns true if app is installed`() {
+    shadowPackageManager!!.addPackage(PHONEPE_PACKAGE_NAME)
+    paymentJsInterface.isPhonePeUpiAvailable(
+        "javascript:alert('success:TO_REPLACE_PAYLOAD')",
+        "javascript:alert('error:TO_REPLACE_PAYLOAD')")
+    assertEquals(
+        """javascript:alert('success:{\"available\":true}')""",
+        shadowWebView.lastEvaluatedJavascript)
+  }
+
+  @Test
+  fun `test isPhonePeUpiAvailable returns false if app is not installed`() {
+    paymentJsInterface.isPhonePeUpiAvailable(
+        "javascript:alert('success:TO_REPLACE_PAYLOAD')",
+        "javascript:alert('error:TO_REPLACE_PAYLOAD')")
+    assertEquals(
+        """javascript:alert('success:{\"available\":false}')""",
+        shadowWebView.lastEvaluatedJavascript)
+  }
+
+  @Test
+  fun `test getPhonePeVersionCode returns version code if app is installed`() {
+    shadowPackageManager!!.addPackage(PHONEPE_PACKAGE_NAME)
+    paymentJsInterface.getPhonePeVersionCode(
+        "javascript:alert('success:TO_REPLACE_PAYLOAD')",
+        "javascript:alert('error:TO_REPLACE_PAYLOAD')")
+    assertEquals(
+        """javascript:alert('success:{\"versionCode\":0}')""",
+        shadowWebView.lastEvaluatedJavascript)
+  }
+
+  @Test
+  fun `test getPhonePeVersionCode returns -1 if app is not installed`() {
+    paymentJsInterface.getPhonePeVersionCode(
+        "javascript:alert('success:TO_REPLACE_PAYLOAD')",
+        "javascript:alert('error:TO_REPLACE_PAYLOAD')")
+    assertEquals(
+        """javascript:alert('success:{\"versionCode\":-1}')""",
+        shadowWebView.lastEvaluatedJavascript)
+  }
+
   private val validInitializeInput =
       InitializeInput(
           merchantId = "merchantIdValue",
@@ -602,17 +590,6 @@ class PaymentJsInterfaceTests {
       {
         "orderId": "orderIdValue",
         "provider": "JUSPAY",
-        "amount": 100.0,
-        "gatewayReferenceId": "gatewayReferenceIdValue",
-        "customerMobile": "1234567890"
-      }
-    """.trim()
-
-  private val unknownProviderCredEligibilityInput =
-      """
-      {
-        "orderId": "orderIdValue",
-        "provider": "Unknown",
         "amount": 100.0,
         "gatewayReferenceId": "gatewayReferenceIdValue",
         "customerMobile": "1234567890"
@@ -695,6 +672,14 @@ class PaymentJsInterfaceTests {
           amount = 102.3,
           customerMobile = "1234567890",
           provider = "JUSPAY")
+
+  private val validPhonePeRedirectInputString =
+      """
+      {
+        "redirectType": "INTENT",
+        "redirectUrl": "upi://pay?pa=IXIGOUAT@ybl&pn=IXIGO&am=806.00&mam=806.00&tr=8DDZIQ1H8W1DVBYZF&tn=Payment+for+8DDZIQ1H8W1DVBYZF&mc=5311&mode=04&purpose=00&utm_campaign=DEBIT&utm_medium=IXIGOUAT&utm_source=8DDZIQ1H8W1DVBYZF"
+      }
+    """.trim()
 
   private fun validFinishPaymentInputString(
       transactionId: String = "transactionIdValue",
