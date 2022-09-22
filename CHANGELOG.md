@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.15.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.14.0...ixigo-sdk-3.15.0) (2022-09-22)
+
+
+### Features
+
+* phonepe direct, cred intent ([aa2dfe6](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/aa2dfe6e957dd8e39085fe02ad5a0b84142c2c77))
+
 ## [3.14.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.13.2...ixigo-sdk-3.14.0) (2022-07-27)
 
 
