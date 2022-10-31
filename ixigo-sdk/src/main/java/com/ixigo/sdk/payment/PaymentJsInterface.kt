@@ -1,18 +1,26 @@
 package com.ixigo.sdk.payment
 
-import android.app.Activity
+import android.app.Activity.*
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.webkit.JavascriptInterface
 import androidx.fragment.app.viewModels
+import com.google.android.apps.nbu.paisa.inapp.client.api.WalletConstants
+import com.google.android.apps.nbu.paisa.inapp.client.api.WalletUtils
+import com.google.android.gms.common.api.ApiException
+import com.ixigo.sdk.BuildConfig
 import com.ixigo.sdk.common.*
 import com.ixigo.sdk.common.NativePromiseError.Companion.notAvailableError
 import com.ixigo.sdk.common.NativePromiseError.Companion.sdkError
 import com.ixigo.sdk.common.NativePromiseError.Companion.wrongInputError
 import com.ixigo.sdk.payment.PackageManager.Companion.PHONEPE_PACKAGE_NAME
+import com.ixigo.sdk.payment.PackageManager.Companion.REQUEST_CODE_GPAY_APP
 import com.ixigo.sdk.payment.PackageManager.Companion.REQUEST_CODE_PHONEPE_APP
 import com.ixigo.sdk.payment.data.*
+import com.ixigo.sdk.payment.gpay.GpayUtils
+import com.ixigo.sdk.payment.gpay.GpayViewModel
+import com.ixigo.sdk.payment.minkasu_sdk.MinkasuSDKManager
 import com.ixigo.sdk.payment.phonepe.PhonePeViewModel
 import com.ixigo.sdk.webview.JsInterface
 import com.ixigo.sdk.webview.WebActivity
@@ -20,6 +28,8 @@ import com.ixigo.sdk.webview.WebViewFragment
 import com.ixigo.sdk.webview.WebViewFragmentListener
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import org.json.JSONObject
+import timber.log.Timber
 
 internal class PaymentJsInterface(
     private val webViewFragment: WebViewFragment,
@@ -55,6 +65,10 @@ internal class PaymentJsInterface(
   private val packageManager: PackageManager by lazy {
     PackageManager(webViewFragment.requireContext().applicationContext)
   }
+
+  private val paymentsClient by lazy { GpayUtils.createPaymentsClient() }
+
+  private val gpayViewModel: GpayViewModel by webViewFragment.viewModels()
 
   @JavascriptInterface
   fun initialize(jsonInput: String, success: String, error: String) {
@@ -169,6 +183,35 @@ internal class PaymentJsInterface(
         }
       }
     }
+  }
+
+  @JavascriptInterface
+  fun process(jsonInput: String, success: String, error: String) {
+    val input = kotlin.runCatching { JSONObject(jsonInput) }.getOrNull()
+    if (input == null) {
+      returnError(error, wrongInputError(jsonInput))
+      return
+    }
+    val provider = "JUSPAY"
+    val gateway = cachingGatewayProvider.getPaymentGateway(provider)
+    if (gateway == null) {
+      val errorPayload =
+          NativePromiseError(
+              errorCode = "InvalidArgumentError",
+              errorMessage = "Could not find payment provider=${provider}")
+      returnError(error, errorPayload)
+      return
+    }
+    if (!gateway.initialized) {
+      val errorPayload =
+          NativePromiseError(
+              errorCode = "NotInitializedError",
+              errorMessage = "Call `PaymentSDKAndroid.initialize` before calling this method")
+      returnError(error, errorPayload)
+      return
+    }
+
+    gateway.process(input) { executeResponse(replaceNativePromisePayload(success, it.toString())) }
   }
 
   @JavascriptInterface
@@ -306,6 +349,87 @@ internal class PaymentJsInterface(
     }
   }
 
+  /**
+   * Determine the viewer's ability to pay with a payment method supported by your app and display a
+   * Google Pay payment button.
+   */
+  @JavascriptInterface
+  fun isGpayUpiAvailable(success: String, error: String) {
+    val isReadyToPayJson = GpayUtils.isReadyToPayRequest() ?: return
+    val task = paymentsClient.isReadyToPay(webViewFragment.requireContext(), isReadyToPayJson)
+    task.addOnCompleteListener { completedTask ->
+      try {
+        completedTask.getResult(ApiException::class.java)?.let {
+          executeResponse(
+              replaceNativePromisePayload(
+                  success,
+                  JuspayPaymentMethodsEligibility(it),
+                  moshi.adapter(JuspayPaymentMethodsEligibility::class.java)))
+        }
+      } catch (exception: ApiException) {
+        executeResponse(
+            replaceNativePromisePayload(
+                success,
+                JuspayPaymentMethodsEligibility(false),
+                moshi.adapter(JuspayPaymentMethodsEligibility::class.java)))
+        // Process error
+        Timber.e(exception)
+      }
+    }
+  }
+
+  /** Launch gpay app */
+  @JavascriptInterface
+  fun requestGpayPayment(jsonInput: String, success: String, error: String) {
+    val input =
+        kotlin
+            .runCatching { moshi.adapter(GpayPaymentInput::class.java).fromJson(jsonInput) }
+            .getOrNull()
+    if (input == null) {
+      returnError(error, wrongInputError(jsonInput))
+      return
+    }
+    val paymentDataRequestJson = GpayUtils.getPaymentDataRequest(input)
+    if (paymentDataRequestJson == null) {
+      Timber.tag("requestGpayPayment").e("Can't fetch payment data request")
+      return
+    }
+
+    webViewFragment.requireActivity().runOnUiThread {
+      gpayViewModel.gpayResultMutableLiveData.observe(webViewFragment) {
+        executeResponse(
+            replaceNativePromisePayload(
+                success, it, moshi.adapter(GpayPaymentFinished::class.java)))
+      }
+    }
+    paymentsClient.loadPaymentData(
+        webViewFragment.requireActivity(), paymentDataRequestJson, REQUEST_CODE_GPAY_APP)
+  }
+
+  /** Get ixigo sdk version */
+  @JavascriptInterface
+  fun getIxigoSDKVersion(success: String, error: String) {
+    val sdkVersion = BuildConfig.SDK_VERSION
+    executeResponse(
+        replaceNativePromisePayload(
+            success, IxigoSDKVersion(sdkVersion), moshi.adapter(IxigoSDKVersion::class.java)))
+  }
+
+  /** Get minkasu data from js-sdk & use it to initialize Minkasu sdk */
+  @JavascriptInterface
+  fun initializeMinkasuSDK(jsonInput: String, success: String, error: String) {
+    val input =
+        kotlin
+            .runCatching { moshi.adapter(MinkasuInput::class.java).fromJson(jsonInput) }
+            .getOrNull()
+    if (input == null) {
+      returnError(error, wrongInputError(jsonInput))
+      return
+    }
+
+    MinkasuSDKManager(webViewFragment).initMinkasu2FASDK(input)
+  }
+
   private fun returnError(error: String, errorPayload: NativePromiseError) {
     executeResponse(replaceNativePromisePayload(error, errorPayload, errorAdapter))
   }
@@ -322,11 +446,43 @@ internal class PaymentJsInterface(
   override fun handle(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
     when (requestCode) {
       REQUEST_CODE_PHONEPE_APP -> {
-        if (resultCode != Activity.RESULT_CANCELED) {
+        if (resultCode != RESULT_CANCELED) {
           phonePeViewModel.setPhonePeResult(PhonePePaymentFinished(paymentFinished = true))
+        }
+      }
+      REQUEST_CODE_GPAY_APP -> {
+        when (resultCode) {
+          RESULT_OK -> {
+            val paymentData = WalletUtils.getPaymentDataFromIntent(data)
+            gpayViewModel.setGpayPaymentResult(GpayPaymentFinished(true))
+            Timber.d(paymentData)
+          }
+          RESULT_FIRST_USER -> {
+            Timber.d(data.toString())
+            val statusCode =
+                data!!.getIntExtra(WalletConstants.EXTRA_ERROR_CODE, WalletConstants.INTERNAL_ERROR)
+            gpayViewModel.setGpayPaymentResult(GpayPaymentFinished(false))
+            handleResultStatusCode(statusCode)
+          }
+          RESULT_CANCELED -> {
+            gpayViewModel.setGpayPaymentResult(GpayPaymentFinished(false))
+            Timber.d("User cancelled gpay transaction")
+          }
         }
       }
     }
     return false
+  }
+
+  /** Handle gpay result status code */
+  private fun handleResultStatusCode(statusCode: Int) {
+    when (statusCode) {
+      WalletConstants.ERROR_CODE_BUYER_ACCOUNT_ERROR -> {}
+      WalletConstants.ERROR_CODE_MERCHANT_ACCOUNT_ERROR -> {}
+      WalletConstants.ERROR_CODE_UNSUPPORTED_API_VERSION,
+      WalletConstants.INTERNAL_ERROR,
+      WalletConstants.DEVELOPER_ERROR -> throw IllegalStateException("Internal error.")
+      else -> throw IllegalStateException("Internal error.")
+    }
   }
 }

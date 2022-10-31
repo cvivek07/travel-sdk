@@ -16,4 +16,8 @@
     <style name="PositiveButtonStyle" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
         <item name="android:textColor">@color/ixigosdk_primary_color</item>
     </style>
+
+    <style name="Mk2FASDKtheme" parent="Minkasu2FATheme">
+        <item name="colorPrimary">@color/mkActionBarColor</item>
+    </style>
 </resources>

@@ -75,6 +75,35 @@ data class JuspayCredEligibilityResponseApps(
 @Keep data class PhonePePaymentFinished(val paymentFinished: Boolean)
 
 @Keep
+data class GpayPaymentInput(
+    val amount: String,
+    val payeeVpa: String,
+    val payeeName: String,
+    val referenceUrl: String,
+    val mcc: String,
+    val transactionReferenceId: String,
+    val transactionId: String,
+    val transactionNote: String
+)
+
+@Keep data class GpayPaymentFinished(val paymentFinished: Boolean)
+
+@Keep data class IxigoSDKVersion(val version: String)
+
+@Keep
+data class MinkasuInput(
+    val merchantId: String,
+    val merchantToken: String,
+    val transactionId: String,
+    val userId: String,
+    val firstName: String,
+    val lastName: String,
+    val email: String,
+    val phoneNumber: String,
+    val ctaColor: String
+)
+
+@Keep
 enum class PaymentHandler {
   BROWSER,
   NATIVE

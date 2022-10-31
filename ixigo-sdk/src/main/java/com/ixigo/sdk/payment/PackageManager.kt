@@ -63,5 +63,6 @@ class PackageManager(private val applicationContext: Context) {
     const val CRED_PACKAGE_NAME = "com.dreamplug.androidapp"
     const val PHONEPE_PACKAGE_NAME = "com.phonepe.app"
     const val REQUEST_CODE_PHONEPE_APP = 101
+    const val REQUEST_CODE_GPAY_APP = 102
   }
 }

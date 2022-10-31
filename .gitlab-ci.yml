@@ -75,7 +75,9 @@ coverage:mergeRequest:
       - "**/build/**/reports"
       - "**/build/outputs"
     reports:
-      cobertura: "**/build/reports/cobertura/cobertura.xml"
+      coverage_report:
+        coverage_format: cobertura
+        path: "**/build/reports/cobertura/cobertura.xml"
 
 deploy:ixigo-sdk:
   extends: .common:snapshot-deploy

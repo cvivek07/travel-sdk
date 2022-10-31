@@ -2,4 +2,8 @@
 <resources>
     <color name="ixigosdk_primary_color">#FF0000</color>
     <color name="exit_top_nav_bar_color">#4F4f4f</color>
+    <color name="mkActionBarColor">@color/ixigosdk_primary_color</color>
+    <color name="mkActionBarTextColor">#ffffff</color>
+    <color name="mkButtonBackground">@color/ixigosdk_primary_color</color>
+    <color name="mkButtonTextColor">#ffffff</color>
 </resources>

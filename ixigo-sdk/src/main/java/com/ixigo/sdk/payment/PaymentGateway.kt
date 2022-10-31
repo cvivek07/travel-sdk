@@ -2,11 +2,14 @@ package com.ixigo.sdk.payment
 
 import androidx.fragment.app.FragmentActivity
 import com.ixigo.sdk.payment.data.*
+import org.json.JSONObject
 
 interface PaymentGateway {
   val initialized: Boolean
 
   fun initialize(input: InitializeInput, callback: InitializeCallback)
+
+  fun process(input: JSONObject, callback: HyperServiceCallback)
 
   fun listAvailableUPIApps(input: GetAvailableUPIAppsInput, callback: AvailableUPIAppsCallback)
 

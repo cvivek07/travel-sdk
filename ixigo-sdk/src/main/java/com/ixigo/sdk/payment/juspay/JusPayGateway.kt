@@ -17,7 +17,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import timber.log.Timber
 
-private typealias HyperServiceCallback = (payload: JSONObject) -> Unit
+typealias HyperServiceCallback = (payload: JSONObject) -> Unit
 
 typealias AvailableUPIAppsResult = Result<GetAvailableUPIAppsResponse, NativePromiseError>
 
@@ -104,6 +104,18 @@ internal class JusPayGateway(
             }
           }
         })
+  }
+
+  override fun process(payload: JSONObject, callback: HyperServiceCallback) {
+    val requestId = createRequestId { data ->
+      val error = data.optBoolean("error")
+      if (error) {
+        callback(data)
+      } else {
+        callback(data)
+      }
+    }
+    process(createJuspayRequestJsonPayload(payload, requestId))
   }
 
   override fun listAvailableUPIApps(

@@ -61,6 +61,7 @@ android {
 }
 
 dependencies {
+    compileOnly files('libs/google-pay-client-api-1.0.1.aar')
     def fragmentVersion = '1.3.6'
     def firebaseVersion = '28.4.2'
 
@@ -124,6 +125,10 @@ dependencies {
 
     // Need this in implementation since IdlingResources are added in Prod code (although not registered)
     implementation 'androidx.test.espresso.idling:idling-net:3.4.0'
+    implementation 'com.google.android.gms:play-services-tasks:18.0.2'
+
+    //Minkasu sdk
+    implementation 'com.minkasu:minkasu-2fa:2.2.5'
 }
 
 task androidSourcesJar(type: Jar) {
