@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.ixigo.sdk">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -13,7 +14,10 @@
         <package android:name="com.dreamplug.androidapp" />
     </queries>
 
-    <application>
+    <application
+        android:allowBackup="true"
+        tools:ignore="UnusedAttribute"
+        tools:replace="android:allowBackup">
         <activity android:name="com.ixigo.sdk.webview.WebActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.IxigoSDK.NoActionBar"/>
