@@ -461,11 +461,9 @@ internal class PaymentJsInterface(
             Timber.d(data.toString())
             val statusCode =
                 data!!.getIntExtra(WalletConstants.EXTRA_ERROR_CODE, WalletConstants.INTERNAL_ERROR)
-            gpayViewModel.setGpayPaymentResult(GpayPaymentFinished(false))
             handleResultStatusCode(statusCode)
           }
           RESULT_CANCELED -> {
-            gpayViewModel.setGpayPaymentResult(GpayPaymentFinished(false))
             Timber.d("User cancelled gpay transaction")
           }
         }
