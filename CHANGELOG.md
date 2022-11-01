@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.16.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.15.0...ixigo-sdk-3.16.0) (2022-11-01)
+
+
+### Features
+
+* gpayd, minkasu sdk, juspay process ([a4c1d57](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/a4c1d57f27f61fcc6cef8dcf8b97828828a86aea))
+* removed .aar from gitignore ([0ab7ec6](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/0ab7ec6fe18b847082f92464e8689f51f8e86a69))
+
+
+### Bug Fixes
+
+* fixed merger failed error ([3339ed8](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/3339ed8d2d1a4b337a4ba60f0296b4948c1b452e))
+* gpay bug fix ([613ee7b](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/613ee7b7404e2e97ae1b0df2c478d335f7c9f3d0))
+* **revert kotlin version:** revert kotlin version ([8d7d00b](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/8d7d00b55c592b1590d25fe9f9c05a8f61ecf9f9))
+
 ## [3.15.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.14.0...ixigo-sdk-3.15.0) (2022-09-22)
 
 
