@@ -397,9 +397,18 @@ internal class PaymentJsInterface(
 
     webViewFragment.requireActivity().runOnUiThread {
       gpayViewModel.gpayResultMutableLiveData.observe(webViewFragment) {
-        executeResponse(
-            replaceNativePromisePayload(
-                success, it, moshi.adapter(GpayPaymentFinished::class.java)))
+        if (it != null) {
+          if (it.paymentFinished) {
+            executeResponse(
+                replaceNativePromisePayload(
+                    success, it, moshi.adapter(GpayPaymentFinished::class.java)))
+          } else {
+            executeResponse(
+                replaceNativePromisePayload(
+                    error, it, moshi.adapter(GpayPaymentFinished::class.java)))
+          }
+          gpayViewModel.gpayResultMutableLiveData.postValue(null)
+        }
       }
     }
     paymentsClient.loadPaymentData(
@@ -461,9 +470,11 @@ internal class PaymentJsInterface(
             Timber.d(data.toString())
             val statusCode =
                 data!!.getIntExtra(WalletConstants.EXTRA_ERROR_CODE, WalletConstants.INTERNAL_ERROR)
+            gpayViewModel.setGpayPaymentResult(GpayPaymentFinished(false))
             handleResultStatusCode(statusCode)
           }
           RESULT_CANCELED -> {
+            gpayViewModel.setGpayPaymentResult(GpayPaymentFinished(false))
             Timber.d("User cancelled gpay transaction")
           }
         }
