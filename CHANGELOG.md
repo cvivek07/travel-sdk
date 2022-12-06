@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.16.2](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.16.1...ixigo-sdk-3.16.2) (2022-12-06)
+
+
+### Bug Fixes
+
+* gpayd crash fix ([2f41f24](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/2f41f241884e260c749aa6e52b10fa38ac6bdc6f))
+
 ### [3.16.1](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.16.0...ixigo-sdk-3.16.1) (2022-11-14)
 
 
