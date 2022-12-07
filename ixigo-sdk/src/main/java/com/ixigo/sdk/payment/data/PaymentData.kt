@@ -86,7 +86,7 @@ data class GpayPaymentInput(
     val transactionNote: String
 )
 
-@Keep data class GpayPaymentFinished(val paymentFinished: Boolean)
+@Keep data class PaymentFinished(val paymentFinished: Boolean)
 
 @Keep data class IxigoSDKVersion(val version: String)
 

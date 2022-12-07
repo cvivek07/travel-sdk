@@ -65,6 +65,7 @@ class PaymentJsInterfaceTests {
         launchFragmentInContainer(
             Bundle().also {
               it.putParcelable(WebViewFragment.INITIAL_PAGE_DATA_ARGS, initialPageData)
+              it.putBoolean(WebViewFragment.QUIT_PAYMENT_PAGE, true)
             })
     scenario.onFragment {
       fragment = it

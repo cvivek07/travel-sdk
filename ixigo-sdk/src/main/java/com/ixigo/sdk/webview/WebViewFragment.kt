@@ -30,7 +30,7 @@ import timber.log.Timber
 class WebViewFragment : Fragment(), UIConfigurable, UrlLoader {
   @VisibleForTesting internal lateinit var binding: WebviewLayoutBinding
   @VisibleForTesting
-  internal val webView
+  val webView
     get() = binding.webView
   @VisibleForTesting
   internal val loadableView
@@ -49,6 +49,9 @@ class WebViewFragment : Fragment(), UIConfigurable, UrlLoader {
 
   val initialPageData: InitialPageData
     get() = arguments?.getParcelable(INITIAL_PAGE_DATA_ARGS)!!
+
+  val quitPaymentPage: Boolean
+    get() = arguments?.getBoolean(QUIT_PAYMENT_PAGE) == true
 
   var delegate: WebViewDelegate? = null
   private lateinit var jsInterfaces: List<JsInterface>
@@ -124,6 +127,7 @@ class WebViewFragment : Fragment(), UIConfigurable, UrlLoader {
   companion object {
     const val INITIAL_PAGE_DATA_ARGS = "InitialPageData"
     const val CONFIG = "WebViewFragmentConfig"
+    const val QUIT_PAYMENT_PAGE = "QuitPaymentPage"
   }
 
   internal val webViewBackPressHandler by lazy {

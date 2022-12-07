@@ -1,5 +1,6 @@
 package com.ixigo.sdk.payment
 
+import android.os.Bundle
 import androidx.fragment.app.FragmentActivity
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.analytics.Event
@@ -65,6 +66,57 @@ class PaymentSDK(
         }
       }
     }
+  }
+
+  fun getPaymentFragment(
+      activity: FragmentActivity,
+      transactionId: String,
+      tripId: String? = null,
+      providerId: String? = null,
+      productType: String? = null,
+      gatewayId: String = "1",
+      flowType: String = "PAYMENT_SDK",
+      config: FunnelConfig? = null,
+      urlLoader: UrlLoader? = null,
+      quitPaymentPage: Boolean,
+      callback: ProcessPaymentCallback? = null
+  ): WebViewFragment {
+    val webViewFragment = WebViewFragment()
+    ssoAuthProvider.login(activity, IxigoSDK.instance.appInfo.clientId) { authResult ->
+      when (authResult) {
+        is Err -> {
+          Timber.e("Unable to perform login before payment. Error=${authResult.value}")
+          callback?.let { it.invoke(Err(ProcessPaymentNotLoginError(authResult.value))) }
+        }
+        is Ok -> {
+          callback?.let { currentTransactions[transactionId] = it }
+          with(IxigoSDK.instance) {
+            val url =
+                getPaymentOptionsUrl(
+                    transactionId = transactionId,
+                    gatewayId = gatewayId,
+                    flowType = flowType,
+                    tripId = tripId,
+                    providerId = providerId,
+                    productType = productType)
+            val authHeaders = mapOf("Authorization" to authResult.value.token)
+            if (urlLoader != null) {
+              urlLoader.loadUrl(url, authHeaders + getHeaders(url))
+            } else {
+              val bundle = Bundle()
+              bundle.putParcelable(
+                  WebViewFragment.INITIAL_PAGE_DATA_ARGS,
+                  InitialPageData(url, authHeaders + getHeaders(url)))
+              config?.let { bundle.putParcelable(WebViewFragment.CONFIG, it) }
+              bundle.putBoolean(WebViewFragment.QUIT_PAYMENT_PAGE, quitPaymentPage)
+              webViewFragment.arguments = bundle
+            }
+            analyticsProvider.logEvent(Event.with(action = "paymentsStartHome"))
+          }
+        }
+      }
+    }
+    return webViewFragment
   }
 
   private fun getPaymentOptionsUrl(

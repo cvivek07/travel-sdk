@@ -19,9 +19,8 @@ import com.ixigo.sdk.payment.PackageManager.Companion.REQUEST_CODE_GPAY_APP
 import com.ixigo.sdk.payment.PackageManager.Companion.REQUEST_CODE_PHONEPE_APP
 import com.ixigo.sdk.payment.data.*
 import com.ixigo.sdk.payment.gpay.GpayUtils
-import com.ixigo.sdk.payment.gpay.GpayViewModel
 import com.ixigo.sdk.payment.minkasu_sdk.MinkasuSDKManager
-import com.ixigo.sdk.payment.phonepe.PhonePeViewModel
+import com.ixigo.sdk.payment.viewmodel.PaymentViewModel
 import com.ixigo.sdk.webview.JsInterface
 import com.ixigo.sdk.webview.WebActivity
 import com.ixigo.sdk.webview.WebViewFragment
@@ -60,15 +59,13 @@ internal class PaymentJsInterface(
   }
   private val errorAdapter by lazy { moshi.adapter(NativePromiseError::class.java) }
 
-  private val phonePeViewModel: PhonePeViewModel by webViewFragment.viewModels()
+  private val paymentViewModel: PaymentViewModel by webViewFragment.viewModels()
 
   private val packageManager: PackageManager by lazy {
     PackageManager(webViewFragment.requireContext().applicationContext)
   }
 
   private val paymentsClient by lazy { GpayUtils.createPaymentsClient() }
-
-  private val gpayViewModel: GpayViewModel by webViewFragment.viewModels()
 
   @JavascriptInterface
   fun initialize(jsonInput: String, success: String, error: String) {
@@ -222,7 +219,7 @@ internal class PaymentJsInterface(
       return
     }
     if (PaymentSDK.instance.finishPayment(input)) {
-      webViewFragment.delegate?.onQuit()
+      if (webViewFragment.quitPaymentPage) webViewFragment.delegate?.onQuit()
       executeResponse(
           replaceNativePromisePayload(
               success,
@@ -325,7 +322,7 @@ internal class PaymentJsInterface(
             ?: return
 
     webViewFragment.requireActivity().runOnUiThread {
-      phonePeViewModel.phonePeResultMutableLiveData.observe(webViewFragment) {
+      paymentViewModel.phonePeResultMutableLiveData.observe(webViewFragment) {
         executeResponse(
             replaceNativePromisePayload(
                 success, it, moshi.adapter(PhonePePaymentFinished::class.java)))
@@ -408,18 +405,18 @@ internal class PaymentJsInterface(
       }
 
       webViewFragment.requireActivity().runOnUiThread {
-        gpayViewModel.gpayResultMutableLiveData.observe(webViewFragment) {
+        paymentViewModel.gpayResultMutableLiveData.observe(webViewFragment) {
           if (it != null) {
             if (it.paymentFinished) {
               executeResponse(
                   replaceNativePromisePayload(
-                      success, it, moshi.adapter(GpayPaymentFinished::class.java)))
+                      success, it, moshi.adapter(PaymentFinished::class.java)))
             } else {
               executeResponse(
                   replaceNativePromisePayload(
-                      error, it, moshi.adapter(GpayPaymentFinished::class.java)))
+                      error, it, moshi.adapter(PaymentFinished::class.java)))
             }
-            gpayViewModel.gpayResultMutableLiveData.postValue(null)
+            paymentViewModel.gpayResultMutableLiveData.postValue(null)
           }
         }
       }
@@ -471,25 +468,25 @@ internal class PaymentJsInterface(
     when (requestCode) {
       REQUEST_CODE_PHONEPE_APP -> {
         if (resultCode != RESULT_CANCELED) {
-          phonePeViewModel.setPhonePeResult(PhonePePaymentFinished(paymentFinished = true))
+          paymentViewModel.setPhonePeResult(PhonePePaymentFinished(paymentFinished = true))
         }
       }
       REQUEST_CODE_GPAY_APP -> {
         when (resultCode) {
           RESULT_OK -> {
             val paymentData = WalletUtils.getPaymentDataFromIntent(data)
-            gpayViewModel.setGpayPaymentResult(GpayPaymentFinished(true))
+            paymentViewModel.setGpayPaymentResult(PaymentFinished(true))
             Timber.d(paymentData)
           }
           RESULT_FIRST_USER -> {
             Timber.d(data.toString())
             val statusCode =
                 data!!.getIntExtra(WalletConstants.EXTRA_ERROR_CODE, WalletConstants.INTERNAL_ERROR)
-            gpayViewModel.setGpayPaymentResult(GpayPaymentFinished(false))
+            paymentViewModel.setGpayPaymentResult(PaymentFinished(false))
             handleResultStatusCode(statusCode)
           }
           RESULT_CANCELED -> {
-            gpayViewModel.setGpayPaymentResult(GpayPaymentFinished(false))
+            paymentViewModel.setGpayPaymentResult(PaymentFinished(false))
             Timber.d("User cancelled gpay transaction")
           }
         }
