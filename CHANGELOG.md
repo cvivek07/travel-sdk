@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.17.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.16.2...ixigo-sdk-3.17.0) (2022-12-07)
+
+
+### Features
+
+* payment screen as a fragment ([b74842e](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/b74842ebfd63718e7143db19f471abb74df7799f))
+
 ### [3.16.2](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.16.1...ixigo-sdk-3.16.2) (2022-12-06)
 
 
