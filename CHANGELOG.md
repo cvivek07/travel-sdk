@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.17.1](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.17.0...ixigo-sdk-3.17.1) (2022-12-12)
+
+
+### Bug Fixes
+
+* fix proguard issue in bus sdk ([5413dcf](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/5413dcf2455a4971244e37aaea3b293ff6d89145))
+
 ## [3.17.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.16.2...ixigo-sdk-3.17.0) (2022-12-07)
 
 
