@@ -12,6 +12,7 @@ import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import timber.log.Timber
 
+@Keep
 class HtmlOutJsInterface(
     private val webViewFragment: WebViewFragment,
     private val partnerTokenProvider: PartnerTokenProvider = IxigoSDK.instance.partnerTokenProvider
