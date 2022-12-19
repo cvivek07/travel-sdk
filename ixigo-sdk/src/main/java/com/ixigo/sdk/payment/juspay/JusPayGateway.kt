@@ -59,6 +59,10 @@ internal class JusPayGateway(
   override val initialized: Boolean
     get() = hyperInstance.isInitialised
 
+  override fun getHyperInstance(): HyperServices {
+    return hyperInstance
+  }
+
   private fun createRequestId(callback: HyperServiceCallback): String {
     val requestId = UUID.randomUUID().toString()
     requestMap[requestId] = callback
@@ -281,7 +285,7 @@ internal class JusPayGateway(
       put("clientId", input.clientId)
       put("customerId", input.customerId)
       put("merchantLoader", true)
-      put(PaymentConstants.ENV, environment.environmentString)
+      put(PaymentConstants.ENV, input.environment ?: environment.environmentString)
     }
   }
 

@@ -135,11 +135,15 @@ class WebViewFragment : Fragment(), UIConfigurable, UrlLoader {
       override fun handleOnBackPressed() {
         when (uiConfig.backNavigationMode) {
           is BackNavigationMode.Handler -> {
-            webView.evaluateJavascript("""javascript:IxigoSDK.ui.handleBackNavigation()""") {
-              if (it != null && it.toBoolean()) {
-                Timber.d("Back Navigation handled by PWA")
-              } else {
-                handleBackNavigation()
+            for (listener in listeners) {
+              if (!listener.onBackPressed(this@WebViewFragment)) {
+                webView.evaluateJavascript("""javascript:IxigoSDK.ui.handleBackNavigation()""") {
+                  if (it != null && it.toBoolean()) {
+                    Timber.d("Back Navigation handled by PWA")
+                  } else {
+                    handleBackNavigation()
+                  }
+                }
               }
             }
           }
@@ -360,4 +364,5 @@ interface WebViewDelegate {
 
 interface WebViewFragmentListener {
   fun onUrlLoadStart(webViewFragment: WebViewFragment, url: String?)
+  fun onBackPressed(webViewFragment: WebViewFragment): Boolean
 }

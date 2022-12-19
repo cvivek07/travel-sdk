@@ -208,7 +208,9 @@ internal class PaymentJsInterface(
       return
     }
 
-    gateway.process(input) { executeResponse(replaceNativePromisePayload(success, it.toString())) }
+    gateway.process(input) {
+      executeResponse(replaceNativePromisePayload(success, escapeSpecialCharacters(it.toString())))
+    }
   }
 
   @JavascriptInterface
@@ -461,6 +463,19 @@ internal class PaymentJsInterface(
 
   override fun onUrlLoadStart(webViewFragment: WebViewFragment, url: String?) {
     cachingGatewayProvider.clear()
+  }
+
+  override fun onBackPressed(webViewFragment: WebViewFragment): Boolean {
+    try {
+      val provider = "JUSPAY"
+      val gateway = cachingGatewayProvider.getPaymentGateway(provider)
+      if (gateway != null && gateway.initialized) {
+        return gateway.getHyperInstance().onBackPressed()
+      }
+    } catch (e: Exception) {
+      Timber.e(e)
+    }
+    return false
   }
 
   /** Callback for onActivityResult */

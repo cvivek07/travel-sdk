@@ -74,7 +74,8 @@ class JuspayGatewayTests {
             merchantId = "merchantIdValue",
             clientId = "clientIdValue",
             customerId = "customerIdValue",
-            provider = "providerValue")) { result = it }
+            provider = "providerValue",
+            environment = null)) { result = it }
 
     verify(hyperServices).initiate(capture(jsonObjectCaptor), capture(hyperCallbackCaptor))
 
@@ -101,7 +102,8 @@ class JuspayGatewayTests {
             merchantId = "merchantIdValue",
             clientId = "clientIdValue",
             customerId = "customerIdValue",
-            provider = "providerValue")) { result = it }
+            provider = "providerValue",
+            environment = null)) { result = it }
 
     verify(hyperServices).initiate(capture(jsonObjectCaptor), capture(hyperCallbackCaptor))
 
@@ -437,7 +439,8 @@ class JuspayGatewayTests {
             merchantId = "merchantIdValue",
             clientId = "clientIdValue",
             customerId = "customerIdValue",
-            provider = "providerValue")) {}
+            provider = "providerValue",
+            environment = null)) {}
 
     verify(hyperServices).initiate(capture(jsonObjectCaptor), capture(hyperCallbackCaptor))
   }

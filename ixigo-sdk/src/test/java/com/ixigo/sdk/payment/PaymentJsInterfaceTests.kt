@@ -93,7 +93,8 @@ class PaymentJsInterfaceTests {
                         merchantId = "merchantIdValue",
                         customerId = "customerIdValue",
                         clientId = "clientIdValue",
-                        provider = "JUSPAY")),
+                        provider = "JUSPAY",
+                        environment = null)),
                 any()))
         .then {
           val callback: InitializeCallback = it.getArgument(1)
@@ -177,7 +178,8 @@ class PaymentJsInterfaceTests {
                         merchantId = "merchantIdValue",
                         customerId = "customerIdValue",
                         clientId = "clientIdValue",
-                        provider = "JUSPAY")),
+                        provider = "JUSPAY",
+                        environment = null)),
                 any()))
         .then {
           val callback: InitializeCallback = it.getArgument(1)
@@ -556,7 +558,8 @@ class PaymentJsInterfaceTests {
           merchantId = "merchantIdValue",
           customerId = "customerIdValue",
           clientId = "clientIdValue",
-          provider = "JUSPAY")
+          provider = "JUSPAY",
+          environment = null)
 
   private val validInitializeInputString =
       """

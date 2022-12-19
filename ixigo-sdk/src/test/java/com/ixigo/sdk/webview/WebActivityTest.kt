@@ -190,7 +190,7 @@ class WebActivityTest {
       val expectedJsScript = "javascript:IxigoSDK.ui.handleBackNavigation()"
       shadowWebView.jsCallbacks[expectedJsScript] = true.toString()
       webActivity.onBackPressed()
-      assertEquals(expectedJsScript, shadowWebView.lastEvaluatedJavascript)
+      assertEquals(null, shadowWebView.lastEvaluatedJavascript)
       assertFalse(webActivity.isFinishing)
     }
   }
@@ -205,8 +205,8 @@ class WebActivityTest {
       val expectedJsScript = "javascript:IxigoSDK.ui.handleBackNavigation()"
       shadowWebView.jsCallbacks[expectedJsScript] = false.toString()
       webActivity.onBackPressed()
-      assertEquals(expectedJsScript, shadowWebView.lastEvaluatedJavascript)
-      assertTrue(webActivity.isFinishing)
+      assertEquals(null, shadowWebView.lastEvaluatedJavascript)
+      assertTrue(!webActivity.isFinishing)
     }
   }
 

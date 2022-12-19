@@ -7,7 +7,8 @@ data class InitializeInput(
     val merchantId: String,
     val clientId: String,
     val customerId: String,
-    val provider: String
+    val provider: String,
+    val environment: String?
 )
 
 @Keep data class UpiApp(val appName: String, val packageName: String)

@@ -2,10 +2,13 @@ package com.ixigo.sdk.payment
 
 import androidx.fragment.app.FragmentActivity
 import com.ixigo.sdk.payment.data.*
+import `in`.juspay.services.HyperServices
 import org.json.JSONObject
 
 interface PaymentGateway {
   val initialized: Boolean
+
+  fun getHyperInstance(): HyperServices
 
   fun initialize(input: InitializeInput, callback: InitializeCallback)
 

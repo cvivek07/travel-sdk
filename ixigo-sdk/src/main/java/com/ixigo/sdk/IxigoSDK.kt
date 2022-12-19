@@ -151,6 +151,7 @@ internal constructor(
     intent.putExtra(
         WebViewFragment.INITIAL_PAGE_DATA_ARGS, InitialPageData(url, headers + getHeaders(url)))
     config?.let { intent.putExtra(WebViewFragment.CONFIG, it) }
+    intent.putExtra(WebViewFragment.QUIT_PAYMENT_PAGE, true)
     context.startActivity(intent)
   }
 
