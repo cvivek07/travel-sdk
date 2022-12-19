@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.18.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.17.1...ixigo-sdk-3.18.0) (2022-12-19)
+
+
+### Features
+
+* net banking, wallet txns via juspay ec sdk ([bd63c02](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/bd63c02416a3a25d65591c1a6b0e2fd72a81940a))
+
 ### [3.17.1](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.17.0...ixigo-sdk-3.17.1) (2022-12-12)
 
 
