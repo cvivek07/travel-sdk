@@ -41,7 +41,7 @@ class WebViewFragment : Fragment(), UIConfigurable, UrlLoader {
 
   private val defaultUIConfig = UIConfig(backNavigationMode = BackNavigationMode.Enabled())
 
-  internal var uiConfig: UIConfig = defaultUIConfig
+  var uiConfig: UIConfig = defaultUIConfig
     private set
 
   val analyticsProvider: AnalyticsProvider
@@ -339,7 +339,7 @@ class WebViewFragment : Fragment(), UIConfigurable, UrlLoader {
     webView.loadUrl(url, headers ?: mapOf())
   }
 
-  private val listeners: MutableList<WebViewFragmentListener> = mutableListOf()
+  val listeners: MutableList<WebViewFragmentListener> = mutableListOf()
   internal fun addListener(listener: WebViewFragmentListener) {
     listeners.add(listener)
   }
