@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.18.1](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.18.0...ixigo-sdk-3.18.1) (2022-12-24)
+
+
+### Bug Fixes
+
+* ui config/listeners accessible from host app ([aa37078](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/aa3707855a93b8196fce069bbc5d9f2715f91751))
+
 ## [3.18.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.17.1...ixigo-sdk-3.18.0) (2022-12-19)
 
 
