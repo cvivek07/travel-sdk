@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.19.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.18.1...ixigo-sdk-3.19.0) (2023-01-04)
+
+
+### Features
+
+* upi direct interfaces, minkasu version upgrade, juspay version upgrade ([3c22839](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/3c2283978b5c11468b9f873581a06b0ed28d3394))
+
 ### [3.18.1](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.18.0...ixigo-sdk-3.18.1) (2022-12-24)
 
 
