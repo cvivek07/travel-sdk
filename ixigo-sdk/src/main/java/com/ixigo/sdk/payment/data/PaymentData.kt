@@ -101,8 +101,11 @@ data class MinkasuInput(
     val lastName: String,
     val email: String,
     val phoneNumber: String,
-    val ctaColor: String
+    val ctaColor: String,
+    val product: String? = "ixigo"
 )
+
+@Keep data class LaunchUPIApp(val deeplink: String, val packageName: String)
 
 @Keep
 enum class PaymentHandler {

@@ -3,6 +3,7 @@ package com.ixigo.sdk.payment
 import android.app.Activity.*
 import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.content.pm.ResolveInfo
 import android.net.Uri
 import android.webkit.JavascriptInterface
 import androidx.fragment.app.viewModels
@@ -17,6 +18,7 @@ import com.ixigo.sdk.common.NativePromiseError.Companion.wrongInputError
 import com.ixigo.sdk.payment.PackageManager.Companion.PHONEPE_PACKAGE_NAME
 import com.ixigo.sdk.payment.PackageManager.Companion.REQUEST_CODE_GPAY_APP
 import com.ixigo.sdk.payment.PackageManager.Companion.REQUEST_CODE_PHONEPE_APP
+import com.ixigo.sdk.payment.PackageManager.Companion.REQUEST_CODE_UPI_APP
 import com.ixigo.sdk.payment.data.*
 import com.ixigo.sdk.payment.gpay.GpayUtils
 import com.ixigo.sdk.payment.minkasu_sdk.MinkasuSDKManager
@@ -27,6 +29,7 @@ import com.ixigo.sdk.webview.WebViewFragment
 import com.ixigo.sdk.webview.WebViewFragmentListener
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import `in`.juspay.hypersdk.core.JuspayWebViewConfigurationCallback
 import org.json.JSONObject
 import timber.log.Timber
 
@@ -66,6 +69,13 @@ internal class PaymentJsInterface(
   }
 
   private val paymentsClient by lazy { GpayUtils.createPaymentsClient() }
+
+  private var minkasuInput: MinkasuInput? = null
+
+  private var juspayWebViewConfigurationCallback: JuspayWebViewConfigurationCallback =
+      JuspayWebViewConfigurationCallback { webView ->
+    minkasuInput?.let { MinkasuSDKManager(webViewFragment, webView).initMinkasu2FASDK(it) }
+  }
 
   @JavascriptInterface
   fun initialize(jsonInput: String, success: String, error: String) {
@@ -145,6 +155,72 @@ internal class PaymentJsInterface(
   }
 
   @JavascriptInterface
+  fun getUPIDirectApps(success: String, error: String) {
+    try {
+      val packageManager: android.content.pm.PackageManager =
+          webViewFragment.requireContext().packageManager
+      val mainIntent = Intent(Intent.ACTION_MAIN, null)
+      mainIntent.addCategory(Intent.CATEGORY_DEFAULT)
+      mainIntent.addCategory(Intent.CATEGORY_BROWSABLE)
+      mainIntent.action = Intent.ACTION_VIEW
+      val uri = Uri.Builder().scheme("upi").authority("pay").build()
+      mainIntent.data = uri
+      val pkgAppsList: MutableList<ResolveInfo>? =
+          webViewFragment.context?.packageManager?.queryIntentActivities(mainIntent, 0)
+
+      val list = arrayListOf<UpiApp>()
+      for (i in pkgAppsList?.indices!!) {
+        val resolveInfo: ResolveInfo = pkgAppsList[i]
+        val app =
+            UpiApp(
+                resolveInfo.loadLabel(packageManager).toString(),
+                resolveInfo.activityInfo.packageName)
+        list.add(app)
+      }
+      val response = GetAvailableUPIAppsResponse(list)
+      executeResponse(
+          replaceNativePromisePayload(success, response, availableUpiAppsResponseAdapter))
+    } catch (e: Exception) {
+      e.printStackTrace()
+      returnError(error, notAvailableError())
+    }
+  }
+
+  @JavascriptInterface
+  fun launchUPIApp(jsonInput: String, success: String, error: String) {
+    val input =
+        kotlin
+            .runCatching { moshi.adapter(LaunchUPIApp::class.java).fromJson(jsonInput) }
+            .getOrNull()
+    if (input == null) {
+      returnError(error, wrongInputError(jsonInput))
+      return
+    }
+    webViewFragment.requireActivity().runOnUiThread {
+      paymentViewModel.upiDirectResultMutableLiveData.observe(webViewFragment) {
+        if (it != null) {
+          executeResponse(
+              replaceNativePromisePayload(
+                  if (it.paymentFinished) success else error,
+                  it,
+                  moshi.adapter(PaymentFinished::class.java)))
+          paymentViewModel.upiDirectResultMutableLiveData.postValue(null)
+        }
+      }
+    }
+    try {
+      val i =
+          Intent(Intent.ACTION_VIEW).apply {
+            data = Uri.parse(input.deeplink)
+            `package` = input.packageName
+          }
+      webViewFragment.requireActivity().startActivityForResult(i, REQUEST_CODE_UPI_APP)
+    } catch (e: ActivityNotFoundException) {
+      returnError(error, notAvailableError())
+    }
+  }
+
+  @JavascriptInterface
   fun processUPIIntent(jsonInput: String, success: String, error: String) {
     val input = kotlin.runCatching { processUpiIntentInputAdapter.fromJson(jsonInput) }.getOrNull()
     if (input == null) {
@@ -207,7 +283,7 @@ internal class PaymentJsInterface(
       returnError(error, errorPayload)
       return
     }
-
+    gateway.getHyperInstance().setWebViewConfigurationCallback(juspayWebViewConfigurationCallback)
     gateway.process(input) {
       executeResponse(replaceNativePromisePayload(success, escapeSpecialCharacters(it.toString())))
     }
@@ -441,16 +517,14 @@ internal class PaymentJsInterface(
   /** Get minkasu data from js-sdk & use it to initialize Minkasu sdk */
   @JavascriptInterface
   fun initializeMinkasuSDK(jsonInput: String, success: String, error: String) {
-    val input =
+    minkasuInput =
         kotlin
             .runCatching { moshi.adapter(MinkasuInput::class.java).fromJson(jsonInput) }
             .getOrNull()
-    if (input == null) {
+    if (minkasuInput == null) {
       returnError(error, wrongInputError(jsonInput))
       return
     }
-
-    MinkasuSDKManager(webViewFragment).initMinkasu2FASDK(input)
   }
 
   private fun returnError(error: String, errorPayload: NativePromiseError) {
@@ -503,6 +577,21 @@ internal class PaymentJsInterface(
           RESULT_CANCELED -> {
             paymentViewModel.setGpayPaymentResult(PaymentFinished(false))
             Timber.d("User cancelled gpay transaction")
+          }
+        }
+      }
+      REQUEST_CODE_UPI_APP -> {
+        Timber.d("UPI RESULT REQUEST CODE-->$requestCode")
+        Timber.d("UPI RESULT RESULT CODE-->$resultCode")
+        Timber.d("UPI RESULT DATA-->$data")
+        when (resultCode) {
+          RESULT_OK -> {
+            // success
+            paymentViewModel.setUPIDirectPaymentResult(PaymentFinished(true))
+          }
+          else -> {
+            // failure
+            paymentViewModel.setUPIDirectPaymentResult(PaymentFinished(false))
           }
         }
       }
