@@ -17,7 +17,8 @@
     <application
         android:allowBackup="true"
         tools:ignore="UnusedAttribute"
-        tools:replace="android:allowBackup">
+        tools:replace="android:allowBackup"
+        android:hardwareAccelerated="true">
         <activity android:name="com.ixigo.sdk.webview.WebActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.IxigoSDK.NoActionBar"/>

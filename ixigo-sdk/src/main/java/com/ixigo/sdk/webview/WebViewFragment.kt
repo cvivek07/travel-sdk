@@ -85,7 +85,13 @@ class WebViewFragment : Fragment(), UIConfigurable, UrlLoader {
     webView.webChromeClient = WebChromeClient()
     webView.settings.javaScriptEnabled = true
     webView.settings.domStorageEnabled = true
-
+    webView.settings.javaScriptEnabled = true
+    webView.settings.setRenderPriority(WebSettings.RenderPriority.HIGH)
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+      webView.setLayerType(View.LAYER_TYPE_HARDWARE, null)
+    } else {
+      webView.setLayerType(View.LAYER_TYPE_SOFTWARE, null)
+    }
     jsInterfaces =
         IxigoSDK.instance.webViewConfig.getMatchingJsInterfaces(initialPageData.url, this)
     jsInterfaces.iterator().forEach(this::addJavascriptInterface)
