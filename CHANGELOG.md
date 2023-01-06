@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.19.1](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.19.0...ixigo-sdk-3.19.1) (2023-01-06)
+
+
+### Bug Fixes
+
+* webview optimizations ([5a32758](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/5a327581758f64d8ec56491bc0bc12fa7d98e781))
+
 ## [3.19.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.18.1...ixigo-sdk-3.19.0) (2023-01-04)
 
 
