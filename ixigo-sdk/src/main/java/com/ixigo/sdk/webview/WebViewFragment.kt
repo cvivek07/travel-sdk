@@ -24,7 +24,11 @@ import com.ixigo.sdk.common.*
 import com.ixigo.sdk.databinding.WebviewLayoutBinding
 import com.ixigo.sdk.ui.*
 import com.ixigo.sdk.util.ThemeUtils.getThemeColor
+import java.text.SimpleDateFormat
+import java.util.*
 import kotlinx.parcelize.Parcelize
+import org.json.JSONException
+import org.json.JSONObject
 import timber.log.Timber
 
 class WebViewFragment : Fragment(), UIConfigurable, UrlLoader {
@@ -189,6 +193,35 @@ class WebViewFragment : Fragment(), UIConfigurable, UrlLoader {
     }
   }
 
+  private fun publishEvent(eventName: String) {
+    try {
+      val authToken = initialPageData.headers["Authorization"]
+      val uri = Uri.parse(initialPageData.url)
+      val paymentTxnId = uri.getQueryParameter("txnId")
+      val tripId = uri.getQueryParameter("tripId")
+      val productType = uri.getQueryParameter("productType")
+      val currentTimeStamp: String =
+          SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.ENGLISH).format(Date())
+
+      if (paymentTxnId != null && authToken != null && productType != null && tripId != null) {
+        val jsonObject =
+            JSONObject()
+                .apply {
+                  put("productType", productType)
+                  put("eventName", eventName)
+                  put("paymentTxnId", paymentTxnId)
+                  put("tripId", tripId)
+                  put("eventTime", currentTimeStamp)
+                }
+                .toString()
+        analyticsProvider.logEvent(
+            Event(
+                name = eventName,
+                properties = mapOf("Authorization" to authToken, "request" to jsonObject)))
+      }
+    } catch (_: JSONException) {}
+  }
+
   private fun stoppedLoading(url: String = webView.url.toString()) {
     with(IxigoSDK.instance.uriIdlingResource) {
       if (!isIdleNow) {
@@ -219,6 +252,7 @@ class WebViewFragment : Fragment(), UIConfigurable, UrlLoader {
       setStatusBarColorFromThemeColor()
 
       loadIxigoJsSDKIfNeeded()
+      publishEvent("WEBVIEW_INIT_END")
     }
 
     override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
@@ -269,6 +303,7 @@ class WebViewFragment : Fragment(), UIConfigurable, UrlLoader {
       }
       return if (URLUtil.isNetworkUrl(url)) {
         startedLoading(url)
+        publishEvent("WEBVIEW_INIT_START")
         analyticsProvider.logEvent(Event.with(action = "webviewStartLoad", referrer = url))
         false
       } else {

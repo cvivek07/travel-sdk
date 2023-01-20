@@ -9,6 +9,7 @@ import com.ixigo.sdk.R
 import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.ChainAnalyticsProvider
 import com.ixigo.sdk.analytics.GoogleAnalyticsProvider
+import com.ixigo.sdk.util.PublishEventProvider
 
 abstract class SdkSingleton<T>(private val sdkName: String) {
   protected var INSTANCE: T? = null
@@ -51,7 +52,9 @@ abstract class SdkSingleton<T>(private val sdkName: String) {
   ): AnalyticsProvider {
     val tracker = GoogleAnalytics.getInstance(context).newTracker(R.xml.ixigosdk_tracker)
     val googleAnalyticsProvider = GoogleAnalyticsProvider(tracker, appInfo = appInfo)
-    return ChainAnalyticsProvider(googleAnalyticsProvider, clientAnalyticsProvider)
+    val publishEventProvider = PublishEventProvider()
+    return ChainAnalyticsProvider(
+        googleAnalyticsProvider, clientAnalyticsProvider, publishEventProvider)
   }
 
   internal fun assertNotCreated() {

@@ -24,6 +24,7 @@ import com.ixigo.sdk.auth.test.ActivityResultPartnerTokenProvider
 import com.ixigo.sdk.payment.ActivityResultPaymentProvider
 import com.ixigo.sdk.test.initializeTestIxigoSDK
 import com.ixigo.sdk.ui.*
+import java.util.*
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
@@ -48,7 +49,9 @@ class WebViewFragmentUnitTests {
 
   private lateinit var scenario: FragmentScenario<WebViewFragment>
   private val initialPageData =
-      InitialPageData("https://www.ixigo.com", mapOf("header1" to "header1Value"))
+      InitialPageData(
+          "https://www.ixigo.com/pwa/initialpage?page=PAYMENT&paymentId=2ME8HW9KHJJS2UNQV&tripId=IXITRS52916728049791&txnId=231QWER89&productType=FLIGHT",
+          mapOf("Authorization" to "Bearer token"))
   private lateinit var shadowWebView: CustomShadowWebview
   private lateinit var shadowActivity: ShadowActivity
   private lateinit var fragmentActivity: Activity
@@ -237,9 +240,7 @@ class WebViewFragmentUnitTests {
     verify(mockAnalyticsProvider)
         .logEvent(
             Event.with(
-                action = "webviewError",
-                label = "errorMessage",
-                referrer = "https://www.ixigo.com"))
+                action = "webviewError", label = "errorMessage", referrer = initialPageData.url))
   }
 
   @Test
@@ -250,7 +251,7 @@ class WebViewFragmentUnitTests {
         mock { on { statusCode } doReturn 404 })
     verify(mockAnalyticsProvider)
         .logEvent(
-            Event.with(action = "webviewError", label = "404", referrer = "https://www.ixigo.com"))
+            Event.with(action = "webviewError", label = "404", referrer = initialPageData.url))
   }
 
   @Test
@@ -493,6 +494,35 @@ class WebViewFragmentUnitTests {
 
     shadowWebView.webViewClient.doUpdateVisitedHistory(fragment.webView, initialPageData.url, false)
     assertEquals("uiConfig resets previously set value", updatedUIConfig, fragment.uiConfig)
+  }
+
+  @Test
+  fun `test if publishEvent is called successfully after shouldOverrideUrlLoading`() {
+    shadowWebView.webViewClient.shouldOverrideUrlLoading(
+        fragment.webView,
+        mock<WebResourceRequest> { on { url } doReturn Uri.parse(initialPageData.url) })
+    assertLoadableViewStatus(Loading(referrer = initialPageData.url))
+    verify(mockAnalyticsProvider)
+        .logEvent(
+            event =
+                argThat { event ->
+                  event.name == "WEBVIEW_INIT_START" &&
+                      event.properties["request"] != null &&
+                      event.properties["Authorization"] != null
+                })
+  }
+
+  @Test
+  fun `test if publishEvent is called successfully after onPageFinished`() {
+    shadowWebView.webViewClient.onPageFinished(fragment.webView, initialPageData.url)
+    verify(mockAnalyticsProvider)
+        .logEvent(
+            event =
+                argThat { event ->
+                  event.name == "WEBVIEW_INIT_END" &&
+                      event.properties["request"] != null &&
+                      event.properties["Authorization"] != null
+                })
   }
 
   private fun assertLoadableViewStatus(status: Status) {
