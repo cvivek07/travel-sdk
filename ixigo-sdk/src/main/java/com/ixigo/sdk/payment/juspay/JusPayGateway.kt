@@ -1,5 +1,6 @@
 package com.ixigo.sdk.payment
 
+import android.webkit.WebView
 import androidx.fragment.app.FragmentActivity
 import com.ixigo.sdk.common.Err
 import com.ixigo.sdk.common.NativePromiseError
@@ -35,6 +36,10 @@ typealias CredEligibilityResult = Result<CredEligibilityResponse, NativePromiseE
 
 typealias CredEligibilityCallback = (CredEligibilityResult) -> Unit
 
+interface WebViewCallback {
+  fun onWebViewAvailable(webView: WebView)
+}
+
 enum class JusPayEnvironment(val environmentString: String) {
   PRODUCTION(PaymentConstants.ENVIRONMENT.PRODUCTION),
   SANDBOX(PaymentConstants.ENVIRONMENT.SANDBOX)
@@ -59,8 +64,14 @@ internal class JusPayGateway(
   override val initialized: Boolean
     get() = hyperInstance.isInitialised
 
-  override fun getHyperInstance(): HyperServices {
-    return hyperInstance
+  override fun onBackPressed(): Boolean {
+    return hyperInstance.onBackPressed()
+  }
+
+  override fun setCallback(callback: WebViewCallback) {
+    hyperInstance.setWebViewConfigurationCallback { juspayWebView ->
+      callback.onWebViewAvailable(juspayWebView)
+    }
   }
 
   private fun createRequestId(callback: HyperServiceCallback): String {

@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.ResolveInfo
 import android.net.Uri
 import android.webkit.JavascriptInterface
+import android.webkit.WebView
 import androidx.fragment.app.viewModels
 import com.google.android.apps.nbu.paisa.inapp.client.api.WalletConstants
 import com.google.android.apps.nbu.paisa.inapp.client.api.WalletUtils
@@ -29,7 +30,6 @@ import com.ixigo.sdk.webview.WebViewFragment
 import com.ixigo.sdk.webview.WebViewFragmentListener
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import `in`.juspay.hypersdk.core.JuspayWebViewConfigurationCallback
 import org.json.JSONObject
 import timber.log.Timber
 
@@ -72,10 +72,12 @@ internal class PaymentJsInterface(
 
   private var minkasuInput: MinkasuInput? = null
 
-  private var juspayWebViewConfigurationCallback: JuspayWebViewConfigurationCallback =
-      JuspayWebViewConfigurationCallback { webView ->
-    minkasuInput?.let { MinkasuSDKManager(webViewFragment, webView).initMinkasu2FASDK(it) }
-  }
+  private val webViewCallback =
+      object : WebViewCallback {
+        override fun onWebViewAvailable(webView: WebView) {
+          minkasuInput?.let { MinkasuSDKManager(webViewFragment, webView).initMinkasu2FASDK(it) }
+        }
+      }
 
   @JavascriptInterface
   fun initialize(jsonInput: String, success: String, error: String) {
@@ -258,6 +260,7 @@ internal class PaymentJsInterface(
     }
   }
 
+  /** Generic method to fetch response from juspay sdk */
   @JavascriptInterface
   fun process(jsonInput: String, success: String, error: String) {
     val input = kotlin.runCatching { JSONObject(jsonInput) }.getOrNull()
@@ -283,7 +286,7 @@ internal class PaymentJsInterface(
       returnError(error, errorPayload)
       return
     }
-    gateway.getHyperInstance().setWebViewConfigurationCallback(juspayWebViewConfigurationCallback)
+    gateway.setCallback(webViewCallback)
     gateway.process(input) {
       executeResponse(replaceNativePromisePayload(success, escapeSpecialCharacters(it.toString())))
     }
@@ -544,7 +547,7 @@ internal class PaymentJsInterface(
       val provider = "JUSPAY"
       val gateway = cachingGatewayProvider.getPaymentGateway(provider)
       if (gateway != null && gateway.initialized) {
-        return gateway.getHyperInstance().onBackPressed()
+        return gateway.onBackPressed()
       }
     } catch (e: Exception) {
       Timber.e(e)
