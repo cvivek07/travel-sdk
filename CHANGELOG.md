@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.20.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.19.1...ixigo-sdk-3.20.0) (2023-01-24)
+
+
+### Features
+
+* **minkasu version upgarde:** minkasu version upgarde ([baa22fc](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/baa22fcc4f9ee2d69f32426cc1f52cdd8041043b))
+
 ### [3.19.1](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.19.0...ixigo-sdk-3.19.1) (2023-01-06)
 
 
