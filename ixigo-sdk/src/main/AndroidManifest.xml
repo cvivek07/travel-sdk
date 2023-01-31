@@ -22,6 +22,11 @@
         <activity android:name="com.ixigo.sdk.webview.WebActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.IxigoSDK.NoActionBar"/>
+        
+        <provider
+            android:authorities="com.ixigo.sdk.contentprovider"
+            android:name=".contentprovider.IxigoSdkInitProvider"
+            android:exported="false" />
     </application>
 
     <queries>
