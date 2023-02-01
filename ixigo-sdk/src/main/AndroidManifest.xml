@@ -24,7 +24,7 @@
             android:theme="@style/Theme.IxigoSDK.NoActionBar"/>
         
         <provider
-            android:authorities="com.ixigo.sdk.contentprovider"
+            android:authorities="${applicationId}.IxigoSdkInitProvider"
             android:name=".contentprovider.IxigoSdkInitProvider"
             android:exported="false" />
     </application>
