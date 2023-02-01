@@ -10,9 +10,6 @@ import com.ixigo.sdk.common.*
 import com.ixigo.sdk.payment.PaymentSDK.Companion.init
 import com.ixigo.sdk.payment.data.FinishPaymentInput
 import com.ixigo.sdk.webview.*
-import `in`.juspay.services.HyperServices
-import org.json.JSONException
-import org.json.JSONObject
 import timber.log.Timber
 
 /**
@@ -183,16 +180,7 @@ class PaymentSDK(
     /** Boots up 3rd party sdk used by this sdk e.g. Juspay Native Sdk. */
     @JvmStatic
     fun bootUp(context: Context, juspayClientId: String) {
-      val payload = JSONObject()
-      val innerPayload = JSONObject()
-
-      try {
-        innerPayload.put("clientId", juspayClientId)
-        payload.put("payload", innerPayload)
-        payload.put("service", "in.juspay.hyperapi")
-      } catch (_: JSONException) {}
-
-      HyperServices.preFetch(context.applicationContext, payload)
+      JusPayGateway.preFetch(context, juspayClientId)
     }
   }
 

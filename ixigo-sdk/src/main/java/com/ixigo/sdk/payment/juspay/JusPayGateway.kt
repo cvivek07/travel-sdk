@@ -1,5 +1,6 @@
 package com.ixigo.sdk.payment
 
+import android.content.Context
 import android.webkit.WebView
 import androidx.fragment.app.FragmentActivity
 import com.ixigo.sdk.common.Err
@@ -15,6 +16,7 @@ import `in`.juspay.hypersdk.ui.HyperPaymentsCallbackAdapter
 import `in`.juspay.services.HyperServices
 import java.util.*
 import org.json.JSONArray
+import org.json.JSONException
 import org.json.JSONObject
 import timber.log.Timber
 
@@ -330,4 +332,18 @@ internal class JusPayGateway(
           errorCode = data.optString("errorCode"),
           errorMessage = data.optString("errorMessage"),
           debugMessage = kotlin.runCatching { data.getString("payload") }.getOrNull())
+
+  companion object {
+
+    fun preFetch(context: Context, juspayClientId: String) {
+      val payload = JSONObject()
+      val innerPayload = JSONObject()
+      try {
+        innerPayload.put("clientId", juspayClientId)
+        payload.put("payload", innerPayload)
+        payload.put("service", "in.juspay.hyperapi")
+      } catch (_: JSONException) {}
+      HyperServices.preFetch(context.applicationContext, payload)
+    }
+  }
 }
