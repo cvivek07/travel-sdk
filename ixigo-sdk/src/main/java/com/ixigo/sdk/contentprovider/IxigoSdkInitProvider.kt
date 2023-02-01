@@ -3,27 +3,17 @@ package com.ixigo.sdk.contentprovider
 import android.content.ContentProvider
 import android.content.ContentValues
 import android.content.Context
-import android.content.pm.ApplicationInfo
-import android.content.pm.PackageManager
 import android.content.pm.ProviderInfo
 import android.database.Cursor
 import android.net.Uri
-import `in`.juspay.services.HyperServices
+import com.ixigo.sdk.common.getMetaDataString
+import com.ixigo.sdk.payment.PaymentSDK
 
 class IxigoSdkInitProvider : ContentProvider() {
 
   override fun attachInfo(context: Context, info: ProviderInfo) {
     super.attachInfo(context, info)
-    val ai: ApplicationInfo =
-        context.packageManager.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
-    val bundle = ai.metaData
-
-    if (!bundle.containsKey("juspay-client-id")) {
-      throw RuntimeException("Juspay client Id not found in app's manifest")
-    }
-
-    val clientId = bundle.get("juspay-client-id").toString()
-    HyperServices.preFetch(context, clientId)
+    PaymentSDK.bootUp(context, juspayClientId = context.getMetaDataString(key = "juspay-client-id"))
   }
 
   override fun onCreate(): Boolean {
