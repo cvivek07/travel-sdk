@@ -32,7 +32,9 @@ fun replaceNativePromisePayload(message: String, payload: String): String {
 }
 
 fun executeNativePromiseResponse(message: String, webViewFragment: WebViewFragment) {
-  webViewFragment.requireActivity().runOnUiThread {
-    webViewFragment.webView.evaluateJavascript(message, null)
+  if (webViewFragment.isAdded) {
+    webViewFragment.requireActivity().runOnUiThread {
+      webViewFragment.webView.evaluateJavascript(message, null)
+    }
   }
 }
