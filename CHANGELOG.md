@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.20.3](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.20.2...ixigo-sdk-3.20.3) (2023-03-03)
+
+
+### Bug Fixes
+
+* fixed gpayd crash ([4c4f0e3](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/4c4f0e3c37e03e3e047f22819b6a2de36f163223))
+
 ### [3.20.2](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.20.1...ixigo-sdk-3.20.2) (2023-02-01)
 
 ### [3.20.1](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.20.0...ixigo-sdk-3.20.1) (2023-02-01)
