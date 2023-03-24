@@ -200,14 +200,16 @@ class PaymentSDKTests {
               gatewayId = gatewayId,
               config = funnelConfig,
               flowType = flowType,
-              urlLoader = urlLoader)
+              urlLoader = urlLoader,
+              callback = {})
         } else {
           PaymentSDK.instance.processPayment(
               activity,
               transactionId = transactionId,
               gatewayId = gatewayId,
               config = funnelConfig,
-              urlLoader = urlLoader)
+              urlLoader = urlLoader,
+              callback = {})
         }
       } else {
         if (flowType != null) {
@@ -216,7 +218,8 @@ class PaymentSDKTests {
               transactionId = transactionId,
               config = funnelConfig,
               urlLoader = urlLoader,
-              flowType = flowType)
+              flowType = flowType,
+              callback = {})
         } else {
           PaymentSDK.instance.processPayment(
               activity,
@@ -225,7 +228,8 @@ class PaymentSDKTests {
               urlLoader = urlLoader,
               tripId = tripId,
               providerId = providerId,
-              productType = productType)
+              productType = productType,
+              callback = {})
         }
       }
       val authHeaders = mapOf("Authorization" to "token")

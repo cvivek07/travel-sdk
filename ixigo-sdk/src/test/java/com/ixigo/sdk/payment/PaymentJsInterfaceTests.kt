@@ -393,7 +393,7 @@ class PaymentJsInterfaceTests {
   }
 
   @Test
-  fun `test finishPayment does nothing if transactionId is unknown`() {
+  fun `test finishPayment closes Funnel and process payment with new transactionId`() {
     val transactionId = "transactionIdValue"
     var processResult: ProcessPaymentResult? = null
     PaymentSDK.instance.processPayment(fragment.requireActivity(), transactionId) {
@@ -401,13 +401,13 @@ class PaymentJsInterfaceTests {
     }
 
     paymentJsInterface.finishPayment(
-        validFinishPaymentInputString(transactionId = "otherTransactionId"),
+        validFinishPaymentInputString(transactionId = "newTransactionId"),
         "javascript:alert('success:TO_REPLACE_PAYLOAD')",
         "javascript:alert('error:TO_REPLACE_PAYLOAD')")
-    verify(mockWebViewDelegate, never()).onQuit()
-    assertNull(processResult)
+    verify(mockWebViewDelegate).onQuit()
+    assertNotNull(processResult)
     assertEquals(
-        """javascript:alert('error:{\"errorCode\":\"SDKError\",\"errorMessage\":\"Unable to find transactionId=otherTransactionId\"}')""",
+        """javascript:alert('success:{\"handler\":\"NATIVE\"}')""",
         shadowWebView.lastEvaluatedJavascript)
   }
 
