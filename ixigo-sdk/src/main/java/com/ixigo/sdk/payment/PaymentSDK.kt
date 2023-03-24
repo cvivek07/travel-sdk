@@ -26,7 +26,7 @@ class PaymentSDK(
         SSOAuthProvider(IxigoSDK.instance.partnerTokenProvider)
 ) : JsInterfaceProvider {
 
-  private lateinit var processPaymentCallback: ProcessPaymentCallback
+  private val currentTransactions: MutableMap<String, ProcessPaymentCallback> = mutableMapOf()
 
   fun processPayment(
       activity: FragmentActivity,
@@ -47,7 +47,7 @@ class PaymentSDK(
           callback?.let { it.invoke(Err(ProcessPaymentNotLoginError(authResult.value))) }
         }
         is Ok -> {
-          callback?.let { processPaymentCallback = callback }
+          callback?.let { currentTransactions[transactionId] = it }
           with(IxigoSDK.instance) {
             val url =
                 getPaymentOptionsUrl(
@@ -91,7 +91,7 @@ class PaymentSDK(
           callback?.let { it.invoke(Err(ProcessPaymentNotLoginError(authResult.value))) }
         }
         is Ok -> {
-          callback?.let { processPaymentCallback = callback }
+          callback?.let { currentTransactions[transactionId] = it }
           with(IxigoSDK.instance) {
             val url =
                 getPaymentOptionsUrl(
@@ -142,13 +142,14 @@ class PaymentSDK(
 
   internal fun finishPayment(input: FinishPaymentInput): Boolean {
     with(input) {
-      val callback = processPaymentCallback
+      val callback = currentTransactions[transactionId]
       return if (callback != null) {
         if (success) {
           callback(Ok(ProcessPaymentResponse(nextUrl)))
         } else {
           callback(Err(ProcessPaymentProcessingError(nextUrl)))
         }
+        currentTransactions.remove(transactionId)
         true
       } else {
         false
