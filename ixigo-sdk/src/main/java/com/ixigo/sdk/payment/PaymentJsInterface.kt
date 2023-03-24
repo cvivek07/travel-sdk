@@ -14,6 +14,7 @@ import com.google.android.gms.common.api.ApiException
 import com.ixigo.sdk.BuildConfig
 import com.ixigo.sdk.common.*
 import com.ixigo.sdk.common.NativePromiseError.Companion.notAvailableError
+import com.ixigo.sdk.common.NativePromiseError.Companion.sdkError
 import com.ixigo.sdk.common.NativePromiseError.Companion.wrongInputError
 import com.ixigo.sdk.payment.PackageManager.Companion.PHONEPE_PACKAGE_NAME
 import com.ixigo.sdk.payment.PackageManager.Companion.REQUEST_CODE_GPAY_APP
@@ -298,15 +299,16 @@ internal class PaymentJsInterface(
       returnError(error, wrongInputError(jsonInput))
       return
     }
-    PaymentSDK.instance.finishPayment(input)
-    if (webViewFragment.quitPaymentPage) {
-      webViewFragment.delegate?.onQuit()
+    if (PaymentSDK.instance.finishPayment(input)) {
+      if (webViewFragment.quitPaymentPage) webViewFragment.delegate?.onQuit()
+      executeResponse(
+          replaceNativePromisePayload(
+              success,
+              FinishPaymentResponse(handler = PaymentHandler.NATIVE),
+              finishPaymentResponseAdapter))
+    } else {
+      returnError(error, sdkError("Unable to find transactionId=${input.transactionId}"))
     }
-    executeResponse(
-        replaceNativePromisePayload(
-            success,
-            FinishPaymentResponse(handler = PaymentHandler.NATIVE),
-            finishPaymentResponseAdapter))
   }
 
   @JavascriptInterface

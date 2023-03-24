@@ -38,16 +38,16 @@ class PaymentSDK(
       flowType: String = "PAYMENT_SDK",
       config: FunnelConfig? = null,
       urlLoader: UrlLoader? = null,
-      callback: ProcessPaymentCallback,
+      callback: ProcessPaymentCallback? = null,
   ) {
     ssoAuthProvider.login(activity, IxigoSDK.instance.appInfo.clientId) { authResult ->
       when (authResult) {
         is Err -> {
           Timber.e("Unable to perform login before payment. Error=${authResult.value}")
-          callback.invoke(Err(ProcessPaymentNotLoginError(authResult.value)))
+          callback?.let { it.invoke(Err(ProcessPaymentNotLoginError(authResult.value))) }
         }
         is Ok -> {
-          processPaymentCallback = callback
+          callback?.let { processPaymentCallback = callback }
           with(IxigoSDK.instance) {
             val url =
                 getPaymentOptionsUrl(
@@ -81,17 +81,17 @@ class PaymentSDK(
       config: FunnelConfig? = null,
       urlLoader: UrlLoader? = null,
       quitPaymentPage: Boolean,
-      callback: ProcessPaymentCallback
+      callback: ProcessPaymentCallback? = null
   ): WebViewFragment {
     val webViewFragment = WebViewFragment()
     ssoAuthProvider.login(activity, IxigoSDK.instance.appInfo.clientId) { authResult ->
       when (authResult) {
         is Err -> {
           Timber.e("Unable to perform login before payment. Error=${authResult.value}")
-          callback.invoke(Err(ProcessPaymentNotLoginError(authResult.value)))
+          callback?.let { it.invoke(Err(ProcessPaymentNotLoginError(authResult.value))) }
         }
         is Ok -> {
-          processPaymentCallback = callback
+          callback?.let { processPaymentCallback = callback }
           with(IxigoSDK.instance) {
             val url =
                 getPaymentOptionsUrl(
@@ -143,13 +143,15 @@ class PaymentSDK(
   internal fun finishPayment(input: FinishPaymentInput): Boolean {
     with(input) {
       val callback = processPaymentCallback
-      return run {
+      return if (callback != null) {
         if (success) {
           callback(Ok(ProcessPaymentResponse(nextUrl)))
         } else {
           callback(Err(ProcessPaymentProcessingError(nextUrl)))
         }
         true
+      } else {
+        false
       }
     }
   }
