@@ -28,11 +28,18 @@ interface PaymentGatewayProvider {
   fun getPaymentGateway(id: String, fragmentActivity: FragmentActivity): PaymentGateway?
 }
 
-class DefaultPaymentGatewayProvider(private val paymentConfig: PaymentConfig) :
-    PaymentGatewayProvider {
+class DefaultPaymentGatewayProvider(
+  private val paymentConfig: PaymentConfig,
+  private val hyperInstanceFactory: HyperInstanceFactory
+) :
+  PaymentGatewayProvider {
   override fun getPaymentGateway(id: String, fragmentActivity: FragmentActivity): PaymentGateway? {
     return when (id) {
-      "JUSPAY" -> JusPayGateway(fragmentActivity, paymentConfig.juspayConfig.environment)
+      "JUSPAY" -> JusPayGateway(
+        fragmentActivity,
+        hyperInstanceFactory,
+        paymentConfig.juspayConfig.environment
+      )
       else -> null
     }
   }

@@ -47,14 +47,19 @@ enum class JusPayEnvironment(val environmentString: String) {
   SANDBOX(PaymentConstants.ENVIRONMENT.SANDBOX)
 }
 
+class HyperInstanceFactory {
+  fun create(fragmentActivity: FragmentActivity) = HyperServices(fragmentActivity)
+}
+
 internal class JusPayGateway(
     private val hyperInstance: HyperServices,
     internal val environment: JusPayEnvironment = JusPayEnvironment.PRODUCTION
 ) : PaymentGateway {
   constructor(
       fragmentActivity: FragmentActivity,
+      factory: HyperInstanceFactory,
       environment: JusPayEnvironment
-  ) : this(HyperServices(fragmentActivity), environment)
+  ) : this(factory.create(fragmentActivity), environment)
 
   private val moshi by lazy { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
   private val juspayAvailableUpiAppsResponseAdapter by lazy {

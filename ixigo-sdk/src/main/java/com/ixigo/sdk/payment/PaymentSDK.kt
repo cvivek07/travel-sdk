@@ -187,7 +187,7 @@ class PaymentSDK(
   override fun getJsInterfaces(url: String, webViewFragment: WebViewFragment): List<JsInterface> {
     var jsInterfaces = mutableListOf<JsInterface>()
     if (url.startsWith(IxigoSDK.instance.config.apiBaseUrl) || url.startsWith("file://")) {
-      jsInterfaces.add(PaymentJsInterface(webViewFragment, DefaultPaymentGatewayProvider(config)))
+      jsInterfaces.add(PaymentJsInterface(webViewFragment, DefaultPaymentGatewayProvider(config, HyperInstanceFactory())))
     }
     return jsInterfaces
   }
