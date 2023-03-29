@@ -33,14 +33,14 @@ class DefaultPaymentGatewayProviderTests {
   }
 
   @Test
-  fun `jusPayGateway is returned for "JUSPAY"`() {
+  fun `jusPayGateway is returned for JUSPAY`() {
     val jusPayGateway =
         paymentGatewayProvider.getPaymentGateway("JUSPAY", fragmentActivity) as JusPayGateway
     assertEquals(config.juspayConfig.environment, jusPayGateway.environment)
   }
 
   @Test
-  fun `null is returned for unknown provider"`() {
+  fun `null is returned for unknown provider`() {
     val jusPayGateway = paymentGatewayProvider.getPaymentGateway("Unknown", fragmentActivity)
     assertNull(jusPayGateway)
   }
