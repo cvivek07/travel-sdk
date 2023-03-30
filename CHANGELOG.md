@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.20.4](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.20.3...ixigo-sdk-3.20.4) (2023-03-30)
+
+
+### Bug Fixes
+
+* paym 1896: udpate process payment callback ([26be059](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/26be05909b3e579dc3f83387a7b748fe638418d9))
+* paym 1896: update process payment callback ([24e9e96](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/24e9e96969242fb2c11febed411adf090b0b0651))
+
 ### [3.20.3](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.20.2...ixigo-sdk-3.20.3) (2023-03-03)
 
 
