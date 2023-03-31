@@ -312,6 +312,13 @@ internal class PaymentJsInterface(
   }
 
   @JavascriptInterface
+  fun updateTransactionId(oldTransactionId: String, newTransactionId: String) {
+    val currentTransactions = PaymentSDK.instance.getCurrentTransactions()
+    val value = currentTransactions.remove(oldTransactionId)
+    value?.let { currentTransactions[newTransactionId] = value }
+  }
+
+  @JavascriptInterface
   fun checkCredEligibility(jsonInput: String, success: String, error: String) {
     val enabled = packageManager.isCredAppInstalled()
     executeResponse(

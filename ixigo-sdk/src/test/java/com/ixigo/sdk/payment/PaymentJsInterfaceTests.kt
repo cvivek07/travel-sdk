@@ -373,6 +373,26 @@ class PaymentJsInterfaceTests {
   }
 
   @Test
+  fun `updateTransactionId updates key in currentTransactions map`() {
+    // Arrange
+    val oldTransactionId = "old_transaction_id"
+    val newTransactionId = "new_transaction_id"
+
+    // Act
+    var processPaymentCallback: ProcessPaymentResult? = null
+    PaymentSDK.instance.processPayment(fragment.requireActivity(), oldTransactionId) {
+      processPaymentCallback = it
+    }
+
+    val currentTransactions = mutableMapOf(oldTransactionId to processPaymentCallback)
+    paymentJsInterface.updateTransactionId(oldTransactionId, newTransactionId)
+
+    // Assert
+    assertNull(currentTransactions[oldTransactionId])
+    assertSame(processPaymentCallback, currentTransactions[newTransactionId])
+  }
+
+  @Test
   fun `test finishPayment closes Funnel and calls processPayment for failed payment`() {
     val transactionId = "transactionIdValue"
     var processResult: ProcessPaymentResult? = null

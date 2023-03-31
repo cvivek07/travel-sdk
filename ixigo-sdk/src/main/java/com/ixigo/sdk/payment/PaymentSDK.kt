@@ -157,6 +157,8 @@ class PaymentSDK(
     }
   }
 
+  internal fun getCurrentTransactions() = currentTransactions
+
   companion object : SdkSingleton<PaymentSDK>("PaymentSDK") {
 
     /**
