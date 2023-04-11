@@ -380,7 +380,8 @@ class PaymentJsInterfaceTests {
 
     // Act
     val processPaymentCallback: ProcessPaymentCallback = {}
-    PaymentSDK.instance.processPayment(fragment.requireActivity(), oldTransactionId, callback = processPaymentCallback)
+    PaymentSDK.instance.processPayment(
+        fragment.requireActivity(), oldTransactionId, callback = processPaymentCallback)
     paymentJsInterface.updateTransactionId(oldTransactionId, newTransactionId)
 
     // Assert
