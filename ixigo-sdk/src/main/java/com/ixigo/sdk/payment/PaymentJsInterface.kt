@@ -313,7 +313,7 @@ internal class PaymentJsInterface(
 
   @JavascriptInterface
   fun updateTransactionId(oldTransactionId: String, newTransactionId: String) {
-    val currentTransactions = PaymentSDK.instance.getCurrentTransactions()
+    val currentTransactions = PaymentSDK.instance.currentTransactions
     val value = currentTransactions.remove(oldTransactionId)
     value?.let { currentTransactions[newTransactionId] = value }
   }

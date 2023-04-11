@@ -379,15 +379,12 @@ class PaymentJsInterfaceTests {
     val newTransactionId = "new_transaction_id"
 
     // Act
-    var processPaymentCallback: ProcessPaymentResult? = null
-    PaymentSDK.instance.processPayment(fragment.requireActivity(), oldTransactionId) {
-      processPaymentCallback = it
-    }
-
-    val currentTransactions = mutableMapOf(oldTransactionId to processPaymentCallback)
+    val processPaymentCallback: ProcessPaymentCallback = {}
+    PaymentSDK.instance.processPayment(fragment.requireActivity(), oldTransactionId, callback = processPaymentCallback)
     paymentJsInterface.updateTransactionId(oldTransactionId, newTransactionId)
 
     // Assert
+    val currentTransactions = PaymentSDK.instance.currentTransactions
     assertNull(currentTransactions[oldTransactionId])
     assertSame(processPaymentCallback, currentTransactions[newTransactionId])
   }

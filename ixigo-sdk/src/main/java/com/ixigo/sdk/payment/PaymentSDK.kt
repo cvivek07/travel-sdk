@@ -26,7 +26,7 @@ class PaymentSDK(
         SSOAuthProvider(IxigoSDK.instance.partnerTokenProvider)
 ) : JsInterfaceProvider {
 
-  private val currentTransactions: MutableMap<String, ProcessPaymentCallback> = mutableMapOf()
+  internal val currentTransactions: MutableMap<String, ProcessPaymentCallback> = mutableMapOf()
 
   fun processPayment(
       activity: FragmentActivity,
@@ -156,8 +156,6 @@ class PaymentSDK(
       }
     }
   }
-
-  internal fun getCurrentTransactions() = currentTransactions
 
   companion object : SdkSingleton<PaymentSDK>("PaymentSDK") {
 
