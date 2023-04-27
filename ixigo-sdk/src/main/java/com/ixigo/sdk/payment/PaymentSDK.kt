@@ -9,6 +9,7 @@ import com.ixigo.sdk.auth.SSOAuthProvider
 import com.ixigo.sdk.common.*
 import com.ixigo.sdk.payment.PaymentSDK.Companion.init
 import com.ixigo.sdk.payment.data.FinishPaymentInput
+import com.ixigo.sdk.payment.gpay.GPayClientFactory
 import com.ixigo.sdk.webview.*
 import timber.log.Timber
 
@@ -189,7 +190,7 @@ class PaymentSDK(
     if (url.startsWith(IxigoSDK.instance.config.apiBaseUrl) || url.startsWith("file://")) {
       jsInterfaces.add(
           PaymentJsInterface(
-              webViewFragment, DefaultPaymentGatewayProvider(config, HyperInstanceFactory())))
+              webViewFragment, DefaultPaymentGatewayProvider(config, HyperInstanceFactory()),  GPayClientFactory()))
     }
     return jsInterfaces
   }

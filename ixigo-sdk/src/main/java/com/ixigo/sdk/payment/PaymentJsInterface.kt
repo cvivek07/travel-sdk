@@ -8,9 +8,9 @@ import android.net.Uri
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.google.android.apps.nbu.paisa.inapp.client.api.WalletConstants
 import com.google.android.apps.nbu.paisa.inapp.client.api.WalletUtils
-import com.google.android.gms.common.api.ApiException
 import com.ixigo.sdk.BuildConfig
 import com.ixigo.sdk.common.*
 import com.ixigo.sdk.common.NativePromiseError.Companion.notAvailableError
@@ -21,7 +21,7 @@ import com.ixigo.sdk.payment.PackageManager.Companion.REQUEST_CODE_GPAY_APP
 import com.ixigo.sdk.payment.PackageManager.Companion.REQUEST_CODE_PHONEPE_APP
 import com.ixigo.sdk.payment.PackageManager.Companion.REQUEST_CODE_UPI_APP
 import com.ixigo.sdk.payment.data.*
-import com.ixigo.sdk.payment.gpay.GpayUtils
+import com.ixigo.sdk.payment.gpay.*
 import com.ixigo.sdk.payment.minkasu_sdk.MinkasuSDKManager
 import com.ixigo.sdk.payment.viewmodel.PaymentViewModel
 import com.ixigo.sdk.webview.JsInterface
@@ -30,17 +30,23 @@ import com.ixigo.sdk.webview.WebViewFragment
 import com.ixigo.sdk.webview.WebViewFragmentListener
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import timber.log.Timber
 
 internal class PaymentJsInterface(
-    private val webViewFragment: WebViewFragment,
-    gatewayProvider: PaymentGatewayProvider
+  private val webViewFragment: WebViewFragment,
+  gatewayProvider: PaymentGatewayProvider,
+  private val gPayClientFactory: GPayClientFactory,
+  private val mainDispatcher: CoroutineDispatcher = Dispatchers.Main
 ) : JsInterface, WebViewFragmentListener, ActivityResultHandler {
   override val name: String = "PaymentSDKAndroid"
 
   private val cachingGatewayProvider =
-      CachingPaymentGatewayProvider(webViewFragment.requireActivity(), gatewayProvider)
+    CachingPaymentGatewayProvider(webViewFragment.requireActivity(), gatewayProvider)
 
   private val moshi by lazy { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
   private val inputAdapter by lazy { moshi.adapter(InitializeInput::class.java) }
@@ -68,7 +74,9 @@ internal class PaymentJsInterface(
     PackageManager(webViewFragment.requireContext().applicationContext)
   }
 
-  private val paymentsClient by lazy { GpayUtils.createPaymentsClient() }
+  private val paymentsClient by lazy {
+    gPayClientFactory.create(webViewFragment.requireContext())
+  }
 
   private var minkasuInput: MinkasuInput? = null
 
@@ -440,78 +448,74 @@ internal class PaymentJsInterface(
    */
   @JavascriptInterface
   fun isGpayUpiAvailable(success: String, error: String) {
-    try {
-      val isReadyToPayJson = GpayUtils.isReadyToPayRequest() ?: return
-      if (webViewFragment.activity != null) {
-        val task = paymentsClient.isReadyToPay(webViewFragment.activity, isReadyToPayJson)
-        task.addOnCompleteListener { completedTask ->
-          try {
-            completedTask.getResult(ApiException::class.java)?.let {
-              executeResponse(
-                  replaceNativePromisePayload(
-                      success,
-                      JuspayPaymentMethodsEligibility(it),
-                      moshi.adapter(JuspayPaymentMethodsEligibility::class.java)))
-            }
-          } catch (exception: ApiException) {
-            executeResponse(
-                replaceNativePromisePayload(
-                    success,
-                    JuspayPaymentMethodsEligibility(false),
-                    moshi.adapter(JuspayPaymentMethodsEligibility::class.java)))
-            // Process error
-            Timber.e(exception)
-          }
-        }
-      }
-    } catch (e: Exception) {
-      executeResponse(
+    webViewFragment.lifecycleScope.launch {
+      try {
+        val isReady = paymentsClient.isReadyToPay()
+        executeResponse(
           replaceNativePromisePayload(
-              success,
-              JuspayPaymentMethodsEligibility(false),
-              moshi.adapter(JuspayPaymentMethodsEligibility::class.java)))
-      Timber.e(e)
+            success,
+            JuspayPaymentMethodsEligibility(isReady),
+            moshi.adapter(JuspayPaymentMethodsEligibility::class.java)
+          )
+        )
+      } catch (e: Exception) {
+        executeResponse(
+          replaceNativePromisePayload(
+            success,
+            JuspayPaymentMethodsEligibility(false),
+            moshi.adapter(JuspayPaymentMethodsEligibility::class.java)
+          )
+        )
+        Timber.e(e)
+      }
     }
   }
 
   /** Launch gpay app */
   @JavascriptInterface
   fun requestGpayPayment(jsonInput: String, success: String, error: String) {
-    try {
-      val input =
-          kotlin
-              .runCatching { moshi.adapter(GpayPaymentInput::class.java).fromJson(jsonInput) }
-              .getOrNull()
-      if (input == null) {
-        returnError(error, wrongInputError(jsonInput))
-        return
-      }
-      val paymentDataRequestJson = GpayUtils.getPaymentDataRequest(input)
-      if (paymentDataRequestJson == null) {
-        Timber.tag("requestGpayPayment").e("Can't fetch payment data request")
-        return
-      }
+    webViewFragment.lifecycleScope.launch {
+      try {
+        val input = kotlin
+          .runCatching { moshi.adapter(GpayPaymentInput::class.java).fromJson(jsonInput) }
+          .getOrNull()
+        if (input == null) {
+          returnError(error, wrongInputError(jsonInput))
+          return@launch
+        }
 
-      webViewFragment.requireActivity().runOnUiThread {
-        paymentViewModel.gpayResultMutableLiveData.observe(webViewFragment) {
-          if (it != null) {
-            if (it.paymentFinished) {
-              executeResponse(
+        withContext(mainDispatcher) {
+          paymentViewModel.gpayResultMutableLiveData.observe(webViewFragment) {
+            if (it != null) {
+              if (it.paymentFinished) {
+                executeResponse(
                   replaceNativePromisePayload(
-                      success, it, moshi.adapter(PaymentFinished::class.java)))
-            } else {
-              executeResponse(
+                    success, it, moshi.adapter(PaymentFinished::class.java)
+                  )
+                )
+              } else {
+                executeResponse(
                   replaceNativePromisePayload(
-                      error, it, moshi.adapter(PaymentFinished::class.java)))
+                    error, it, moshi.adapter(PaymentFinished::class.java)
+                  )
+                )
+              }
+              paymentViewModel.gpayResultMutableLiveData.postValue(null)
             }
-            paymentViewModel.gpayResultMutableLiveData.postValue(null)
           }
         }
+
+        paymentsClient.loadPaymentData(
+          webViewFragment.requireActivity(),
+          input,
+          REQUEST_CODE_GPAY_APP
+        )
+
+      } catch (e: InvalidPaymentDataRequestException) {
+        returnError(error, sdkError("Gpay Payment Error"))
+      } catch (e: Exception) {
+        Timber.e(e)
       }
-      paymentsClient.loadPaymentData(
-          webViewFragment.requireActivity(), paymentDataRequestJson, REQUEST_CODE_GPAY_APP)
-    } catch (e: Exception) {
-      Timber.e(e)
     }
   }
 
