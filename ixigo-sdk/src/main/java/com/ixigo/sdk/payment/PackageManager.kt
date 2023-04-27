@@ -12,8 +12,6 @@ import timber.log.Timber
 /** Helper class to check if a particular app is installed in user's device */
 class PackageManager(private val applicationContext: Context) {
 
-
-
   fun isPhonePeUpiAvailable(): Boolean {
     val phonePePackageNameProduction = "com.phonepe.app" // Production Environment
     val uri: Uri = Uri.parse(String.format("%s://%s", "upi", "pay"))
