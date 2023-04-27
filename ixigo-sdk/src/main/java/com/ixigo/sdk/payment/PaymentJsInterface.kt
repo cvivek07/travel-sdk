@@ -381,7 +381,7 @@ internal class PaymentJsInterface(
    */
   @JavascriptInterface
   fun isPhonePeUpiAvailable(success: String, error: String) {
-    val enabled = packageManager.isPhonePeAppInstalled()
+    val enabled = packageManager.isPhonePeUpiAvailable()
     executeResponse(
         replaceNativePromisePayload(
             success,

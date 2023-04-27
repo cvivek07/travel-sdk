@@ -1,25 +1,34 @@
 package com.ixigo.sdk.payment
 
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
+import android.content.pm.ResolveInfo
+import android.net.Uri
 import android.os.Build
 import timber.log.Timber
 
 /** Helper class to check if a particular app is installed in user's device */
 class PackageManager(private val applicationContext: Context) {
 
-  /** Check if PhonePe app is installed on device */
-  fun isPhonePeAppInstalled(): Boolean {
-    try {
-      val phonepackage = PHONEPE_PACKAGE_NAME
-      val pm: PackageManager =
-          applicationContext.packageManager.apply {
-            getPackageInfo(phonepackage, PackageManager.GET_ACTIVITIES)
-          }
-      return pm.getApplicationInfo(phonepackage, 0).enabled
-    } catch (e: PackageManager.NameNotFoundException) {
-      e.printStackTrace()
+
+
+  fun isPhonePeUpiAvailable(): Boolean {
+    val phonePePackageNameProduction = "com.phonepe.app" // Production Environment
+    val uri: Uri = Uri.parse(String.format("%s://%s", "upi", "pay"))
+    val upiUriIntent = Intent()
+    upiUriIntent.data = uri
+    val packageManager = applicationContext.packageManager
+    val resolveInfoList: List<ResolveInfo> =
+        packageManager.queryIntentActivities(upiUriIntent, PackageManager.MATCH_DEFAULT_ONLY)
+    for (resolveInfo in resolveInfoList) {
+      val packageName = resolveInfo.activityInfo.packageName
+      if (packageName != null &&
+          packageName.isNotEmpty() &&
+          phonePePackageNameProduction == packageName) {
+        return true
+      }
     }
     return false
   }
