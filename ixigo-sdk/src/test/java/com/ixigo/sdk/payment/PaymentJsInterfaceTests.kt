@@ -22,13 +22,13 @@ import com.ixigo.sdk.common.NativePromiseError
 import com.ixigo.sdk.common.Ok
 import com.ixigo.sdk.payment.PackageManager.Companion.PHONEPE_PACKAGE_NAME
 import com.ixigo.sdk.payment.data.*
+import com.ixigo.sdk.payment.gpay.GPayClient
+import com.ixigo.sdk.payment.gpay.GPayClientFactory
 import com.ixigo.sdk.test.initializePaymentSDK
 import com.ixigo.sdk.test.initializeTestIxigoSDK
 import com.ixigo.sdk.webview.InitialPageData
 import com.ixigo.sdk.webview.WebViewDelegate
 import com.ixigo.sdk.webview.WebViewFragment
-import com.ixigo.sdk.payment.gpay.GPayClient
-import com.ixigo.sdk.payment.gpay.GPayClientFactory
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.*
@@ -89,7 +89,7 @@ class PaymentJsInterfaceTests {
       fragment.delegate = mockWebViewDelegate
       shadowWebView = Shadows.shadowOf(it.webView)
       paymentJsInterface =
-        PaymentJsInterface(fragment, mockGatewayProvider, mockGPayClientFactory, testDispatcher)
+          PaymentJsInterface(fragment, mockGatewayProvider, mockGPayClientFactory, testDispatcher)
 
       whenever(
               mockGatewayProvider.getPaymentGateway(eq("JUSPAY"), same(fragment.requireActivity())))
@@ -611,9 +611,8 @@ class PaymentJsInterfaceTests {
         "javascript:alert('success:TO_REPLACE_PAYLOAD')",
         "javascript:alert('error:TO_REPLACE_PAYLOAD')")
     assertEquals(
-      """javascript:alert('success:{\"versionCode\":-1}')""",
-      shadowWebView.lastEvaluatedJavascript
-    )
+        """javascript:alert('success:{\"versionCode\":-1}')""",
+        shadowWebView.lastEvaluatedJavascript)
   }
 
   @Test
@@ -621,28 +620,24 @@ class PaymentJsInterfaceTests {
     Mockito.`when`(mockGPayClient.isReadyToPay()).thenReturn(true)
 
     paymentJsInterface.isGpayUpiAvailable(
-      "javascript:alert('success:TO_REPLACE_PAYLOAD')",
-      "javascript:alert('error:TO_REPLACE_PAYLOAD')"
-    )
+        "javascript:alert('success:TO_REPLACE_PAYLOAD')",
+        "javascript:alert('error:TO_REPLACE_PAYLOAD')")
 
     assertEquals(
-      """javascript:alert('success:{\"isEligible\":true}')""",
-      shadowWebView.lastEvaluatedJavascript
-    )
+        """javascript:alert('success:{\"isEligible\":true}')""",
+        shadowWebView.lastEvaluatedJavascript)
   }
 
   @Test
   fun `test isGPayUpiAvailable invokes error when gpay is not available`() = runTest {
     Mockito.`when`(mockGPayClient.isReadyToPay()).thenReturn(false)
     paymentJsInterface.isGpayUpiAvailable(
-      "javascript:alert('success:TO_REPLACE_PAYLOAD')",
-      "javascript:alert('error:TO_REPLACE_PAYLOAD')"
-    )
+        "javascript:alert('success:TO_REPLACE_PAYLOAD')",
+        "javascript:alert('error:TO_REPLACE_PAYLOAD')")
 
     assertEquals(
-      """javascript:alert('success:{\"isEligible\":false}')""",
-      shadowWebView.lastEvaluatedJavascript
-    )
+        """javascript:alert('success:{\"isEligible\":false}')""",
+        shadowWebView.lastEvaluatedJavascript)
   }
 
   private val validInitializeInput =

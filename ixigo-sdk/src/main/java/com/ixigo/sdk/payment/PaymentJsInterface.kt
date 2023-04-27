@@ -38,15 +38,15 @@ import org.json.JSONObject
 import timber.log.Timber
 
 internal class PaymentJsInterface(
-  private val webViewFragment: WebViewFragment,
-  gatewayProvider: PaymentGatewayProvider,
-  private val gPayClientFactory: GPayClientFactory,
-  private val mainDispatcher: CoroutineDispatcher = Dispatchers.Main
+    private val webViewFragment: WebViewFragment,
+    gatewayProvider: PaymentGatewayProvider,
+    private val gPayClientFactory: GPayClientFactory,
+    private val mainDispatcher: CoroutineDispatcher = Dispatchers.Main
 ) : JsInterface, WebViewFragmentListener, ActivityResultHandler {
   override val name: String = "PaymentSDKAndroid"
 
   private val cachingGatewayProvider =
-    CachingPaymentGatewayProvider(webViewFragment.requireActivity(), gatewayProvider)
+      CachingPaymentGatewayProvider(webViewFragment.requireActivity(), gatewayProvider)
 
   private val moshi by lazy { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
   private val inputAdapter by lazy { moshi.adapter(InitializeInput::class.java) }
@@ -74,9 +74,7 @@ internal class PaymentJsInterface(
     PackageManager(webViewFragment.requireContext().applicationContext)
   }
 
-  private val paymentsClient by lazy {
-    gPayClientFactory.create(webViewFragment.requireContext())
-  }
+  private val paymentsClient by lazy { gPayClientFactory.create(webViewFragment.requireContext()) }
 
   private var minkasuInput: MinkasuInput? = null
 
@@ -452,20 +450,16 @@ internal class PaymentJsInterface(
       try {
         val isReady = paymentsClient.isReadyToPay()
         executeResponse(
-          replaceNativePromisePayload(
-            success,
-            JuspayPaymentMethodsEligibility(isReady),
-            moshi.adapter(JuspayPaymentMethodsEligibility::class.java)
-          )
-        )
+            replaceNativePromisePayload(
+                success,
+                JuspayPaymentMethodsEligibility(isReady),
+                moshi.adapter(JuspayPaymentMethodsEligibility::class.java)))
       } catch (e: Exception) {
         executeResponse(
-          replaceNativePromisePayload(
-            success,
-            JuspayPaymentMethodsEligibility(false),
-            moshi.adapter(JuspayPaymentMethodsEligibility::class.java)
-          )
-        )
+            replaceNativePromisePayload(
+                success,
+                JuspayPaymentMethodsEligibility(false),
+                moshi.adapter(JuspayPaymentMethodsEligibility::class.java)))
         Timber.e(e)
       }
     }
@@ -476,9 +470,10 @@ internal class PaymentJsInterface(
   fun requestGpayPayment(jsonInput: String, success: String, error: String) {
     webViewFragment.lifecycleScope.launch {
       try {
-        val input = kotlin
-          .runCatching { moshi.adapter(GpayPaymentInput::class.java).fromJson(jsonInput) }
-          .getOrNull()
+        val input =
+            kotlin
+                .runCatching { moshi.adapter(GpayPaymentInput::class.java).fromJson(jsonInput) }
+                .getOrNull()
         if (input == null) {
           returnError(error, wrongInputError(jsonInput))
           return@launch
@@ -489,16 +484,12 @@ internal class PaymentJsInterface(
             if (it != null) {
               if (it.paymentFinished) {
                 executeResponse(
-                  replaceNativePromisePayload(
-                    success, it, moshi.adapter(PaymentFinished::class.java)
-                  )
-                )
+                    replaceNativePromisePayload(
+                        success, it, moshi.adapter(PaymentFinished::class.java)))
               } else {
                 executeResponse(
-                  replaceNativePromisePayload(
-                    error, it, moshi.adapter(PaymentFinished::class.java)
-                  )
-                )
+                    replaceNativePromisePayload(
+                        error, it, moshi.adapter(PaymentFinished::class.java)))
               }
               paymentViewModel.gpayResultMutableLiveData.postValue(null)
             }
@@ -506,11 +497,7 @@ internal class PaymentJsInterface(
         }
 
         paymentsClient.loadPaymentData(
-          webViewFragment.requireActivity(),
-          input,
-          REQUEST_CODE_GPAY_APP
-        )
-
+            webViewFragment.requireActivity(), input, REQUEST_CODE_GPAY_APP)
       } catch (e: InvalidPaymentDataRequestException) {
         returnError(error, sdkError("Gpay Payment Error"))
       } catch (e: Exception) {

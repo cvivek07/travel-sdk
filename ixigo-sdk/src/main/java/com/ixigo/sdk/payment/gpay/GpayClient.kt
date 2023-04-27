@@ -5,10 +5,10 @@ import android.content.Context
 import com.google.android.apps.nbu.paisa.inapp.client.api.PaymentsClient
 import com.google.android.gms.common.api.ApiException
 import com.ixigo.sdk.payment.data.GpayPaymentInput
-import timber.log.Timber
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
+import timber.log.Timber
 
 class GPayClientFactory {
   fun create(context: Context): GPayClient {
@@ -16,9 +16,10 @@ class GPayClientFactory {
   }
 }
 
-class GPayClient constructor(
-  private val context: Context,
-  private val paymentsClient: PaymentsClient = GpayUtils.createPaymentsClient()
+class GPayClient
+constructor(
+    private val context: Context,
+    private val paymentsClient: PaymentsClient = GpayUtils.createPaymentsClient()
 ) {
 
   suspend fun isReadyToPay(): Boolean {
@@ -27,9 +28,7 @@ class GPayClient constructor(
       val task = paymentsClient.isReadyToPay(context, isReadyToPayJson)
       task.addOnCompleteListener { completedTask ->
         try {
-          completedTask.getResult(ApiException::class.java)?.let {
-            continuation.resume(it)
-          }
+          completedTask.getResult(ApiException::class.java)?.let { continuation.resume(it) }
         } catch (exception: ApiException) {
           continuation.resumeWithException(exception)
         }
@@ -49,4 +48,4 @@ class GPayClient constructor(
   }
 }
 
-class InvalidPaymentDataRequestException: Exception()
+class InvalidPaymentDataRequestException : Exception()

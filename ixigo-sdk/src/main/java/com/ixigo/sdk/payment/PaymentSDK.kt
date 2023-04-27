@@ -190,7 +190,9 @@ class PaymentSDK(
     if (url.startsWith(IxigoSDK.instance.config.apiBaseUrl) || url.startsWith("file://")) {
       jsInterfaces.add(
           PaymentJsInterface(
-              webViewFragment, DefaultPaymentGatewayProvider(config, HyperInstanceFactory()),  GPayClientFactory()))
+              webViewFragment,
+              DefaultPaymentGatewayProvider(config, HyperInstanceFactory()),
+              GPayClientFactory()))
     }
     return jsInterfaces
   }
