@@ -13,7 +13,6 @@ import timber.log.Timber
 class PackageManager(private val applicationContext: Context) {
 
   fun isPhonePeUpiAvailable(): Boolean {
-    val phonePePackageNameProduction = "com.phonepe.app" // Production Environment
     val uri: Uri = Uri.parse(String.format("%s://%s", "upi", "pay"))
     val upiUriIntent = Intent()
     upiUriIntent.data = uri
@@ -22,9 +21,7 @@ class PackageManager(private val applicationContext: Context) {
         packageManager.queryIntentActivities(upiUriIntent, PackageManager.MATCH_DEFAULT_ONLY)
     for (resolveInfo in resolveInfoList) {
       val packageName = resolveInfo.activityInfo.packageName
-      if (packageName != null &&
-          packageName.isNotEmpty() &&
-          phonePePackageNameProduction == packageName) {
+      if (packageName != null && packageName.isNotEmpty() && PHONEPE_PACKAGE_NAME == packageName) {
         return true
       }
     }

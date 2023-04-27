@@ -1,8 +1,16 @@
 package com.ixigo.sdk.payment
 
 import android.app.Application
+import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.content.pm.ActivityInfo
+import android.content.pm.PackageInfo
+import android.content.pm.ResolveInfo
+import android.net.Uri
 import android.os.Bundle
+import android.os.PatternMatcher
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -26,6 +34,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito
+import org.mockito.Mockito.`when`
 import org.mockito.junit.MockitoJUnit
 import org.mockito.junit.MockitoRule
 import org.mockito.kotlin.*
@@ -531,7 +540,31 @@ class PaymentJsInterfaceTests {
 
   @Test
   fun `test isPhonePeUpiAvailable returns true if app is installed`() {
-    shadowPackageManager!!.addPackage(PHONEPE_PACKAGE_NAME)
+    val upiUriIntent = Intent(Intent.ACTION_VIEW)
+    upiUriIntent.data = Uri.parse("upi://pay")
+
+    val resolveInfo = ResolveInfo()
+    resolveInfo.activityInfo = ActivityInfo()
+    resolveInfo.activityInfo.packageName = PHONEPE_PACKAGE_NAME
+
+    val resolveInfoList: MutableList<ResolveInfo> = ArrayList()
+    resolveInfoList.add(resolveInfo)
+
+    val intentFilter =
+        IntentFilter().apply {
+          addAction(Intent.ACTION_VIEW)
+          addCategory(Intent.CATEGORY_DEFAULT)
+          addDataScheme("upi")
+          addDataPath("pay", PatternMatcher.PATTERN_LITERAL)
+        }
+
+    with(shadowPackageManager!!) {
+      val phonePeActivity = ComponentName(PHONEPE_PACKAGE_NAME, "test")
+      installPackage(PackageInfo().apply { packageName = phonePeActivity.packageName })
+      addActivityIfNotPresent(phonePeActivity)
+      addIntentFilterForActivity(phonePeActivity, intentFilter)
+    }
+
     paymentJsInterface.isPhonePeUpiAvailable(
         "javascript:alert('success:TO_REPLACE_PAYLOAD')",
         "javascript:alert('error:TO_REPLACE_PAYLOAD')")
