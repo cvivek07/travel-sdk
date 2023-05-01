@@ -1,5 +1,6 @@
 package com.ixigo.sdk.payment.gpay
 
+import android.app.Activity
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -17,6 +18,7 @@ import org.mockito.Mockito
 import org.mockito.Mockito.any
 import org.mockito.Mockito.mock
 import org.mockito.kotlin.argumentCaptor
+import org.mockito.kotlin.eq
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
@@ -44,7 +46,7 @@ class GPayClientTest {
   }
 
   @Test
-  fun `isReadyToPay returns false when gpay client is not ready`() = runTest {
+  fun `isReadyToPay returns false when gPay client is not ready`() = runTest {
     val completionListenerCaptor = argumentCaptor<OnCompleteListener<Boolean>>()
     Mockito.`when`(mockCompletionTask.getResult<Exception>(any())).thenReturn(false)
     Mockito.`when`(mockGPaymentsClient.isReadyToPay(any(), any())).thenReturn(mockCompletionTask)
@@ -60,7 +62,7 @@ class GPayClientTest {
   }
 
   @Test(expected = ApiException::class)
-  fun `isReadyToPay throws exception when gpay client fails to resolve successfully`() = runTest {
+  fun `isReadyToPay throws exception when gPay client fails to resolve successfully`() = runTest {
     val completionListenerCaptor = argumentCaptor<OnCompleteListener<Boolean>>()
     Mockito.`when`(mockCompletionTask.getResult<Exception>(any()))
         .thenThrow(ApiException(Status.RESULT_TIMEOUT))
@@ -73,5 +75,11 @@ class GPayClientTest {
         }
 
     gPayClient.isReadyToPay()
+  }
+
+  @Test
+  fun `loadPaymentData invokes gPay Client`() {
+    gPayClient.loadPaymentData(mock(), mock(), 0)
+    Mockito.verify(mockGPaymentsClient).loadPaymentData(any<Activity>(), any(), eq(0))
   }
 }
