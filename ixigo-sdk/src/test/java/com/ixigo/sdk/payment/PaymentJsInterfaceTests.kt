@@ -14,6 +14,8 @@ import android.os.PatternMatcher
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.common.api.Status
 import com.ixigo.sdk.auth.AuthCallback
 import com.ixigo.sdk.auth.AuthData
 import com.ixigo.sdk.auth.SSOAuthProvider
@@ -29,8 +31,9 @@ import com.ixigo.sdk.test.initializeTestIxigoSDK
 import com.ixigo.sdk.webview.InitialPageData
 import com.ixigo.sdk.webview.WebViewDelegate
 import com.ixigo.sdk.webview.WebViewFragment
-import kotlinx.coroutines.test.StandardTestDispatcher
-import kotlinx.coroutines.test.runTest
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import kotlinx.coroutines.test.*
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
@@ -68,7 +71,8 @@ class PaymentJsInterfaceTests {
   @Mock internal lateinit var mockGPayClientFactory: GPayClientFactory
   @Mock internal lateinit var mockGPayClient: GPayClient
 
-  private val testDispatcher = StandardTestDispatcher()
+  private val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
+  private val testDispatcher = UnconfinedTestDispatcher()
   private var context: Context? = null
   private var shadowPackageManager: ShadowPackageManager? = null
 
@@ -616,7 +620,7 @@ class PaymentJsInterfaceTests {
   }
 
   @Test
-  fun `test isGPayUpiAvailable invokes success when gpay is available`() = runTest {
+  fun `test isGPayUpiAvailable sends isEligible true when gpay is available`() = runTest {
     Mockito.`when`(mockGPayClient.isReadyToPay()).thenReturn(true)
 
     paymentJsInterface.isGpayUpiAvailable(
@@ -629,7 +633,7 @@ class PaymentJsInterfaceTests {
   }
 
   @Test
-  fun `test isGPayUpiAvailable invokes error when gpay is not available`() = runTest {
+  fun `test isGPayUpiAvailable sends isEligible false when gpay is not available`() = runTest {
     Mockito.`when`(mockGPayClient.isReadyToPay()).thenReturn(false)
     paymentJsInterface.isGpayUpiAvailable(
         "javascript:alert('success:TO_REPLACE_PAYLOAD')",
@@ -638,6 +642,78 @@ class PaymentJsInterfaceTests {
     assertEquals(
         """javascript:alert('success:{\"isEligible\":false}')""",
         shadowWebView.lastEvaluatedJavascript)
+  }
+
+  @Test
+  fun `test isGPayUpiAvailable sends isEligible false when gpay throws exception`() = runTest {
+    Mockito.`when`(mockGPayClient.isReadyToPay()).thenThrow(ApiException(Status.RESULT_TIMEOUT))
+    paymentJsInterface.isGpayUpiAvailable(
+        "javascript:alert('success:TO_REPLACE_PAYLOAD')",
+        "javascript:alert('error:TO_REPLACE_PAYLOAD')")
+
+    assertEquals(
+        """javascript:alert('success:{\"isEligible\":false}')""",
+        shadowWebView.lastEvaluatedJavascript)
+  }
+
+  @Test
+  fun `test requestGPayPayment requests payments from gPay client`() {
+    val paymentInput =
+        GpayPaymentInput(
+            amount = "100",
+            payeeName = "payee",
+            mcc = "mcc",
+            payeeVpa = "payee@okBank",
+            referenceUrl = "https://ixigo.com",
+            transactionId = "transactionId",
+            transactionNote = "transaction note",
+            transactionReferenceId = "transactionReferenceId")
+
+    val gPayPaymentAdapter = moshi.adapter(GpayPaymentInput::class.java)
+
+    paymentJsInterface.requestGpayPayment(
+        gPayPaymentAdapter.toJson(paymentInput),
+        "javascript:alert('success:TO_REPLACE_PAYLOAD')",
+        "javascript:alert('error:TO_REPLACE_PAYLOAD')")
+
+    Mockito.verify(mockGPayClient).loadPaymentData(any(), any(), any())
+  }
+
+  @Test
+  fun `test requestGPayPayment return error for invalid payment input`() {
+    val paymentInput = "{ }"
+
+    paymentJsInterface.requestGpayPayment(
+        paymentInput,
+        "javascript:alert('success:TO_REPLACE_PAYLOAD')",
+        "javascript:alert('error:TO_REPLACE_PAYLOAD')")
+
+    assertEquals(
+        "javascript:alert('error:{\\\"errorCode\\\":\\\"InvalidArgumentError\\\",\\\"errorMessage\\\":\\\"unable to parse input={ }\\\"}')",
+        shadowWebView.lastEvaluatedJavascript)
+  }
+
+  @Test
+  fun `test requestGPayPayment observes payment result`() {
+    val paymentInput =
+        GpayPaymentInput(
+            amount = "100",
+            payeeName = "payee",
+            mcc = "mcc",
+            payeeVpa = "payee@okBank",
+            referenceUrl = "https://ixigo.com",
+            transactionId = "transactionId",
+            transactionNote = "transaction note",
+            transactionReferenceId = "transactionReferenceId")
+
+    val gPayPaymentAdapter = moshi.adapter(GpayPaymentInput::class.java)
+
+    paymentJsInterface.requestGpayPayment(
+        gPayPaymentAdapter.toJson(paymentInput),
+        "javascript:alert('success:TO_REPLACE_PAYLOAD')",
+        "javascript:alert('error:TO_REPLACE_PAYLOAD')")
+
+    assertEquals(true, fragment.viewModel.paymentResult.hasObservers())
   }
 
   private val validInitializeInput =

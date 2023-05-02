@@ -22,6 +22,7 @@ constructor(
     private val paymentsClient: PaymentsClient = GpayUtils.createPaymentsClient()
 ) {
 
+  @Throws(ApiException::class)
   suspend fun isReadyToPay(): Boolean {
     val isReadyToPayJson = GpayUtils.isReadyToPayRequest() ?: return false
     return suspendCoroutine { continuation ->
