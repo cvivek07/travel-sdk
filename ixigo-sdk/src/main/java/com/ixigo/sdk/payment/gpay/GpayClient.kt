@@ -8,7 +8,6 @@ import com.ixigo.sdk.payment.data.GpayPaymentInput
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
-import timber.log.Timber
 
 class GPayClientFactory {
   fun create(context: Context): GPayClient {
@@ -37,16 +36,8 @@ constructor(
     }
   }
 
-  @Throws(InvalidPaymentDataRequestException::class)
   fun loadPaymentData(activity: Activity, paymentInput: GpayPaymentInput, requestCode: Int) {
     val paymentDataRequestJson = GpayUtils.getPaymentDataRequest(paymentInput)
-    if (paymentDataRequestJson == null) {
-      Timber.tag("requestGpayPayment").e("Can't fetch payment data request")
-      throw InvalidPaymentDataRequestException()
-    }
-
     paymentsClient.loadPaymentData(activity, paymentDataRequestJson, requestCode)
   }
 }
-
-class InvalidPaymentDataRequestException : Exception()

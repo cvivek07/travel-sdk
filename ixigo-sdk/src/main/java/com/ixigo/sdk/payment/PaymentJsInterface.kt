@@ -7,6 +7,7 @@ import android.content.pm.ResolveInfo
 import android.net.Uri
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
+import androidx.annotation.VisibleForTesting
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.google.android.apps.nbu.paisa.inapp.client.api.WalletConstants
@@ -68,7 +69,7 @@ internal class PaymentJsInterface(
   }
   private val errorAdapter by lazy { moshi.adapter(NativePromiseError::class.java) }
 
-  private val paymentViewModel: PaymentViewModel by webViewFragment.viewModels()
+  @VisibleForTesting val paymentViewModel: PaymentViewModel by webViewFragment.viewModels()
 
   private val packageManager: PackageManager by lazy {
     PackageManager(webViewFragment.requireContext().applicationContext)
@@ -491,16 +492,15 @@ internal class PaymentJsInterface(
                     replaceNativePromisePayload(
                         error, it, moshi.adapter(PaymentFinished::class.java)))
               }
-              paymentViewModel.gpayResultMutableLiveData.postValue(null)
+              paymentViewModel.gpayResultMutableLiveData.value = null
             }
           }
         }
 
         paymentsClient.loadPaymentData(
             webViewFragment.requireActivity(), input, REQUEST_CODE_GPAY_APP)
-      } catch (e: InvalidPaymentDataRequestException) {
-        returnError(error, sdkError("Gpay Payment Error"))
       } catch (e: Exception) {
+        returnError(error, sdkError("Gpay Payment Error"))
         Timber.e(e)
       }
     }

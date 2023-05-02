@@ -69,17 +69,13 @@ object GpayUtils {
    * @return Payment data expected by your app.
    * @see [PaymentDataRequest]
    */
-  fun getPaymentDataRequest(input: GpayPaymentInput): String? {
-    return try {
-      baseRequest
-          .apply {
-            put("allowedPaymentMethods", JSONArray().put(getAllowedPaymentMethods(input)))
-            put("transactionInfo", getTransactionInfo(input))
-          }
-          .toString()
-    } catch (e: JSONException) {
-      null
-    }
+  fun getPaymentDataRequest(input: GpayPaymentInput): String {
+    return baseRequest
+        .apply {
+          put("allowedPaymentMethods", JSONArray().put(getAllowedPaymentMethods(input)))
+          put("transactionInfo", getTransactionInfo(input))
+        }
+        .toString()
   }
 
   private fun getAllowedPaymentMethods(input: GpayPaymentInput): JSONObject {

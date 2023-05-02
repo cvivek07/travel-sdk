@@ -680,6 +680,66 @@ class PaymentJsInterfaceTests {
   }
 
   @Test
+  fun `test requestGPayPayment invokes success on successful payment finish`() = runTest {
+    val paymentInput =
+        GpayPaymentInput(
+            amount = "100",
+            payeeName = "payee",
+            mcc = "mcc",
+            payeeVpa = "payee@okBank",
+            referenceUrl = "https://ixigo.com",
+            transactionId = "transactionId",
+            transactionNote = "transaction note",
+            transactionReferenceId = "transactionReferenceId")
+
+    val gPayPaymentAdapter = moshi.adapter(GpayPaymentInput::class.java)
+    val paymentViewModel = paymentJsInterface.paymentViewModel
+
+    paymentViewModel.gpayResultMutableLiveData.value = PaymentFinished(paymentFinished = true)
+
+    paymentJsInterface.requestGpayPayment(
+        gPayPaymentAdapter.toJson(paymentInput),
+        "javascript:alert('success:TO_REPLACE_PAYLOAD')",
+        "javascript:alert('error:TO_REPLACE_PAYLOAD')")
+
+    assertEquals(
+        """javascript:alert('success:{\"paymentFinished\":true}')""",
+        shadowWebView.lastEvaluatedJavascript)
+
+    assertEquals(null, paymentViewModel.gpayResultMutableLiveData.value)
+  }
+
+  @Test
+  fun `test requestGPayPayment invokes error on failed payment finish`() = runTest {
+    val paymentInput =
+        GpayPaymentInput(
+            amount = "100",
+            payeeName = "payee",
+            mcc = "mcc",
+            payeeVpa = "payee@okBank",
+            referenceUrl = "https://ixigo.com",
+            transactionId = "transactionId",
+            transactionNote = "transaction note",
+            transactionReferenceId = "transactionReferenceId")
+
+    val gPayPaymentAdapter = moshi.adapter(GpayPaymentInput::class.java)
+    val paymentViewModel = paymentJsInterface.paymentViewModel
+
+    paymentViewModel.gpayResultMutableLiveData.value = PaymentFinished(paymentFinished = false)
+
+    paymentJsInterface.requestGpayPayment(
+        gPayPaymentAdapter.toJson(paymentInput),
+        "javascript:alert('success:TO_REPLACE_PAYLOAD')",
+        "javascript:alert('error:TO_REPLACE_PAYLOAD')")
+
+    assertEquals(
+        """javascript:alert('error:{\"paymentFinished\":false}')""",
+        shadowWebView.lastEvaluatedJavascript)
+
+    assertEquals(null, paymentViewModel.gpayResultMutableLiveData.value)
+  }
+
+  @Test
   fun `test requestGPayPayment return error for invalid payment input`() {
     val paymentInput = "{ }"
 
