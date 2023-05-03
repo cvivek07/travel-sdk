@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.20.5](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.20.4...ixigo-sdk-3.20.5) (2023-05-03)
+
+
+### Bug Fixes
+
+* update transaction id map ([c596912](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/c59691229942ef04dc680ba1e2eda4255d58f507))
+
 ### [3.20.4](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.20.3...ixigo-sdk-3.20.4) (2023-03-30)
 
 
