@@ -35,7 +35,7 @@
 
         <meta-data
             android:name="juspay-client-id"
-            android:value="ixigoprod_ANDROID" />
+            android:value="ixigoprod" />
 
     </application>
 

@@ -15,6 +15,10 @@
                 <action android:name="com.google.android.gms.auth.api.phone.SMS_RETRIEVED" />
             </intent-filter>
         </receiver>
+
+        <meta-data
+            android:name="juspay-client-id"
+            android:value="ixigoprod" />
     </application>
 
 </manifest>
