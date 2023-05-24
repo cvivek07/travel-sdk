@@ -297,6 +297,12 @@ class FirstFragment : Fragment() {
       }
     }
 
+    binding.buttonOpenMpm.setOnClickListener {
+      if (initSDK()) {
+        PaymentSDK.instance.openManagePaymentMethodsPage(requireActivity())
+      }
+    }
+
     val adapter = ArrayAdapter(requireContext(), R.layout.list_item, ixigoConfigs)
     (binding.configInput.editText as? AutoCompleteTextView)?.setAdapter(adapter)
 

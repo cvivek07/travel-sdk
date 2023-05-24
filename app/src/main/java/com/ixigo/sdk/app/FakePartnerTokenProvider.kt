@@ -28,10 +28,11 @@ class FakePartnerTokenProvider(private val token: String) : PartnerTokenProvider
       partnerToken?.let { callback(Ok(it)) }
     } else {
       this.callback = callback
-      val intent = Intent(activity, FakeLoginActivity::class.java)
-      intent.putExtra("token", token)
-      intent.putExtra("partnerId", requester.partnerId)
-      activity.startActivityForResult(intent, LoginRequestCode)
+      callback.invoke(Ok(PartnerToken(token)))
+//      val intent = Intent(activity, FakeLoginActivity::class.java)
+//      intent.putExtra("token", token)
+//      intent.putExtra("partnerId", requester.partnerId)
+//      activity.startActivityForResult(intent, LoginRequestCode)
     }
   }
 

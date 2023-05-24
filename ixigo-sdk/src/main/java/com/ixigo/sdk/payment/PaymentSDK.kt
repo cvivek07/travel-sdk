@@ -29,6 +29,25 @@ class PaymentSDK(
 
   internal val currentTransactions: MutableMap<String, ProcessPaymentCallback> = mutableMapOf()
 
+  fun openManagePaymentMethodsPage(activity: FragmentActivity, callback: OpenPageCallback? = null) {
+    ssoAuthProvider.login(activity, IxigoSDK.instance.appInfo.clientId) { authResult ->
+      when (authResult) {
+        is Err -> {
+          Timber.e("Unable to perform login before payment. Error=${authResult.value}")
+          callback?.invoke(Err(OpenPageUserNotLoggedInError(authResult.value)))
+        }
+        is Ok -> {
+          with(IxigoSDK.instance) {
+            val url = getManagePaymentOptionsUrl()
+            val authHeaders = mapOf("Authorization" to authResult.value.token)
+            launchWebActivity(activity, url, headers = authHeaders + getHeaders(url))
+            analyticsProvider.logEvent(Event.with(action = "paymentsOpenMPM"))
+          }
+        }
+      }
+    }
+  }
+
   fun processPayment(
       activity: FragmentActivity,
       transactionId: String,
@@ -141,6 +160,9 @@ class PaymentSDK(
                   productType?.let { "productType" to it })
               .toMap())
 
+  private fun getManagePaymentOptionsUrl(): String =
+      IxigoSDK.instance.getUrl(listOfNotNull("page" to "MANAGE_PAYMENT_METHODS").toMap())
+
   internal fun finishPayment(input: FinishPaymentInput): Boolean {
     with(input) {
       val callback = currentTransactions[transactionId]
@@ -216,3 +238,11 @@ sealed class ProcessPaymentError
 data class ProcessPaymentProcessingError(val nextUrl: String) : ProcessPaymentError()
 
 data class ProcessPaymentNotLoginError(val error: Error) : ProcessPaymentError()
+
+sealed class OpenPageError
+
+data class OpenPageUserNotLoggedInError(val error: Error) : OpenPageError()
+
+typealias OpenPageResult = Result<Nothing, OpenPageError>
+
+typealias OpenPageCallback = (OpenPageResult) -> Unit

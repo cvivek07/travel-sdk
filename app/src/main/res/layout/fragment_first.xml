@@ -456,6 +456,14 @@
                     android:layout_gravity="fill"
                     android:text="SSO Test" />
 
+                <Button
+                    android:id="@+id/buttonOpenMpm"
+                    android:layout_width="0dp"
+                    android:layout_columnWeight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="fill"
+                    android:text="Manage Payment Methods Page" />
+
             </GridLayout>
 
         </androidx.appcompat.widget.LinearLayoutCompat>
