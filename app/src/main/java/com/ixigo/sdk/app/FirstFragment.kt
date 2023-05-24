@@ -10,10 +10,6 @@ import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.ktx.app
-import com.google.firebase.remoteconfig.ktx.remoteConfig
-import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import com.ixigo.sdk.*
 import com.ixigo.sdk.app.databinding.FragmentFirstBinding
 import com.ixigo.sdk.auth.*
@@ -22,7 +18,8 @@ import com.ixigo.sdk.bus.BusSDK
 import com.ixigo.sdk.common.Err
 import com.ixigo.sdk.common.Ok
 import com.ixigo.sdk.covid.covidLaunchAppointments
-import com.ixigo.sdk.flights.*
+import com.ixigo.sdk.flights.FlightPassengerData
+import com.ixigo.sdk.flights.FlightSearchData
 import com.ixigo.sdk.hotels.HotelsSDK
 import com.ixigo.sdk.payment.*
 import com.ixigo.sdk.trains.TrainsSDK
@@ -33,6 +30,9 @@ import com.ixigo.sdk.webview.FunnelConfig
 import com.ixigo.sdk.webview.InitialPageData
 import com.ixigo.sdk.webview.WebActivity
 import com.ixigo.sdk.webview.WebViewFragment
+import okhttp3.*
+import org.json.JSONObject
+import java.io.IOException
 import java.time.LocalDate
 import kotlin.reflect.KClass
 import kotlin.reflect.full.companionObject
@@ -75,9 +75,9 @@ class FirstFragment : Fragment() {
   }
 
   override fun onCreateView(
-      inflater: LayoutInflater,
-      container: ViewGroup?,
-      savedInstanceState: Bundle?
+    inflater: LayoutInflater,
+    container: ViewGroup?,
+    savedInstanceState: Bundle?
   ): View? {
 
     _binding = FragmentFirstBinding.inflate(inflater, container, false)
@@ -91,10 +91,10 @@ class FirstFragment : Fragment() {
       initSDK()
 
       val enabled =
-          getSSOTestAuthProvider().login(requireActivity(), "iximad") {
-            progressDialog.hide()
-            Snackbar.make(binding.buttonSSOTest, getSsoAuthMessage(it), Snackbar.LENGTH_LONG).show()
-          }
+        getSSOTestAuthProvider().login(requireActivity(), "iximad") {
+          progressDialog.hide()
+          Snackbar.make(binding.buttonSSOTest, getSsoAuthMessage(it), Snackbar.LENGTH_LONG).show()
+        }
       if (enabled) {
         progressDialog.show()
       }
@@ -182,21 +182,24 @@ class FirstFragment : Fragment() {
     binding.buttonCovidAppointment.setOnClickListener {
       if (initSDK()) {
         IxigoSDK.instance.covidLaunchAppointments(
-            requireContext(), FunnelConfig(enableExitBar = false))
+          requireContext(), FunnelConfig(enableExitBar = false)
+        )
       }
     }
 
     binding.buttonFlightSearch.setOnClickListener {
       if (initSDK()) {
         IxigoSDK.instance.flightsStartSearch(
-            requireContext(),
-            FlightSearchData(
-                origin = "DEL",
-                destination = "BOM",
-                departDate = LocalDate.now().plusDays(1),
-                source = "FlightSearchFormFragment",
-                flightClass = "e",
-                passengerData = FlightPassengerData(adults = 1, children = 0, infants = 0)))
+          requireContext(),
+          FlightSearchData(
+            origin = "DEL",
+            destination = "BOM",
+            departDate = LocalDate.now().plusDays(1),
+            source = "FlightSearchFormFragment",
+            flightClass = "e",
+            passengerData = FlightPassengerData(adults = 1, children = 0, infants = 0)
+          )
+        )
       }
     }
 
@@ -208,11 +211,61 @@ class FirstFragment : Fragment() {
 
     binding.paymentPlayground.setOnClickListener {
       if (initSDK()) {
-        val intent = Intent(requireContext(), WebActivity::class.java)
-        intent.putExtra(
-            WebViewFragment.INITIAL_PAGE_DATA_ARGS,
-            InitialPageData("file:///android_asset/paymentPlayground.html"))
-        startActivity(intent)
+        // create order post api call
+        // https://sandbox.juspay.in/orders
+        // order_id, amount
+        val formBody: FormBody = FormBody.Builder()
+          .add("order_id", "TEST12168197086")
+          .add("amount", "100")
+          .add("options.get_client_auth_token", "true")
+          .add("customer_id", "cth_7UMaUzPGTTpcbLop")
+          .add("metadata.JUSPAY:gateway_reference_id", "FLIGHT")
+          .build()
+
+        val request =
+          Request.Builder()
+            .url("https://sandbox.juspay.in/orders")
+            .addHeader("Authorization", "Basic NEJCQTUzNDdFNjU1NDJDNUE1NkVGMUI4QzE4NERENDM6")
+            .addHeader("version", "2018-07-01")
+            .post(formBody)
+            .build()
+
+
+        OkHttpClient().newCall(request).enqueue(object : Callback {
+          override fun onFailure(call: Call, e: IOException) {
+            requireActivity().runOnUiThread {
+              Toast.makeText(requireContext(), "Order Create Api Failed", Toast.LENGTH_SHORT).show()
+            }
+          }
+
+          override fun onResponse(call: Call, response: Response) {
+            requireActivity().runOnUiThread {
+              val jsonObject = JSONObject(response.body!!.string())
+              if (jsonObject.has("juspay")) {
+                val token = jsonObject.getJSONObject("juspay").get("client_auth_token")
+                Toast.makeText(
+                  requireContext(),
+                  "Token $token",
+                  Toast.LENGTH_SHORT
+                ).show()
+
+                val intent = Intent(requireContext(), WebActivity::class.java)
+                intent.putExtra(
+                  WebViewFragment.INITIAL_PAGE_DATA_ARGS,
+                  InitialPageData("file:///android_asset/paymentPlayground.html?clientAuthToken=$token")
+                )
+                startActivity(intent)
+              } else {
+                Toast.makeText(
+                  requireContext(),
+                  "No Token",
+                  Toast.LENGTH_SHORT
+                ).show()
+              }
+            }
+
+          }
+        })
       }
     }
 
@@ -223,20 +276,22 @@ class FirstFragment : Fragment() {
         if (transactionId != null) {
           if (gatewayId != null) {
             paymentProvider.startPayment(
-                requireActivity(),
-                PaymentInput("product", mapOf("paymentTransactionId" to transactionId))) {
+              requireActivity(),
+              PaymentInput("product", mapOf("paymentTransactionId" to transactionId))
+            ) {
               val result =
-                  when (it) {
-                    is Err -> "Error"
-                    is Ok -> "Success"
-                  }
-              Toast.makeText(
-                      requireContext(), "Payment completed with result=$result", Toast.LENGTH_SHORT)
-                  .show()
+                when (it) {
+                  is Err -> "Error"
+                  is Ok -> "Success"
+                }
+//              Toast.makeText(
+//                      requireContext(), "Payment completed with result=$result", Toast.LENGTH_SHORT)
+//                  .show()
             }
           } else {
             paymentProvider.startPayment(
-                requireActivity(), PaymentInput("product", mapOf("paymentId" to transactionId))) {}
+              requireActivity(), PaymentInput("product", mapOf("paymentId" to transactionId))
+            ) {}
           }
         }
       }
@@ -252,10 +307,11 @@ class FirstFragment : Fragment() {
 
   private fun setupPayment() {
     val adapter =
-        ArrayAdapter(
-            requireContext(),
-            R.layout.list_item,
-            arrayOf(JusPayEnvironment.PRODUCTION, JusPayEnvironment.SANDBOX))
+      ArrayAdapter(
+        requireContext(),
+        R.layout.list_item,
+        arrayOf(JusPayEnvironment.PRODUCTION, JusPayEnvironment.SANDBOX)
+      )
     (binding.juspayEnvironment.editText as? AutoCompleteTextView)?.setAdapter(adapter)
   }
 
@@ -372,37 +428,40 @@ class FirstFragment : Fragment() {
       binding.configInput.error = "Config can not be empty"
     }
     if (appVersion == null ||
-        apiKey == null ||
-        clientId == null ||
-        appName == null ||
-        uuid == null ||
-        deviceId == null ||
-        ixigoConfig == null) {
+      apiKey == null ||
+      clientId == null ||
+      appName == null ||
+      uuid == null ||
+      deviceId == null ||
+      ixigoConfig == null
+    ) {
       return false
     }
 
     val theme: Theme = currentPreset?.let { it.theme } ?: defaultTheme(requireContext())
 
     val analyticsProvider =
-        ToastAnalyticsProvider(requireActivity()).apply {
-          enabled = binding.toastEventsSwitch.isChecked
-        }
+      ToastAnalyticsProvider(requireActivity()).apply {
+        enabled = binding.toastEventsSwitch.isChecked
+      }
 
     val ixigoSDK = IxigoSDK.init(
-        requireContext(),
-        AppInfo(
-            clientId = clientId,
-            apiKey = apiKey,
-            appVersion = appVersion,
-            appName = appName,
-            uuid = uuid,
-            deviceId = deviceId),
-        getPartnerTokenProvider(),
-        PaymentSDKPaymentProvider(),
-        analyticsProvider = analyticsProvider,
-        config = ixigoConfig.config.copy(enableExitBar = binding.exitBarSwitch.isChecked),
-        deeplinkHandler = FakeDeeplinkHandler(),
-        theme = theme)
+      requireContext(),
+      AppInfo(
+        clientId = clientId,
+        apiKey = apiKey,
+        appVersion = appVersion,
+        appName = appName,
+        uuid = uuid,
+        deviceId = deviceId
+      ),
+      getPartnerTokenProvider(),
+      PaymentSDKPaymentProvider(),
+      analyticsProvider = analyticsProvider,
+      config = ixigoConfig.config.copy(enableExitBar = binding.exitBarSwitch.isChecked),
+      deeplinkHandler = FakeDeeplinkHandler(),
+      theme = theme
+    )
 
     ixigoSDK.setLoggingConfig(LoggingConfig(enabled = true))
 
@@ -413,7 +472,7 @@ class FirstFragment : Fragment() {
 
   private fun initBusSDK(): Boolean {
     val busConfig =
-        if (ixigoConfig()?.config == Config.ProdConfig) BusConfig.PROD else BusConfig.STAGING
+      if (ixigoConfig()?.config == Config.ProdConfig) BusConfig.PROD else BusConfig.STAGING
     BusSDK.init(config = busConfig)
     return true
   }
@@ -430,13 +489,13 @@ class FirstFragment : Fragment() {
 
   private fun initPaymentSDK(): Boolean {
     val juspayEnvironment =
-        JusPayEnvironment.valueOf(binding.juspayEnvironment.editText!!.text.toString())
+      JusPayEnvironment.valueOf(binding.juspayEnvironment.editText!!.text.toString())
     PaymentSDK.init(PaymentConfig(juspayConfig = JuspayConfig(environment = juspayEnvironment)))
     return true
   }
 
   private fun ixigoConfig() =
-      ixigoConfigs.find { it.label == binding.configInput.editText?.text.toString() }
+    ixigoConfigs.find { it.label == binding.configInput.editText?.text.toString() }
 
   private fun getFieldValue(editText: EditText, fieldName: String): String? {
     val value = editText.text.toString()
@@ -452,19 +511,19 @@ class FirstFragment : Fragment() {
   private fun getSSOTestAuthProvider(): AuthProvider {
     val token = binding.ssoPartnerToken.text.toString()
     return SSOAuthProvider(
-        object : PartnerTokenProvider {
-          override fun fetchPartnerToken(
-              activity: FragmentActivity,
-              requester: PartnerTokenProvider.Requester,
-              callback: PartnerTokenCallback
-          ) {
-            if (token.isNullOrBlank()) {
-              callback(Err(PartnerTokenErrorUserNotLoggedIn()))
-            } else {
-              callback(Ok(PartnerToken(token)))
-            }
+      object : PartnerTokenProvider {
+        override fun fetchPartnerToken(
+          activity: FragmentActivity,
+          requester: PartnerTokenProvider.Requester,
+          callback: PartnerTokenCallback
+        ) {
+          if (token.isNullOrBlank()) {
+            callback(Err(PartnerTokenErrorUserNotLoggedIn()))
+          } else {
+            callback(Ok(PartnerToken(token)))
           }
-        })
+        }
+      })
   }
 
   private fun getPartnerTokenProvider(): PartnerTokenProvider {
@@ -479,89 +538,98 @@ class FirstFragment : Fragment() {
 
   object DisabledPaymentProvider : PaymentProvider {
     override fun startPayment(
-        activity: FragmentActivity,
-        input: PaymentInput,
-        callback: PaymentCallback
+      activity: FragmentActivity,
+      input: PaymentInput,
+      callback: PaymentCallback
     ): Boolean {
       return false
     }
   }
 
   private val ixigoConfigs =
-      listOf(IxigoConfig("Prod", Config.ProdConfig)) +
-          IxigoConfig("dev (local)", Config("http://dev.ixigo.com")) +
-          (1..8).map { IxigoConfig("Build $it", Config.StagingBuildConfig("build$it")) }
+    listOf(IxigoConfig("Prod", Config.ProdConfig)) +
+            IxigoConfig("dev (local)", Config("http://dev.ixigo.com")) +
+            (1..8).map { IxigoConfig("Build $it", Config.StagingBuildConfig("build$it")) }
 
   private val presets =
-      listOf(
-          Preset(
-              label = "ConfirmTkt",
-              clientId = "confirmtckt",
-              apiKey = "confirmtckt!2\$",
-              theme = Theme(primaryColor = Color.parseColor("#43a64e")),
-              ssoPartnerToken = "D5DCFBD21CF7867B74D5273A57A0254D1785773799EEDD0E683B0EE5C6E56878",
-              buttonsState =
-                  ButtonsState(
-                      flightsSearch = false,
-                      flightsMultiModule = false,
-                      trainsHome = false,
-                      busHome = false,
-                      busMultiModel = false,
-                      busTrips = false)),
-          Preset(
-              label = "Abhibus",
-              clientId = "abhibus",
-              apiKey = "abhibus!2\$",
-              theme = Theme(primaryColor = Color.parseColor("#dc635b")),
-              ssoPartnerToken = "RQjsRqkORTji8R9+AQkLFyl9yeLQxX2II01n4rvVh1vpoH6pVx4eiw==",
-              buttonsState =
-                  ButtonsState(
-                      trainsTrips = true,
-                      trainsTripsFragment = true,
-                      flightsSearch = false,
-                      flightsMultiModule = false,
-                      busHome = false,
-                      busMultiModel = false,
-                      busTrips = false)),
-          Preset(
-              label = "ixigo trains",
-              clientId = "iximatr",
-              apiKey = "iximatr!2\$",
-              theme = Theme(primaryColor = Color.parseColor("#1556ba")),
-              buttonsState = ButtonsState(trainsHome = false),
-              appVersion = "1801"),
-          Preset(
-              label = "ixigo flights",
-              clientId = "iximaad",
-              apiKey = "iximaad!2\$",
-              theme = Theme(primaryColor = Color.parseColor("#721053")),
-              buttonsState =
-                  ButtonsState(
-                      trainsHome = false,
-                      flightsMultiModule = false,
-                      flightsHome = false,
-                      flightsSearch = false)),
-          Preset(
-              label = "Other",
-              clientId = "",
-              apiKey = "",
-              ssoPartnerToken = "",
-              uuid = "",
-              deviceId = "",
-              appVersion = "",
-              theme = Theme(primaryColor = Color.parseColor("#CCCCCC"))))
+    listOf(
+      Preset(
+        label = "ConfirmTkt",
+        clientId = "confirmtckt",
+        apiKey = "confirmtckt!2\$",
+        theme = Theme(primaryColor = Color.parseColor("#43a64e")),
+        ssoPartnerToken = "D5DCFBD21CF7867B74D5273A57A0254D1785773799EEDD0E683B0EE5C6E56878",
+        buttonsState =
+        ButtonsState(
+          flightsSearch = false,
+          flightsMultiModule = false,
+          trainsHome = false,
+          busHome = false,
+          busMultiModel = false,
+          busTrips = false
+        )
+      ),
+      Preset(
+        label = "Abhibus",
+        clientId = "abhibus",
+        apiKey = "abhibus!2\$",
+        theme = Theme(primaryColor = Color.parseColor("#dc635b")),
+        ssoPartnerToken = "RQjsRqkORTji8R9+AQkLFyl9yeLQxX2II01n4rvVh1vpoH6pVx4eiw==",
+        buttonsState =
+        ButtonsState(
+          trainsTrips = true,
+          trainsTripsFragment = true,
+          flightsSearch = false,
+          flightsMultiModule = false,
+          busHome = false,
+          busMultiModel = false,
+          busTrips = false
+        )
+      ),
+      Preset(
+        label = "ixigo trains",
+        clientId = "iximatr",
+        apiKey = "iximatr!2\$",
+        theme = Theme(primaryColor = Color.parseColor("#1556ba")),
+        buttonsState = ButtonsState(trainsHome = false),
+        appVersion = "1801"
+      ),
+      Preset(
+        label = "ixigo flights",
+        clientId = "iximaad",
+        apiKey = "iximaad!2\$",
+        theme = Theme(primaryColor = Color.parseColor("#721053")),
+        buttonsState =
+        ButtonsState(
+          trainsHome = false,
+          flightsMultiModule = false,
+          flightsHome = false,
+          flightsSearch = false
+        )
+      ),
+      Preset(
+        label = "Other",
+        clientId = "",
+        apiKey = "",
+        ssoPartnerToken = "",
+        uuid = "",
+        deviceId = "",
+        appVersion = "",
+        theme = Theme(primaryColor = Color.parseColor("#CCCCCC"))
+      )
+    )
 }
 
 data class Preset(
-    val label: String,
-    val clientId: String,
-    val apiKey: String,
-    val ssoPartnerToken: String? = null,
-    val appVersion: String = "1",
-    val uuid: String = "987654321ABC",
-    val deviceId: String = "123456789abcdef",
-    val buttonsState: ButtonsState = ButtonsState(),
-    val theme: Theme
+  val label: String,
+  val clientId: String,
+  val apiKey: String,
+  val ssoPartnerToken: String? = null,
+  val appVersion: String = "1",
+  val uuid: String = "987654321ABC",
+  val deviceId: String = "123456789abcdef",
+  val buttonsState: ButtonsState = ButtonsState(),
+  val theme: Theme
 ) {
   override fun toString(): String {
     return label
@@ -569,15 +637,15 @@ data class Preset(
 }
 
 data class ButtonsState(
-    val flightsSearch: Boolean = true,
-    val flightsHome: Boolean = true,
-    val flightsMultiModule: Boolean = true,
-    val trainsHome: Boolean = true,
-    val busHome: Boolean = true,
-    val busMultiModel: Boolean = true,
-    val busTrips: Boolean = true,
-    val trainsTripsFragment: Boolean = false,
-    val trainsTrips: Boolean = false
+  val flightsSearch: Boolean = true,
+  val flightsHome: Boolean = true,
+  val flightsMultiModule: Boolean = true,
+  val trainsHome: Boolean = true,
+  val busHome: Boolean = true,
+  val busMultiModel: Boolean = true,
+  val busTrips: Boolean = true,
+  val trainsTripsFragment: Boolean = false,
+  val trainsTrips: Boolean = false
 )
 
 data class IxigoConfig(val label: String, val config: Config) {

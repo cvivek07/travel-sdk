@@ -1,48 +1,41 @@
 package com.ixigo.sdk.app
 
-import android.app.ActivityManager
 import android.os.Build
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
-import android.webkit.CookieManager
-import android.webkit.WebStorage
 import android.webkit.WebView
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
-import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.app.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var appBarConfiguration: AppBarConfiguration
-    private lateinit var binding: ActivityMainBinding
+  private lateinit var appBarConfiguration: AppBarConfiguration
+  private lateinit var binding: ActivityMainBinding
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+  @RequiresApi(Build.VERSION_CODES.O)
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
 
-        WebView.setWebContentsDebuggingEnabled(true)
+    WebView.setWebContentsDebuggingEnabled(true)
 
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    binding = ActivityMainBinding.inflate(layoutInflater)
+    setContentView(binding.root)
 
-        setSupportActionBar(binding.toolbar)
+    setSupportActionBar(binding.toolbar)
 
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
-        appBarConfiguration = AppBarConfiguration(navController.graph)
-        setupActionBarWithNavController(navController, appBarConfiguration)
+    val navController = findNavController(R.id.nav_host_fragment_content_main)
+    appBarConfiguration = AppBarConfiguration(navController.graph)
+    setupActionBarWithNavController(navController, appBarConfiguration)
 
-    }
+  }
 
-    override fun onSupportNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
-        return navController.navigateUp(appBarConfiguration)
-                || super.onSupportNavigateUp()
-    }
+  override fun onSupportNavigateUp(): Boolean {
+    val navController = findNavController(R.id.nav_host_fragment_content_main)
+    return navController.navigateUp(appBarConfiguration)
+            || super.onSupportNavigateUp()
+  }
 }

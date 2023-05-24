@@ -13,6 +13,9 @@ dependencyResolutionManagement {
         maven {
             url "https://maven.juspay.in/jp-build-packages/hyper-sdk/"
         }
+        maven {
+            url "https://maven.juspay.in/jp-build-packages/hypersdk-asset-download/releases/"
+        }
         jcenter() // Warning: this repository is going to shut down soon
     }
 }

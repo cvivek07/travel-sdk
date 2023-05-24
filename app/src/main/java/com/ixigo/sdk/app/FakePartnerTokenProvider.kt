@@ -12,7 +12,8 @@ import com.ixigo.sdk.common.Ok
 
 private const val LoginRequestCode = 1001
 
-class FakePartnerTokenProvider(private val token: String): PartnerTokenProvider, ActivityResultHandler {
+class FakePartnerTokenProvider(private val token: String) : PartnerTokenProvider,
+  ActivityResultHandler {
   private var partnerToken: PartnerToken? = null
   private var callback: PartnerTokenCallback? = null
 
@@ -24,7 +25,7 @@ class FakePartnerTokenProvider(private val token: String): PartnerTokenProvider,
     callback: PartnerTokenCallback
   ) {
     if (partnerToken != null) {
-      partnerToken?.let { callback(Ok(it))}
+      partnerToken?.let { callback(Ok(it)) }
     } else {
       this.callback = callback
       val intent = Intent(activity, FakeLoginActivity::class.java)

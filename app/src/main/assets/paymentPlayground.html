@@ -19,7 +19,7 @@
     <h2>PaymentSDK Playground</h2>
 
     <div class="accordion mt-3" id="accordionExample">
-        <div class="accordion-item open">
+        <div class="accordion-item">
             <h2 class="accordion-header" id="headingSms">
                 <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSms" aria-expanded="true" aria-controls="collapseOne">
                     Read SMS
@@ -31,7 +31,7 @@
                 </div>
             </div>
         </div>
-        <div class="accordion-item open">
+        <div class="accordion-item">
             <h2 class="accordion-header" id="headingScanCreditCard">
                 <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseScanCreditCard" aria-expanded="true" aria-controls="collapseOne">
                     Scan Credit Card
@@ -43,7 +43,7 @@
                 </div>
             </div>
         </div>
-        <div class="accordion-item open">
+        <div class="accordion-item">
             <h2 class="accordion-header" id="headingOne">
                 <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                     Initialize
@@ -55,13 +55,13 @@
                         <div class="form-group mb-3">
 
                             <label for="initialize-customerId">Customer Id</label>
-                            <input type="text" class="form-control" id="initialize-customerId" placeholder="Customer Id" value="cst_jyeynkeyjqqa3zhm">
+                            <input type="text" class="form-control" id="initialize-customerId" placeholder="Customer Id" value="cth_7UMaUzPGTTpcbLop">
 
                             <label for="initialize-merchantId">Merchant Id</label>
                             <input type="text" class="form-control" id="initialize-merchantId" placeholder="Merchant Id" value="ixigo">
 
                             <label for="initialize-clientId">Client Id</label>
-                            <input type="text" class="form-control" id="initialize-clientId" placeholder="Client Id" value="ixigo_MWEB">
+                            <input type="text" class="form-control" id="initialize-clientId" placeholder="Client Id" value="ixigo_ANDROID">
 
                             <label for="initialize-provider">Provider</label>
                             <input type="text" class="form-control" id="initialize-provider" placeholder="Provider" value="JUSPAY">
@@ -133,18 +133,62 @@
                 </div>
             </div>
         </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingWallets">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseWallets" aria-expanded="false" aria-controls="collapseWallets">
+                    Refresh Wallets
+                </button>
+            </h2>
+            <div id="collapseWallets" class="accordion-collapse collapse" aria-labelledby="headingWallets" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                    <button type="button" id="refresh-wallets-btn" class="btn btn-primary">Refresh Wallets</button>
+                </div>
+            </div>
+        </div>
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingCreateWallet">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseCreateWallet" aria-expanded="false" aria-controls="collapseCreateWallet">
+                    Create Wallet
+                </button>
+            </h2>
+            <div id="collapseCreateWallet" class="accordion-collapse collapse" aria-labelledby="headingCreateWallet" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                    <button type="button" id="create-amazon-wallet-btn" class="btn btn-primary">Create Amazon Wallet</button>
+                </div>
+                <div class="accordion-body">
+                    <button type="button" id="create-amazon-wallet-balance-btn" class="btn btn-primary" style="display:none"></button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
+
+    function getParameterByName(name, url = window.location.href) {
+        name = name.replace(/[\[\]]/g, '\\$&');
+        var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, ' '));
+    }
+
+    const clientAuthToken = getParameterByName('clientAuthToken');
+
     document.getElementById('initialize-btn').onclick = async () => {
         try {
-            await IxigoSDK.payment.initialize({
-                "customerId": document.getElementById('initialize-customerId').value,
-                "merchantId": document.getElementById('initialize-merchantId').value,
-                "clientId": document.getElementById('initialize-clientId').value,
-                "provider": document.getElementById('initialize-provider').value
-            })
+            await IxigoSDK.payment.initialize(
+
+                    {
+                        "customerId": document.getElementById('initialize-customerId').value,
+                        "merchantId": document.getElementById('initialize-merchantId').value,
+                        "clientId": document.getElementById('initialize-clientId').value,
+                        "provider": document.getElementById('initialize-provider').value,
+                        "environment": "sandbox"
+                    }
+
+            )
             alert("Successfully initialized SDK")
         } catch(e) {
             alert("Error trying to initialize SDK=${JSON.stringify(e)}")
@@ -197,6 +241,86 @@
             alert(`Error trying to scan credit card=${JSON.stringify(e)}`)
         }
     }
+
+    function onWalletLinkSuccess(response, deLinkElement) {
+        deLinkElement.textContent = 'balance : ₹' + response.payload.currentBalance;
+        deLinkElement.style.display = 'block';
+        deLinkElement.setAttribute('data-info', JSON.stringify(response.payload));
+    }
+
+    function onWalletDeLinkSuccess(response, deLinkElement) {
+        deLinkElement.textContent = '';
+        deLinkElement.style.display = 'none';
+        deLinkElement.removeAttribute('data-info');
+    }
+
+    function deLinkWallet(walletId, walletName, success, error) {
+        PaymentSDKAndroid.process(JSON.stringify({
+                    "action": "delinkWallet",
+                    "walletId" : walletId,
+                    "walletName": walletName,
+                    "clientAuthToken": clientAuthToken,
+                    "gatewayReferenceId": "FLIGHT",
+                    "sdkWalletIdentifier": "A2L8B17DHBF6TG",
+                    "sdkPresent": "ANDROID_AMAZONPAY_TOKENIZED"
+                 }),
+            success,
+            error
+        )
+    }
+
+    document.getElementById('create-amazon-wallet-balance-btn').onclick = async () => {
+        const onSuccess = "onWalletDeLinkSuccess(JSON.parse('TO_REPLACE_PAYLOAD'), document.getElementById('create-amazon-wallet-balance-btn'))";
+
+        try {
+            const div = document.getElementById('create-amazon-wallet-balance-btn');
+            const wallet = JSON.parse(div.getAttribute('data-info'));
+            deLinkWallet(
+                    wallet.id,
+                    wallet.wallet,
+                    onSuccess,
+                    "javascript:alert('error:TO_REPLACE_PAYLOAD')"
+            )
+        } catch(e) {
+           alert(`Error delinking amazon wallet=${JSON.stringify(e)}`)
+        }
+    }
+
+    document.getElementById('create-amazon-wallet-btn').onclick = async () => {
+        const onAmazonLinkSuccess =  "onWalletLinkSuccess(JSON.parse('TO_REPLACE_PAYLOAD'), document.getElementById('create-amazon-wallet-balance-btn'))";
+
+        try {
+            PaymentSDKAndroid.process(JSON.stringify({
+                    "action": "createWallet",
+                    "walletName" : "AMAZONPAY",
+                    "clientAuthToken": clientAuthToken,
+                    "amount": "100",
+                    "gatewayReferenceId": "FLIGHT",
+                    "sdkWalletIdentifier": "A2L8B17DHBF6TG",
+                    "paymentMethod": "AMAZONPAY",
+                    "sdkPresent": "ANDROID_AMAZONPAY_TOKENIZED"
+                 }),
+             onAmazonLinkSuccess,
+            "javascript:alert('error:TO_REPLACE_PAYLOAD')"
+            )
+        } catch(e) {
+           alert(`Error creating amazon wallet=${JSON.stringify(e)}`)
+        }
+    }
+
+    document.getElementById('refresh-wallets-btn').onclick = async () => {
+        try {
+            const result = await IxigoSDK.payment.process({
+                    "action": "refreshWalletBalances",
+                    "clientAuthToken": clientAuthToken
+                 }
+            );
+        } catch(e) {
+            console.log(e);
+           alert(`Error refreshing wallets=${JSON.stringify(e)}`)
+        }
+    }
+
 </script>
 </body>
 </html>
