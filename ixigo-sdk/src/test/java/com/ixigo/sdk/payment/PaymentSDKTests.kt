@@ -151,6 +151,51 @@ class PaymentSDKTests {
     }
   }
 
+  @Test
+  fun `test openManagePaymentPage returns error if unable to get ixigo token`() {
+    initializeTestIxigoSDK(analyticsProvider = mockAnalyticsProvider)
+    initializePaymentSDK(ssoAuthProvider = ssoAuthProvider)
+
+    scenario.onActivity { activity ->
+      whenever(ssoAuthProvider.login(same(activity), eq(IxigoSDK.instance.appInfo.clientId), any()))
+          .then { invocation ->
+            val callback: AuthCallback = invocation.getArgument(2)
+            callback.invoke(Err(Error("errorMessage")))
+            true
+          }
+      var result: OpenPageResult? = null
+      PaymentSDK.instance.openManagePaymentMethodsPage(activity) { result = it }
+      assertEquals(
+          "errorMessage", (result as Err<OpenPageUserNotLoggedInError>).value.error.message)
+      verifyNoInteractions(mockAnalyticsProvider)
+    }
+  }
+
+  @Test
+  fun `test openManagePaymentMethods Page is opened`() {
+    initializeTestIxigoSDK(
+        analyticsProvider = mockAnalyticsProvider,
+        partnerTokenProvider = FakePartnerTokenProvider("iximatr", PartnerToken("token")))
+    initializePaymentSDK(ssoAuthProvider = ssoAuthProvider)
+    scenario.onActivity { activity ->
+      whenever(ssoAuthProvider.login(same(activity), eq(IxigoSDK.instance.appInfo.clientId), any()))
+          .then {
+            val callback: AuthCallback = it.getArgument(2)
+            callback.invoke(Ok(AuthData(token = "token")))
+            true
+          }
+
+      PaymentSDK.instance.openManagePaymentMethodsPage(activity)
+      val authHeaders = mapOf("Authorization" to "token")
+
+      assertLaunchedIntent(
+          activity,
+          url =
+              "https://www.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=1&deviceId=deviceId&languageCode=en&page=MANAGE_PAYMENT_METHODS",
+          expectedHeaders = defaultIntentHeaders + authHeaders)
+    }
+  }
+
   private fun testJsInterface(url: String, check: (List<JsInterface>) -> Unit) {
     initializeTestIxigoSDK()
 
