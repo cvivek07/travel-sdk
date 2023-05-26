@@ -26,7 +26,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
-import kotlin.math.exp
 
 @RunWith(AndroidJUnit4::class)
 class FlightsFunnelTest {
@@ -51,16 +50,20 @@ class FlightsFunnelTest {
   @Test
   fun `test flightsStartHome launches WebActivity with auth header when auth is available`() {
     initializeTestIxigoSDK(
-        appInfo = appInfo, analyticsProvider = mockAnalyticsProvider, config = config, authProvider = FakeAuthProvider(token = "token")
-    )
+        appInfo = appInfo,
+        analyticsProvider = mockAnalyticsProvider,
+        config = config,
+        authProvider = FakeAuthProvider(token = "token"))
     assertFlightsHome(expectedHeaders = expectedHeaders() + mapOf("Authorization" to "token"))
   }
 
   @Test
   fun `test flightsStartHome launches WebActivity without auth header when auth is not available`() {
     initializeTestIxigoSDK(
-      appInfo = appInfo, analyticsProvider = mockAnalyticsProvider, config = config, authProvider = FakeAuthProvider(token = null)
-    )
+        appInfo = appInfo,
+        analyticsProvider = mockAnalyticsProvider,
+        config = config,
+        authProvider = FakeAuthProvider(token = null))
     assertFlightsHome(expectedHeaders = expectedHeaders())
   }
 

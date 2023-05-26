@@ -47,9 +47,7 @@ internal fun initializeTestIxigoSDK(
           deeplinkHandler = deeplinkHandler,
           theme = theme,
           remoteConfigProvider = FakeRemoteConfigProvider(),
-          authProvider = authProvider
-      )
-  )
+          authProvider = authProvider))
 }
 
 internal fun initializePaymentSDK(ssoAuthProvider: SSOAuthProvider? = null) {

@@ -24,13 +24,11 @@ import com.ixigo.sdk.flights.FlightSearchData
 import com.ixigo.sdk.flights.getFlightsSearchParams
 import com.ixigo.sdk.payment.DefaultPaymentProvider
 import com.ixigo.sdk.payment.PaymentProvider
-import com.ixigo.sdk.payment.ProcessPaymentNotLoginError
 import com.ixigo.sdk.remoteConfig.RemoteConfigProvider
 import com.ixigo.sdk.remoteConfig.get
 import com.ixigo.sdk.ui.Theme
 import com.ixigo.sdk.ui.defaultTheme
 import com.ixigo.sdk.webview.*
-import timber.log.Timber
 import java.net.URL
 
 /**
