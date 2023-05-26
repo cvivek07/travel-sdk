@@ -160,6 +160,22 @@
                 </div>
             </div>
         </div>
+
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="headingGooglePay">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseGooglePay" aria-expanded="false" aria-controls="collapseGooglePay">
+                    Google Pay
+                </button>
+            </h2>
+            <div id="collapseGooglePay" class="accordion-collapse collapse" aria-labelledby="headingGooglePay" data-bs-parent="#accordionExample">
+                <div class="accordion-body">
+                    <button type="button" id="check-google-pay-available-btn" class="btn btn-primary">Check Google Pay Available</button>
+                </div>
+                <div class="accordion-body">
+                    <button type="button" id="pay-with-google-pay-btn" class="btn btn-primary" style="display:none">Pay with Google Pay</button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -269,6 +285,8 @@
         )
     }
 
+
+
     document.getElementById('create-amazon-wallet-balance-btn').onclick = async () => {
         const onSuccess = "onWalletDeLinkSuccess(JSON.parse('TO_REPLACE_PAYLOAD'), document.getElementById('create-amazon-wallet-balance-btn'))";
 
@@ -314,6 +332,41 @@
                     "action": "refreshWalletBalances",
                     "clientAuthToken": clientAuthToken
                  }
+            );
+        } catch(e) {
+            console.log(e);
+           alert(`Error refreshing wallets=${JSON.stringify(e)}`)
+        }
+    }
+
+    document.getElementById('check-google-pay-available-btn').onclick = async () => {
+        const payWithGooglePayBtn = document.getElementById('pay-with-google-pay-btn')
+        try {
+            const result = await IxigoSDK.payment.isGpayUpiAvailable();
+            if (result.isEnabled) {
+                payWithGooglePayBtn.style.display = 'block';
+            } else {
+                alert('not available');
+                payWithGooglePayBtn.style.display = 'none';
+            }
+        } catch(e) {
+            console.log(e);
+           alert(`Error refreshing wallets=${JSON.stringify(e)}`)
+        }
+    }
+
+    document.getElementById('pay-with-google-pay-btn').onclick = async () => {
+        try {
+            const result = await IxigoSDK.payment.requestGpayPayment({
+                    "amount": "100",
+                    "payeeVpa": "ixigo@okhdfcbank",
+                    "payeeName": "ixigo",
+                    "referenceUrl": "https://ixigo.com",
+                    "mcc": 1012,
+                    "transactionReferenceId": "transactionReferenceId",
+                    "transactionId": "transactionId",
+                    "transactionNote": "Test Transaction"
+                }
             );
         } catch(e) {
             console.log(e);

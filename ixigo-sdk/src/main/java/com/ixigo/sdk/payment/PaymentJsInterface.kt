@@ -449,7 +449,7 @@ internal class PaymentJsInterface(
   fun isGpayUpiAvailable(success: String, error: String) {
     webViewFragment.lifecycleScope.launch {
       try {
-        val isReady = paymentsClient.isReadyToPay()
+        val isReady = paymentsClient.isReadyToPay() && paymentsClient.isReadyToPay()
         executeResponse(
             replaceNativePromisePayload(
                 success,
