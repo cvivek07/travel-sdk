@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.20.9](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.20.8...ixigo-sdk-3.20.9) (2023-05-26)
+
 ### [3.20.8](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.20.7...ixigo-sdk-3.20.8) (2023-05-25)
 
 ### [3.20.7](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.20.5...ixigo-sdk-3.20.7) (2023-05-18)
