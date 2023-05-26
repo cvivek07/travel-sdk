@@ -8,26 +8,29 @@ import android.os.Bundle
 import android.webkit.CookieManager
 import androidx.annotation.VisibleForTesting
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.test.espresso.idling.net.UriIdlingResource
 import com.ixigo.sdk.Config.Companion.ProdConfig
 import com.ixigo.sdk.IxigoSDK.Companion.init
 import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
-import com.ixigo.sdk.auth.AuthProvider
+import com.ixigo.sdk.auth.*
 import com.ixigo.sdk.auth.CachingPartnerTokenProvider
-import com.ixigo.sdk.auth.PartnerToken
-import com.ixigo.sdk.auth.PartnerTokenProvider
+import com.ixigo.sdk.common.Err
+import com.ixigo.sdk.common.Ok
 import com.ixigo.sdk.common.SdkSingleton
 import com.ixigo.sdk.firebase.FirebaseHelper
 import com.ixigo.sdk.flights.FlightSearchData
 import com.ixigo.sdk.flights.getFlightsSearchParams
 import com.ixigo.sdk.payment.DefaultPaymentProvider
 import com.ixigo.sdk.payment.PaymentProvider
+import com.ixigo.sdk.payment.ProcessPaymentNotLoginError
 import com.ixigo.sdk.remoteConfig.RemoteConfigProvider
 import com.ixigo.sdk.remoteConfig.get
 import com.ixigo.sdk.ui.Theme
 import com.ixigo.sdk.ui.defaultTheme
 import com.ixigo.sdk.webview.*
+import timber.log.Timber
 import java.net.URL
 
 /**
@@ -48,7 +51,8 @@ internal constructor(
     internal val webViewConfig: WebViewConfig = WebViewConfig(),
     internal val deeplinkHandler: DeeplinkHandler? = null,
     internal val theme: Theme,
-    internal val remoteConfigProvider: RemoteConfigProvider
+    internal val remoteConfigProvider: RemoteConfigProvider,
+    private val authProvider: AuthProvider = SSOAuthProvider(partnerTokenProvider, appInfo)
 ) : JsInterfaceProvider {
 
   private val cachingPartnerTokenProvider: CachingPartnerTokenProvider =
@@ -223,10 +227,20 @@ internal constructor(
    *
    * @param context
    */
-  fun flightsStartHome(context: Context) {
-    val url = getUrl(mapOf("page" to "FLIGHT_HOME"))
-    launchWebActivity(context, url)
-    analyticsProvider.logEvent(Event.with(action = "flightsStartHome"))
+  fun flightsStartHome(activity: FragmentActivity) {
+    authProvider.login(activity, IxigoSDK.instance.appInfo.clientId) { authResult ->
+      val url = getUrl(mapOf("page" to "FLIGHT_HOME"))
+      when (authResult) {
+        is Err -> {
+          launchWebActivity(activity, url, headers = getHeaders(url))
+        }
+        is Ok -> {
+          val authHeaders = mapOf("Authorization" to authResult.value.token)
+          launchWebActivity(activity, url, headers = getHeaders(url) + authHeaders)
+        }
+      }
+      analyticsProvider.logEvent(Event.with(action = "flightsStartHome"))
+    }
   }
 
   /**

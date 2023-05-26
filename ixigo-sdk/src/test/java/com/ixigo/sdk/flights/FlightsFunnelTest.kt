@@ -1,6 +1,7 @@
 package com.ixigo.sdk.flights
 
 import android.app.Activity
+import androidx.fragment.app.FragmentActivity
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.launchActivity
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -9,6 +10,7 @@ import com.ixigo.sdk.Config
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
+import com.ixigo.sdk.auth.test.FakeAuthProvider
 import com.ixigo.sdk.test.assertLaunchedIntent
 import com.ixigo.sdk.test.initializeTestIxigoSDK
 import com.ixigo.sdk.webview.FunnelConfig
@@ -24,11 +26,12 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
+import kotlin.math.exp
 
 @RunWith(AndroidJUnit4::class)
 class FlightsFunnelTest {
 
-  private lateinit var scenario: ActivityScenario<Activity>
+  private lateinit var scenario: ActivityScenario<FragmentActivity>
   private lateinit var activity: Activity
   private val mockAnalyticsProvider = mock<AnalyticsProvider>()
   private val config = Config("https://baseUrl.ixigo.com/")
@@ -46,10 +49,19 @@ class FlightsFunnelTest {
   }
 
   @Test
-  fun `test flightsStartHome launches WebActivity`() {
+  fun `test flightsStartHome launches WebActivity with auth header when auth is available`() {
     initializeTestIxigoSDK(
-        appInfo = appInfo, analyticsProvider = mockAnalyticsProvider, config = config)
-    assertFlightsHome()
+        appInfo = appInfo, analyticsProvider = mockAnalyticsProvider, config = config, authProvider = FakeAuthProvider(token = "token")
+    )
+    assertFlightsHome(expectedHeaders = expectedHeaders() + mapOf("Authorization" to "token"))
+  }
+
+  @Test
+  fun `test flightsStartHome launches WebActivity without auth header when auth is not available`() {
+    initializeTestIxigoSDK(
+      appInfo = appInfo, analyticsProvider = mockAnalyticsProvider, config = config, authProvider = FakeAuthProvider(token = null)
+    )
+    assertFlightsHome(expectedHeaders = expectedHeaders())
   }
 
   @Test
@@ -171,13 +183,13 @@ class FlightsFunnelTest {
     assertEquals(expectedConfig, fragment.arguments!!.getParcelable(WebViewFragment.CONFIG))
   }
 
-  private fun assertFlightsHome() {
+  private fun assertFlightsHome(expectedHeaders: Map<String, String> = expectedHeaders()) {
     scenario.onActivity { activity ->
       IxigoSDK.instance.flightsStartHome(activity)
       assertLaunchedIntent(
           activity,
           "https://baseUrl.ixigo.com/pwa/initialpage?clientId=clientId&apiKey=apiKey&appVersion=1&deviceId=deviceId&languageCode=en&page=FLIGHT_HOME",
-          expectedHeaders = expectedHeaders())
+          expectedHeaders = expectedHeaders)
       verify(mockAnalyticsProvider).logEvent(Event.with(action = "flightsStartHome"))
     }
   }

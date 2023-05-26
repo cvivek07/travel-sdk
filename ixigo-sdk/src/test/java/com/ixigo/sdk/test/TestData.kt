@@ -10,6 +10,7 @@ import com.ixigo.sdk.analytics.test.FakeAnalyticsProvider
 import com.ixigo.sdk.auth.EmptyPartnerTokenProvider
 import com.ixigo.sdk.auth.PartnerTokenProvider
 import com.ixigo.sdk.auth.SSOAuthProvider
+import com.ixigo.sdk.auth.test.FakeAuthProvider
 import com.ixigo.sdk.payment.*
 import com.ixigo.sdk.remoteConfig.FakeRemoteConfigProvider
 import com.ixigo.sdk.remoteConfig.RemoteConfigProvider
@@ -32,7 +33,8 @@ internal fun initializeTestIxigoSDK(
     webViewConfig: WebViewConfig = WebViewConfig(),
     deeplinkHandler: DeeplinkHandler? = null,
     theme: Theme = Theme(primaryColor = Color.RED),
-    remoteConfig: RemoteConfigProvider = FakeRemoteConfigProvider()
+    remoteConfig: RemoteConfigProvider = FakeRemoteConfigProvider(),
+    authProvider: FakeAuthProvider = FakeAuthProvider("token")
 ) {
   IxigoSDK.replaceInstance(
       IxigoSDK(
@@ -44,7 +46,10 @@ internal fun initializeTestIxigoSDK(
           webViewConfig = webViewConfig,
           deeplinkHandler = deeplinkHandler,
           theme = theme,
-          remoteConfigProvider = FakeRemoteConfigProvider()))
+          remoteConfigProvider = FakeRemoteConfigProvider(),
+          authProvider = authProvider
+      )
+  )
 }
 
 internal fun initializePaymentSDK(ssoAuthProvider: SSOAuthProvider? = null) {
