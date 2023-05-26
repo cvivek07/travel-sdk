@@ -119,7 +119,7 @@ class FirstFragment : Fragment() {
 
     binding.buttonFlightHome.setOnClickListener {
       if (initSDK()) {
-        IxigoSDK.instance.flightsStartHome(requireContext())
+        IxigoSDK.instance.flightsStartHome(requireActivity())
       }
     }
 
