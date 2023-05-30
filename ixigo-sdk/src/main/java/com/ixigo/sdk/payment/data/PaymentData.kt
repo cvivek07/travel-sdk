@@ -112,3 +112,7 @@ enum class PaymentHandler {
   BROWSER,
   NATIVE
 }
+
+@Keep data class SimplFingerprintInput(val mobile: String, val email: String)
+
+@Keep data class SimplFingerprint(val fingerprint: String)

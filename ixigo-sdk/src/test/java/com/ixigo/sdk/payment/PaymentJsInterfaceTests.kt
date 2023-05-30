@@ -22,10 +22,12 @@ import com.ixigo.sdk.auth.SSOAuthProvider
 import com.ixigo.sdk.common.Err
 import com.ixigo.sdk.common.NativePromiseError
 import com.ixigo.sdk.common.Ok
+import com.ixigo.sdk.common.SdkNotFoundException
 import com.ixigo.sdk.payment.PackageManager.Companion.PHONEPE_PACKAGE_NAME
 import com.ixigo.sdk.payment.data.*
 import com.ixigo.sdk.payment.gpay.GPayClient
 import com.ixigo.sdk.payment.gpay.GPayClientFactory
+import com.ixigo.sdk.payment.simpl.SimplClient
 import com.ixigo.sdk.test.initializePaymentSDK
 import com.ixigo.sdk.test.initializeTestIxigoSDK
 import com.ixigo.sdk.webview.InitialPageData
@@ -33,6 +35,7 @@ import com.ixigo.sdk.webview.WebViewDelegate
 import com.ixigo.sdk.webview.WebViewFragment
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.*
 import org.junit.Assert.*
 import org.junit.Before
@@ -51,6 +54,7 @@ import org.robolectric.Shadows.shadowOf
 import org.robolectric.shadows.ShadowPackageManager
 import org.robolectric.shadows.ShadowWebView
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @RunWith(AndroidJUnit4::class)
 class PaymentJsInterfaceTests {
 
@@ -70,6 +74,7 @@ class PaymentJsInterfaceTests {
   @Mock internal lateinit var ssoAuthProvider: SSOAuthProvider
   @Mock internal lateinit var mockGPayClientFactory: GPayClientFactory
   @Mock internal lateinit var mockGPayClient: GPayClient
+  @Mock internal lateinit var mockSimplClient: SimplClient
 
   private val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
   private val testDispatcher = UnconfinedTestDispatcher()
@@ -93,7 +98,8 @@ class PaymentJsInterfaceTests {
       fragment.delegate = mockWebViewDelegate
       shadowWebView = Shadows.shadowOf(it.webView)
       paymentJsInterface =
-          PaymentJsInterface(fragment, mockGatewayProvider, mockGPayClientFactory, testDispatcher)
+          PaymentJsInterface(
+              fragment, mockGatewayProvider, mockGPayClientFactory, mockSimplClient, testDispatcher)
 
       whenever(
               mockGatewayProvider.getPaymentGateway(eq("JUSPAY"), same(fragment.requireActivity())))
@@ -786,6 +792,70 @@ class PaymentJsInterfaceTests {
 
     assertEquals(
         "javascript:alert('error:{\\\"errorCode\\\":\\\"InvalidArgumentError\\\",\\\"errorMessage\\\":\\\"unable to parse input={abc\\\"}')",
+        shadowWebView.lastEvaluatedJavascript)
+  }
+
+  @Test
+  fun `test getSimplFingerprint returns error for wrong input`() {
+    val incorrectInputJson = "{ }"
+    paymentJsInterface.getSimplFingerprint(
+        incorrectInputJson,
+        "javascript:alert('success:TO_REPLACE_PAYLOAD')",
+        "javascript:alert('error:TO_REPLACE_PAYLOAD')")
+
+    assertEquals(
+        "javascript:alert('error:{\\\"errorCode\\\":\\\"InvalidArgumentError\\\",\\\"errorMessage\\\":\\\"unable to parse input={ }\\\"}')",
+        shadowWebView.lastEvaluatedJavascript)
+  }
+
+  @Test
+  fun `test getSimplFingerprint returns sdk error when fingerprint sdk is not present`() = runTest {
+    `when`(mockSimplClient.getFingerPrint(any(), any())).thenThrow(SdkNotFoundException::class.java)
+
+    val input = SimplFingerprintInput(mobile = "9876543210", email = "test@gmail.com")
+    val adapter = moshi.adapter(SimplFingerprintInput::class.java)
+
+    paymentJsInterface.getSimplFingerprint(
+        adapter.toJson(input),
+        "javascript:alert('success:TO_REPLACE_PAYLOAD')",
+        "javascript:alert('error:TO_REPLACE_PAYLOAD')")
+
+    assertEquals(
+        """javascript:alert('error:{\"errorCode\":\"NotAvailableError\",\"errorMessage\":\"Simpl fingerprint sdk is not available\"}')""",
+        shadowWebView.lastEvaluatedJavascript)
+  }
+
+  @Test
+  fun `test getSimplFingerprint returns fingerprint`() = runTest {
+    `when`(mockSimplClient.getFingerPrint(any(), any())).thenReturn("fingerprint")
+
+    val input = SimplFingerprintInput(mobile = "9876543210", email = "test@gmail.com")
+    val adapter = moshi.adapter(SimplFingerprintInput::class.java)
+
+    paymentJsInterface.getSimplFingerprint(
+        adapter.toJson(input),
+        "javascript:alert('success:TO_REPLACE_PAYLOAD')",
+        "javascript:alert('error:TO_REPLACE_PAYLOAD')")
+
+    assertEquals(
+        """javascript:alert('success:{\"fingerprint\":\"fingerprint\"}')""",
+        shadowWebView.lastEvaluatedJavascript)
+  }
+
+  @Test
+  fun `test getSimplFingerprint returns error when fingerprint is not available`() = runTest {
+    `when`(mockSimplClient.getFingerPrint(any(), any())).thenReturn(null)
+
+    val input = SimplFingerprintInput(mobile = "9876543210", email = "test@gmail.com")
+    val adapter = moshi.adapter(SimplFingerprintInput::class.java)
+
+    paymentJsInterface.getSimplFingerprint(
+        adapter.toJson(input),
+        "javascript:alert('success:TO_REPLACE_PAYLOAD')",
+        "javascript:alert('error:TO_REPLACE_PAYLOAD')")
+
+    assertEquals(
+        """javascript:alert('error:{\"errorCode\":\"SDKError\",\"errorMessage\":\"Simpl fingerprint is not available\"}')""",
         shadowWebView.lastEvaluatedJavascript)
   }
 

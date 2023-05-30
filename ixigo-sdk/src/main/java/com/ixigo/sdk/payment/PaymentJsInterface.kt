@@ -22,8 +22,10 @@ import com.ixigo.sdk.payment.PackageManager.Companion.REQUEST_CODE_GPAY_APP
 import com.ixigo.sdk.payment.PackageManager.Companion.REQUEST_CODE_PHONEPE_APP
 import com.ixigo.sdk.payment.PackageManager.Companion.REQUEST_CODE_UPI_APP
 import com.ixigo.sdk.payment.data.*
+import com.ixigo.sdk.payment.data.SimplFingerprint as SimplFingerprintData
 import com.ixigo.sdk.payment.gpay.*
 import com.ixigo.sdk.payment.minkasu_sdk.MinkasuSDKManager
+import com.ixigo.sdk.payment.simpl.SimplClient
 import com.ixigo.sdk.payment.viewmodel.PaymentViewModel
 import com.ixigo.sdk.webview.JsInterface
 import com.ixigo.sdk.webview.WebActivity
@@ -42,6 +44,7 @@ internal class PaymentJsInterface(
     private val webViewFragment: WebViewFragment,
     gatewayProvider: PaymentGatewayProvider,
     private val gPayClientFactory: GPayClientFactory,
+    private val simplClient: SimplClient = SimplClient(webViewFragment.requireContext()),
     private val mainDispatcher: CoroutineDispatcher = Dispatchers.Main
 ) : JsInterface, WebViewFragmentListener, ActivityResultHandler {
   override val name: String = "PaymentSDKAndroid"
@@ -525,6 +528,36 @@ internal class PaymentJsInterface(
     if (minkasuInput == null) {
       returnError(error, wrongInputError(jsonInput))
       return
+    }
+  }
+
+  @JavascriptInterface
+  fun getSimplFingerprint(jsonInput: String, success: String, error: String) {
+    val input =
+        kotlin
+            .runCatching { moshi.adapter(SimplFingerprintInput::class.java).fromJson(jsonInput) }
+            .getOrNull()
+    if (input == null) {
+      returnError(error, wrongInputError(jsonInput))
+      return
+    }
+
+    webViewFragment.lifecycleScope.launch {
+      try {
+        val fingerprint = simplClient.getFingerPrint(input.mobile, input.email)
+        if (fingerprint == null) {
+          returnError(error, sdkError(message = "Simpl fingerprint is not available"))
+        } else {
+          executeResponse(
+              replaceNativePromisePayload(
+                  message = success,
+                  payload = SimplFingerprintData(fingerprint = fingerprint),
+                  moshi.adapter(SimplFingerprintData::class.java)))
+        }
+      } catch (e: SdkNotFoundException) {
+        returnError(
+            error, notAvailableError(errorMessage = "Simpl fingerprint sdk is not available"))
+      }
     }
   }
 

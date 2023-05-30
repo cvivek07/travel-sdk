@@ -83,6 +83,7 @@ dependencies {
     implementation 'androidx.work:work-runtime:2.7.1'
     implementation "androidx.browser:browser:1.0.0"
 
+    implementation 'com.simpl.android:fingerprintSDK:1.1.4'
 
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.8.1'
     implementation 'com.squareup.okhttp3:okhttp:4.9.2'

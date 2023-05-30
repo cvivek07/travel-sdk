@@ -271,6 +271,10 @@ dependencies {
     compileOnly 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     compileOnly 'androidx.work:work-runtime:2.7.1'
     compileOnly "androidx.browser:browser:1.0.0"
+
+    // simpl fingerprint sdk
+    compileOnly 'com.simpl.android:fingerprintSDK:1.1.4'
+    testImplementation 'com.simpl.android:fingerprintSDK:1.1.4'
 }
 
 task androidSourcesJar(type: Jar) {
