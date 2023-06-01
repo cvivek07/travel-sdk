@@ -1,3 +1,5 @@
+import com.kageiit.jacobo.JacoboTask
+
 import java.text.NumberFormat
 
 plugins {
@@ -74,6 +76,7 @@ android {
                     includeNoLocationClasses = true
                     excludes = ['jdk.internal.*']
                 }
+                jvmArgs '-noverify'
             }
         }
     }
@@ -126,10 +129,14 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'crea
             '**/*$Creator*', // Parcelize generated classes
             '**/databinding/*' // Data Binding
     ]
-    def debugTree = fileTree(
-            dir: "$project.buildDir/tmp/kotlin-classes/debug",
-            excludes: fileFilter
-    )
+
+    //java compiled classes
+    def javaTree = fileTree(dir: "$project.buildDir/intermediates/javac/debug/classes", excludes: fileFilter)
+//kotlin compiled classes
+    def kotlinTree = fileTree(dir: "$project.buildDir/tmp/kotlin-classes/debug", excludes: fileFilter)
+
+    def debugTree = files([javaTree, kotlinTree])
+
     def mainSrc = "$project.projectDir/src/main/java"
 
     sourceDirectories.from(files([mainSrc]))
@@ -144,30 +151,40 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'crea
 }
 
 task jacocoDiffCoverage(dependsOn: ['jacocoTestReport']) {
-    {
-        def targetBranch = project.getProperties().get("targetBranch") ?: "development"
-        def diffFile = new File(buildDir, "diff.patch")
-        exec {
-            // Create the diff using `...` which matches what a merge request does
-            commandLine "bash", "-c", "git diff ${targetBranch}..."
-            standardOutput new FileOutputStream(diffFile)
-        }
 
-        diffCoverageReport {
-
-            diffSource.file = diffFile
-
-            jacocoExecFiles = files(jacocoTestReport.executionData)
-            classesDirs = files(jacocoTestReport.classDirectories)
-            srcDirs = files(jacocoTestReport.sourceDirectories)
-
-            reports {
-                html = true
-                xml = true
-            }
-        }
-        diffCoverage.executeAction()
+    def targetBranch = project.getProperties().get("targetBranch") ?: "development"
+    def diffFile = new File(buildDir, "diff.patch")
+    exec {
+        // Create the diff using `...` which matches what a merge request does
+        commandLine "bash", "-c", "git diff ${targetBranch}..."
+        standardOutput new FileOutputStream(diffFile)
     }
+
+    diffCoverageReport {
+
+        diffSource.file = diffFile
+
+        jacocoExecFiles = files(jacocoTestReport.executionData)
+        classesDirs = files(jacocoTestReport.classDirectories)
+        srcDirs = files(jacocoTestReport.sourceDirectories)
+
+        reports {
+            html = true
+            xml = true
+        }
+    }
+    diffCoverage.executeAction()
+
+}
+
+task coberturaTask(dependsOn: ['jacocoDiffCoverage'], type: JacoboTask) {
+    def jacocoReport = file("${project.buildDir}/reports/jacoco/diffCoverage/report.xml")
+    onlyIf {
+        return jacocoReport.exists()
+    }
+    it.jacocoReport = jacocoReport
+    it.coberturaReport = file("${project.buildDir}/reports/cobertura/cobertura.xml")
+    it.srcDirs = android.sourceSets.main.java.srcDirs
 }
 
 dependencies {
