@@ -9,6 +9,7 @@ plugins {
     id 'com.ncorti.ktfmt.gradle' version '0.7.0'
     id 'com.diffplug.spotless' version '6.0.5'
     id 'hypersdk.plugin'
+    id 'com.form.diff-coverage'
 }
 
 hyperSdkPlugin {
@@ -71,14 +72,14 @@ android {
             all {
                 jacoco {
                     includeNoLocationClasses = true
-                    excludes = ['jdk.internal.*' ]
+                    excludes = ['jdk.internal.*']
                 }
             }
         }
     }
 }
 
-task overallCoverageReport(dependsOn:  ['jacocoTestReport']) {
+task overallCoverageReport(dependsOn: ['jacocoTestReport']) {
     // Prints Coverage to be picked up by CI
     doLast {
         new File(buildDir, "reports/jacoco/jacocoTestReport/html/index.html").readLines().each {
@@ -87,7 +88,7 @@ task overallCoverageReport(dependsOn:  ['jacocoTestReport']) {
                 def format = NumberFormat.getInstance(Locale.US)
                 def missedInstructions = format.parse(matcher[0][1])
                 def totalInstructions = format.parse(matcher[0][3])
-                def coveragePercentage = (100.0 - 100.0*(missedInstructions/totalInstructions)).round(4)
+                def coveragePercentage = (100.0 - 100.0 * (missedInstructions / totalInstructions)).round(4)
                 println("Total Coverage = ${coveragePercentage}%")
             }
         }
@@ -142,6 +143,33 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'crea
     ))
 }
 
+task jacocoDiffCoverage(dependsOn: ['jacocoTestReport']) {
+    {
+        def targetBranch = project.getProperties().get("targetBranch") ?: "development"
+        def diffFile = new File(buildDir, "diff.patch")
+        exec {
+            // Create the diff using `...` which matches what a merge request does
+            commandLine "bash", "-c", "git diff ${targetBranch}..."
+            standardOutput new FileOutputStream(diffFile)
+        }
+
+        diffCoverageReport {
+
+            diffSource.file = diffFile
+
+            jacocoExecFiles = files(jacocoTestReport.executionData)
+            classesDirs = files(jacocoTestReport.classDirectories)
+            srcDirs = files(jacocoTestReport.sourceDirectories)
+
+            reports {
+                html = true
+                xml = true
+            }
+        }
+        diffCoverage.executeAction()
+    }
+}
+
 dependencies {
     compileOnly files('libs/google-pay-client-api-1.0.1.aar')
     testImplementation files('libs/google-pay-client-api-1.0.1.aar')
@@ -160,7 +188,8 @@ dependencies {
     implementation("com.squareup.moshi:moshi-adapters:1.12.0")
 
     // Logging
-    implementation 'com.jakewharton.timber:timber:4.7.1' // Version 5 is only compatible with AGP7
+    implementation 'com.jakewharton.timber:timber:4.7.1'
+    // Version 5 is only compatible with AGP7
 
     // Firebase
     implementation platform("com.google.firebase:firebase-bom:$firebaseVersion")
@@ -202,7 +231,8 @@ dependencies {
     androidTestImplementation 'com.squareup.okhttp3:mockwebserver:4.9.2'
     androidTestImplementation 'org.mockito.kotlin:mockito-kotlin:4.0.0'
     androidTestImplementation 'com.linkedin.dexmaker:dexmaker-mockito-inline:2.28.1'
-    androidTestImplementation 'commons-io:commons-io:2.11.0' // Used to read html files when testing WebView
+    androidTestImplementation 'commons-io:commons-io:2.11.0'
+    // Used to read html files when testing WebView
 
     // Need this in implementation since IdlingResources are added in Prod code (although not registered)
     implementation 'androidx.test.espresso.idling:idling-net:3.4.0'
