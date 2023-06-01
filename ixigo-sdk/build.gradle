@@ -1,3 +1,5 @@
+import java.text.NumberFormat
+
 plugins {
     id 'com.android.library'
     id 'kotlin-android'
@@ -45,9 +47,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         debug {
-            testCoverageEnabled true
+            enableUnitTestCoverage true
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -62,8 +65,81 @@ android {
         coreLibraryDesugaringEnabled true
     }
     testOptions {
-        unitTests.includeAndroidResources = true
+
+        unitTests {
+            includeAndroidResources = true
+            all {
+                jacoco {
+                    includeNoLocationClasses = true
+                    excludes = ['jdk.internal.*' ]
+                }
+            }
+        }
     }
+}
+
+task overallCoverageReport(dependsOn:  ['jacocoTestReport']) {
+    // Prints Coverage to be picked up by CI
+    doLast {
+        new File(buildDir, "reports/jacoco/jacocoTestReport/html/index.html").readLines().each {
+            def matcher = it =~ /(\d{1,3}(,\d{3})*) of (\d{1,3}(,\d{3})*)/
+            if (matcher.count > 0) {
+                def format = NumberFormat.getInstance(Locale.US)
+                def missedInstructions = format.parse(matcher[0][1])
+                def totalInstructions = format.parse(matcher[0][3])
+                def coveragePercentage = (100.0 - 100.0*(missedInstructions/totalInstructions)).round(4)
+                println("Total Coverage = ${coveragePercentage}%")
+            }
+        }
+    }
+}
+
+task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'createDebugCoverageReport']) {
+    reports {
+        xml.getRequired().set(true)
+        html.getRequired().set(true)
+    }
+
+    def fileFilter = [
+            '**/R.class',
+            '**/R2.class', // ButterKnife Gradle Plugin.
+            '**/R$*.class',
+            '**/R2$*.class', // ButterKnife Gradle Plugin.
+            '**/*$$*',
+            '**/*$ViewInjector*.*', // Older ButterKnife Versions.
+            '**/*$ViewBinder*.*', // Older ButterKnife Versions.
+            '**/*_ViewBinding*.*', // Newer ButterKnife Versions.
+            '**/BuildConfig.*',
+            '**/Manifest*.*',
+            '**/*$Lambda$*.*', // Jacoco can not handle several "$" in class name.
+            '**/*Dagger*.*', // Dagger auto-generated code.
+            '**/*MembersInjector*.*', // Dagger auto-generated code.
+            '**/*_Provide*Factory*.*', // Dagger auto-generated code.
+            '**/*_Factory*.*', // Dagger auto-generated code.
+            '**/*$JsonObjectMapper.*', // LoganSquare auto-generated code.
+            '**/*$inlined$*.*', // Kotlin specific, Jacoco can not handle several "$" in class name.
+            '**/*$Icepick.*', // Icepick auto-generated code.
+            '**/*$StateSaver.*', // android-state auto-generated code.
+            '**/*AutoValue_*.*', // AutoValue auto-generated code.
+            // Custom Added
+            '**/*$Creator*', // Parcelize generated classes
+            '**/databinding/*' // Data Binding
+    ]
+    def debugTree = fileTree(
+            dir: "$project.buildDir/tmp/kotlin-classes/debug",
+            excludes: fileFilter
+    )
+    def mainSrc = "$project.projectDir/src/main/java"
+
+    sourceDirectories.from(files([mainSrc]))
+    classDirectories.from(files([debugTree]))
+    executionData.from(fileTree(
+            dir: "$buildDir",
+            includes: [
+                    "outputs/unit_test_code_coverage/debugUnitTest/testDebugUnitTest.exec",
+                    "outputs/code_coverage/debugAndroidTest/connected/*/coverage.ec"
+            ]
+    ))
 }
 
 dependencies {
