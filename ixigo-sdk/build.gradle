@@ -152,39 +152,45 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'crea
 
 task jacocoDiffCoverage(dependsOn: ['jacocoTestReport']) {
 
-    def targetBranch = project.getProperties().get("targetBranch") ?: "development"
-    def diffFile = new File(buildDir, "diff.patch")
-    exec {
-        // Create the diff using `...` which matches what a merge request does
-        commandLine "bash", "-c", "git diff ${targetBranch}..."
-        standardOutput new FileOutputStream(diffFile)
-    }
+    doLast {
+        def targetBranch = project.getProperties().get("targetBranch") ?: "development"
+        def diffFile = new File(buildDir, "diff.patch")
+        if (diffFile.exists()) diffFile.delete()
+        else diffFile.createNewFile()
 
-    diffCoverageReport {
-
-        diffSource.file = diffFile
-
-        jacocoExecFiles = files(jacocoTestReport.executionData)
-        classesDirs = files(jacocoTestReport.classDirectories)
-        srcDirs = files(jacocoTestReport.sourceDirectories)
-
-        reports {
-            html = true
-            xml = true
+        exec {
+            // Create the diff using `...` which matches what a merge request does
+            commandLine "bash", "-c", "git diff ${targetBranch}..."
+            standardOutput new FileOutputStream(diffFile)
         }
-    }
-    diffCoverage.executeAction()
 
+        diffCoverageReport {
+
+            diffSource.file = diffFile
+
+            jacocoExecFiles = files(jacocoTestReport.executionData)
+            classesDirs = files(jacocoTestReport.classDirectories)
+            srcDirs = files(jacocoTestReport.sourceDirectories)
+
+            reports {
+                html = true
+                xml = true
+            }
+        }
+        diffCoverage.executeAction()
+    }
 }
 
 task coberturaTask(dependsOn: ['jacocoDiffCoverage'], type: JacoboTask) {
-    def jacocoReport = file("${project.buildDir}/reports/jacoco/diffCoverage/report.xml")
-    onlyIf {
-        return jacocoReport.exists()
+    doLast {
+        def jacocoReport = file("${project.buildDir}/reports/jacoco/diffCoverage/report.xml")
+        onlyIf {
+            return jacocoReport.exists()
+        }
+        it.jacocoReport = jacocoReport
+        it.coberturaReport = file("${project.buildDir}/reports/cobertura/cobertura.xml")
+        it.srcDirs = "$project.projectDir/src/main/java"
     }
-    it.jacocoReport = jacocoReport
-    it.coberturaReport = file("${project.buildDir}/reports/cobertura/cobertura.xml")
-    it.srcDirs = android.sourceSets.main.java.srcDirs
 }
 
 dependencies {
