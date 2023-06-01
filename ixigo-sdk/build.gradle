@@ -150,6 +150,17 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'crea
     ))
 }
 
+
+task coberturaTask(dependsOn: ['jacocoDiffCoverage'], type: JacoboTask) {
+    def report = file("${project.buildDir}/reports/jacoco/diffCoverage/report.xml")
+    onlyIf {
+        return report.exists()
+    }
+    jacocoReport = report
+    coberturaReport = file("${project.buildDir}/reports/cobertura/cobertura.xml")
+    srcDirs = "$project.projectDir/src/main/java"
+}
+
 task jacocoDiffCoverage(dependsOn: ['jacocoTestReport']) {
 
     doLast {
@@ -179,19 +190,10 @@ task jacocoDiffCoverage(dependsOn: ['jacocoTestReport']) {
         }
         diffCoverage.executeAction()
     }
+
+    finalizedBy(coberturaTask)
 }
 
-task coberturaTask(dependsOn: ['jacocoDiffCoverage'], type: JacoboTask) {
-    doLast {
-        def jacocoReport = file("${project.buildDir}/reports/jacoco/diffCoverage/report.xml")
-        onlyIf {
-            return jacocoReport.exists()
-        }
-        it.jacocoReport = jacocoReport
-        it.coberturaReport = file("${project.buildDir}/reports/cobertura/cobertura.xml")
-        it.srcDirs = "$project.projectDir/src/main/java"
-    }
-}
 
 dependencies {
     compileOnly files('libs/google-pay-client-api-1.0.1.aar')
