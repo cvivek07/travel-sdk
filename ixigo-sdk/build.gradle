@@ -130,9 +130,9 @@ task jacocoTestReport(type: JacocoReport, dependsOn: ['testDebugUnitTest', 'crea
             '**/databinding/*' // Data Binding
     ]
 
-    //java compiled classes
+    // java compiled classes
     def javaTree = fileTree(dir: "$project.buildDir/intermediates/javac/debug/classes", excludes: fileFilter)
-//kotlin compiled classes
+    // kotlin compiled classes
     def kotlinTree = fileTree(dir: "$project.buildDir/tmp/kotlin-classes/debug", excludes: fileFilter)
 
     def debugTree = files([javaTree, kotlinTree])

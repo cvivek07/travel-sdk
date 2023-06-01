@@ -779,13 +779,14 @@ class PaymentJsInterfaceTests {
   @Test
   fun `test process returns error when input is invalid`() {
     val invalidJsonInput = "{abc"
-    paymentJsInterface.process(invalidJsonInput,
-      "javascript:alert('success:TO_REPLACE_PAYLOAD')",
-      "javascript:alert('error:TO_REPLACE_PAYLOAD')")
+    paymentJsInterface.process(
+        invalidJsonInput,
+        "javascript:alert('success:TO_REPLACE_PAYLOAD')",
+        "javascript:alert('error:TO_REPLACE_PAYLOAD')")
 
     assertEquals(
-      "javascript:alert('error:{\\\"errorCode\\\":\\\"InvalidArgumentError\\\",\\\"errorMessage\\\":\\\"unable to parse input={abc\\\"}')",
-      shadowWebView.lastEvaluatedJavascript)
+        "javascript:alert('error:{\\\"errorCode\\\":\\\"InvalidArgumentError\\\",\\\"errorMessage\\\":\\\"unable to parse input={abc\\\"}')",
+        shadowWebView.lastEvaluatedJavascript)
   }
 
   private val validInitializeInput =
