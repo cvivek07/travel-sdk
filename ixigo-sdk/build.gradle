@@ -27,7 +27,7 @@ spotless {
 }
 
 group = 'com.ixigo.sdk'
-version = '3.20.9'
+version = '3.20.10'
 
 android {
     compileSdk 31
