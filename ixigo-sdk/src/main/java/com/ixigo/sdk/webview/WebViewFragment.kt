@@ -24,6 +24,7 @@ import com.ixigo.sdk.common.*
 import com.ixigo.sdk.databinding.WebviewLayoutBinding
 import com.ixigo.sdk.ui.*
 import com.ixigo.sdk.util.ThemeUtils.getThemeColor
+import com.ixigo.sdk.util.isIxigoUrl
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlinx.parcelize.Parcelize
@@ -246,16 +247,18 @@ class WebViewFragment : Fragment(), UIConfigurable, UrlLoader {
       }
     }
 
-    override fun onPageFinished(view: WebView?, url: String?) {
+    override fun onPageFinished(view: WebView, url: String) {
       super.onPageFinished(view, url)
-      pwaReady()
+      if (!isIxigoUrl(url)) {
+        pwaReady()
+      }
       setStatusBarColorFromThemeColor()
 
       loadIxigoJsSDKIfNeeded()
       publishEvent("WEBVIEW_INIT_END")
     }
 
-    override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+    override fun onPageStarted(view: WebView, url: String, favicon: Bitmap?) {
       super.onPageStarted(view, url, favicon)
 
       for (listener in listeners) {
@@ -302,7 +305,6 @@ class WebViewFragment : Fragment(), UIConfigurable, UrlLoader {
         }
       }
       return if (URLUtil.isNetworkUrl(url)) {
-        startedLoading(url)
         publishEvent("WEBVIEW_INIT_START")
         analyticsProvider.logEvent(Event.with(action = "webviewStartLoad", referrer = url))
         false

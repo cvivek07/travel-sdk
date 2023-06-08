@@ -24,6 +24,7 @@ import com.ixigo.sdk.auth.test.ActivityResultPartnerTokenProvider
 import com.ixigo.sdk.payment.ActivityResultPaymentProvider
 import com.ixigo.sdk.test.initializeTestIxigoSDK
 import com.ixigo.sdk.ui.*
+import com.ixigo.sdk.util.isIxigoUrl
 import java.util.*
 import org.junit.After
 import org.junit.Assert.*
@@ -148,14 +149,14 @@ class WebViewFragmentUnitTests {
   }
 
   @Test
-  fun `test that status is Loading after loading new url`() {
+  fun `test that status is Loaded after loading initial url`() {
     assertEquals(Loading(referrer = initialPageData.url), fragment.loadableView.status)
-    shadowWebView.webViewClient.onPageFinished(fragment.webView, initialPageData.url)
+    finishPageLoad()
     assertLoadableViewStatus(Loaded)
     val newPage = "https://www.ixigo.com/page2"
     shadowWebView.webViewClient.shouldOverrideUrlLoading(
         fragment.webView, mock<WebResourceRequest> { on { url } doReturn Uri.parse(newPage) })
-    assertLoadableViewStatus(Loading(referrer = newPage))
+    assertLoadableViewStatus(Loaded)
     verify(mockAnalyticsProvider)
         .logEvent(Event.with(action = "webviewStartLoad", referrer = newPage))
   }
@@ -166,7 +167,7 @@ class WebViewFragmentUnitTests {
         fragment.webView,
         mock<WebResourceRequest> { on { url } doReturn Uri.parse(initialPageData.url) })
     assertLoadableViewStatus(Loading(referrer = initialPageData.url))
-    shadowWebView.webViewClient.onPageFinished(fragment.webView, initialPageData.url)
+    finishPageLoad()
     assertLoadableViewStatus(Loaded)
   }
 
@@ -179,7 +180,7 @@ class WebViewFragmentUnitTests {
     shadowWebView.webViewClient.onReceivedError(
         fragment.webView, mock { on { url } doReturn Uri.parse(initialPageData.url) }, mock())
     assertLoadableViewStatus(Failed())
-    shadowWebView.webViewClient.onPageFinished(fragment.webView, initialPageData.url)
+    finishPageLoad()
     assertLoadableViewStatus(Failed())
   }
 
@@ -192,7 +193,7 @@ class WebViewFragmentUnitTests {
     shadowWebView.webViewClient.onReceivedHttpError(
         fragment.webView, mock { on { url } doReturn Uri.parse(initialPageData.url) }, mock())
     assertLoadableViewStatus(Failed())
-    shadowWebView.webViewClient.onPageFinished(fragment.webView, initialPageData.url)
+    finishPageLoad()
     assertLoadableViewStatus(Failed())
   }
 
@@ -205,13 +206,13 @@ class WebViewFragmentUnitTests {
     shadowWebView.webViewClient.onReceivedHttpError(
         fragment.webView, mock { on { url } doReturn Uri.parse("https://random.com") }, mock())
     assertLoadableViewStatus(Loading(referrer = initialPageData.url))
-    shadowWebView.webViewClient.onPageFinished(fragment.webView, initialPageData.url)
+    finishPageLoad()
     assertLoadableViewStatus(Loaded)
   }
 
   @Test
   fun `test that loadingView status is not set to error when an error happens but we were not loading a page`() {
-    shadowWebView.webViewClient.onPageFinished(fragment.webView, initialPageData.url)
+    finishPageLoad()
     assertLoadableViewStatus(Loaded)
     shadowWebView.webViewClient.onReceivedError(fragment.webView, mock(), mock())
     assertLoadableViewStatus(Loaded)
@@ -222,7 +223,7 @@ class WebViewFragmentUnitTests {
     shadowWebView.webViewClient.shouldOverrideUrlLoading(
         fragment.webView,
         mock<WebResourceRequest> { on { url } doReturn Uri.parse(initialPageData.url) })
-    shadowWebView.webViewClient.onPageFinished(fragment.webView, initialPageData.url)
+    finishPageLoad()
     assertLoadableViewStatus(Loaded)
     shadowWebView.webViewClient.onReceivedError(
         fragment.webView,
@@ -280,7 +281,7 @@ class WebViewFragmentUnitTests {
     shadowWebView.webViewClient.onReceivedError(
         fragment.webView, mock { on { url } doReturn Uri.parse(initialPageData.url) }, mock())
     assertLoadableViewStatus(Failed())
-    shadowWebView.webViewClient.onPageFinished(fragment.webView, initialPageData.url)
+    finishPageLoad()
     assertLoadableViewStatus(Failed())
 
     // Reload
@@ -305,7 +306,7 @@ class WebViewFragmentUnitTests {
       shadowWebView = shadowOf(it.webView) as CustomShadowWebview
       shadowWebView.jsCallbacks[javascriptThemeScript] =
           "{\"gradientThemeColor\":\"(start-color: #721053, end-color: #AD2E41)\",\"solidThemeColor\":\"#8d204a\"}"
-      shadowWebView.webViewClient.onPageFinished(fragment.webView, initialPageData.url)
+      finishPageLoad()
       verify(delegate)
           .updateStatusBarColor(
               GradientThemeColor(Color.parseColor("#721053"), Color.parseColor("#AD2E41")))
@@ -326,7 +327,7 @@ class WebViewFragmentUnitTests {
       fragmentActivity = it.requireActivity()
       shadowWebView = shadowOf(it.webView) as CustomShadowWebview
       shadowWebView.jsCallbacks[javascriptThemeScript] = "{\"solidThemeColor\":\"#8d204a\"}"
-      shadowWebView.webViewClient.onPageFinished(fragment.webView, initialPageData.url)
+      finishPageLoad()
       verify(delegate).updateStatusBarColor(SolidThemeColor(Color.parseColor("#8d204a")))
     }
   }
@@ -345,7 +346,7 @@ class WebViewFragmentUnitTests {
       fragmentActivity = it.requireActivity()
       shadowWebView = shadowOf(it.webView) as CustomShadowWebview
       shadowWebView.jsCallbacks[javascriptThemeScript] = "{}"
-      shadowWebView.webViewClient.onPageFinished(fragment.webView, initialPageData.url)
+      finishPageLoad()
       verify(delegate, never()).updateStatusBarColor(SolidThemeColor(Color.parseColor("#FF0000")))
     }
   }
@@ -365,7 +366,7 @@ class WebViewFragmentUnitTests {
       shadowWebView = shadowOf(it.webView) as CustomShadowWebview
       shadowWebView.jsCallbacks[javascriptThemeScript] =
           "{\"gradientThemeColor\":\"(start-color: #721053, end-color: #AD2E41)\",\"solidThemeColor\":\"#8d204a\"}"
-      shadowWebView.webViewClient.onPageFinished(fragment.webView, initialPageData.url)
+      finishPageLoad()
       verify(delegate)
           .updateStatusBarColor(
               GradientThemeColor(Color.parseColor("#721053"), Color.parseColor("#AD2E41")))
@@ -386,7 +387,7 @@ class WebViewFragmentUnitTests {
       fragmentActivity = it.requireActivity()
       shadowWebView = shadowOf(it.webView) as CustomShadowWebview
       shadowWebView.jsCallbacks[javascriptThemeScript] = "{\"solidThemeColor\":\"#8d204a\"}"
-      shadowWebView.webViewClient.onPageFinished(fragment.webView, initialPageData.url)
+      finishPageLoad()
       verify(delegate).updateStatusBarColor(SolidThemeColor(Color.parseColor("#8d204a")))
     }
   }
@@ -450,7 +451,7 @@ class WebViewFragmentUnitTests {
 
   @Test
   fun `test Ixigo JS SDK is loaded if needed`() {
-    shadowWebView.webViewClient.onPageFinished(fragment.webView, initialPageData.url)
+    finishPageLoad()
     assertEquals(
         """
         if (!window.IxigoSDK) {
@@ -514,7 +515,7 @@ class WebViewFragmentUnitTests {
 
   @Test
   fun `test if publishEvent is called successfully after onPageFinished`() {
-    shadowWebView.webViewClient.onPageFinished(fragment.webView, initialPageData.url)
+    finishPageLoad()
     verify(mockAnalyticsProvider)
         .logEvent(
             event =
@@ -523,6 +524,25 @@ class WebViewFragmentUnitTests {
                       event.properties["request"] != null &&
                       event.properties["Authorization"] != null
                 })
+  }
+
+  @Test
+  fun `test that webview does not move to loaded state on page load finish if its ixigo url`() {
+    shadowWebView.webViewClient.onPageFinished(fragment.webView, "https://www.ixigo.com")
+    assertLoadableViewStatus(Loading(referrer = initialPageData.url))
+  }
+
+  @Test
+  fun `test that webview moves to loaded state on page load finish if its not an ixigo url`() {
+    shadowWebView.webViewClient.onPageFinished(fragment.webView, "https://www.random.com")
+    assertLoadableViewStatus(Loaded)
+  }
+
+  private fun finishPageLoad() {
+    shadowWebView.webViewClient.onPageFinished(fragment.webView, initialPageData.url)
+    if (isIxigoUrl(initialPageData.url)) {
+      fragment.pwaReady()
+    }
   }
 
   private fun assertLoadableViewStatus(status: Status) {
