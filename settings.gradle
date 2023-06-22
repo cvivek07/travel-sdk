@@ -8,6 +8,9 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven {
+            url 'https://jitpack.io'
+        }
+        maven {
             url 'https://nexus.ixigo.com/nexus/content/repositories/androidshared'
         }
         maven {
@@ -19,7 +22,6 @@ dependencyResolutionManagement {
         maven {
             url "https://maven.getsimpl.com"
         }
-        jcenter() // Warning: this repository is going to shut down soon
     }
 }
 rootProject.name = 'ixigo-android-sdk'
