@@ -78,11 +78,7 @@ class PaymentSDK(
                     providerId = providerId,
                     productType = productType)
             val authHeaders = mapOf("Authorization" to authResult.value.token)
-            if (urlLoader != null) {
-              urlLoader.loadUrl(url, authHeaders + getHeaders(url))
-            } else {
-              launchWebActivity(activity, url, config, headers = authHeaders)
-            }
+            launchWebActivity(activity, url, config, headers = authHeaders)
             analyticsProvider.logEvent(Event.with(action = "paymentsStartHome"))
           }
         }

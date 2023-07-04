@@ -274,13 +274,8 @@ class PaymentSDKTests {
         }
       }
       val authHeaders = mapOf("Authorization" to "token")
-      if (urlLoader != null) {
-        verify(urlLoader).loadUrl(expectedUrl, expectedHeaders)
-      } else {
-        assertLaunchedIntent(
-            activity, expectedUrl, expectedHeaders = defaultIntentHeaders + authHeaders)
-      }
-
+      assertLaunchedIntent(
+          activity, expectedUrl, expectedHeaders = defaultIntentHeaders + authHeaders)
       verify(mockAnalyticsProvider).logEvent(Event.with(action = "paymentsStartHome"))
     }
   }
