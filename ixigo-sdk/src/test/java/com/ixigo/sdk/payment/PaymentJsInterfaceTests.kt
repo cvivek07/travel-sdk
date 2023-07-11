@@ -11,6 +11,7 @@ import android.content.pm.ResolveInfo
 import android.net.Uri
 import android.os.Bundle
 import android.os.PatternMatcher
+import android.webkit.WebView
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -27,6 +28,7 @@ import com.ixigo.sdk.payment.PackageManager.Companion.PHONEPE_PACKAGE_NAME
 import com.ixigo.sdk.payment.data.*
 import com.ixigo.sdk.payment.gpay.GPayClient
 import com.ixigo.sdk.payment.gpay.GPayClientFactory
+import com.ixigo.sdk.payment.minkasu_sdk.MinkasuSDKManager
 import com.ixigo.sdk.payment.simpl.SimplClient
 import com.ixigo.sdk.test.initializePaymentSDK
 import com.ixigo.sdk.test.initializeTestIxigoSDK
@@ -75,6 +77,7 @@ class PaymentJsInterfaceTests {
   @Mock internal lateinit var mockGPayClientFactory: GPayClientFactory
   @Mock internal lateinit var mockGPayClient: GPayClient
   @Mock internal lateinit var mockSimplClient: SimplClient
+  @Mock internal lateinit var mockMinkasuManager: MinkasuSDKManager
 
   private val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
   private val testDispatcher = UnconfinedTestDispatcher()
@@ -99,7 +102,12 @@ class PaymentJsInterfaceTests {
       shadowWebView = Shadows.shadowOf(it.webView)
       paymentJsInterface =
           PaymentJsInterface(
-              fragment, mockGatewayProvider, mockGPayClientFactory, mockSimplClient, testDispatcher)
+              fragment,
+              mockGatewayProvider,
+              mockGPayClientFactory,
+              mockSimplClient,
+              testDispatcher,
+              mockMinkasuManager)
 
       whenever(
               mockGatewayProvider.getPaymentGateway(eq("JUSPAY"), same(fragment.requireActivity())))
@@ -858,6 +866,55 @@ class PaymentJsInterfaceTests {
         """javascript:alert('error:{\"errorCode\":\"SDKError\",\"errorMessage\":\"Simpl fingerprint is not available\"}')""",
         shadowWebView.lastEvaluatedJavascript)
   }
+
+  @Test
+  fun `initializeMinkasuSdk initializes minkasu sdk with host webview for web flowtype`() {
+    val minaksuInput = validMinkasuInput.copy(flowType = "WEB")
+    val adapter = moshi.adapter(MinkasuInput::class.java)
+    val jsonInput = adapter.toJson(minaksuInput)
+
+    paymentJsInterface.initializeMinkasuSDK(
+        jsonInput,
+        "javascript:alert('success:TO_REPLACE_PAYLOAD')",
+        "javascript:alert('error:TO_REPLACE_PAYLOAD')")
+
+    Mockito.verify(mockMinkasuManager)
+        .initMinkasu2FASDK(webView = eq(fragment.webView), input = eq(minaksuInput))
+  }
+
+  @Test
+  fun `initializeMinkasuSdk initializes minkasu sdk with juspay webview for native flowtype`() {
+    val minaksuInput = validMinkasuInput.copy(flowType = "NATIVE")
+    val adapter = moshi.adapter(MinkasuInput::class.java)
+    val jsonInput = adapter.toJson(minaksuInput)
+
+    paymentJsInterface.initializeMinkasuSDK(
+        jsonInput,
+        "javascript:alert('success:TO_REPLACE_PAYLOAD')",
+        "javascript:alert('error:TO_REPLACE_PAYLOAD')")
+
+    Mockito.verifyNoInteractions(mockMinkasuManager)
+
+    val mockWebView = mock<WebView>()
+    paymentJsInterface.webViewCallback.onWebViewAvailable(mockWebView)
+
+    Mockito.verify(mockMinkasuManager)
+        .initMinkasu2FASDK(webView = eq(mockWebView), input = eq(minaksuInput))
+  }
+
+  private val validMinkasuInput =
+      MinkasuInput(
+          merchantId = "merchantId",
+          merchantToken = "merchantToken",
+          transactionId = "transactionId",
+          userId = "userId",
+          firstName = "firstName",
+          lastName = "lastName",
+          email = "email",
+          phoneNumber = "9876543210",
+          ctaColor = "color",
+          product = "ixigo",
+          flowType = "WEB")
 
   private val validInitializeInput =
       InitializeInput(

@@ -45,7 +45,8 @@ internal class PaymentJsInterface(
     gatewayProvider: PaymentGatewayProvider,
     private val gPayClientFactory: GPayClientFactory,
     private val simplClient: SimplClient = SimplClient(webViewFragment.requireContext()),
-    private val mainDispatcher: CoroutineDispatcher = Dispatchers.Main
+    private val mainDispatcher: CoroutineDispatcher = Dispatchers.Main,
+    private val minkasu: MinkasuSDKManager = MinkasuSDKManager(webViewFragment)
 ) : JsInterface, WebViewFragmentListener, ActivityResultHandler {
   override val name: String = "PaymentSDKAndroid"
 
@@ -82,10 +83,15 @@ internal class PaymentJsInterface(
 
   private var minkasuInput: MinkasuInput? = null
 
-  private val webViewCallback =
+  @VisibleForTesting
+  val webViewCallback =
       object : WebViewCallback {
         override fun onWebViewAvailable(webView: WebView) {
-          minkasuInput?.let { MinkasuSDKManager(webViewFragment, webView).initMinkasu2FASDK(it) }
+          minkasuInput?.let {
+            if (it.flowType == "NATIVE") {
+              minkasu.initMinkasu2FASDK(webView, it)
+            }
+          }
         }
       }
 
@@ -126,6 +132,8 @@ internal class PaymentJsInterface(
         }
       }
     }
+
+    gateway.setCallback(webViewCallback)
   }
 
   @JavascriptInterface
@@ -296,7 +304,6 @@ internal class PaymentJsInterface(
       returnError(error, errorPayload)
       return
     }
-    gateway.setCallback(webViewCallback)
     gateway.process(input) {
       executeResponse(replaceNativePromisePayload(success, escapeSpecialCharacters(it.toString())))
     }
@@ -521,14 +528,17 @@ internal class PaymentJsInterface(
   /** Get minkasu data from js-sdk & use it to initialize Minkasu sdk */
   @JavascriptInterface
   fun initializeMinkasuSDK(jsonInput: String, success: String, error: String) {
-    minkasuInput =
+    val input =
         kotlin
             .runCatching { moshi.adapter(MinkasuInput::class.java).fromJson(jsonInput) }
             .getOrNull()
-    if (minkasuInput == null) {
+    if (input == null) {
       returnError(error, wrongInputError(jsonInput))
-      return
+    } else if (input.flowType == "WEB") {
+      minkasu.initMinkasu2FASDK(webViewFragment.webView, input)
     }
+
+    minkasuInput = input
   }
 
   @JavascriptInterface
