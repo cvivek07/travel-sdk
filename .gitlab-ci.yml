@@ -159,6 +159,7 @@ release-preview:
     - yarn install
     - yarn run release -- -t ixigo-sdk- --no-verify
     - yarn run pdf-changelog
+    - "./gradlew ixigo-sdk:publishSnapshotPublicationToNexusSnapshotRepository --stacktrace $GRADLE_SCAN_OPTION"
   artifacts:
     name: CHANGELOG
     paths:

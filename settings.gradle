@@ -14,6 +14,9 @@ dependencyResolutionManagement {
             url 'https://nexus.ixigo.com/nexus/content/repositories/androidshared'
         }
         maven {
+            url 'https://nexus.ixigo.com/nexus/content/repositories/androidshared-snapshots'
+        }
+        maven {
             url "https://maven.juspay.in/jp-build-packages/hyper-sdk/"
         }
         maven {
