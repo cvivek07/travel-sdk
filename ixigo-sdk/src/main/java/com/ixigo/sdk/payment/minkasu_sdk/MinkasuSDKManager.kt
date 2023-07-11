@@ -11,12 +11,9 @@ import com.minkasu.android.twofa.sdk.Minkasu2faCallbackInfo
 import com.minkasu.android.twofa.sdk.Minkasu2faSDK
 import timber.log.Timber
 
-class MinkasuSDKManager(
-    private val webViewFragment: WebViewFragment,
-    private val webView: WebView?
-) {
+class MinkasuSDKManager(private val webViewFragment: WebViewFragment) {
 
-  fun initMinkasu2FASDK(input: MinkasuInput) {
+  fun initMinkasu2FASDK(webView: WebView, input: MinkasuInput) {
     try {
       webViewFragment.requireActivity().runOnUiThread {
         if (Minkasu2faSDK.isSupportedPlatform()) {
@@ -35,7 +32,7 @@ class MinkasuSDKManager(
           orderInfo.setBillingCategory(input.product)
           config.sdkMode = Config.PRODUCTION_MODE
           config.orderInfo = orderInfo
-          webView?.let {
+          webView.let {
             Minkasu2faSDK.init(webViewFragment.requireActivity(), config, it) { callbackInfo ->
               val infoType = callbackInfo?.infoType
               val data = callbackInfo.getData()
