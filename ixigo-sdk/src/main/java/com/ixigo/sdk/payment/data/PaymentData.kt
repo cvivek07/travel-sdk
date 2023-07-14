@@ -103,7 +103,7 @@ data class MinkasuInput(
     val phoneNumber: String,
     val ctaColor: String,
     val product: String? = "ixigo",
-    val flowType: String
+    val flowType: String = "WEB"
 )
 
 @Keep data class LaunchUPIApp(val deeplink: String, val packageName: String)
