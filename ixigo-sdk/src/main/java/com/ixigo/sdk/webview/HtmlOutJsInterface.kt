@@ -2,6 +2,7 @@ package com.ixigo.sdk.webview
 
 import android.webkit.JavascriptInterface
 import androidx.annotation.Keep
+import com.ixigo.sdk.AppInfo
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.auth.PartnerTokenError
 import com.ixigo.sdk.auth.PartnerTokenProvider
@@ -54,6 +55,9 @@ class HtmlOutJsInterface(
   fun quit() {
     webViewFragment.delegate?.let { webViewFragment.activity?.runOnUiThread { it.onQuit() } }
   }
+
+  @JavascriptInterface
+  fun getAppInfo(): String = moshi.adapter(AppInfo::class.java).toJson(IxigoSDK.instance.appInfo)
 
   private fun executeSSOCallback(ssoInput: SSOInput, ssoResult: SSOResult) {
     val ssoResultJson = ssoResultAdapter.toJson(ssoResult)

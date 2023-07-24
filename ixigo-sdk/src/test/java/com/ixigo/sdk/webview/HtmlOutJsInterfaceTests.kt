@@ -6,10 +6,14 @@ import android.webkit.JavascriptInterface
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.ixigo.sdk.AppInfo
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.auth.*
 import com.ixigo.sdk.auth.test.FakePartnerTokenProvider
+import com.ixigo.sdk.test.TestData.FakeAppInfo
 import com.ixigo.sdk.test.initializeTestIxigoSDK
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
@@ -31,6 +35,7 @@ class HtmlOutJsInterfaceTests {
   private lateinit var htmlOut: HtmlOutJsInterface
   private lateinit var fakePartnerTokenProvider: FakePartnerTokenProvider
   private val partnerId = "partnerId"
+  private val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
 
   @Before
   fun setup() {
@@ -74,10 +79,22 @@ class HtmlOutJsInterfaceTests {
   fun `test quit`() {
     val delegate: WebViewDelegate = mock()
     fragment.delegate = delegate
-    val quitMethod = htmlOut.javaClass.getDeclaredMethod("quit")
-    assertNotNull(quitMethod.getAnnotation(JavascriptInterface::class.java))
+    assertJsInterfaceMethodExists("quit")
     htmlOut.quit()
     verify(delegate).onQuit()
+  }
+
+  @Test
+  fun `test getAppInfo`() {
+    assertJsInterfaceMethodExists("getAppInfo")
+    val actualAppInfoString = htmlOut.getAppInfo()
+    val actualAppInfo = moshi.adapter(AppInfo::class.java).fromJson(actualAppInfoString)
+    assert(actualAppInfo == FakeAppInfo)
+  }
+
+  private fun assertJsInterfaceMethodExists(methodName: String) {
+    val method = htmlOut.javaClass.getDeclaredMethod(methodName)
+    assertNotNull(method.getAnnotation(JavascriptInterface::class.java))
   }
 
   private fun testLogin(token: String?) {
