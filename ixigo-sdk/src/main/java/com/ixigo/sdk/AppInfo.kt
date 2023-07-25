@@ -1,5 +1,7 @@
 package com.ixigo.sdk
 
+import androidx.annotation.Keep
+
 /**
  * Information about the host App
  *
@@ -12,6 +14,7 @@ package com.ixigo.sdk
  * @property uuid UUID uniquely identifies a specific user. Do not set unless you have a specific
  * use.
  */
+@Keep
 data class AppInfo
 @JvmOverloads
 constructor(
