@@ -24,6 +24,7 @@ import com.ixigo.sdk.auth.test.ActivityResultPartnerTokenProvider
 import com.ixigo.sdk.payment.ActivityResultPaymentProvider
 import com.ixigo.sdk.test.initializeTestIxigoSDK
 import com.ixigo.sdk.ui.*
+import com.ixigo.sdk.util.AssetFileReader
 import com.ixigo.sdk.util.isIxigoUrl
 import java.util.*
 import org.junit.After
@@ -536,6 +537,18 @@ class WebViewFragmentUnitTests {
   fun `test that webview moves to loaded state on page load finish if its not an ixigo url`() {
     shadowWebView.webViewClient.onPageFinished(fragment.webView, "https://www.random.com")
     assertLoadableViewStatus(Loaded)
+  }
+
+  @Test
+  fun `test webview injects bundled js sdk script when remote fails`() {
+    val scriptRemoteUrl = "https://rocket.ixigo.com/ixigo-js-sdk/latest/index.umd.js"
+    shadowWebView.webViewClient.onReceivedError(
+        fragment.webView, mock { on { url } doReturn Uri.parse(scriptRemoteUrl) }, mock())
+
+    val assetFileReader = AssetFileReader(fragment.requireContext())
+    val expectedScript = assetFileReader.readFile("ixigo-sdk.js")
+
+    assertEquals(expectedScript, shadowWebView.lastEvaluatedJavascript)
   }
 
   private fun finishPageLoad() {

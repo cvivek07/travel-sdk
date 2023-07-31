@@ -285,6 +285,31 @@ task androidSourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
 }
 
+task downloadIxigoJsSdkFromRemote() {
+    def scriptUrl = "https://rocket.ixigo.com/ixigo-js-sdk/latest/index.umd.js" // Replace with the actual URL of your script
+    def destinationDir = "${projectDir}/src/main/assets"
+    def destinationFile = "ixigo-sdk.js" // Replace with the desired filename
+
+    doLast {
+        try {
+            URL url = new URL(scriptUrl)
+            InputStream inputStream = url.openStream()
+            File outputFile = new File(destinationDir, destinationFile)
+
+            outputFile.withOutputStream { outputStream ->
+                outputStream << inputStream
+            }
+
+            println "Script downloaded and placed in assets folder."
+        } catch (Exception e) {
+            println "Failed to download the script: ${e.message}"
+            throw new GradleException("ixigo js sdk download failed.")
+        }
+    }
+}
+
+tasks.findByName("preBuild").dependsOn(downloadIxigoJsSdkFromRemote)
+
 afterEvaluate {
     publishing {
         publications {

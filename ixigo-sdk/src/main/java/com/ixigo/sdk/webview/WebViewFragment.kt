@@ -23,6 +23,7 @@ import com.ixigo.sdk.analytics.Event
 import com.ixigo.sdk.common.*
 import com.ixigo.sdk.databinding.WebviewLayoutBinding
 import com.ixigo.sdk.ui.*
+import com.ixigo.sdk.util.AssetFileReader
 import com.ixigo.sdk.util.ThemeUtils.getThemeColor
 import com.ixigo.sdk.util.isIxigoUrl
 import java.text.SimpleDateFormat
@@ -60,6 +61,8 @@ class WebViewFragment : Fragment(), UIConfigurable, UrlLoader {
 
   var delegate: WebViewDelegate? = null
   private lateinit var jsInterfaces: List<JsInterface>
+
+  val assetFileReader: AssetFileReader by lazy { AssetFileReader(requireContext()) }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -139,6 +142,9 @@ class WebViewFragment : Fragment(), UIConfigurable, UrlLoader {
     const val INITIAL_PAGE_DATA_ARGS = "InitialPageData"
     const val CONFIG = "WebViewFragmentConfig"
     const val QUIT_PAYMENT_PAGE = "QuitPaymentPage"
+
+    private const val JS_SDK_URL = "https://rocket.ixigo.com/ixigo-js-sdk/latest/index.umd.js"
+    private const val JS_SDK_FILE_NAME = "ixigo-sdk.js"
   }
 
   internal val webViewBackPressHandler by lazy {
@@ -353,7 +359,9 @@ class WebViewFragment : Fragment(), UIConfigurable, UrlLoader {
         error: String?,
         showErrorViewIfNeeded: Boolean = true
     ) {
-      if (request?.url.toString() == webView.url) {
+      if (request?.url.toString() == JS_SDK_URL) {
+        handleJsSdkLoadError()
+      } else if (request?.url.toString() == webView.url) {
         analyticsProvider.logEvent(
             Event.with(action = "webviewError", label = error, referrer = request?.url.toString()))
         if (showErrorViewIfNeeded) {
@@ -361,6 +369,11 @@ class WebViewFragment : Fragment(), UIConfigurable, UrlLoader {
           stoppedLoading()
         }
       }
+    }
+
+    private fun handleJsSdkLoadError() {
+      // inject js script bundled in the sdk.
+      webView.evaluateJavascript(assetFileReader.readFile(JS_SDK_FILE_NAME), null)
     }
 
     private fun setStatusBarColorFromThemeColor() {
