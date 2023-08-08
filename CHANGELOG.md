@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.21.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.20.12...ixigo-sdk-3.21.0) (2023-08-08)
+
+
+### Features
+
+* bundled js sdk ([f1fb876](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/f1fb876eebf9429434af31203d72890f8ce81842))
+
+
+### Bug Fixes
+
+* add default flow type for Minkasu initialization ([aef994d](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/aef994db9045968402afb3f6604a024047e6feda))
+* keep AppInfo class ([757af79](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/757af79655433cce494b5826abb92c540a577b72))
+
 ### [3.20.12](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.20.11...ixigo-sdk-3.20.12) (2023-07-04)
 
 ### [3.20.11](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.20.10...ixigo-sdk-3.20.11) (2023-06-23)
