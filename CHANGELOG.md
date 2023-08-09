@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.21.1](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.21.0...ixigo-sdk-3.21.1) (2023-08-09)
+
+
+### Bug Fixes
+
+* back navigation mode ([bf61384](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/bf61384ee57c1c7fd056aacc71b6ee476e269d66))
+
 ## [3.21.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.20.12...ixigo-sdk-3.21.0) (2023-08-08)
 
 
