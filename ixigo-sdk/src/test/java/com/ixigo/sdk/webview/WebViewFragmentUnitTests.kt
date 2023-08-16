@@ -13,6 +13,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
+import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ixigo.sdk.DeeplinkHandler
@@ -549,6 +550,12 @@ class WebViewFragmentUnitTests {
     val expectedScript = assetFileReader.readFile("ixigo-sdk.js")
 
     assertEquals(expectedScript, shadowWebView.lastEvaluatedJavascript)
+  }
+
+  @Test
+  fun `test webview is destroyed on view detach`() {
+    scenario.moveToState(Lifecycle.State.DESTROYED)
+    assertTrue(shadowWebView.wasDestroyCalled())
   }
 
   private fun finishPageLoad() {
