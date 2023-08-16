@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.21.2](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.21.1...ixigo-sdk-3.21.2) (2023-08-16)
+
+
+### Bug Fixes
+
+* webview cleanup on detach ([19e3383](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/19e3383d100c0ace7fc82c1f71470886c1a7e96f))
+
 ### [3.21.1](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.21.0...ixigo-sdk-3.21.1) (2023-08-09)
 
 
