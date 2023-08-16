@@ -399,6 +399,11 @@ class WebViewFragment : Fragment(), UIConfigurable, UrlLoader {
   internal fun addListener(listener: WebViewFragmentListener) {
     listeners.add(listener)
   }
+
+  override fun onDestroyView() {
+    webView.destroy()
+    super.onDestroyView()
+  }
 }
 
 @Parcelize
