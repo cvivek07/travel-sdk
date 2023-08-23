@@ -23,6 +23,19 @@ data class NativePromiseError(
   }
 }
 
+fun returnError(
+    error: String,
+    errorPayload: NativePromiseError,
+    errorAdapter: JsonAdapter<NativePromiseError>,
+    webViewFragment: WebViewFragment
+) {
+  executeResponse(replaceNativePromisePayload(error, errorPayload, errorAdapter), webViewFragment)
+}
+
+private fun executeResponse(message: String, webViewFragment: WebViewFragment) {
+  executeNativePromiseResponse(message, webViewFragment)
+}
+
 fun <T> replaceNativePromisePayload(message: String, payload: T, adapter: JsonAdapter<T>): String {
   return replaceNativePromisePayload(message, adapter.toJson(payload))
 }

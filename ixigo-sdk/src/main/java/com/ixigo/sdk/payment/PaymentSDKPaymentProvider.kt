@@ -1,7 +1,6 @@
 package com.ixigo.sdk.payment
 
 import androidx.fragment.app.FragmentActivity
-import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.common.Err
 import com.ixigo.sdk.common.Ok
 import com.ixigo.sdk.webview.UrlLoader
@@ -30,24 +29,23 @@ class PaymentSDKPaymentProvider : PaymentProvider {
         tripId = input.data["tripId"],
         providerId = input.data["providerId"],
         productType = input.data["productType"]) {
-      val nextUrl: String? =
-          when (it) {
-            is Err -> {
-              callback(Err(PaymentInternalError("Error processing payment")))
-              when (it.value) {
-                is ProcessPaymentNotLoginError -> null
-                is ProcessPaymentProcessingError -> {
-                  it.value.nextUrl
-                }
-              }
-            }
-            is Ok -> {
-              callback(Ok(PaymentResponse(it.value.nextUrl)))
+      when (it) {
+        is Err -> {
+          callback(Err(PaymentInternalError("Error processing payment")))
+          when (it.value) {
+            is ProcessPaymentNotLoginError -> null
+            is ProcessPaymentProcessingError -> {
               it.value.nextUrl
             }
           }
-      nextUrl?.let { IxigoSDK.instance.launchWebActivity(activity, it) }
+        }
+        is Ok -> {
+          callback(Ok(PaymentResponse(it.value.nextUrl)))
+          it.value.nextUrl
+        }
+      }
     }
+
     return true
   }
 }

@@ -6,7 +6,13 @@ import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
 import com.ixigo.sdk.auth.SSOAuthProvider
+import com.ixigo.sdk.common.NativePromiseError
+import com.ixigo.sdk.common.executeNativePromiseResponse
+import com.ixigo.sdk.common.replaceNativePromisePayload
+import com.ixigo.sdk.common.returnError
+import com.ixigo.sdk.payment.PaymentError
 import com.ixigo.sdk.payment.PaymentInput
+import com.ixigo.sdk.payment.data.PaymentSuccessResult
 import com.squareup.moshi.FromJson
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.ToJson
@@ -20,6 +26,9 @@ class IxiWebView(
         SSOAuthProvider(IxigoSDK.instance.partnerTokenProvider),
     private val analyticsProvider: AnalyticsProvider = IxigoSDK.instance.analyticsProvider
 ) : JsInterface {
+
+  private val moshi by lazy { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
+  private val errorAdapter by lazy { moshi.adapter(NativePromiseError::class.java) }
 
   private val paymentInputAdapter by lazy {
     Moshi.Builder().add(KotlinJsonAdapterFactory()).build().adapter(PaymentInput::class.java)
@@ -70,6 +79,37 @@ class IxiWebView(
   }
 
   @JavascriptInterface
+  fun executeNativePayment(jsonInput: String, success: String, error: String) {
+    val input = kotlin.runCatching { paymentInputAdapter.fromJson(jsonInput) }.getOrNull()
+
+    if (input == null) {
+      returnError(error, NativePromiseError.wrongInputError(jsonInput))
+      return
+    }
+
+    fragment.requireActivity().runOnUiThread {
+      fragment.viewModel.startNativePaymentAsync(fragment.requireActivity(), input).observe(
+              fragment) {
+        it.result.onSuccess { paymentResponse ->
+          executeNativePromiseResponse(
+              replaceNativePromisePayload(
+                  success,
+                  PaymentSuccessResult(nextUrl = paymentResponse.nextUrl),
+                  moshi.adapter(PaymentSuccessResult::class.java)),
+              fragment)
+        }
+
+        it.result.onError { paymentError ->
+          returnError(
+              error,
+              NativePromiseError.sdkError(
+                  moshi.adapter(PaymentError::class.java).toJson(paymentError)))
+        }
+      }
+    }
+  }
+
+  @JavascriptInterface
   fun openWindow(url: String, @Suppress("UNUSED_PARAMETER") title: String?) {
     runOnUiThread { IxigoSDK.instance.launchWebActivity(fragment.requireActivity(), url) }
   }
@@ -99,6 +139,10 @@ class IxiWebView(
   @JavascriptInterface
   fun pwaReady() {
     runOnUiThread { fragment.pwaReady() }
+  }
+
+  private fun returnError(error: String, errorPayload: NativePromiseError) {
+    returnError(error, errorPayload, errorAdapter, fragment)
   }
 
   private fun eventProperties(

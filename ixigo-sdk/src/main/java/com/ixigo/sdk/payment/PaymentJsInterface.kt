@@ -572,7 +572,7 @@ internal class PaymentJsInterface(
   }
 
   private fun returnError(error: String, errorPayload: NativePromiseError) {
-    executeResponse(replaceNativePromisePayload(error, errorPayload, errorAdapter))
+    returnError(error, errorPayload, errorAdapter, webViewFragment)
   }
 
   private fun executeResponse(message: String) {

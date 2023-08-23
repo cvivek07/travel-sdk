@@ -23,6 +23,13 @@ sealed class Result<out T, out E> {
     }
   }
 
+  fun onError(block: (E) -> Unit) {
+    when (this) {
+      is Err -> block(value)
+      else -> Unit
+    }
+  }
+
   fun <S> mapBoth(success: (T) -> S, failure: (E) -> S): S {
     return when (this) {
       is Ok -> success(value)
