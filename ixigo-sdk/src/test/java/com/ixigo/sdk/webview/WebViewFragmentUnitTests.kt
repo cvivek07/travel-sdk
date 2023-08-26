@@ -22,7 +22,10 @@ import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
 import com.ixigo.sdk.auth.test.ActivityResultPartnerTokenProvider
+import com.ixigo.sdk.common.Ok
 import com.ixigo.sdk.payment.ActivityResultPaymentProvider
+import com.ixigo.sdk.payment.PaymentInput
+import com.ixigo.sdk.payment.PaymentResponse
 import com.ixigo.sdk.test.initializeTestIxigoSDK
 import com.ixigo.sdk.ui.*
 import com.ixigo.sdk.util.AssetFileReader
@@ -95,6 +98,16 @@ class WebViewFragmentUnitTests {
   @After
   fun teardown() {
     IxigoSDK.clearInstance()
+  }
+
+  @Test
+  fun `test fragment quits on payment result`() {
+    fragment.viewModel.paymentResult.value =
+        NativePaymentResult(
+            PaymentInput("flights", emptyMap()),
+            Ok(PaymentResponse("https://ixigo.com/payment/complete")))
+
+    verify(delegate).onQuit()
   }
 
   @Test

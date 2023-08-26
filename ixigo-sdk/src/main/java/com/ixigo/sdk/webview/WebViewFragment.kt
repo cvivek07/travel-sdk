@@ -41,7 +41,8 @@ class WebViewFragment : Fragment(), UIConfigurable, UrlLoader {
   @VisibleForTesting
   internal val loadableView
     get() = binding.loadableView
-  val viewModel: WebViewViewModel by viewModels()
+  val viewModel: WebViewViewModel by
+      viewModels(factoryProducer = { WebViewViewModel.Factory(IxigoSDK.instance) })
 
   private val urlState = UrlState()
 
@@ -69,7 +70,10 @@ class WebViewFragment : Fragment(), UIConfigurable, UrlLoader {
 
     viewModel.paymentResult.observe(this) { paymentResult ->
       // No action if Payment failed
-      paymentResult.result.onSuccess { loadUrl(it.nextUrl) }
+      paymentResult.result.onSuccess {
+        IxigoSDK.instance.launchWebActivity(requireContext(), it.nextUrl)
+        delegate?.onQuit()
+      }
     }
   }
 
