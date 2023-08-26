@@ -14,7 +14,6 @@ import com.ixigo.sdk.auth.*
 import com.ixigo.sdk.common.Err
 import com.ixigo.sdk.common.Ok
 import com.ixigo.sdk.payment.*
-import com.ixigo.sdk.remoteConfig.FakeRemoteConfigProvider
 import com.ixigo.sdk.test.TestData.FakeAppInfo
 import com.ixigo.sdk.test.initializeTestIxigoSDK
 import com.ixigo.sdk.ui.Loaded
@@ -26,6 +25,7 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mockito
 import org.mockito.kotlin.*
 import org.robolectric.Shadows
 import org.robolectric.Shadows.shadowOf
@@ -48,11 +48,13 @@ class IxiWebViewTests {
 
   private lateinit var ssoAuthProvider: SSOAuthProvider
   private lateinit var paymentProvider: PaymentProvider
+  private lateinit var mockViewModel: WebViewViewModel
 
   @Before
   fun setup() {
     ssoAuthProvider = mock()
     paymentProvider = mock()
+    mockViewModel = mock()
 
     initializeTestIxigoSDK(analyticsProvider = analyticsProvider)
 
@@ -66,7 +68,7 @@ class IxiWebViewTests {
       shadowWebView = Shadows.shadowOf(it.webView)
       shadowWebView.pushEntryToHistory(initialPageData.url)
       fragmentActivity = it.requireActivity()
-      ixiWebView = IxiWebView(it, ssoAuthProvider, analyticsProvider)
+      ixiWebView = IxiWebView(it, ssoAuthProvider, analyticsProvider, mockViewModel)
     }
   }
 
@@ -104,6 +106,7 @@ class IxiWebViewTests {
 
   @Test
   fun `test successful payment`() {
+    Mockito.`when`(mockViewModel.startNativePayment(any(), any())).thenReturn(true)
     val nextUrl = "nextUrl"
     val paymentInputStr =
         """
@@ -116,27 +119,18 @@ class IxiWebViewTests {
             |   }
             |}""".trimMargin()
     val paymentInput = paymentInputAdapter.fromJson(paymentInputStr)!!
-    IxigoSDK.replaceInstance(
-        IxigoSDK(
-            appInfo,
-            EmptyPartnerTokenProvider,
-            FakePaymentProvider(
-                fragmentActivity, mapOf(paymentInput to Ok(PaymentResponse(nextUrl)))),
-            analyticsProvider,
-            theme = IxigoSDK.instance.theme,
-            remoteConfigProvider = FakeRemoteConfigProvider()))
     val startNativePaymentMethod =
         ixiWebView.javaClass.getDeclaredMethod("executeNativePayment", String::class.java)
     val paymentReturn = startNativePaymentMethod.invoke(ixiWebView, paymentInputStr) as Boolean
     Shadows.shadowOf(Looper.getMainLooper()).idle()
 
     assertTrue(paymentReturn)
-    assertEquals(nextUrl, shadowWebView.lastLoadedUrl)
     assertNotNull(startNativePaymentMethod.getAnnotation(JavascriptInterface::class.java))
   }
 
   @Test
   fun `test failed payment`() {
+    Mockito.`when`(mockViewModel.startNativePayment(any(), any())).thenReturn(false)
     val paymentInputStr =
         """
             |{
@@ -148,21 +142,13 @@ class IxiWebViewTests {
             |   }
             |}""".trimMargin()
     val paymentInput = paymentInputAdapter.fromJson(paymentInputStr)!!
-    IxigoSDK.replaceInstance(
-        IxigoSDK(
-            appInfo,
-            EmptyPartnerTokenProvider,
-            FakePaymentProvider(
-                fragmentActivity, mapOf(paymentInput to Err(PaymentInternalError()))),
-            analyticsProvider,
-            theme = IxigoSDK.instance.theme,
-            remoteConfigProvider = FakeRemoteConfigProvider()))
     val startNativePaymentMethod =
         ixiWebView.javaClass.getDeclaredMethod("executeNativePayment", String::class.java)
     val paymentReturn = startNativePaymentMethod.invoke(ixiWebView, paymentInputStr) as Boolean
     shadowOf(Looper.getMainLooper()).idle()
 
-    assertTrue(paymentReturn)
+    Mockito.verify(mockViewModel).startNativePayment(any(), eq(paymentInput))
+    assertFalse(paymentReturn)
     assertEquals(initialPageData.url, shadowWebView.lastLoadedUrl)
   }
 

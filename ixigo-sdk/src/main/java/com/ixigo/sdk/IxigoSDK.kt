@@ -211,7 +211,7 @@ internal constructor(
     if (url.startsWith(config.apiBaseUrl) ||
         url.startsWith("file://") ||
         Uri.parse(url)?.host?.endsWith("ixigo.com") == true) {
-      jsInterfaces.add(IxiWebView(webViewFragment))
+      jsInterfaces.add(IxiWebView(webViewFragment, viewModel = webViewFragment.viewModel))
     }
     jsInterfaces.add(IxigoSDKAndroid(analyticsProvider, webViewFragment))
     return jsInterfaces

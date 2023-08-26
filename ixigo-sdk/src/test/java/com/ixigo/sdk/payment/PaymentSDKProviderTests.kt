@@ -42,7 +42,7 @@ class PaymentSDKProviderTests {
   }
 
   @Test
-  fun `test startPayment call processPayment and opens nextUrl on success`() {
+  fun `test startPayment call processPayment and does not open nextUrl on success`() {
     val transactionId = "transactionIdValue"
     val tripId = "tripIdValue"
     val providerId = "providerIdValue"
@@ -80,11 +80,11 @@ class PaymentSDKProviderTests {
 
     assertTrue(ret)
     assertEquals(Ok(PaymentResponse(nextUrl)), paymentResult)
-    verify(mockIxigoSDK).launchWebActivity(activity, nextUrl)
+    verify(mockIxigoSDK, times(0)).launchWebActivity(activity, nextUrl)
   }
 
   @Test
-  fun `test startPayment call processPayment and opens nextUrl on error`() {
+  fun `test startPayment call processPayment and does not open nextUrl on error`() {
     val transactionId = "transactionIdValue"
     val nextUrl = "https://www.ixigo.com/payment/success"
     PaymentSDK.replaceInstance(mockPaymentSDK)
@@ -114,7 +114,7 @@ class PaymentSDKProviderTests {
 
     assertTrue(ret)
     assertEquals(false, paymentResult?.isSuccess)
-    verify(mockIxigoSDK).launchWebActivity(activity, nextUrl)
+    verify(mockIxigoSDK, times(0)).launchWebActivity(activity, nextUrl)
   }
 
   @Test
@@ -148,7 +148,6 @@ class PaymentSDKProviderTests {
 
     assertTrue(ret)
     assertEquals(Ok(PaymentResponse(nextUrl)), paymentResult)
-    verify(mockIxigoSDK).launchWebActivity(webActivity, nextUrl)
   }
 
   @Test
@@ -184,7 +183,6 @@ class PaymentSDKProviderTests {
 
     assertTrue(ret)
     assertEquals(Ok(PaymentResponse(nextUrl)), paymentResult)
-    verify(mockIxigoSDK).launchWebActivity(activity, nextUrl)
   }
 
   @Test

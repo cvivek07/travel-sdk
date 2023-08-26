@@ -193,7 +193,7 @@ class BusSDK(internal val config: Config) : JsInterfaceProvider {
   override fun getJsInterfaces(url: String, webViewFragment: WebViewFragment): List<JsInterface> {
     var jsInterfaces = mutableListOf<JsInterface>()
     if (url.startsWith(config.apiBaseUrl)) {
-      jsInterfaces.add(IxiWebView(webViewFragment))
+      jsInterfaces.add(IxiWebView(webViewFragment, viewModel = webViewFragment.viewModel))
       jsInterfaces.add(HtmlOutJsInterface(webViewFragment))
     }
     return jsInterfaces

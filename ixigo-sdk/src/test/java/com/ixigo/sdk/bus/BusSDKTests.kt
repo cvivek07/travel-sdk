@@ -20,6 +20,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Mockito
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
@@ -137,7 +138,9 @@ class BusSDKTests {
         appInfo =
             AppInfo(clientId = "iximatr", apiKey = "any", appVersion = 1, appName = "Ixigo Trains"))
     val busSDK = BusSDK.init(config = BusConfig.PROD)
-    val webViewFragment: WebViewFragment = mock()
+    val webViewFragment: WebViewFragment =
+        mock<WebViewFragment>().apply { Mockito.`when`(this.viewModel).thenReturn(mock()) }
+
     val interfaces =
         IxigoSDK.instance.webViewConfig.getMatchingJsInterfaces(
             busSDK.config.createUrl("testUrl"), webViewFragment)
@@ -152,7 +155,8 @@ class BusSDKTests {
         appInfo =
             AppInfo(clientId = "iximatr", apiKey = "any", appVersion = 1, appName = "Ixigo Trains"))
     BusSDK.init(config = BusConfig.PROD)
-    val webViewFragment: WebViewFragment = mock()
+    val webViewFragment: WebViewFragment =
+        mock<WebViewFragment>().apply { Mockito.`when`(this.viewModel).thenReturn(mock()) }
     val interfaces =
         IxigoSDK.instance.webViewConfig.getMatchingJsInterfaces(
             "https://www.ixigo.com/test", webViewFragment)

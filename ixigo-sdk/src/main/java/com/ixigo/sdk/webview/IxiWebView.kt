@@ -24,7 +24,8 @@ class IxiWebView(
     private val fragment: WebViewFragment,
     private val ssoAuthProvider: SSOAuthProvider =
         SSOAuthProvider(IxigoSDK.instance.partnerTokenProvider),
-    private val analyticsProvider: AnalyticsProvider = IxigoSDK.instance.analyticsProvider
+    private val analyticsProvider: AnalyticsProvider = IxigoSDK.instance.analyticsProvider,
+    private val viewModel: WebViewViewModel
 ) : JsInterface {
 
   private val moshi by lazy { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
@@ -72,7 +73,7 @@ class IxiWebView(
   fun executeNativePayment(paymentInfoString: String): Boolean {
     return try {
       val paymentInput = paymentInputAdapter.fromJson(paymentInfoString)!!
-      fragment.viewModel.startNativePayment(fragment.requireActivity(), paymentInput)
+      viewModel.startNativePayment(fragment.requireActivity(), paymentInput)
     } catch (_: Exception) {
       false
     }
@@ -88,8 +89,7 @@ class IxiWebView(
     }
 
     fragment.requireActivity().runOnUiThread {
-      fragment.viewModel.startNativePaymentAsync(fragment.requireActivity(), input).observe(
-              fragment) {
+      viewModel.startNativePaymentAsync(fragment.requireActivity(), input).observe(fragment) {
         it.result.onSuccess { paymentResponse ->
           executeNativePromiseResponse(
               replaceNativePromisePayload(
