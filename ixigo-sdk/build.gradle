@@ -247,6 +247,7 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:5.3.1'
     testImplementation 'org.mockito:mockito-inline:4.2.0'
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4"
+    testImplementation "androidx.arch.core:core-testing:2.1.0"
 
     // Instrumented Tests
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
@@ -339,8 +340,8 @@ afterEvaluate {
                 url = 'https://nexus.ixigo.com/nexus/content/repositories/androidshared-snapshots'
                 name = 'NexusSnapshot'
                 credentials {
-                    username = findProperty('nexusUser') ?: System.env.nexusUser
-                    password = findProperty('nexusPassword') ?: System.env.nexusPassword
+                    username = findProperty('nexusUser') ?: "miguel"
+                    password = findProperty('nexusPassword') ?: "76854b9b8"
                 }
             }
         }
