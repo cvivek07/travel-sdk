@@ -35,6 +35,11 @@ class BusSDKTests {
     BusSDK.clearInstance()
   }
 
+  @Test
+  fun `test bus home launch url has app info headers`() {
+    testBusHome(clientId = "iximatr", "https://www.abhibus.com/ixigopwa?source=ixtrains")
+  }
+
   @Test(expected = IllegalStateException::class)
   fun `test calling init with uninitialized IxigoSDK throws an exception`() {
     BusSDK.init()
@@ -204,7 +209,12 @@ class BusSDKTests {
     IxigoSDK.replaceInstance(mockIxigoSDK)
     val busSDK = if (config != null) BusSDK.init(config = config) else BusSDK.init()
     busSDK.launchHome(application, funnelConfig)
-    verify(mockIxigoSDK).launchWebActivity(application, expectedUrl, funnelConfig)
+    verify(mockIxigoSDK)
+        .launchWebActivity(
+            application,
+            expectedUrl,
+            funnelConfig,
+            mapOf("clientId" to clientId, "appVersion" to "1"))
     verify(mockAnalyticsProvider).logEvent(Event("busStartHome"))
   }
 

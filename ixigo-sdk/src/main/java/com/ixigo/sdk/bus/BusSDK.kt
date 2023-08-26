@@ -94,7 +94,16 @@ class BusSDK(internal val config: Config) : JsInterfaceProvider {
   fun launchHome(context: Context, funnelConfig: FunnelConfig? = null) {
     analyticsProvider.logEvent(Event.with(action = "busStartHome"))
     IxigoSDK.instance.launchWebActivity(
-        context, config.createUrl(null, addSkinParam()), funnelConfig)
+        context,
+        config.createUrl(null, addSkinParam()),
+        headers = getHeaders(),
+        config = funnelConfig)
+  }
+
+  private fun getHeaders(): Map<String, String> {
+    return with(IxigoSDK.instance) {
+      mapOf("appVersion" to appInfo.appVersionString, "clientId" to appInfo.clientId)
+    }
   }
 
   private val skin: String?
