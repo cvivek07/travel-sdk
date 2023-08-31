@@ -117,5 +117,3 @@ enum class PaymentHandler {
 @Keep data class SimplFingerprintInput(val mobile: String, val email: String)
 
 @Keep data class SimplFingerprint(val fingerprint: String)
-
-@Keep data class PaymentSuccessResult(val nextUrl: String)

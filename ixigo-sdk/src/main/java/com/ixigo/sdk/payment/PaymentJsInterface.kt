@@ -95,6 +95,39 @@ internal class PaymentJsInterface(
         }
       }
 
+  private val paymentInputAdapter by lazy {
+    Moshi.Builder().add(KotlinJsonAdapterFactory()).build().adapter(PaymentInput::class.java)
+  }
+
+  @JavascriptInterface
+  fun executeNativePayment(jsonInput: String, success: String, error: String) {
+    val input = kotlin.runCatching { paymentInputAdapter.fromJson(jsonInput) }.getOrNull()
+
+    if (input == null) {
+      returnError(error, wrongInputError(jsonInput))
+      return
+    }
+
+    webViewFragment.requireActivity().runOnUiThread {
+      webViewFragment.viewModel.startNativePaymentAsync(webViewFragment.requireActivity(), input)
+          .observe(webViewFragment) {
+            it.result.onSuccess { paymentResponse ->
+              executeNativePromiseResponse(
+                  replaceNativePromisePayload(
+                      success,
+                      PaymentSuccessResult(nextUrl = paymentResponse.nextUrl),
+                      moshi.adapter(PaymentSuccessResult::class.java)),
+                  webViewFragment)
+            }
+
+            it.result.onError { paymentError ->
+              returnError(
+                  error, sdkError(moshi.adapter(PaymentError::class.java).toJson(paymentError)))
+            }
+          }
+    }
+  }
+
   @JavascriptInterface
   fun initialize(jsonInput: String, success: String, error: String) {
     val input = kotlin.runCatching { inputAdapter.fromJson(jsonInput) }.getOrNull()

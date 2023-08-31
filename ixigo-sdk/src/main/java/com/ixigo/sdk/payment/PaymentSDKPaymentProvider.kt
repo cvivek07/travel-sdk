@@ -30,7 +30,14 @@ class PaymentSDKPaymentProvider : PaymentProvider {
         providerId = input.data["providerId"],
         productType = input.data["productType"]) {
       when (it) {
-        is Err -> callback(Err(PaymentInternalError("Error processing payment")))
+        is Err -> {
+          val error = it.value
+          if (error is ProcessPaymentCanceled) {
+            callback(Err(PaymentCancelled()))
+          } else {
+            callback(Err(PaymentInternalError("Error processing payment")))
+          }
+        }
         is Ok -> callback(Ok(PaymentResponse(it.value.nextUrl)))
       }
     }

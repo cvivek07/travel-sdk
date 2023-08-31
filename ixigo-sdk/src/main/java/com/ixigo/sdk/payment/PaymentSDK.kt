@@ -27,6 +27,7 @@ class PaymentSDK(
         SSOAuthProvider(IxigoSDK.instance.partnerTokenProvider)
 ) : JsInterfaceProvider {
 
+  internal var currentTransaction: Pair<String, ProcessPaymentCallback?>? = null
   internal val currentTransactions: MutableMap<String, ProcessPaymentCallback> = mutableMapOf()
 
   fun openManagePaymentMethodsPage(activity: FragmentActivity, callback: OpenPageCallback? = null) {
@@ -60,6 +61,7 @@ class PaymentSDK(
       urlLoader: UrlLoader? = null,
       callback: ProcessPaymentCallback? = null,
   ) {
+    currentTransaction = (transactionId to callback)
     ssoAuthProvider.login(activity, IxigoSDK.instance.appInfo.clientId) { authResult ->
       when (authResult) {
         is Err -> {
@@ -99,6 +101,7 @@ class PaymentSDK(
       quitPaymentPage: Boolean,
       callback: ProcessPaymentCallback? = null
   ): WebViewFragment {
+    currentTransaction = (transactionId to callback)
     val webViewFragment = WebViewFragment()
     ssoAuthProvider.login(activity, IxigoSDK.instance.appInfo.clientId) { authResult ->
       when (authResult) {
@@ -158,6 +161,14 @@ class PaymentSDK(
 
   private fun getManagePaymentOptionsUrl(): String =
       IxigoSDK.instance.getUrl(listOfNotNull("page" to "MANAGE_PAYMENT_METHODS").toMap())
+
+  internal fun cancelPayment() {
+    currentTransaction?.let {
+      val transactionId = it.first
+      val transactionCallback = it.second
+      transactionCallback?.let { callback -> callback(Err(ProcessPaymentCanceled(transactionId))) }
+    }
+  }
 
   internal fun finishPayment(input: FinishPaymentInput): Boolean {
     with(input) {
@@ -234,6 +245,8 @@ sealed class ProcessPaymentError
 data class ProcessPaymentProcessingError(val nextUrl: String) : ProcessPaymentError()
 
 data class ProcessPaymentNotLoginError(val error: Error) : ProcessPaymentError()
+
+data class ProcessPaymentCanceled(val transactionId: String) : ProcessPaymentError()
 
 sealed class OpenPageError
 

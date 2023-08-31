@@ -4,7 +4,7 @@ import androidx.annotation.Keep
 import androidx.fragment.app.FragmentActivity
 import com.ixigo.sdk.common.NoCoverage
 import com.ixigo.sdk.common.Result
-import java.lang.Exception
+import com.squareup.moshi.Json
 
 interface PaymentProvider {
   fun startPayment(
@@ -22,16 +22,27 @@ typealias PaymentCallback = (PaymentResult) -> Unit
 
 typealias PaymentResult = Result<PaymentResponse, PaymentError>
 
-sealed class PaymentError
-
-@NoCoverage
 @Keep
-data class PaymentCancelled(val message: String = "Payment was canceled by the customer") :
-    PaymentError()
+enum class PaymentStatus {
+  Success,
+  Error,
+  Canceled
+}
+
+@Keep sealed class PaymentStatusResponse(@Json(name = "status") status: PaymentStatus)
+
+@Keep
+data class PaymentSuccessResult(val nextUrl: String) : PaymentStatusResponse(PaymentStatus.Success)
+
+@Keep sealed class PaymentError(status: PaymentStatus) : PaymentStatusResponse(status)
 
 @NoCoverage
 @Keep
 data class PaymentInternalError(
     val message: String = "Error processing payment",
-    val exception: Exception? = null
-) : PaymentError()
+) : PaymentError(PaymentStatus.Error)
+
+@NoCoverage
+@Keep
+data class PaymentCancelled(val message: String = "Payment was canceled by the customer") :
+    PaymentError(PaymentStatus.Canceled)

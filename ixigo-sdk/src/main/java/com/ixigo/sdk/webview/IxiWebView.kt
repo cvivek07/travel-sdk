@@ -10,13 +10,18 @@ import com.ixigo.sdk.common.NativePromiseError
 import com.ixigo.sdk.common.executeNativePromiseResponse
 import com.ixigo.sdk.common.replaceNativePromisePayload
 import com.ixigo.sdk.common.returnError
+import com.ixigo.sdk.payment.PaymentCancelled
 import com.ixigo.sdk.payment.PaymentError
 import com.ixigo.sdk.payment.PaymentInput
-import com.ixigo.sdk.payment.data.PaymentSuccessResult
+import com.ixigo.sdk.payment.PaymentInternalError
+import com.ixigo.sdk.payment.PaymentSDK
+import com.ixigo.sdk.payment.PaymentStatusResponse
+import com.ixigo.sdk.payment.PaymentSuccessResult
 import com.squareup.moshi.FromJson
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.ToJson
 import com.squareup.moshi.Types
+import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import timber.log.Timber
 
@@ -28,7 +33,20 @@ class IxiWebView(
     private val viewModel: WebViewViewModel
 ) : JsInterface {
 
-  private val moshi by lazy { Moshi.Builder().add(KotlinJsonAdapterFactory()).build() }
+  private val moshi by lazy {
+    Moshi.Builder()
+        .add(
+            PolymorphicJsonAdapterFactory.of(PaymentStatusResponse::class.java, "status")
+                .withSubtype(PaymentSuccessResult::class.java, "success")
+                .withSubtype(PaymentCancelled::class.java, "canceled")
+                .withSubtype(PaymentInternalError::class.java, "error"))
+        .add(
+            PolymorphicJsonAdapterFactory.of(PaymentError::class.java, "error")
+                .withSubtype(PaymentCancelled::class.java, "canceled")
+                .withSubtype(PaymentInternalError::class.java, "internal error"))
+        .add(KotlinJsonAdapterFactory())
+        .build()
+  }
   private val errorAdapter by lazy { moshi.adapter(NativePromiseError::class.java) }
 
   private val paymentInputAdapter by lazy {
@@ -66,6 +84,7 @@ class IxiWebView(
 
   @JavascriptInterface
   fun quit() {
+    PaymentSDK.instance.cancelPayment()
     fragment.delegate?.let { runOnUiThread { it.onQuit() } }
   }
 
@@ -95,7 +114,7 @@ class IxiWebView(
               replaceNativePromisePayload(
                   success,
                   PaymentSuccessResult(nextUrl = paymentResponse.nextUrl),
-                  moshi.adapter(PaymentSuccessResult::class.java)),
+                  moshi.adapter(PaymentStatusResponse::class.java)),
               fragment)
         }
 
@@ -103,7 +122,7 @@ class IxiWebView(
           returnError(
               error,
               NativePromiseError.sdkError(
-                  moshi.adapter(PaymentError::class.java).toJson(paymentError)))
+                  moshi.adapter(PaymentStatusResponse::class.java).toJson(paymentError)))
         }
       }
     }
