@@ -27,7 +27,7 @@ spotless {
 }
 
 group = 'com.ixigo.sdk'
-version = '3.21.2'
+version = '3.21.2.12'
 
 android {
     compileSdk 31
@@ -287,7 +287,7 @@ task androidSourcesJar(type: Jar) {
 }
 
 task downloadIxigoJsSdkFromRemote() {
-    def scriptUrl = "https://rocket.ixigo.com/ixigo-js-sdk/latest/index.umd.js" // Replace with the actual URL of your script
+    def scriptUrl = "https://build-eks.ixigo.com/js-sdk/index.umd.js" // Replace with the actual URL of your script
     def destinationDir = "${projectDir}/src/main/assets"
     def destinationFile = "ixigo-sdk.js" // Replace with the desired filename
 
