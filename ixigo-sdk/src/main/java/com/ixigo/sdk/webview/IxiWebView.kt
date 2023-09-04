@@ -119,10 +119,12 @@ class IxiWebView(
         }
 
         it.result.onError { paymentError ->
-          returnError(
-              error,
-              NativePromiseError.sdkError(
-                  moshi.adapter(PaymentStatusResponse::class.java).toJson(paymentError)))
+          executeNativePromiseResponse(
+            replaceNativePromisePayload(
+              success,
+              paymentError,
+              moshi.adapter(PaymentStatusResponse::class.java)),
+            fragment)
         }
       }
     }
