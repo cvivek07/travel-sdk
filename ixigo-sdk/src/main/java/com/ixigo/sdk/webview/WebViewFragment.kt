@@ -147,7 +147,7 @@ class WebViewFragment : Fragment(), UIConfigurable, UrlLoader {
     const val CONFIG = "WebViewFragmentConfig"
     const val QUIT_PAYMENT_PAGE = "QuitPaymentPage"
 
-    private const val JS_SDK_URL = "https://rocket.ixigo.com/ixigo-js-sdk/latest/index.umd.js"
+    private const val JS_SDK_URL = "https://build4.ixigo.com/js-sdk/index.umd.js"
     private const val JS_SDK_FILE_NAME = "ixigo-sdk.js"
   }
 
@@ -283,7 +283,7 @@ class WebViewFragment : Fragment(), UIConfigurable, UrlLoader {
           var loadIxigoSDK = function() {
               var script = document.createElement("script");
               script.type = "text/javascript";
-              script.src = "https://build-eks.ixigo.com/js-sdk/index.umd.js";
+              script.src = "$JS_SDK_URL";
               document.body.appendChild(script);
           }
           if (document.readyState === 'complete') {
