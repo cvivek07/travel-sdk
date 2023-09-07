@@ -57,6 +57,7 @@ class IxiWebViewTests {
     mockViewModel = mock()
 
     initializeTestIxigoSDK(analyticsProvider = analyticsProvider)
+    PaymentSDK.init()
 
     scenario =
         launchFragmentInContainer(
