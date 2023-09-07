@@ -15,6 +15,7 @@ import com.ixigo.sdk.common.Err
 import com.ixigo.sdk.common.Ok
 import com.ixigo.sdk.payment.*
 import com.ixigo.sdk.test.TestData.FakeAppInfo
+import com.ixigo.sdk.test.initializePaymentSDK
 import com.ixigo.sdk.test.initializeTestIxigoSDK
 import com.ixigo.sdk.ui.Loaded
 import com.ixigo.sdk.ui.Loading
@@ -57,7 +58,7 @@ class IxiWebViewTests {
     mockViewModel = mock()
 
     initializeTestIxigoSDK(analyticsProvider = analyticsProvider)
-    PaymentSDK.init()
+    initializePaymentSDK(ssoAuthProvider = ssoAuthProvider)
 
     scenario =
         launchFragmentInContainer(
