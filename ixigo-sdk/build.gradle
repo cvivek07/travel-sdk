@@ -27,7 +27,7 @@ spotless {
 }
 
 group = 'com.ixigo.sdk'
-version = '3.21.2.16'
+version = '3.21.2'
 
 android {
     compileSdk 31
@@ -287,7 +287,7 @@ task androidSourcesJar(type: Jar) {
 }
 
 task downloadIxigoJsSdkFromRemote() {
-    def scriptUrl = "https://build4.ixigo.com/js-sdk/index.umd.js" // Replace with the actual URL of your script
+    def scriptUrl = "https://rocket.ixigo.com/ixigo-js-sdk/latest/index.umd.js" // Replace with the actual URL of your script
     def destinationDir = "${projectDir}/src/main/assets"
     def destinationFile = "ixigo-sdk.js" // Replace with the desired filename
 
@@ -340,8 +340,8 @@ afterEvaluate {
                 url = 'https://nexus.ixigo.com/nexus/content/repositories/androidshared-snapshots'
                 name = 'NexusSnapshot'
                 credentials {
-                    username = findProperty('nexusUser') ?: "miguel"
-                    password = findProperty('nexusPassword') ?: "76854b9b8"
+                    username = findProperty('nexusUser') ?: System.env.nexusUser
+                    password = findProperty('nexusPassword') ?: System.env.nexusPassword
                 }
             }
         }
