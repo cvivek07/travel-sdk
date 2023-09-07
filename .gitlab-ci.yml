@@ -1,5 +1,5 @@
 ## This image extends 'jangrewe/gitlab-ci-android' by adding node and yarn, needed for DangerJS.
-image: 119677764340.dkr.ecr.ap-south-1.amazonaws.com/jangrewe/gitlab-ci-android:1.2
+image: 119677764340.dkr.ecr.ap-south-1.amazonaws.com/jangrewe/gitlab-ci-android:1.5
 
 default:
   tags:
