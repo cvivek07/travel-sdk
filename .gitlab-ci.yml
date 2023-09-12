@@ -142,7 +142,7 @@ release:
   script:
     - yarn install
     - yarn run release -- -t ixigo-sdk- --no-verify
-    - git push --no-verify --follow-tags http://root:$REPO_ACCESS_TOKEN@$CI_SERVER_HOST/$CI_PROJECT_PATH.git HEAD:development
+    - git push --no-verify --follow-tags https://root:$REPO_ACCESS_TOKEN@$CI_SERVER_HOST/$CI_PROJECT_PATH.git HEAD:development
     - yarn run pdf-changelog
     - "./gradlew ixigo-sdk:publishReleasePublicationToNexusRepository --stacktrace $GRADLE_SCAN_OPTION"
     - yarn run slack-new-version
