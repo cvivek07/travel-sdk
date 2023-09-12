@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.22.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.21.2...ixigo-sdk-3.22.0) (2023-09-12)
+
+
+### Features
+
+* add new payment js interface for client to receive payment status in executeNativePayment call ([21d4c08](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/21d4c083d484c35da7853109c2dace2ef66f20c0))
+* client information headers in bus home page request ([b4f2a82](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/b4f2a82ed9b33879695b8a7c5e92739e08e2d629))
+
 ### [3.21.2](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.21.1...ixigo-sdk-3.21.2) (2023-08-16)
 
 
