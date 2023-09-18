@@ -77,6 +77,10 @@ class IxiWebView(
         override fun onPause(owner: LifecycleOwner) {
           dispatchState("PAUSED")
         }
+
+        override fun onDestroy(owner: LifecycleOwner) {
+          fragment.lifecycle.removeObserver(this)
+        }
       }
 
   init {
