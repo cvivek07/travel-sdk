@@ -2,6 +2,8 @@ package com.ixigo.sdk.webview
 
 import android.webkit.JavascriptInterface
 import androidx.annotation.Keep
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
@@ -63,8 +65,42 @@ class IxiWebView(
         .lenient()
   }
 
+  private val onPageStateChangeJsCallbacks = mutableListOf<String>()
+
+  private val fragmentLifeCycleObserver =
+      object : DefaultLifecycleObserver {
+
+        override fun onResume(owner: LifecycleOwner) {
+          dispatchState("RESUMED")
+        }
+
+        override fun onPause(owner: LifecycleOwner) {
+          dispatchState("PAUSED")
+        }
+      }
+
+  init {
+    fragment.lifecycle.addObserver(fragmentLifeCycleObserver)
+  }
+
   override val name: String
     get() = "IxiWebView"
+
+  @JavascriptInterface
+  fun registerPageStateChange(onStateChangeJsFunction: String) {
+    onPageStateChangeJsCallbacks.add(onStateChangeJsFunction)
+  }
+
+  @JavascriptInterface
+  fun unregisterPageStateChange(onStateChangeJsFunction: String) {
+    onPageStateChangeJsCallbacks.remove(onStateChangeJsFunction)
+  }
+
+  private fun dispatchState(state: String) {
+    onPageStateChangeJsCallbacks.forEach {
+      fragment.webView.evaluateJavascript(it.replace("STATE", state), null)
+    }
+  }
 
   @JavascriptInterface
   fun loginUser(logInSuccessJsFunction: String, logInFailureJsFunction: String): Boolean {

@@ -6,6 +6,7 @@ import android.webkit.JavascriptInterface
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
+import androidx.lifecycle.Lifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.analytics.AnalyticsProvider
@@ -248,6 +249,28 @@ class IxiWebViewTests {
       assertEquals(Loading(referrer = initialPageData.url), fragment.loadableView.status)
       ixiWebView.pwaReady()
       assertEquals(Loaded, fragment.loadableView.status)
+    }
+  }
+
+  @Test
+  fun `fragment state change is dispatched to on page state change js callbacks`() {
+    scenario.onFragment {
+      val onPageStateChangeJsFunction = "javascript:alert('STATE')"
+      assertNull(shadowWebView.lastEvaluatedJavascript)
+
+      // test register
+      ixiWebView.registerPageStateChange(onPageStateChangeJsFunction)
+
+      scenario.moveToState(Lifecycle.State.STARTED)
+      assertEquals("javascript:alert('PAUSED')", shadowWebView.lastEvaluatedJavascript)
+
+      scenario.moveToState(Lifecycle.State.RESUMED)
+      assertEquals("javascript:alert('RESUMED')", shadowWebView.lastEvaluatedJavascript)
+
+      // test unregister
+      ixiWebView.unregisterPageStateChange(onPageStateChangeJsFunction)
+      scenario.moveToState(Lifecycle.State.STARTED)
+      assertEquals("javascript:alert('RESUMED')", shadowWebView.lastEvaluatedJavascript)
     }
   }
 
