@@ -2,6 +2,7 @@ package com.ixigo.sdk.bus
 
 import android.app.Activity
 import android.app.Application
+import androidx.lifecycle.LifecycleRegistry
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -137,10 +138,14 @@ class BusSDKTests {
     initializeTestIxigoSDK(
         appInfo =
             AppInfo(clientId = "iximatr", apiKey = "any", appVersion = 1, appName = "Ixigo Trains"))
-    val busSDK = BusSDK.init(config = BusConfig.PROD)
+
     val webViewFragment: WebViewFragment =
         mock<WebViewFragment>().apply { Mockito.`when`(this.viewModel).thenReturn(mock()) }
 
+    val fakeLifecycle = LifecycleRegistry(webViewFragment)
+    Mockito.`when`(webViewFragment.lifecycle).thenReturn(fakeLifecycle)
+
+    val busSDK = BusSDK.init(config = BusConfig.PROD)
     val interfaces =
         IxigoSDK.instance.webViewConfig.getMatchingJsInterfaces(
             busSDK.config.createUrl("testUrl"), webViewFragment)

@@ -1,6 +1,7 @@
 package com.ixigo.sdk.trains
 
 import android.app.Application
+import androidx.lifecycle.LifecycleRegistry
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ixigo.sdk.AppInfo
@@ -127,9 +128,12 @@ class TrainsSDKTests {
     initializeTestIxigoSDK(
         appInfo =
             AppInfo(clientId = "abhibus", apiKey = "abhibus", appVersion = 1, appName = "appName"))
-    val trainsSDK = TrainsSDK.init()
     val webViewFragment: WebViewFragment =
         mock<WebViewFragment>().apply { Mockito.`when`(this.viewModel).thenReturn(mock()) }
+    val fakeLifecycle = LifecycleRegistry(webViewFragment)
+    Mockito.`when`(webViewFragment.lifecycle).thenReturn(fakeLifecycle)
+
+    val trainsSDK = TrainsSDK.init()
     val interfaces =
         IxigoSDK.instance.webViewConfig.getMatchingJsInterfaces(
             trainsSDK.getBaseUrl(), webViewFragment)
