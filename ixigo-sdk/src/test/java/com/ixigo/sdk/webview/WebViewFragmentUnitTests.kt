@@ -16,6 +16,7 @@ import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.lifecycle.Lifecycle
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.ixigo.sdk.BuildConfig
 import com.ixigo.sdk.DeeplinkHandler
 import com.ixigo.sdk.Handled
 import com.ixigo.sdk.IxigoSDK
@@ -473,7 +474,7 @@ class WebViewFragmentUnitTests {
           var loadIxigoSDK = function() {
               var script = document.createElement("script");
               script.type = "text/javascript";
-              script.src = "https://rocket.ixigo.com/ixigo-js-sdk/latest/index.umd.js";
+              script.src = "${BuildConfig.JS_SDK_URL}";
               document.body.appendChild(script);
           }
           if (document.readyState === 'complete') {
@@ -555,7 +556,7 @@ class WebViewFragmentUnitTests {
 
   @Test
   fun `test webview injects bundled js sdk script when remote fails`() {
-    val scriptRemoteUrl = "https://rocket.ixigo.com/ixigo-js-sdk/latest/index.umd.js"
+    val scriptRemoteUrl = BuildConfig.JS_SDK_URL
     shadowWebView.webViewClient.onReceivedError(
         fragment.webView, mock { on { url } doReturn Uri.parse(scriptRemoteUrl) }, mock())
 

@@ -15,6 +15,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.annotation.VisibleForTesting
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.ixigo.sdk.BuildConfig
 import com.ixigo.sdk.Handled
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.NotHandled
@@ -147,7 +148,7 @@ class WebViewFragment : Fragment(), UIConfigurable, UrlLoader {
     const val CONFIG = "WebViewFragmentConfig"
     const val QUIT_PAYMENT_PAGE = "QuitPaymentPage"
 
-    private const val JS_SDK_URL = "https://rocket.ixigo.com/ixigo-js-sdk/latest/index.umd.js"
+    private val JS_SDK_URL = BuildConfig.JS_SDK_URL
     private const val JS_SDK_FILE_NAME = "ixigo-sdk.js"
   }
 

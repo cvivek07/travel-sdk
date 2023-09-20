@@ -39,7 +39,7 @@ android {
         versionName "$version"
 
         buildConfigField("String", "SDK_VERSION", "\"$versionName\"")
-
+        buildConfigField("String", "JS_SDK_URL", "\"https://rocket.ixigo.com/ixigo-js-sdk/latest/index.umd.js\"")
         testInstrumentationRunner 'com.ixigo.sdk.test.util.EspressoRunner'
         consumerProguardFiles 'consumer-rules.pro'
     }
@@ -52,7 +52,13 @@ android {
         debug {
             enableUnitTestCoverage true
         }
+
+         staging {
+            initWith release
+            buildConfigField("String", "JS_SDK_URL", "\"https://build-eks.ixigo.com/js-sdk/index.umd.js\"")
+        }
     }
+
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -324,6 +330,13 @@ afterEvaluate {
                 from components.release
                 artifact androidSourcesJar
                 artifactId = "${project.name}"
+            }
+
+            staging(MavenPublication) {
+                from components.staging
+                artifact androidSourcesJar
+                artifactId = "${project.name}"
+                version = "${version}-staging"
             }
         }
 
