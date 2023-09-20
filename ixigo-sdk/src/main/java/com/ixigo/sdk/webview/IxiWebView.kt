@@ -139,7 +139,7 @@ class IxiWebView(
   }
 
   @JavascriptInterface
-  fun executeNativePayment(jsonInput: String, success: String, error: String) {
+  fun executeNativePaymentAsync(jsonInput: String, success: String, error: String) {
     val input = kotlin.runCatching { paymentInputAdapter.fromJson(jsonInput) }.getOrNull()
 
     if (input == null) {
