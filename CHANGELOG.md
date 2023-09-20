@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.23.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.22.0...ixigo-sdk-3.23.0) (2023-09-20)
+
+
+### Features
+
+* add registerPageStateChange interface api on IxiWebView object for web clients to observe android native page state ([59e8a4a](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/59e8a4a19e4d2c965443c1e418a695cb53d8773a))
+
+
+### Bug Fixes
+
+* rename payment interface method to executeNativePaymentAsync to avoid unsupported overloaded methods on javascript client ([a81bb3a](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/a81bb3a1f160f53b7ceca7fad7f2be3d4d751868))
+
 ## [3.22.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.21.2...ixigo-sdk-3.22.0) (2023-09-12)
 
 
