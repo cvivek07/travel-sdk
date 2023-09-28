@@ -23,6 +23,7 @@ import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
 import com.ixigo.sdk.common.*
 import com.ixigo.sdk.databinding.WebviewLayoutBinding
+import com.ixigo.sdk.payment.PaymentSDK
 import com.ixigo.sdk.ui.*
 import com.ixigo.sdk.util.AssetFileReader
 import com.ixigo.sdk.util.ThemeUtils.getThemeColor
@@ -194,6 +195,7 @@ class WebViewFragment : Fragment(), UIConfigurable, UrlLoader {
     if (webView.canGoBack()) {
       webView.goBack()
     } else {
+      PaymentSDK.instance.cancelPayment()
       delegate?.onQuit()
     }
   }
