@@ -67,6 +67,8 @@ class WebViewFragment : Fragment(), UIConfigurable, UrlLoader {
 
   val assetFileReader: AssetFileReader by lazy { AssetFileReader(requireContext()) }
 
+  lateinit var paymentSDK: PaymentSDK
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
 
@@ -195,7 +197,7 @@ class WebViewFragment : Fragment(), UIConfigurable, UrlLoader {
     if (webView.canGoBack()) {
       webView.goBack()
     } else {
-      PaymentSDK.instance.cancelPayment()
+      paymentSDK.cancelPayment()
       delegate?.onQuit()
     }
   }

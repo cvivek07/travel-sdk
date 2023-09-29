@@ -20,6 +20,7 @@ import com.ixigo.sdk.remoteConfig.FakeRemoteConfigProvider
 import com.ixigo.sdk.test.IntentMatcher
 import com.ixigo.sdk.test.TestData.DisabledAnalyticsProvider
 import com.ixigo.sdk.test.TestData.FakeAppInfo
+import com.ixigo.sdk.test.initializePaymentSDK
 import com.ixigo.sdk.test.initializeTestIxigoSDK
 import com.ixigo.sdk.ui.defaultTheme
 import com.ixigo.sdk.webview.*
@@ -148,6 +149,7 @@ class IxigoSDKTests {
         EmptyPartnerTokenProvider,
         DisabledPaymentProvider,
         analyticsProvider)
+    initializePaymentSDK()
     val scenario: FragmentScenario<WebViewFragment> =
         launchFragmentInContainer(
             Bundle().also {

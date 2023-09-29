@@ -51,6 +51,7 @@ class IxiWebViewTests {
   private lateinit var ssoAuthProvider: SSOAuthProvider
   private lateinit var paymentProvider: PaymentProvider
   private lateinit var mockViewModel: WebViewViewModel
+  private lateinit var spyPaymentSDK: PaymentSDK
 
   @Before
   fun setup() {
@@ -59,7 +60,9 @@ class IxiWebViewTests {
     mockViewModel = mock()
 
     initializeTestIxigoSDK(analyticsProvider = analyticsProvider)
-    initializePaymentSDK(ssoAuthProvider = ssoAuthProvider)
+    initializePaymentSDK(ssoAuthProvider = ssoAuthProvider).also {
+      spyPaymentSDK = spy(PaymentSDK.instance)
+    }
 
     scenario =
         launchFragmentInContainer(
@@ -71,7 +74,7 @@ class IxiWebViewTests {
       shadowWebView = Shadows.shadowOf(it.webView)
       shadowWebView.pushEntryToHistory(initialPageData.url)
       fragmentActivity = it.requireActivity()
-      ixiWebView = IxiWebView(it, ssoAuthProvider, analyticsProvider, mockViewModel)
+      ixiWebView = IxiWebView(it, ssoAuthProvider, analyticsProvider, mockViewModel, spyPaymentSDK)
     }
   }
 
@@ -104,6 +107,7 @@ class IxiWebViewTests {
     val quitMethod = ixiWebView.javaClass.getDeclaredMethod("quit")
     assertNotNull(quitMethod.getAnnotation(JavascriptInterface::class.java))
     ixiWebView.quit()
+    verify(spyPaymentSDK).cancelPayment()
     verify(delegate).onQuit()
   }
 

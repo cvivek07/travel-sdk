@@ -14,6 +14,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.test.R
+import com.ixigo.sdk.test.initializePaymentSDK
 import com.ixigo.sdk.test.initializeTestIxigoSDK
 import com.ixigo.sdk.webview.InitialPageData
 import com.ixigo.sdk.webview.WebActivity
@@ -49,6 +50,7 @@ class LoadableViewTests {
   @Before
   fun setup() {
     initializeTestIxigoSDK(analyticsProvider = mockAnalyticsProvider)
+    initializePaymentSDK()
     val app = ApplicationProvider.getApplicationContext<Application>()
     val intent =
         Intent(app, WebActivity::class.java).also {

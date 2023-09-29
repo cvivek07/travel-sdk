@@ -20,6 +20,7 @@ import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.R
 import com.ixigo.sdk.auth.PartnerTokenProvider
 import com.ixigo.sdk.common.ActivityResultHandler
+import com.ixigo.sdk.test.initializePaymentSDK
 import com.ixigo.sdk.test.initializeTestIxigoSDK
 import com.ixigo.sdk.ui.GradientThemeColor
 import com.ixigo.sdk.ui.SolidThemeColor
@@ -44,6 +45,7 @@ class WebActivityTest {
   @Before
   fun setup() {
     initializeTestIxigoSDK(theme = defaultTheme(getApplicationContext()))
+    initializePaymentSDK()
   }
 
   @Test

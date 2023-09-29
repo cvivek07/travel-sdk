@@ -32,8 +32,11 @@ class IxiWebView(
     private val ssoAuthProvider: SSOAuthProvider =
         SSOAuthProvider(IxigoSDK.instance.partnerTokenProvider),
     private val analyticsProvider: AnalyticsProvider = IxigoSDK.instance.analyticsProvider,
-    private val viewModel: WebViewViewModel
-) : JsInterface {
+    private val viewModel: WebViewViewModel,
+    private val paymentSDK: PaymentSDK = PaymentSDK.instance
+) : JsInterface, WebViewFragmentListener {
+
+  private var quitOnBackPress: Boolean = false
 
   private val moshi by lazy {
     Moshi.Builder()
@@ -124,8 +127,16 @@ class IxiWebView(
 
   @JavascriptInterface
   fun quit() {
-    PaymentSDK.instance.cancelPayment()
+    paymentSDK.cancelPayment()
     fragment.delegate?.let { runOnUiThread { it.onQuit() } }
+  }
+
+  @JavascriptInterface
+  fun quitOnBackPress() {
+    quitOnBackPress = true
+    fragment.requireActivity().runOnUiThread {
+      fragment.configUI(UIConfig(backNavigationMode = BackNavigationMode.Handler()))
+    }
   }
 
   @JavascriptInterface
@@ -229,6 +240,19 @@ class IxiWebView(
 
   private fun runOnUiThread(runnable: Runnable) {
     fragment.requireActivity().runOnUiThread(runnable)
+  }
+
+  override fun onUrlLoadStart(webViewFragment: WebViewFragment, url: String?) {
+    // no-op
+  }
+
+  override fun onBackPressed(webViewFragment: WebViewFragment): Boolean {
+    if (quitOnBackPress) {
+      webViewFragment.delegate?.onQuit()
+      return true
+    }
+
+    return false
   }
 }
 

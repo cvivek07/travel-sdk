@@ -27,6 +27,8 @@ import com.ixigo.sdk.common.Ok
 import com.ixigo.sdk.payment.ActivityResultPaymentProvider
 import com.ixigo.sdk.payment.PaymentInput
 import com.ixigo.sdk.payment.PaymentResponse
+import com.ixigo.sdk.payment.PaymentSDK
+import com.ixigo.sdk.test.initializePaymentSDK
 import com.ixigo.sdk.test.initializeTestIxigoSDK
 import com.ixigo.sdk.ui.*
 import com.ixigo.sdk.util.AssetFileReader
@@ -75,10 +77,13 @@ class WebViewFragmentUnitTests {
               gradientThemeColor: document.querySelector('meta[name=\"sdk-theme\"]')?.content})
       """.trimIndent()
 
+  private lateinit var spyPaymentSdk: PaymentSDK
+
   @Before
   fun setup() {
     initializeTestIxigoSDK(
         analyticsProvider = mockAnalyticsProvider, deeplinkHandler = mockDeeplinkHandler)
+    initializePaymentSDK().also { spyPaymentSdk = spy(PaymentSDK.instance) }
     scenario =
         launchFragmentInContainer(
             Bundle().also {
@@ -87,6 +92,7 @@ class WebViewFragmentUnitTests {
     delegate = mock()
     scenario.onFragment {
       fragment = it
+      fragment.paymentSDK = spyPaymentSdk
       fragment.delegate = delegate
       shadowWebView = shadowOf(it.webView) as CustomShadowWebview
       shadowWebView.performSuccessfulPageLoadClientCallbacks()
@@ -285,6 +291,12 @@ class WebViewFragmentUnitTests {
   fun `test that goBack navigates back when loadingView onGoBack is called and there is navigation stack`() {
     fragment.loadableView.onGoBack?.invoke()
     verify(delegate).onQuit()
+  }
+
+  @Test
+  fun `test that goBack cancels payment`() {
+    fragment.loadableView.onGoBack?.invoke()
+    verify(spyPaymentSdk).cancelPayment()
   }
 
   @Test

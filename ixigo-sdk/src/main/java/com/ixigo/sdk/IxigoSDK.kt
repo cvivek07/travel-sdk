@@ -200,7 +200,8 @@ internal constructor(
 
   private fun isIxigoUrl(url: String): Boolean {
     return try {
-      URL(url).host?.endsWith("ixigo.com") ?: false
+      val host = URL(url).host
+      host?.endsWith("ixigo.com") ?: false || host?.endsWith("abhibus.com") ?: false
     } catch (e: Exception) {
       false
     }

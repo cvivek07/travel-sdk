@@ -12,6 +12,7 @@ import androidx.core.view.WindowInsetsControllerCompat
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.R
 import com.ixigo.sdk.databinding.WebActivityBinding
+import com.ixigo.sdk.payment.PaymentSDK
 import com.ixigo.sdk.ui.GradientThemeColor
 import com.ixigo.sdk.ui.SolidThemeColor
 import com.ixigo.sdk.ui.ThemeColor
@@ -25,6 +26,7 @@ class WebActivity : AppCompatActivity(), WebViewDelegate, UrlLoader {
     super.onCreate(savedInstanceState)
 
     webViewFragment = WebViewFragment()
+    webViewFragment.paymentSDK = PaymentSDK.instance
     webViewFragment.delegate = this
     webViewFragment.arguments = intent.extras
 
