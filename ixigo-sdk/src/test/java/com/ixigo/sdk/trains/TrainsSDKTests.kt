@@ -9,6 +9,7 @@ import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
 import com.ixigo.sdk.test.TestData.FakeAppInfo
+import com.ixigo.sdk.test.initializePaymentSDK
 import com.ixigo.sdk.test.initializeTestIxigoSDK
 import com.ixigo.sdk.webview.*
 import org.junit.Assert
@@ -32,11 +33,13 @@ class TrainsSDKTests {
   @Test(expected = IllegalStateException::class)
   fun `test calling init with uninitialized IxigoSDK throws an exception`() {
     TrainsSDK.init()
+    initializePaymentSDK()
   }
 
   @Test(expected = IllegalStateException::class)
   fun `test calling init twice throws an exception`() {
     initializeTestIxigoSDK()
+    initializePaymentSDK()
     TrainsSDK.init()
     TrainsSDK.init()
   }
