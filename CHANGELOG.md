@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.23.2](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.23.1...ixigo-sdk-3.23.2) (2023-10-04)
+
+
+### Bug Fixes
+
+* invoke cancel callback on back press before page is loaded ([4aff207](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/4aff20798607532b08d4570a90c244f62ad9e111))
+* quit funnel by providing hint to native client using quitOnBackPress API ([5402eef](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/5402eef925e30f36790602617795decb6991a495))
+
 ### [3.23.1](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.23.0...ixigo-sdk-3.23.1) (2023-09-20)
 
 ## [3.23.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.22.0...ixigo-sdk-3.23.0) (2023-09-20)
