@@ -317,6 +317,12 @@ task downloadIxigoJsSdkFromRemote() {
 
 tasks.findByName("preBuild").dependsOn(downloadIxigoJsSdkFromRemote)
 
+def localProperty(propertyName) {
+    def props = new Properties()
+    file("${project.rootDir}/local.properties").withInputStream { props.load(it) }
+    return props[propertyName]
+}
+
 afterEvaluate {
     publishing {
         publications {
@@ -353,8 +359,8 @@ afterEvaluate {
                 url = 'https://nexus.ixigo.com/nexus/content/repositories/androidshared-snapshots'
                 name = 'NexusSnapshot'
                 credentials {
-                    username = findProperty('nexusUser') ?: System.env.nexusUser
-                    password = findProperty('nexusPassword') ?: System.env.nexusPassword
+                    username = findProperty('nexusUser') ?: localProperty('nexusUser')
+                    password = findProperty('nexusPassword') ?: localProperty('nexusPassword')
                 }
             }
         }
