@@ -359,8 +359,8 @@ afterEvaluate {
                 url = 'https://nexus.ixigo.com/nexus/content/repositories/androidshared-snapshots'
                 name = 'NexusSnapshot'
                 credentials {
-                    username = findProperty('nexusUser') ?: localProperty('nexusUser')
-                    password = findProperty('nexusPassword') ?: localProperty('nexusPassword')
+                    username = findProperty('nexusUser') ?: System.env.nexusUser ?: localProperty('nexusUser')
+                    password = findProperty('nexusPassword') ?: System.env.nexusPassword ?: localProperty('nexusPassword')
                 }
             }
         }
