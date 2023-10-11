@@ -12,15 +12,11 @@ import com.ixigo.sdk.Config
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.analytics.AnalyticsProvider
 import com.ixigo.sdk.analytics.Event
-import com.ixigo.sdk.bus.BusConfig
-import com.ixigo.sdk.bus.BusSDK
-import com.ixigo.sdk.common.CustomChromeTabsHelper
 import com.ixigo.sdk.test.initializeTestIxigoSDK
 import com.ixigo.sdk.webview.*
 import org.junit.*
 import org.junit.runner.RunWith
 import org.mockito.Mock
-import org.mockito.Mockito
 import org.mockito.junit.MockitoJUnit
 import org.mockito.junit.MockitoRule
 import org.mockito.kotlin.*
@@ -45,17 +41,16 @@ class HotelsSDKTests {
   }
 
   @Test
-  fun `test event on launchHome`(){
+  fun `test event on launchHome`() {
     hotelsSDK.launchHome(activity)
     verify(mockAnalyticsProvider).logEvent(eq(Event("hotelStartHome")))
   }
 
   @Test
-  fun `test event on launchTrips`(){
+  fun `test event on launchTrips`() {
     hotelsSDK.launchTrips(activity)
     verify(mockAnalyticsProvider).logEvent(eq(Event("hotelStartTrips")))
   }
-
 
   @After
   fun teardown() {
@@ -70,14 +65,14 @@ class HotelsSDKTests {
   }
 
   private fun testHotelsHome(
-    clientId: String,
-    expectedUrl: String,
-    funnelConfig: FunnelConfig? = null
+      clientId: String,
+      expectedUrl: String,
+      funnelConfig: FunnelConfig? = null
   ) {
     val mockAnalyticsProvider: AnalyticsProvider = mock()
     val mockIxigoSDK: IxigoSDK = mock {
       on { appInfo } doReturn
-              AppInfo(clientId = clientId, apiKey = "any", appVersion = 1, appName = "Ixigo Hotels")
+          AppInfo(clientId = clientId, apiKey = "any", appVersion = 1, appName = "Ixigo Hotels")
       on { analyticsProvider } doReturn mockAnalyticsProvider
       on { webViewConfig } doReturn WebViewConfig()
       on { config } doReturn Config.ProdConfig
@@ -86,13 +81,7 @@ class HotelsSDKTests {
     IxigoSDK.replaceInstance(mockIxigoSDK)
 
     hotelsSDK.launchHome(application, funnelConfig)
-    verify(mockIxigoSDK)
-      .launchWebActivity(
-        anyOrNull(),
-        anyOrNull(),
-        anyOrNull(),
-        anyOrNull()
-      )
+    verify(mockIxigoSDK).launchWebActivity(anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())
     verify(mockAnalyticsProvider).logEvent(Event("hotelStartHome"))
   }
 }
