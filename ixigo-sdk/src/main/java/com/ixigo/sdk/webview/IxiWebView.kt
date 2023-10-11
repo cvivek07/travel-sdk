@@ -1,5 +1,6 @@
 package com.ixigo.sdk.webview
 
+import android.content.Intent
 import android.webkit.JavascriptInterface
 import androidx.annotation.Keep
 import androidx.lifecycle.DefaultLifecycleObserver
@@ -209,6 +210,19 @@ class IxiWebView(
   @JavascriptInterface
   fun pwaReady() {
     runOnUiThread { fragment.pwaReady() }
+  }
+
+  @JavascriptInterface
+  fun share(title: String?, message: String?) {
+    runOnUiThread {
+      val shareIntent = Intent(Intent.ACTION_SEND)
+      shareIntent.putExtra(Intent.EXTRA_SUBJECT, title)
+      shareIntent.putExtra(Intent.EXTRA_TEXT, message)
+      shareIntent.type = "text/plain"
+      try {
+        fragment.requireActivity().startActivity(shareIntent)
+      } catch (_: Exception) {}
+    }
   }
 
   private fun returnError(error: String, errorPayload: NativePromiseError) {
