@@ -1,6 +1,8 @@
 package com.ixigo.sdk.hotels
 
 import android.content.Context
+import com.ixigo.sdk.IxigoSDK
+import com.ixigo.sdk.analytics.Event
 import com.ixigo.sdk.common.*
 import com.ixigo.sdk.webview.*
 
@@ -12,13 +14,20 @@ import com.ixigo.sdk.webview.*
  * Before using it, you need to call [HotelsSDK.init(...)][init] once when you start-up your
  * Application.
  */
-class HotelsSDK(
-    private val customChromeTabsHelper: CustomChromeTabsHelper = CustomChromeTabsHelper()
-) {
+class HotelsSDK {
 
-  fun launchHome(context: Context) {
-    val url = "https://www.booking.com"
-    customChromeTabsHelper.openUrl(context, url)
+  fun launchHome(context: Context, funnelConfig: FunnelConfig? = null) {
+    with(IxigoSDK.instance) {
+      analyticsProvider.logEvent(Event.with(action = "hotelStartHome"))
+      launchWebActivity(context, getUrl(mapOf("page" to "HOTEL_HOME")), funnelConfig)
+    }
+  }
+
+  fun launchTrips(context: Context, funnelConfig: FunnelConfig? = null) {
+    with(IxigoSDK.instance) {
+      analyticsProvider.logEvent(Event.with(action = "hotelStartTrips"))
+      launchWebActivity(context, getUrl(mapOf("page" to "HOTEL_BOOKINGS")), funnelConfig)
+    }
   }
 
   companion object : SdkSingleton<HotelsSDK>("HotelsSDK") {

@@ -35,7 +35,7 @@ class HotelsSDKTests {
     scenario.onActivity { activity = it }
     initializeTestIxigoSDK(analyticsProvider = mockAnalyticsProvider)
 
-    hotelsSDK = HotelsSDK(customChromeTabsHelper = mockCustomChromeTokenProvider)
+    hotelsSDK = HotelsSDK()
   }
 
   @After
