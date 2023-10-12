@@ -320,15 +320,16 @@ class IxiWebViewTests {
   private val appInfo = FakeAppInfo
 }
 
-class ShareIntentMatcher(private val title: String?, private val message: String?) : TypeSafeMatcher<Intent>() {
+class ShareIntentMatcher(private val title: String?, private val message: String?) :
+    TypeSafeMatcher<Intent>() {
   override fun describeTo(description: Description) {
     description.appendText("share intent")
   }
 
   override fun matchesSafely(item: Intent): Boolean {
-    return item.action == Intent.ACTION_SEND
-            && item.getStringExtra(Intent.EXTRA_SUBJECT) == title
-            && item.getStringExtra(Intent.EXTRA_TEXT) == message
-            && item.type == "text/plain"
+    return item.action == Intent.ACTION_SEND &&
+        item.getStringExtra(Intent.EXTRA_SUBJECT) == title &&
+        item.getStringExtra(Intent.EXTRA_TEXT) == message &&
+        item.type == "text/plain"
   }
 }
