@@ -1,5 +1,6 @@
 package com.ixigo.sdk.webview
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Looper
 import android.webkit.JavascriptInterface
@@ -7,6 +8,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.testing.FragmentScenario
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.lifecycle.Lifecycle
+import androidx.test.espresso.intent.Intents
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.ixigo.sdk.IxigoSDK
 import com.ixigo.sdk.analytics.AnalyticsProvider
@@ -22,6 +24,8 @@ import com.ixigo.sdk.ui.Loaded
 import com.ixigo.sdk.ui.Loading
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import org.hamcrest.Description
+import org.hamcrest.TypeSafeMatcher
 import org.junit.After
 import org.junit.Assert.*
 import org.junit.Before
@@ -76,10 +80,13 @@ class IxiWebViewTests {
       fragmentActivity = it.requireActivity()
       ixiWebView = IxiWebView(it, ssoAuthProvider, analyticsProvider, mockViewModel, spyPaymentSDK)
     }
+
+    Intents.init()
   }
 
   @After
   fun teardown() {
+    Intents.release()
     IxigoSDK.clearInstance()
   }
 
@@ -278,6 +285,12 @@ class IxiWebViewTests {
     }
   }
 
+  @Test
+  fun `test share`() {
+    ixiWebView.share("title", "message")
+    Intents.intended(ShareIntentMatcher("title", "message"))
+  }
+
   private fun testLogin(token: String?) {
     doAnswer {
           val callback: AuthCallback = it.getArgument(2)
@@ -305,4 +318,17 @@ class IxiWebViewTests {
   }
 
   private val appInfo = FakeAppInfo
+}
+
+class ShareIntentMatcher(private val title: String?, private val message: String?) : TypeSafeMatcher<Intent>() {
+  override fun describeTo(description: Description) {
+    description.appendText("share intent")
+  }
+
+  override fun matchesSafely(item: Intent): Boolean {
+    return item.action == Intent.ACTION_SEND
+            && item.getStringExtra(Intent.EXTRA_SUBJECT) == title
+            && item.getStringExtra(Intent.EXTRA_TEXT) == message
+            && item.type == "text/plain"
+  }
 }
