@@ -62,14 +62,11 @@ class BusSDK(internal val config: Config) : JsInterfaceProvider {
     IxigoSDK.instance.launchWebActivity(context, url)
   }
 
-  /**
-   * launch the redirection url of bus detail page.
-   */
-  fun launchBusDetail(context: Context,redirectionUrl: String){
+  /** launch the redirection url of bus detail page. */
+  fun launchBusDetail(context: Context, redirectionUrl: String) {
     val url = config.createUrl(redirectionUrl, addSkinParam())
-    IxigoSDK.instance.launchWebActivity(context,url )
+    IxigoSDK.instance.launchWebActivity(context, url)
   }
-
 
   /**
    * Opens Abhibus PWA trips page
