@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.24.0](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.23.2...ixigo-sdk-3.24.0) (2023-10-19)
+
+
+### Features
+
+* add launchHome and launchTrips entrypoints in HotelsSDK ([0e9dec8](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/0e9dec8160256769a5a88193e324b7116b3b80a6))
+* add share interface on IxiWebView to share text ([88a870f](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/commit/88a870f9e1276124ea17e281a1e4742cf416e69b))
+
 ### [3.23.2](https://git.ixigo.com/ixigo-sdk/ixigo-android-sdk/compare/ixigo-sdk-3.23.1...ixigo-sdk-3.23.2) (2023-10-04)
 
 
